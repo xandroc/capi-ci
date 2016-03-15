@@ -1,0 +1,29 @@
+#!/bin/bash
+
+set -e -x
+
+source ~/.bashrc
+
+environment_path="${PWD}/${DEPLOYMENTS_DIR}/${ENVIRONMENT_NAME}"
+stubs_path="${environment_path}/stubs"
+templates_path="${environment_path}/templates"
+
+cf_deployment_name="cf-${ENVIRONMENT_NAME}"
+
+bosh -n target ${BOSH_TARGET}
+bosh -n login ${BOSH_USER} ${BOSH_PASSWORD}
+
+pushd diego-release
+  bosh download manifest ${cf_deployment_name} /tmp/cf.yml
+
+  ./scripts/generate-deployment-manifest \
+    -c /tmp/cf.yml \
+    -i ${stubs_path}/diego/iaas-settings.yml \
+    -p ${stubs_path}/diego/property-overrides.yml \
+    -n ${stubs_path}/diego/instance-count-overrides.yml \
+    -k ${stubs_path}/diego/persistent-disk-overrides.yml \
+    -v ${stubs_path}/diego/release-versions.yml \
+    > ../generated-manifest/diego-deployment.yml
+
+    cat ../generated-manifest/diego-deployment.yml
+popd

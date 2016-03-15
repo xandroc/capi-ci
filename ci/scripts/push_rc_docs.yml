@@ -1,0 +1,11 @@
+---
+platform: linux
+
+image: docker:///cloudfoundry/runtime-ci
+
+inputs:
+  - name: cf-release
+  - name: capi-ci
+
+run:
+  path: capi-ci/ci/scripts/push_rc_docs

@@ -1,0 +1,23 @@
+---
+platform: linux
+
+image: docker:///cloudfoundry/runtime-ci
+
+inputs:
+  - name: capi-ci
+  - name: diego-release
+  - name: diego-ci
+
+outputs:
+  - name: generated-manifest
+
+params:
+  BOSH_PASSWORD: ~
+  BOSH_TARGET: ~
+  BOSH_USER: ~
+  DATADOG_API_KEY: ~
+  DEPLOYMENTS_DIR: ~
+  ENVIRONMENT_NAME: ~
+
+run:
+  path: capi-ci/ci/scripts/create_diego_release_manifest

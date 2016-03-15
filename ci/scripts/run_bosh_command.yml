@@ -1,0 +1,21 @@
+---
+platform: linux
+
+image: docker:///cloudfoundry/runtime-ci
+
+inputs:
+  - name: capi-ci
+  - name: generated-manifest
+
+outputs:
+  - name: bosh-logs
+
+run:
+  path: capi-ci/ci/scripts/run_bosh_command
+
+params:
+  BOSH_DIRECTOR:
+  BOSH_USER:
+  BOSH_PASSWORD:
+  DEPLOYMENT_YML:
+  COMMAND:

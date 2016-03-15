@@ -1,0 +1,29 @@
+#!/bin/bash
+set -e -x
+
+source ~/.bashrc
+
+echo "======ENVIRONMENT======"
+printenv
+
+# Ensure that /tmp is world-writable, otherwise MySQL fails to start.
+chmod 777 /tmp
+
+cd cloud_controller_ng
+
+chruby $(cat .ruby-version)
+
+# AUFS has weird issues with file permissions in docker. 
+# We found this solution here:
+# https://github.com/docker/docker/issues/783#issuecomment-56013588
+mkdir /etc/ssl/private-copy; mv /etc/ssl/private/* /etc/ssl/private-copy/; rm -r /etc/ssl/private; mv /etc/ssl/private-copy /etc/ssl/private; chmod -R 0700 /etc/ssl/private; chown -R postgres /etc/ssl/private
+
+service mysql restart
+service postgresql restart
+
+gem install bundler
+bundle install
+
+bundle exec rake rubocop
+bundle exec rake spec:all
+

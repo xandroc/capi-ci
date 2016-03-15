@@ -1,0 +1,65 @@
+groups:
+- name: concourse
+  jobs:
+  - deploy-concourse
+
+resources:
+- name: aws-stemcell
+  type: bosh-io-stemcell
+  source:
+    name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
+
+- name: deployments-runtime
+  type: git
+  source:
+    branch: master
+    private_key: {{private_key}}
+    uri: git@github.com:cloudfoundry/deployments-runtime.git
+
+- name: concourse
+  type: github-release
+  source:
+    access_token: {{access_token}}
+    repository: concourse
+    user: concourse
+
+- name: concourse-deployment
+  type: bosh-deployment
+  source:
+    target: 52.0.73.109:25555
+    username: {{wasabi_bosh_user}}
+    password: {{wasabi_bosh_password}}
+    deployment: concourse
+    ignore_ssl: true
+
+- name: concourse-config
+  type: git
+  source:
+    paths:
+    - wasabi
+    ignore_paths:
+    - wasabi/deployments/pipeline.yml
+    private_key: {{private_key}}
+    uri: git@github.com:cloudfoundry/deployments-runtime.git
+
+jobs:
+- name: deploy-concourse
+  serial: true
+  plan:
+  - aggregate:
+    - get: concourse
+      params:
+        globs:
+        - concourse-*.tgz
+        - garden-linux-*.tgz
+    - get: concourse-config
+    - get: aws-stemcell
+    - get: deployments-runtime
+  - put: concourse-deployment
+    params:
+      manifest: concourse-config/wasabi/deployments/concourse.yml
+      releases:
+        - concourse/concourse-*.tgz
+        - concourse/garden-linux-*.tgz
+      stemcells:
+        - aws-stemcell/*.tgz

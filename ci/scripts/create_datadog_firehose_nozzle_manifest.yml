@@ -1,0 +1,18 @@
+---
+platform: linux
+
+image: docker:///cloudfoundry/runtime-ci
+
+inputs:
+  - name: datadog-firehose-nozzle-release
+  - name: deployments-runtime
+  - name: capi-ci
+
+outputs:
+  - name: generated-manifest
+
+run:
+  path: capi-ci/ci/scripts/create_datadog_firehose_nozzle_manifest
+
+params:
+  ENVIRONMENT:

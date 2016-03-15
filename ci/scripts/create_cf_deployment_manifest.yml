@@ -1,0 +1,19 @@
+---
+platform: linux
+
+image: docker:///cloudfoundry/runtime-ci
+
+inputs:
+  - name: cf-release
+  - name: deployments-runtime
+  - name: capi-ci
+
+outputs:
+  - name: generated-manifest
+
+run:
+  path: capi-ci/ci/scripts/create_cf_deployment_manifest.sh
+
+params:
+  INFRASTRUCTURE:
+  ENVIRONMENT:

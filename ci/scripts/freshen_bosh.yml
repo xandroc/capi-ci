@@ -1,0 +1,22 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source: {repository: ruby}
+
+inputs:
+  - name: capi-ci
+  - name: bosh
+  - name: bosh-aws-cpi
+  - name: aws-stemcell
+
+outputs:
+  - name: freshened-config
+
+run:
+  path: capi-ci/wasabi/scripts/ci/freshen_bosh.rb
+
+params:
+  BOSH_INIT_CONFIG_DIR:
+  BOSH_ENVIRONMENT_NAME:

@@ -1,0 +1,14 @@
+---
+platform: linux
+
+image: docker:///cloudfoundry/runtime-ci
+
+inputs:
+  - name: cloud_controller_ng
+  - name: concourse-config
+
+params:
+  GEMNASIUM_API_KEY:
+
+run:
+  path: concourse-config/wasabi/scripts/ci/cloud_controller_ng_dependencies.sh

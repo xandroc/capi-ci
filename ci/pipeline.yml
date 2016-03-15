@@ -1,0 +1,573 @@
+groups:
+- name: can-we-bump
+  jobs:
+  - cc-unit-tests
+  - create-capi-release
+  - deploy-and-test-xena
+  - bump-cf-release
+  - deploy-diego-xena
+  - deploy-xena-datadog-firehose-nozzle
+- name: migrations-dependencies-docs
+  jobs:
+  - migration-backwards-compatibility-test
+  - check-cc-dependencies
+  - rc-docs
+- name: bosh
+  jobs:
+  - clean-all-the-boshes
+  - freshen-wasabi
+  - freshen-xena
+
+resources:
+- name: daily
+  type: time
+  source:
+    start: 23:00 -0700
+    stop: 23:30 -0700
+    interval: 24h
+
+- name: bump-hourly
+  type: time
+  source:
+    interval: 1h
+
+- name: capi-release-version
+  type: semver
+  source:
+    access_key_id: {{wasabi_semver_access_key}}
+    secret_access_key: {{wasabi_semver_secret_key}}
+    initial_version: 0.0.0
+    bucket: capi-release-versions
+    key: current-capi-release-version
+    region_name: us-east-1
+
+- name: cf-release-tarball
+  type: s3
+  source:
+    bucket: cf-runtime-releases
+    regexp: cf-(\d+\.\d+\.\d+)-.*.tgz
+    access_key_id: {{wasabi_s3_access_key}}
+    secret_access_key: {{wasabi_s3_secret_key}}
+
+- name: capi-release-tarball
+  type: s3
+  source:
+    bucket: cf-capi-releases
+    regexp: capi-.*.tgz
+    access_key_id: {{wasabi_s3_access_key}}
+    secret_access_key: {{wasabi_s3_secret_key}}
+
+- name: diego-release-tarball
+  type: s3
+  source:
+    bucket: diego-final-releases
+    regexp: diego-(.*).tgz
+    access_key_id: {{diego_s3_access_key}}
+    secret_access_key: {{diego_s3_secret_key}}
+
+- name: aws-stemcell
+  type: bosh-io-stemcell
+  source:
+    name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
+
+- name: cf-release-final
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/cf-release
+
+- name: datadog-firehose-nozzle-release-final
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry-incubator/datadog-firehose-nozzle-release
+
+- name: garden-linux-release-tarball
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry-incubator/garden-linux-release
+
+- name: etcd-release-tarball
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry-incubator/etcd-release
+
+- name: bosh
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/bosh
+
+- name: bosh-aws-cpi
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry-incubator/bosh-aws-cpi-release
+
+- name: cf-wasabi-deployment
+  type: bosh-deployment
+  source:
+    target: 52.0.73.109:25555
+    username: {{wasabi_bosh_user}}
+    password: {{wasabi_bosh_password}}
+    deployment: cf-wasabi
+    ignore_ssl: true
+
+- name: xena-datadog-firehose-nozzle-deployment
+  type: bosh-deployment
+  source:
+    target: https://bosh.xena.cf-app.com:25555
+    username: {{xena_bosh_user}}
+    password: {{xena_bosh_password}}
+    deployment: datadog-firehose-nozzle
+    ignore_ssl: true
+
+- name: xena-deployment
+  type: bosh-deployment
+  source:
+    target: https://bosh.xena.cf-app.com:25555
+    username: {{xena_bosh_user}}
+    password: {{xena_bosh_password}}
+    deployment: cf-xena
+    ignore_ssl: true
+
+- name: xena-diego-deployment
+  type: bosh-deployment
+  source:
+    target: https://bosh.xena.cf-app.com:25555
+    username: {{xena_bosh_user}}
+    password: {{xena_bosh_password}}
+    deployment: cf-xena-diego
+    ignore_ssl: true
+
+- name: xena-acceptance-tests-logs
+  type: s3
+  source:
+    private: true
+    bucket: xena-acceptance-tests-logs
+    regexp: acceptance_tests.*.tgz
+    access_key_id: {{xena_s3_access_key}}
+    secret_access_key: {{xena_s3_secret_key}}
+
+- name: datadog-firehose-nozzle-release
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry-incubator/datadog-firehose-nozzle-release.git
+
+- name: capi-release
+  type: git
+  source:
+    branch: master
+    private_key: {{private_key}}
+    uri: git@github.com:cloudfoundry/capi-release.git
+
+- name: cf-release-master
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/cf-release.git
+
+- name: cf-release-develop
+  type: git
+  source:
+    branch: develop
+    private_key: {{private_key}}
+    uri: git@github.com:cloudfoundry/cf-release.git
+
+- name: cf-release-release-candidate
+  type: git
+  source:
+    branch: release-candidate
+    private_key: {{private_key}}
+    uri: git@github.com:cloudfoundry/cf-release.git
+
+- name: cloud-controller-master-migrations
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/cloud_controller_ng.git
+    paths: ['db']
+
+- name: concourse-config
+  type: git
+  source:
+    paths:
+    - wasabi
+    ignore_paths:
+    - wasabi/deployments/pipeline.yml
+    private_key: {{private_key}}
+    uri: git@github.com:cloudfoundry/deployments-runtime.git
+
+- name: deployments-runtime
+  type: git
+  source:
+    branch: master
+    private_key: {{private_key}}
+    uri: git@github.com:cloudfoundry/deployments-runtime.git
+
+- name: capi-ci
+  type: git
+  source:
+    branch: master
+    uri: https://@github.com:cloudfoundry/capi-ci.git
+
+- name: capi-ci-private
+  type: git
+  source:
+    branch: master
+    private_key: {{private_key}}
+    uri: git@github.com:cloudfoundry/capi-ci-private.git
+
+- name: diego-ci
+  type: git
+  source:
+    uri: https://github.com/cloudfoundry-incubator/diego-ci
+
+- name: diego-release
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry-incubator/diego-release.git
+
+- name: cloud_controller_ng
+  type: git
+  source:
+    branch: master
+    private_key: {{private_key}}
+    uri: git@github.com:cloudfoundry/cloud_controller_ng.git
+
+jobs:
+- name: check-cc-dependencies
+  serial: true
+  plan:
+  - aggregate:
+    - get: cloud_controller_ng
+      trigger: true
+    - get: concourse-config
+  - task: check-dependencies
+    file: concourse-config/wasabi/scripts/ci/cloud_controller_ng_dependencies.yml
+    config:
+      params:
+        GEMNASIUM_API_KEY: {{gemnasium_api_key}}
+
+- name: cc-unit-tests
+  plan:
+  - aggregate:
+    - get: cloud_controller_ng
+      trigger: true
+    - get: capi-release
+    - get: deployments-runtime
+    - get: capi-ci
+  - aggregate:
+    - task: run-cc-unit-tests-mysql
+      privileged: true
+      file: capi-ci/ci/scripts/run_cc_unit_tests.yml
+      config:
+        params:
+          DB: mysql
+    - task: run-cc-unit-tests-postgres
+      privileged: true
+      file: capi-ci/ci/scripts/run_cc_unit_tests.yml
+      config:
+        params:
+          DB: postgres
+  - task: bump-capi-release
+    file: capi-ci/ci/scripts/bump_capi_release.yml
+  - put: capi-release
+    params:
+      repository: bumped/capi-release
+      rebase: true
+
+- name: create-capi-release
+  serial: true
+  plan:
+  - aggregate:
+    - get: capi-release
+      trigger: true
+    - get: deployments-runtime
+    - get: capi-ci
+    - get: version
+      resource: capi-release-version
+      params:
+        bump: major
+  - put: capi-release-version
+    params:
+      file: version/number
+  - task: create-release-tarball
+    file: capi-ci/ci/scripts/create_capi_release.yml
+  - put: capi-release-tarball
+    params:
+      from: created-capi-release/capi-(.*).tgz
+
+- name: deploy-and-test-xena
+  serial: true
+  serial_groups: [deploy-xena-cf]
+  plan:
+  - aggregate:
+    - get: cf-release-tarball
+    - get: capi-release-tarball
+      passed: [create-capi-release]
+      trigger: true
+    - get: capi-release
+      passed: [create-capi-release]
+    - get: deployments-runtime
+    - get: capi-ci
+    - get: aws-stemcell
+    - get: cf-release
+      resource: cf-release-develop
+  - task: manifest
+    privileged: true
+    file: capi-ci/ci/scripts/create_cf_deployment_manifest.yml
+    config:
+      params:
+        INFRASTRUCTURE: aws
+        ENVIRONMENT: xena
+  - put: xena-deployment
+    params:
+      manifest: generated-manifest/deployment.yml
+      stemcells: [aws-stemcell/*.tgz]
+      releases:
+        - cf-release-tarball/*.tgz
+        - capi-release-tarball/*.tgz
+  - task: acceptance-tests
+    privileged: true
+    file: capi-ci/ci/scripts/run_bosh_command.yml
+    config:
+      params:
+        <<: *bosh-target-xena
+        DEPLOYMENT_YML: generated-manifest/deployment.yml
+        COMMAND: 'run errand acceptance_tests --keep-alive --download-logs --logs-dir bosh-logs'
+    ensure:
+      put: xena-acceptance-tests-logs
+      params:
+        from: bosh-logs/acceptance_tests(.*).tgz
+
+- name: bump-cf-release
+  serial: true
+  plan:
+  - aggregate:
+    - get: bump-hourly
+      trigger: true
+    - get: deployments-runtime
+    - get: capi-ci
+    - get: capi-release
+      trigger: true
+      passed: [deploy-and-test-xena]
+    - get: cf-release
+      resource: cf-release-develop
+      params:
+        submodules:
+        - src/capi-release
+  - task: check-can-i-bump
+    file: capi-ci/ci/scripts/check_can_i_bump.yml
+  - task: bump-cf-release
+    file: capi-ci/ci/scripts/bump_cf_release.yml
+  - put: cf-release-develop
+    params:
+      repository: bumped/cf-release
+      rebase: true
+
+- name: deploy-diego-xena
+  serial: true
+  serial_groups: [deploy-xena-diego]
+  plan:
+  - aggregate:
+    - get: diego-ci
+    - get: diego-release
+      params:
+        submodules: none
+    - get: garden-linux-release-tarball
+    - get: etcd-release-tarball
+    - get: deployments-runtime
+    - get: capi-ci
+    - get: aws-stemcell
+    - get: diego-release-tarball
+      trigger: true
+  - task: generate-deployment-manifests
+    file: capi-ci/ci/scripts/create_diego_release_manifest.yml
+    config:
+      params:
+        BOSH_TARGET: bosh.xena.cf-app.com
+        BOSH_USER: {{xena_bosh_user}}
+        BOSH_PASSWORD: {{xena_bosh_password}}
+        DEPLOYMENTS_DIR: deployments-runtime
+        ENVIRONMENT_NAME: xena
+  - put: xena-diego-deployment
+    params:
+      manifest: generated-manifest/diego-deployment.yml
+      releases: [diego-release-tarball/*.tgz, garden-linux-release-tarball/*.tgz, etcd-release-tarball/*.tgz]
+      stemcells: [aws-stemcell/*.tgz]
+
+- name: migration-backwards-compatibility-test
+  serial: true
+  serial_groups: [deploy-wasabi-migrations]
+  plan:
+  - aggregate:
+    - get: cf-release-final
+      params:
+        tarball: true
+    - get: cf-release
+      resource: cf-release-master
+    - get: capi-ci
+    - get: delpoyments-runtime
+    - get: aws-stemcell
+    - get: cloud_controller_ng
+      resource: cloud-controller-master-migrations
+      trigger: true
+  - task: manifest
+    privileged: true
+    file: capi-ci/ci/scripts/create_cf_deployment_manifest.yml
+    config:
+      params:
+        INFRASTRUCTURE: aws
+        ENVIRONMENT: wasabi
+  - task: delete-wasabi-deployment
+    privileged: true
+    file: capi-ci/ci/scripts/run_bosh_command.yml
+    config:
+      params:
+        <<: *bosh-target-wasabi
+        DEPLOYMENT_YML: generated-manifest/deployment.yml
+        COMMAND: 'delete deployment cf-wasabi'
+  - put: cf-wasabi-deployment
+    params:
+      manifest: generated-manifest/deployment.yml
+      stemcells: [aws-stemcell/*.tgz]
+      releases: [ cf-release-final/release.tgz]
+  - task: smoke-tests
+    privileged: true
+    file: capi-ci/ci/scripts/run_bosh_command.yml
+    config:
+      params:
+        <<: *bosh-target-wasabi
+        DEPLOYMENT_YML: generated-manifest/deployment.yml
+        COMMAND: 'run errand smoke_tests --keep-alive'
+  - task: apply-migrations
+    privileged: true
+    file: capi-ci/ci/scripts/apply_cc_migrations.yml
+    config:
+      params:
+        CONNECTION_STRING: {{cc_db_connection_string}}
+        ENVIRONMENT: wasabi
+        DB_HOST: 10.0.32.30
+        TUNNEL_HOST: 52.0.73.109
+  - task: acceptance-tests
+    privileged: true
+    file: capi-ci/ci/scripts/run_bosh_command.yml
+    config:
+      params:
+        <<: *bosh-target-wasabi
+        DEPLOYMENT_YML: generated-manifest/deployment.yml
+        COMMAND: 'run errand acceptance_tests --keep-alive --download-logs --logs-dir bosh-logs'
+
+- name: clean-all-the-boshes
+  plan:
+  - aggregate:
+    - get: deployments-runtime
+    - get: capi-ci
+    - get: daily
+      trigger: true
+  - aggregate:
+    - task: cleanup-wasabi
+      privileged: true
+      file: capi-ci/ci/scripts/run_bosh_cleanup.yml
+      config:
+        params: &bosh-target-wasabi
+          BOSH_DIRECTOR: https://bosh.wasabi.cf-app.com:25555
+          BOSH_USER: {{wasabi_bosh_user}}
+          BOSH_PASSWORD: {{wasabi_bosh_password}}
+    - task: cleanup-xena
+      privileged: true
+      file: capi-ci/ci/scripts/run_bosh_cleanup.yml
+      config:
+        params: &bosh-target-xena
+          BOSH_DIRECTOR: https://bosh.xena.cf-app.com:25555
+          BOSH_USER: {{xena_bosh_user}}
+          BOSH_PASSWORD: {{xena_bosh_password}}
+
+- name: deploy-xena-datadog-firehose-nozzle
+  serial_groups: [deploy-xena-datadog]
+  plan:
+  - aggregate:
+    - get: datadog-firehose-nozzle-release-final
+      params:
+        tarball: true
+      trigger: true
+    - get: datadog-firehose-nozzle-release
+    - get: aws-stemcell
+    - get: deployments-runtime
+    - get: capi-ci
+  - task: manifest
+    file: capi-ci/ci/scripts/create_datadog_firehose_nozzle_manifest.yml
+    config:
+      params:
+        ENVIRONMENT: xena
+  - put: xena-datadog-firehose-nozzle-deployment
+    params:
+      manifest: generated-manifest/deployment.yml
+      stemcells: [aws-stemcell/*.tgz]
+      releases: [ datadog-firehose-nozzle-release-final/release.tgz]
+
+- name: rc-docs
+  serial: true
+  plan:
+  - aggregate:
+    - get: deployments-runtime
+    - get: capi-ci
+    - get: cf-release
+      resource: cf-release-release-candidate
+      trigger: true
+      params:
+        submodules:
+          - src/capi-release
+  - task: push-rc-docs
+    file: capi-ci/ci/scripts/push_rc_docs.yml
+    config:
+      params: &docs-aws-account
+        AWS_DEFAULT_REGION: us-east-1
+        AWS_ACCESS_KEY_ID: {{docs_s3_access_key}}
+        AWS_SECRET_ACCESS_KEY: {{docs_s3_secret_key}}
+
+- name: freshen-wasabi
+  serial: true
+  serial_groups: [deploy-wasabi-migrations]
+  plan:
+  - aggregate:
+    - get: capi-ci
+    - get: bosh
+      trigger: true
+    - get: bosh-aws-cpi
+      trigger: true
+    - get: aws-stemcell
+      trigger: true
+  - task: freshen-wasabi
+    file: capi-ci/ci/scripts/freshen_bosh.yml
+    config:
+      params:
+        BOSH_INIT_CONFIG_DIR: capi-ci/wasabi/deployments/bosh
+        BOSH_ENVIRONMENT_NAME: wasabi
+  - put: capi-ci
+    params:
+      repository: freshened-config/capi-ci
+      rebase: true
+
+
+- name: freshen-xena
+  serial: true
+  serial_groups: [deploy-xena-cf, deploy-xena-diego, deploy-xena-datadog]
+  plan:
+  - aggregate:
+    - get: capi-ci
+    - get: bosh
+      trigger: true
+    - get: bosh-aws-cpi
+      trigger: true
+    - get: aws-stemcell
+      trigger: true
+  - task: freshen-xena
+    file: capi-ci/ci/scripts/freshen_bosh.yml
+    config:
+      params:
+        BOSH_INIT_CONFIG_DIR: capi-ci/xena/deployments/bosh
+        BOSH_ENVIRONMENT_NAME: xena
+  - put: capi-ci
+    params:
+      repository: freshened-config/capi-ci
+      rebase: true

@@ -1,0 +1,12 @@
+---
+platform: linux
+
+image: docker:///cloudfoundry/runtime-ci
+
+inputs:
+  - name: cloud_controller_ng
+  - name: capi-ci
+
+run:
+  path: capi-ci/ci/scripts/run_cc_unit_tests
+

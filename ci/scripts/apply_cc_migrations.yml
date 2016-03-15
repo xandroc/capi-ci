@@ -1,0 +1,18 @@
+---
+platform: linux
+
+image: docker:///cloudfoundry/runtime-ci
+
+inputs:
+  - name: cloud_controller_ng
+  - name: capi-ci
+  - name: deployments-runtime
+
+run:
+  path: capi-ci/ci/scripts/apply_cc_migrations.sh
+
+params:
+  CONNECTION_STRING:
+  ENVIRONMENT:
+  TUNNEL_HOST:
+  DB_HOST:
