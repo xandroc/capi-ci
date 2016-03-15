@@ -206,7 +206,7 @@ resources:
   type: git
   source:
     branch: master
-    uri: https://@github.com:cloudfoundry/capi-ci.git
+    uri: https://github.com:cloudfoundry/capi-ci.git
 
 - name: capi-ci-private
   type: git
@@ -406,7 +406,7 @@ jobs:
     - get: cf-release
       resource: cf-release-master
     - get: capi-ci
-    - get: delpoyments-runtime
+    - get: deployments-runtime
     - get: aws-stemcell
     - get: cloud_controller_ng
       resource: cloud-controller-master-migrations
@@ -530,6 +530,7 @@ jobs:
   serial_groups: [deploy-wasabi-migrations]
   plan:
   - aggregate:
+    - get: deployments-runtime
     - get: capi-ci
     - get: bosh
       trigger: true
@@ -554,6 +555,7 @@ jobs:
   serial_groups: [deploy-xena-cf, deploy-xena-diego, deploy-xena-datadog]
   plan:
   - aggregate:
+    - get: deployments-runtime
     - get: capi-ci
     - get: bosh
       trigger: true
