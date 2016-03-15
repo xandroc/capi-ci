@@ -5,6 +5,7 @@ image: docker:///cloudfoundry/runtime-ci
 
 inputs:
   - name: capi-ci
+  - name: deployments-runtime
   - name: diego-release
   - name: diego-ci
 
