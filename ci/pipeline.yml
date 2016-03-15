@@ -541,11 +541,11 @@ jobs:
     file: capi-ci/ci/scripts/freshen_bosh.yml
     config:
       params:
-        BOSH_INIT_CONFIG_DIR: capi-ci/wasabi/deployments/bosh
+        BOSH_INIT_CONFIG_DIR: deployments-runtime/wasabi/deployments/bosh
         BOSH_ENVIRONMENT_NAME: wasabi
-  - put: capi-ci
+  - put: deployments-runtime
     params:
-      repository: freshened-config/capi-ci
+      repository: freshened-config/deployments-runtime
       rebase: true
 
 
@@ -565,9 +565,9 @@ jobs:
     file: capi-ci/ci/scripts/freshen_bosh.yml
     config:
       params:
-        BOSH_INIT_CONFIG_DIR: capi-ci/xena/deployments/bosh
+        BOSH_INIT_CONFIG_DIR: deployments-runtime/xena/deployments/bosh
         BOSH_ENVIRONMENT_NAME: xena
-  - put: capi-ci
+  - put: deployments-runtime
     params:
-      repository: freshened-config/capi-ci
+      repository: freshened-config/deployments-runtime
       rebase: true

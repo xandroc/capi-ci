@@ -7,6 +7,7 @@ image_resource:
 
 inputs:
   - name: capi-ci
+  - name: deployments-runtime
   - name: bosh
   - name: bosh-aws-cpi
   - name: aws-stemcell

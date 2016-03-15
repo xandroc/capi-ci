@@ -98,5 +98,5 @@ Tracer.on do
     sh "git commit -m 'Bump #{ENV.fetch('BOSH_ENVIRONMENT_NAME')} bosh resources'"
   end
 
-  sh "cp -r capi-ci freshened-config/capi-ci"
+  sh "cp -r deployments-runtime freshened-config/deployments-runtime"
 end
