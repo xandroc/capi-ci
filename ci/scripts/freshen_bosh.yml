@@ -16,7 +16,7 @@ outputs:
   - name: freshened-config
 
 run:
-  path: capi-ci/wasabi/scripts/ci/freshen_bosh.rb
+  path: capi-ci/ci/scripts/freshen_bosh.rb
 
 params:
   BOSH_INIT_CONFIG_DIR:
