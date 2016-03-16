@@ -241,8 +241,9 @@ jobs:
     - get: cloud_controller_ng
       trigger: true
     - get: concourse-config
+    - get: capi-ci
   - task: check-dependencies
-    file: concourse-config/wasabi/scripts/ci/cloud_controller_ng_dependencies.yml
+    file: capi-ci/ci/scripts/cloud_controller_ng_dependencies.yml
     config:
       params:
         GEMNASIUM_API_KEY: {{gemnasium_api_key}}
