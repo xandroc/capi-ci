@@ -1,7 +1,10 @@
 ---
 platform: linux
 
-image: docker:///cloudfoundry/runtime-ci
+image_resource:
+  type: docker-image
+  source:
+    repository: cloudfoundry/runtime-ci
 
 inputs:
   - name: cloud_controller_ng
