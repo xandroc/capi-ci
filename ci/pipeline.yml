@@ -19,6 +19,13 @@ groups:
   - freshen-xena
 
 resources:
+- name: weekly-sunday
+  type: time
+  source:
+    start: 23:00 -0700
+    stop: 23:30 -0700
+    days: [Sunday]
+
 - name: daily
   type: time
   source:
@@ -533,10 +540,9 @@ jobs:
     - get: deployments-runtime
     - get: capi-ci
     - get: bosh
-      trigger: true
     - get: bosh-aws-cpi
-      trigger: true
     - get: aws-stemcell
+    - get: weekly-sunday
       trigger: true
   - task: freshen-wasabi
     file: capi-ci/ci/scripts/freshen_bosh.yml
@@ -558,10 +564,9 @@ jobs:
     - get: deployments-runtime
     - get: capi-ci
     - get: bosh
-      trigger: true
     - get: bosh-aws-cpi
-      trigger: true
     - get: aws-stemcell
+    - get: weekly-sunday
       trigger: true
   - task: freshen-xena
     file: capi-ci/ci/scripts/freshen_bosh.yml
