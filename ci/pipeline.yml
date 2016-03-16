@@ -201,14 +201,7 @@ resources:
     ignore_paths:
     - wasabi/deployments/pipeline.yml
     private_key: {{private_key}}
-    uri: git@github.com:cloudfoundry/deployments-runtime.git
-
-- name: deployments-runtime
-  type: git
-  source:
-    branch: master
-    private_key: {{private_key}}
-    uri: git@github.com:cloudfoundry/deployments-runtime.git
+    uri: git@github.com:cloudfoundry/capi-ci-private.git
 
 - name: capi-ci
   type: git
@@ -381,8 +374,8 @@ jobs:
         submodules: none
     - get: garden-linux-release-tarball
     - get: etcd-release-tarball
-    - get: deployments-runtime
     - get: capi-ci
+    - get: capi-ci-private
     - get: aws-stemcell
     - get: diego-release-tarball
       trigger: true
@@ -393,7 +386,7 @@ jobs:
         BOSH_TARGET: bosh.xena.cf-app.com
         BOSH_USER: {{xena_bosh_user}}
         BOSH_PASSWORD: {{xena_bosh_password}}
-        DEPLOYMENTS_DIR: deployments-runtime
+        DEPLOYMENTS_DIR: capi-ci-private
         ENVIRONMENT_NAME: xena
   - put: xena-diego-deployment
     params:
@@ -514,7 +507,6 @@ jobs:
   serial: true
   plan:
   - aggregate:
-    - get: deployments-runtime
     - get: capi-ci
     - get: cf-release
       resource: cf-release-release-candidate
@@ -544,8 +536,8 @@ jobs:
   serial_groups: [deploy-wasabi-migrations]
   plan:
   - aggregate:
-    - get: deployments-runtime
     - get: capi-ci
+    - get: capi-ci-private
     - get: bosh
       passed: [wait-for-sunday]
       trigger: true
@@ -559,11 +551,11 @@ jobs:
     file: capi-ci/ci/scripts/freshen_bosh.yml
     config:
       params:
-        BOSH_INIT_CONFIG_DIR: deployments-runtime/wasabi/deployments/bosh
+        BOSH_INIT_CONFIG_DIR: capi-ci-private/wasabi/deployments/bosh
         BOSH_ENVIRONMENT_NAME: wasabi
-  - put: deployments-runtime
+  - put: capi-ci-private
     params:
-      repository: freshened-config/deployments-runtime
+      repository: freshened-config/capi-ci-private
       rebase: true
 
 
@@ -572,8 +564,8 @@ jobs:
   serial_groups: [deploy-xena-cf, deploy-xena-diego, deploy-xena-datadog]
   plan:
   - aggregate:
-    - get: deployments-runtime
     - get: capi-ci
+    - get: capi-ci-private
     - get: bosh
       passed: [wait-for-sunday]
       trigger: true
@@ -587,9 +579,9 @@ jobs:
     file: capi-ci/ci/scripts/freshen_bosh.yml
     config:
       params:
-        BOSH_INIT_CONFIG_DIR: deployments-runtime/xena/deployments/bosh
+        BOSH_INIT_CONFIG_DIR: capi-ci-private/xena/deployments/bosh
         BOSH_ENVIRONMENT_NAME: xena
-  - put: deployments-runtime
+  - put: capi-ci-private
     params:
-      repository: freshened-config/deployments-runtime
+      repository: freshened-config/capi-ci-private
       rebase: true
