@@ -282,7 +282,6 @@ jobs:
   - aggregate:
     - get: capi-release
       trigger: true
-    - get: deployments-runtime
     - get: capi-ci
     - get: version
       resource: capi-release-version
@@ -308,8 +307,8 @@ jobs:
       trigger: true
     - get: capi-release
       passed: [create-capi-release]
-    - get: deployments-runtime
     - get: capi-ci
+    - get: capi-ci-private
     - get: aws-stemcell
     - get: cf-release
       resource: cf-release-develop

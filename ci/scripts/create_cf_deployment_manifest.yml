@@ -5,7 +5,7 @@ image: docker:///cloudfoundry/runtime-ci
 
 inputs:
   - name: cf-release
-  - name: deployments-runtime
+  - name: capi-ci-private
   - name: capi-ci
 
 outputs:
