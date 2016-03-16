@@ -14,6 +14,7 @@ groups:
   - rc-docs
 - name: bosh
   jobs:
+  - wait-for-sunday
   - clean-all-the-boshes
   - freshen-wasabi
   - freshen-xena
@@ -529,6 +530,15 @@ jobs:
         AWS_ACCESS_KEY_ID: {{docs_s3_access_key}}
         AWS_SECRET_ACCESS_KEY: {{docs_s3_secret_key}}
 
+- name: wait-for-sunday
+  plan:
+  - aggregate:
+    - get: weekly-sunday
+      trigger: true
+    - get: bosh
+    - get: bosh-aws-cpi
+    - get: aws-stemcell
+
 - name: freshen-wasabi
   serial: true
   serial_groups: [deploy-wasabi-migrations]
@@ -537,9 +547,13 @@ jobs:
     - get: deployments-runtime
     - get: capi-ci
     - get: bosh
+      passed: [wait-for-sunday]
+      trigger: true
     - get: bosh-aws-cpi
+      passed: [wait-for-sunday]
+      trigger: true
     - get: aws-stemcell
-    - get: weekly-sunday
+      passed: [wait-for-sunday]
       trigger: true
   - task: freshen-wasabi
     file: capi-ci/ci/scripts/freshen_bosh.yml
@@ -561,9 +575,13 @@ jobs:
     - get: deployments-runtime
     - get: capi-ci
     - get: bosh
+      passed: [wait-for-sunday]
+      trigger: true
     - get: bosh-aws-cpi
+      passed: [wait-for-sunday]
+      trigger: true
     - get: aws-stemcell
-    - get: weekly-sunday
+      passed: [wait-for-sunday]
       trigger: true
   - task: freshen-xena
     file: capi-ci/ci/scripts/freshen_bosh.yml
