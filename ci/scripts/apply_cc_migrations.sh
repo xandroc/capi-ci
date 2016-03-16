@@ -5,7 +5,7 @@ set -e -x
 source ~/.bashrc
 
 export DB_CONNECTION_STRING="${CONNECTION_STRING}"
-KEY_FILE="${PWD}/deployments-runtime/${ENVIRONMENT}/keypair/bosh.pem"
+KEY_FILE="${PWD}/capi-ci-private/${ENVIRONMENT}/keypair/bosh.pem"
 
 chmod 600 ${KEY_FILE}
 eval `ssh-agent -s`
