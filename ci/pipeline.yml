@@ -206,7 +206,7 @@ resources:
   type: git
   source:
     branch: master
-    uri: https://github.com:cloudfoundry/capi-ci.git
+    uri: https://github.com/cloudfoundry/capi-ci.git
 
 - name: capi-ci-private
   type: git
