@@ -4,7 +4,7 @@ set -e -x
 
 spiff merge \
   datadog-firehose-nozzle-release/templates/datadog-firehose-nozzle-template.yml \
-  deployments-runtime/$ENVIRONMENT/stubs/datadog-firehose-nozzle/nozzle-stub.yml \
+  capi-ci-private/$ENVIRONMENT/stubs/datadog-firehose-nozzle/nozzle-stub.yml \
   > generated-manifest/deployment.yml
 
 cat generated-manifest/deployment.yml

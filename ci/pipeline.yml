@@ -261,7 +261,6 @@ jobs:
     - get: cloud_controller_ng
       trigger: true
     - get: capi-release
-    - get: deployments-runtime
     - get: capi-ci
   - aggregate:
     - task: run-cc-unit-tests-mysql
@@ -352,7 +351,6 @@ jobs:
   - aggregate:
     - get: bump-hourly
       trigger: true
-    - get: deployments-runtime
     - get: capi-ci
     - get: capi-release
       trigger: true
@@ -413,7 +411,7 @@ jobs:
     - get: cf-release
       resource: cf-release-master
     - get: capi-ci
-    - get: deployments-runtime
+    - get: capi-ci-private
     - get: aws-stemcell
     - get: cloud_controller_ng
       resource: cloud-controller-master-migrations
@@ -467,7 +465,6 @@ jobs:
 - name: clean-all-the-boshes
   plan:
   - aggregate:
-    - get: deployments-runtime
     - get: capi-ci
     - get: daily
       trigger: true
@@ -499,7 +496,7 @@ jobs:
       trigger: true
     - get: datadog-firehose-nozzle-release
     - get: aws-stemcell
-    - get: deployments-runtime
+    - get: capi-ci-private
     - get: capi-ci
   - task: manifest
     file: capi-ci/ci/scripts/create_datadog_firehose_nozzle_manifest.yml
