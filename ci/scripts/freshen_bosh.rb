@@ -40,7 +40,7 @@ class BoshInit
   end
 
   def self.latest_url
-    bosh_init_artifacts_location = "https://s3.amazonaws.com/bosh-init-artifacts"
+    bosh_init_artifacts_location = 'https://s3.amazonaws.com/bosh-init-artifacts'
     all_versions = `curl #{bosh_init_artifacts_location}`
     linux_versions = all_versions.scan(/bosh-init-[\d\.]+-linux-amd64/).map { |file| { name: file, version: SemVer.new(file.match(/[\d\.]+/)[0]) } }
     latest_bosh_init_version = linux_versions.sort_by { |a| a[:version] }.last[:name]
@@ -90,7 +90,7 @@ Tracer.on do
 
     File.open('bosh.yml', 'w') { |f| f.write(bosh_config.to_yaml) }
 
-    sh "bosh-init deploy bosh.yml"
+    sh 'bosh-init deploy bosh.yml'
 
     sh 'git config user.name "CAPI CI"'
     sh 'git config user.email "cf-capi-eng+ci@pivotal.io"'
@@ -98,5 +98,5 @@ Tracer.on do
     sh "git commit -m 'Bump #{ENV.fetch('BOSH_ENVIRONMENT_NAME')} bosh resources'"
   end
 
-  sh "cp -r capi-ci-private freshened-config/capi-ci-private"
+  sh 'cp -r capi-ci-private freshened-config/capi-ci-private'
 end
