@@ -1,0 +1,427 @@
+---
+meta:
+  environment: cf-wasabi
+
+  stemcell:
+    name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
+    version: latest
+
+director_uuid: (( merge ))
+
+compilation:
+  cloud_properties:
+    instance_type: c3.large
+
+networks:
+  - name: cf1
+    type: manual
+    subnets:
+      - range: 10.0.32.0/20
+        name: default_unused
+        reserved:
+          - 10.0.32.2 - 10.0.32.9
+          - 10.0.33.0
+        static:
+          - 10.0.32.10 - 10.0.32.255
+        gateway: 10.0.32.1
+        dns:
+          - 10.0.0.2 # amazon has only 1 DNS server for the whole VPC at x.x.0.2
+        cloud_properties:
+          security_groups: (( env_specific.aws.cf1.security_groups ))
+          subnet: (( properties.template_only.aws.subnet_ids.cf1 ))
+
+  - name: cf2
+    type: manual
+    subnets:
+      - range: 10.0.80.0/20
+        name: default_unused
+        reserved:
+          - 10.0.80.2 - 10.0.80.9
+          - 10.0.81.3
+          - 10.0.81.18
+          - 10.0.81.1
+        static:
+          - 10.0.80.10 - 10.0.80.255
+        gateway: 10.0.80.1
+        dns:
+          - 10.0.0.2 # amazon has only 1 DNS server for the whole VPC at x.x.0.2
+        cloud_properties:
+          security_groups: (( env_specific.aws.cf2.security_groups ))
+          subnet: (( properties.template_only.aws.subnet_ids.cf2 ))
+
+resource_pools:
+  - name: router_z1
+    cloud_properties:
+      elbs: (( env_specific.aws.router_z1.elbs ))
+  - name: router_z2
+    cloud_properties:
+      elbs: (( env_specific.aws.router_z2.elbs ))
+
+jobs:
+- name: runner_z1
+  instances: 1
+- name: runner_z2
+  instances: 0
+- name: acceptance_tests
+  resource_pool: xlarge_errand
+- name: consul_z1
+  instances: 1
+- name: consul_z2
+  instances: 0
+- name: nats_z2
+  instances: 0
+- name: etcd_z1
+  instances: 1
+- name: etcd_z2
+  instances: 0
+- name: stats_z1
+  instances: 0
+- name: uaa_z2
+  instances: 0
+- name: api_z1
+  instances: 1
+  templates:
+    - name: consul_agent
+    - name: go-buildpack
+    - name: binary-buildpack
+    - name: nodejs-buildpack
+    - name: ruby-buildpack
+    - name: php-buildpack
+    - name: python-buildpack
+    - name: staticfile-buildpack
+    - name: cloud_controller_ng
+    - name: cloud_controller_clock
+    - name: cloud_controller_worker
+    - name: metron_agent
+    - name: statsd-injector
+    - name: nfs_mounter
+    - name: route_registrar
+    - name: java-buildpack
+- name: api_z2
+  instances: 0
+- name: clock_global
+  instances: 0
+- name: api_worker_z1
+  instances: 0
+- name: api_worker_z2
+  instances: 0
+- name: hm9000_z2
+  instances: 0
+- name: doppler_z2
+  instances: 0
+- name: loggregator_trafficcontroller_z2
+  instances: 0
+- name: router_z2
+  instances: 0
+- name: postgres_z1
+  instances: 1
+  networks:
+    - name: cf1
+      static_ips: 10.0.32.30
+
+secrets:
+  app_ssh:
+    host_key_fingerprint: (( merge ))
+  aws:
+    access_key_id: (( merge ))
+    secret_access_key: (( merge ))
+  ccdb_admin_password: (( merge ))
+  uaadb_admin_password: (( merge ))
+  uaa:
+    jwt:
+      signing_key: (( merge ))
+      verification_key: (( merge ))
+    cc:
+      client_secret: (( merge ))
+    admin:
+      client_secret: (( merge ))
+    clients:
+      cc_routing:
+        secret: (( merge ))
+      datadog-firehose-nozzle:
+        secret: (( merge ))
+      login:
+        secret: (( merge ))
+      developer_console:
+        secret: (( merge ))
+      doppler:
+        secret: (( merge ))
+      notifications:
+        secret: (( merge ))
+      cc-service-dashboards:
+        secret: (( merge ))
+      cloud_controller_username_lookup:
+        secret: (( merge ))
+      gorouter:
+        secret: (( merge ))
+      tcp_emitter:
+        secret: (( merge ))
+      tcp_router:
+        secret: (( merge ))
+    scm:
+      admin:
+        password: (( merge ))
+      services:
+        password: (( merge ))
+      broker:
+        password: (( merge ))
+  nats:
+    password: (( merge ))
+  cc:
+    bulk_api_password: (( merge ))
+    staging_upload_user: (( merge ))
+    staging_upload_password: (( merge ))
+    db_encryption_key: (( merge ))
+    newrelic:
+      license_key: (( merge ))
+  router:
+    status:
+      password: (( merge ))
+  loggregator_endpoint:
+    shared_secret: (( merge ))
+
+env_specific:
+  smtp:
+    host: (( merge ))
+    port: (( merge ))
+    user: (( merge ))
+    password: (( merge ))
+  syslog_daemon_config:
+    address: (( merge ))
+    port: (( merge ))
+  aws:
+    cf1:
+      security_groups: (( merge ))
+    cf2:
+      security_groups: (( merge ))
+    router_z1:
+      elbs: (( merge )) # an array of ELB ids
+    router_z2:
+      elbs: (( merge )) # an array of ELB ids
+
+properties:
+  domain: wasabi.cf-app.com
+  ssl:
+    skip_cert_verify: true
+  system_domain: wasabi.cf-app.com
+  system_domain_organization: pivotal
+  app_domains:
+  - wasabi.cf-app.com
+  app_ssh:
+    host_key_fingerprint: (( secrets.app_ssh.host_key_fingerprint ))
+
+  template_only:
+    aws:
+      access_key_id: (( secrets.aws.access_key_id ))
+      secret_access_key: (( secrets.aws.secret_access_key ))
+      availability_zone: us-east-1a
+      availability_zone2: us-east-1c
+      subnet_ids:
+        cf1: (( merge ))
+        cf2: (( merge ))
+
+  ccdb:
+    db_scheme: postgres
+    address: 10.0.32.30
+    roles:
+    - tag: admin
+      name: ccadmin
+      password: (( secrets.ccdb_admin_password ))
+    databases:
+    - tag: cc
+      name: ccdb
+    port: 5524
+
+  databases:
+    address: 10.244.0.30
+    databases:
+    - citext: true
+      name: ccdb
+      tag: cc
+    - citext: true
+      name: uaadb
+      tag: uaa
+    db_scheme: postgres
+    port: 5524
+    roles:
+    - name: ccadmin
+      password: (( secrets.ccdb_admin_password ))
+      tag: admin
+    - name: uaaadmin
+      password: (( secrets.uaadb_admin_password ))
+      tag: admin
+
+  uaadb:
+    db_scheme: postgresql
+    address: 10.0.32.30
+    roles:
+    - tag: admin
+      name: uaaadmin
+      password: (( secrets.uaadb_admin_password ))
+    databases:
+    - tag: uaa
+      name: uaadb
+    port: 5524
+
+  login:
+    asset_base_url: /resources/pivotal
+    brand: pivotal
+    smtp:
+      host: (( env_specific.smtp.host ))
+      port: (( env_specific.smtp.port ))
+      user: (( env_specific.smtp.user ))
+      password: (( env_specific.smtp.password ))
+  uaa:
+    jwt:
+      signing_key: (( secrets.uaa.jwt.signing_key ))
+      verification_key: (( secrets.uaa.jwt.verification_key ))
+    cc:
+      client_secret: (( secrets.uaa.cc.client_secret ))
+    admin:
+      client_secret: (( secrets.uaa.admin.client_secret ))
+    clients:
+      cc_routing:
+        secret: (( secrets.uaa.clients.cc_routing.secret ))
+      datadog-firehose-nozzle:
+        access-token-validity: 1209600
+        authorized-grant-types: authorization_code,client_credentials,refresh_token
+        override: true
+        secret: (( secrets.uaa.clients.datadog-firehose-nozzle.secret ))
+        scope: openid,oauth.approvals,doppler.firehose
+        authorities: oauth.login,doppler.firehose
+      login:
+        secret: (( secrets.uaa.clients.login.secret ))
+      developer_console:
+        override: true
+        scope: openid,cloud_controller.read,cloud_controller.write,password.write,console.admin,console.support
+        authorities: scim.write,scim.read,cloud_controller.read,cloud_controller.write,password.write,uaa.admin,uaa.resource,cloud_controller.admin,billing.admin
+        authorized-grant-types: authorization_code,client_credentials
+        access-token-validity: 1209600
+        refresh-token-validity: 1209600
+        redirect-uri: (( "https://console." domain "/oauth/callback" ))
+        secret: (( secrets.uaa.clients.developer_console.secret ))
+      doppler:
+        secret: (( secrets.uaa.clients.doppler.secret ))
+      notifications:
+        secret: (( secrets.uaa.clients.notifications.secret ))
+      cc-service-dashboards:
+        authorities: clients.read,clients.write,clients.admin
+        authorized-grant-types: client_credentials
+        scope: openid,cloud_controller_service_permissions.read
+        secret: (( secrets.uaa.clients.cc-service-dashboards.secret ))
+      cloud_controller_username_lookup:
+        secret: (( secrets.uaa.clients.cloud_controller_username_lookup.secret ))
+      gorouter:
+        secret: (( secrets.uaa.clients.gorouter.secret ))
+      tcp_emitter:
+        secret: (( secrets.uaa.clients.tcp_emitter.secret ))
+      tcp_router:
+        secret: (( secrets.uaa.clients.tcp_router.secret ))
+    scim:
+      users:
+      - (( "admin|" secrets.uaa.scm.admin.password "|scim.write,scim.read,openid,cloud_controller.admin,doppler.firehose" ))
+      - (( "services|" secrets.uaa.scm.services.password "|scim.write,scim.read,openid,cloud_controller.admin" ))
+      - (( "v1-dummy-broker|" secrets.uaa.scm.broker.password "|cloud_controller.admin" ))
+  consul:
+    require_ssl: false
+
+  nats:
+    user: nats
+    password: (( secrets.nats.password ))
+    monitor_port: 9222
+    prof_port: 6060
+
+  cc: &cc
+    allow_app_ssh_access: true
+    bulk_api_password: (( secrets.cc.bulk_api_password ))
+    staging_upload_user: (( secrets.cc.staging_upload_user ))
+    staging_upload_password: (( secrets.cc.staging_upload_password ))
+    db_encryption_key: (( secrets.cc.db_encryption_key ))
+    default_quota_definition: free
+    generic:
+      number_of_workers: 2
+    quota_definitions:
+      free:
+        memory_limit: 0
+        total_services: 0
+        total_routes: 1000
+        non_basic_services_allowed: false
+      paid:
+        memory_limit: 10240
+        total_services: -1
+        total_routes: 1000
+        non_basic_services_allowed: true
+      runaway:
+        memory_limit: 102400
+        total_services: -1
+        total_routes: 1000
+        non_basic_services_allowed: true
+      trial:
+        non_basic_services_allowed: false
+        total_services: 10
+        memory_limit: 2048
+        total_routes: 1000
+        trial_db_allowed: true
+    default_app_memory: 256
+    app_usage_events:
+      cutoff_age_in_days: 61
+    resource_pool:
+      blobstore_type: fog
+      resource_directory_key: wasabi-cf-app-com-cc-resources
+    packages:
+      blobstore_type: fog
+      app_package_directory_key: wasabi-cf-app-com-cc-packages
+    droplets:
+      blobstore_type: fog
+      droplet_directory_key: wasabi-cf-app-com-cc-droplets
+    buildpacks:
+      blobstore_type: fog
+      buildpack_directory_key: wasabi-cf-app-com-cc-buildpacks
+    newrelic:
+      license_key: (( secrets.cc.newrelic.license_key ))
+      monitor_mode: true
+      capture_params: true
+      transaction_tracer:
+        enabled: true
+        record_sql: raw
+
+  router:
+    status:
+      user: router
+      password: (( secrets.router.status.password ))
+
+  loggregator_endpoint:
+    shared_secret: (( secrets.loggregator_endpoint.shared_secret ))
+
+  syslog_daemon_config:
+    address: (( env_specific.syslog_daemon_config.address ))
+    port: (( env_specific.syslog_daemon_config.port ))
+
+  dea_next:
+    disk_mb: 100001
+    memory_mb: 6656
+    allow_networks:
+      - 10.10.0.2/32
+      - 10.10.32.0/20
+
+  acceptance_tests:
+    api: (( "api." domain ))
+    apps_domain: (( app_domains ))
+    admin_user: admin
+    admin_password: (( secrets.ccdb_admin_password ))
+    nodes: 4
+    include_sso: true
+    include_tasks: true
+    include_services: true
+    skip_ssl_validation: true
+
+  smoke_tests:
+    api:  (( "api." domain ))
+    apps_domain: (( app_domains ))
+    user: admin
+    password: (( secrets.ccdb_admin_password ))
+    org: runtime-smoke-tests
+    space: runtime-smoke-tests
+    use_existing_space: false
+    use_existing_org: false
+    skip_ssl_validation: true
