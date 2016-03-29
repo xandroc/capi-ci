@@ -92,10 +92,12 @@ Tracer.on do
 
     sh 'bosh-init deploy bosh.yml'
 
-    sh 'git config user.name "CAPI CI"'
-    sh 'git config user.email "cf-capi-eng+ci@pivotal.io"'
-    sh 'git add -A'
-    sh "git commit -m 'Bump #{ENV.fetch('BOSH_ENVIRONMENT_NAME')} bosh resources'"
+    unless sh('git status -s').empty?
+      sh 'git config user.name "CAPI CI"'
+      sh 'git config user.email "cf-capi-eng+ci@pivotal.io"'
+      sh 'git add -A'
+      sh "git commit -m 'Bump #{ENV.fetch('BOSH_ENVIRONMENT_NAME')} bosh resources'"
+    end
   end
 
   sh 'cp -r capi-ci-private freshened-config/capi-ci-private'
