@@ -1,33 +1,46 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e -x
 
 source ~/.bashrc
 
-# Shenanigans copied from to get MySQL running
-# (Required because we generate our docs with rspec, and we've configured
-#  our tests to require a database)
-chmod 777 /tmp
-service mysql restart
-
-pushd cf-release/src/cloud_controller_ng
+function global_setup() {
   chruby $(cat .ruby-version)
-
   gem install bundler
-  bundle install
+}
 
+function setup_v2() {
+  chmod 777 /tmp
+  service mysql restart
+  bundle install
+}
+
+function setup_v3() {
+  git config user.name 'CAPI CI'
+  git config user.email 'cf-capi-eng+ci@pivotal.io'
+}
+
+function build_v2_docs() {
   # We don't care which database we use, but we don't want to bother starting postgres
   DB=mysql bundle exec rake spec:api
 
   aws s3 rm s3://cc-api-docs/release-candidate/ --recursive
   aws s3 cp doc/api s3://cc-api-docs/release-candidate --recursive
+}
 
-  # Generate documentation for http://v3-apidocs.cloudfoundry.org
-  apt-get install npm --assume-yes
+function build_v3_docs() {
+  ./scripts/publish_docs_for_version.sh 'release-candidate'
+}
 
-  pushd docs
-    bundle
-    npm install
+function main() {
+  pushd cf-release/src/capi-release/src/cloud_controller_ng
+    global_setup
+
+    setup_v2
+    build_v2_docs
+
+    setup_v3
+    build_v3_docs
   popd
+}
 
-  ./scripts/publish_docs_for_version.sh release-candidate "CAPI CI" "cf-capi-eng+ci@pivotal.io"
-popd
+main
