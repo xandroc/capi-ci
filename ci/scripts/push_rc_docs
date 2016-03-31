@@ -25,5 +25,8 @@ pushd cf-release/src/cloud_controller_ng
   pushd docs
     bundle
   popd
+
+  git config user.name "CAPI CI"
+  git config user.email "cf-capi-eng+ci@pivotal.io"
   ./scripts/publish_docs_for_version.sh release-candidate
 popd
