@@ -186,10 +186,10 @@ resources:
     private_key: {{private_key}}
     uri: git@github.com:cloudfoundry/cf-release.git
 
-- name: cf-release-runtime-passed
+- name: cf-release-acceptance-deployed
   type: git
   source:
-    branch: runtime-passed
+    branch: acceptance-deployed
     private_key: {{private_key}}
     uri: git@github.com:cloudfoundry/cf-release.git
 
@@ -516,7 +516,7 @@ jobs:
   - aggregate:
     - get: capi-ci
     - get: cf-release
-      resource: cf-release-runtime-passed
+      resource: cf-release-acceptance-deployed
       trigger: true
       params:
         submodules:
