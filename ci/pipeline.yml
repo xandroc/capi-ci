@@ -183,7 +183,7 @@ resources:
   type: git
   source:
     branch: acceptance-deployed
-    uri: git@github.com:cloudfoundry/cf-release.git
+    uri: https://github.com/cloudfoundry/cf-release.git
 
 - name: cloud-controller-master-migrations
   type: git
