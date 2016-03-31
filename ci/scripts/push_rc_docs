@@ -22,5 +22,8 @@ pushd cf-release/src/cloud_controller_ng
   aws s3 cp doc/api s3://cc-api-docs/release-candidate --recursive
 
   # Generate documentation for http://v3-apidocs.cloudfoundry.org
+  pushd docs
+    bundle
+  popd
   ./scripts/publish_docs_for_version.sh release-candidate
 popd
