@@ -279,11 +279,21 @@ jobs:
       repository: bumped/capi-release
       rebase: true
 
+- name: bridge-unit-tests
+  plan:
+  - aggregate:
+    - get: capi-release
+      trigger: true
+    - get: capi-ci
+  - task: run-bridge-unit-tests
+    file: capi-ci/ci/scripts/run_bridge_unit_tests.yml
+
 - name: create-capi-release
   serial: true
   plan:
   - aggregate:
     - get: capi-release
+      passed: [bridge-unit-tests]
       trigger: true
     - get: capi-ci
     - get: version

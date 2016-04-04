@@ -1,0 +1,14 @@
+---
+platform: linux
+
+image_resource:
+ type: docker-image
+ source:
+   repository: golang
+
+inputs:
+  - name: capi-release
+  - name: capi-ci
+
+run:
+  path: capi-ci/ci/scripts/run_bridge_unit_tests

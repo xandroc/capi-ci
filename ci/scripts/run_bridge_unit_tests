@@ -1,0 +1,23 @@
+#!/bin/bash
+set -e -x
+
+apt-get update
+apt-get install unzip
+wget -q https://releases.hashicorp.com/consul/0.5.2/consul_0.5.2_linux_amd64.zip -P /tmp/
+unzip /tmp/consul_0.5.2_linux_amd64.zip -d /usr/local/bin
+rm /tmp/consul_0.5.2_linux_amd64.zip
+
+echo "======ENVIRONMENT======"
+printenv
+
+pushd capi-release
+  source .envrc
+
+  go install github.com/onsi/ginkgo/ginkgo
+
+  pushd src/github.com/cloudfoundry-incubator
+
+    ginkgo -r -keepGoing -p -trace -randomizeAllSpecs -progress --race \
+        cc-uploader nsync stager tps
+  popd
+popd
