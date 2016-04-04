@@ -3,14 +3,14 @@ set -e -x
 
 source ~/.bashrc
 
-pushd cloud_controller_ng
-  CC_MASTER_SHA=$(git rev-parse HEAD)
+pushd $SOURCE_REPO
+  SOURCE_MASTER_SHA=$(git rev-parse HEAD)
 popd
 
 pushd capi-release
-  pushd src/cloud_controller_ng
+  pushd "$DESTINATION_SUBMODULE"
     git fetch
-    git checkout $CC_MASTER_SHA
+    git checkout $SOURCE_MASTER_SHA
   popd
 
   set +e
@@ -25,7 +25,7 @@ pushd capi-release
     git config user.name "CAPI CI"
     git config user.email "cf-capi-eng+ci@pivotal.io"
 
-    git add src/cloud_controller_ng
+    git add "$DESTINATION_SUBMODULE"
 
     scripts/staged_shortlog
     scripts/staged_shortlog | git commit -F -

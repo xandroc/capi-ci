@@ -270,6 +270,10 @@ jobs:
           DB: postgres
   - task: bump-capi-release
     file: capi-ci/ci/scripts/bump_capi_release.yml
+    config:
+      params:
+        SOURCE_REPO: cloud_controller_ng
+        DESTINATION_SUBMODULE: src/cloud_controller_ng
   - put: capi-release
     params:
       repository: bumped/capi-release

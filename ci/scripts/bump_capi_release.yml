@@ -15,3 +15,7 @@ outputs:
 
 run:
   path: capi-ci/ci/scripts/bump_capi_release.sh
+
+params:
+  SOURCE_REPO:
+  DESTINATION_SUBMODULE:
