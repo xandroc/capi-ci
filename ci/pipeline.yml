@@ -2,6 +2,7 @@ groups:
 - name: can-we-bump
   jobs:
   - cc-unit-tests
+  - bridge-unit-tests
   - create-capi-release
   - deploy-and-test-xena
   - bump-cf-release
