@@ -17,6 +17,7 @@ function setup_v2() {
 function setup_v3() {
   echo "${GITHUB_PUSH_KEY}" > /tmp/key
   chmod 600 /tmp/key
+  eval `ssh-agent -s`
   ssh-add /tmp/key
   rm /tmp/key
 
