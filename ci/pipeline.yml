@@ -154,6 +154,15 @@ resources:
     access_key_id: {{xena_s3_access_key}}
     secret_access_key: {{xena_s3_secret_key}}
 
+- name: xena-diego-acceptance-tests-logs
+  type: s3
+  source:
+    private: true
+    bucket: xena-acceptance-tests-logs
+    regexp: diego_acceptance_tests.*.tgz
+    access_key_id: {{xena_s3_access_key}}
+    secret_access_key: {{xena_s3_secret_key}}
+
 - name: datadog-firehose-nozzle-release
   type: git
   source:
@@ -340,18 +349,37 @@ jobs:
       releases:
         - cf-release-tarball/*.tgz
         - capi-release-tarball/*.tgz
-  - task: acceptance-tests
-    privileged: true
-    file: capi-ci/ci/scripts/run_bosh_command.yml
-    config:
-      params:
-        <<: *bosh-target-xena
-        DEPLOYMENT_YML: generated-manifest/deployment.yml
-        COMMAND: 'run errand acceptance_tests --keep-alive --download-logs --logs-dir bosh-logs'
-    ensure:
-      put: xena-acceptance-tests-logs
-      params:
-        from: bosh-logs/acceptance_tests(.*).tgz
+  - put: xena-diego-cats-deployment
+    params:
+      manifest: capi-ci-private/xena/deployments/xena-diego-cats.yml
+      stemcells: [aws-stemcell/*.tgz]
+      releases:
+        - cf-release-tarball/*.tgz
+  - aggregate:
+    - task: acceptance-tests
+      privileged: true
+      file: capi-ci/ci/scripts/run_bosh_command.yml
+      config:
+        params:
+          <<: *bosh-target-xena
+          DEPLOYMENT_YML: generated-manifest/deployment.yml
+          COMMAND: 'run errand acceptance_tests --keep-alive --download-logs --logs-dir bosh-logs'
+      ensure:
+        put: xena-acceptance-tests-logs
+        params:
+          from: bosh-logs/acceptance_tests(.*).tgz
+    - task: diego-acceptance-tests
+      privileged: true
+      file: capi-ci/ci/scripts/run_bosh_command.yml
+      config:
+        params:
+          <<: *bosh-target-xena
+          DEPLOYMENT_YML: capi-ci-private/xena/deployments/xena-diego-cats.yml
+          COMMAND: 'run errand diego_acceptance_tests --keep-alive --download-logs --logs-dir bosh-logs'
+      ensure:
+        put: xena-diego-acceptance-tests-logs
+        params:
+          from: bosh-logs/diego_acceptance_tests(.*).tgz
 
 - name: bump-cf-release
   serial: true
