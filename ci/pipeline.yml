@@ -473,7 +473,7 @@ jobs:
   - task: delete-wasabi-deployment
     privileged: true
     file: capi-ci/ci/scripts/run_bosh_command.yml
-    intput_mapping: {manifest: generated-manifest}
+    input_mapping: {manifest: generated-manifest}
     config:
       params:
         <<: *bosh-target-wasabi
