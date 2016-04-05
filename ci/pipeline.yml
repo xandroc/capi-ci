@@ -263,9 +263,8 @@ jobs:
     - get: capi-ci
   - task: check-dependencies
     file: capi-ci/ci/scripts/cloud_controller_ng_dependencies.yml
-    config:
-      params:
-        GEMNASIUM_API_KEY: {{gemnasium_api_key}}
+    params:
+      GEMNASIUM_API_KEY: {{gemnasium_api_key}}
 
 - name: cc-unit-tests
   plan:
@@ -278,21 +277,18 @@ jobs:
     - task: run-cc-unit-tests-mysql
       privileged: true
       file: capi-ci/ci/scripts/run_cc_unit_tests.yml
-      config:
-        params:
-          DB: mysql
+      params:
+        DB: mysql
     - task: run-cc-unit-tests-postgres
       privileged: true
       file: capi-ci/ci/scripts/run_cc_unit_tests.yml
-      config:
-        params:
-          DB: postgres
+      params:
+        DB: postgres
   - task: bump-capi-release
     file: capi-ci/ci/scripts/bump_capi_release.yml
-    config:
-      params:
-        SOURCE_REPO: cloud_controller_ng
-        DESTINATION_SUBMODULE: src/cloud_controller_ng
+    params:
+      SOURCE_REPO: cloud_controller_ng
+      DESTINATION_SUBMODULE: src/cloud_controller_ng
   - put: capi-release
     params:
       repository: bumped/capi-release
@@ -347,10 +343,9 @@ jobs:
   - task: manifest
     privileged: true
     file: capi-ci/ci/scripts/create_cf_deployment_manifest.yml
-    config:
-      params:
-        INFRASTRUCTURE: aws
-        ENVIRONMENT: xena
+    params:
+      INFRASTRUCTURE: aws
+      ENVIRONMENT: xena
   - put: xena-deployment
     params:
       manifest: generated-manifest/deployment.yml
@@ -369,11 +364,10 @@ jobs:
       privileged: true
       file: capi-ci/ci/scripts/run_bosh_command.yml
       input_mapping: {manifest: generated-manifest}
-      config:
-        params:
-          <<: *bosh-target-xena
-          DEPLOYMENT_YML: manifest/deployment.yml
-          COMMAND: 'run errand acceptance_tests --keep-alive --download-logs --logs-dir bosh-logs'
+      params:
+        <<: *bosh-target-xena
+        DEPLOYMENT_YML: manifest/deployment.yml
+        COMMAND: 'run errand acceptance_tests --keep-alive --download-logs --logs-dir bosh-logs'
       ensure:
         put: xena-acceptance-tests-logs
         params:
@@ -382,11 +376,10 @@ jobs:
       privileged: true
       file: capi-ci/ci/scripts/run_bosh_command.yml
       input_mapping: {manifest: capi-ci-private}
-      config:
-        params:
-          <<: *bosh-target-xena
-          DEPLOYMENT_YML: manifest/xena/deployments/xena-diego-cats.yml
-          COMMAND: 'run errand diego_acceptance_tests --keep-alive --download-logs --logs-dir bosh-logs'
+      params:
+        <<: *bosh-target-xena
+        DEPLOYMENT_YML: manifest/xena/deployments/xena-diego-cats.yml
+        COMMAND: 'run errand diego_acceptance_tests --keep-alive --download-logs --logs-dir bosh-logs'
       ensure:
         put: xena-diego-acceptance-tests-logs
         params:
@@ -434,13 +427,12 @@ jobs:
       trigger: true
   - task: generate-deployment-manifests
     file: capi-ci/ci/scripts/create_diego_release_manifest.yml
-    config:
-      params:
-        BOSH_TARGET: bosh.xena.cf-app.com
-        BOSH_USER: {{xena_bosh_user}}
-        BOSH_PASSWORD: {{xena_bosh_password}}
-        DEPLOYMENTS_DIR: capi-ci-private
-        ENVIRONMENT_NAME: xena
+    params:
+      BOSH_TARGET: bosh.xena.cf-app.com
+      BOSH_USER: {{xena_bosh_user}}
+      BOSH_PASSWORD: {{xena_bosh_password}}
+      DEPLOYMENTS_DIR: capi-ci-private
+      ENVIRONMENT_NAME: xena
   - put: xena-diego-deployment
     params:
       manifest: generated-manifest/diego-deployment.yml
@@ -466,19 +458,17 @@ jobs:
   - task: manifest
     privileged: true
     file: capi-ci/ci/scripts/create_cf_deployment_manifest.yml
-    config:
-      params:
-        INFRASTRUCTURE: aws
-        ENVIRONMENT: wasabi
+    params:
+      INFRASTRUCTURE: aws
+      ENVIRONMENT: wasabi
   - task: delete-wasabi-deployment
     privileged: true
     file: capi-ci/ci/scripts/run_bosh_command.yml
     input_mapping: {manifest: generated-manifest}
-    config:
-      params:
-        <<: *bosh-target-wasabi
-        DEPLOYMENT_YML: manifest/deployment.yml
-        COMMAND: 'delete deployment cf-wasabi'
+    params:
+      <<: *bosh-target-wasabi
+      DEPLOYMENT_YML: manifest/deployment.yml
+      COMMAND: 'delete deployment cf-wasabi'
   - put: cf-wasabi-deployment
     params:
       manifest: generated-manifest/deployment.yml
@@ -488,29 +478,26 @@ jobs:
     privileged: true
     file: capi-ci/ci/scripts/run_bosh_command.yml
     input_mapping: {manifest: generated-manifest}
-    config:
-      params:
-        <<: *bosh-target-wasabi
-        DEPLOYMENT_YML: manifest/deployment.yml
-        COMMAND: 'run errand smoke_tests --keep-alive'
+    params:
+      <<: *bosh-target-wasabi
+      DEPLOYMENT_YML: manifest/deployment.yml
+      COMMAND: 'run errand smoke_tests --keep-alive'
   - task: apply-migrations
     privileged: true
     file: capi-ci/ci/scripts/apply_cc_migrations.yml
-    config:
-      params:
-        CONNECTION_STRING: {{cc_db_connection_string}}
-        ENVIRONMENT: wasabi
-        DB_HOST: 10.0.32.30
-        TUNNEL_HOST: 52.0.73.109
+    params:
+      CONNECTION_STRING: {{cc_db_connection_string}}
+      ENVIRONMENT: wasabi
+      DB_HOST: 10.0.32.30
+      TUNNEL_HOST: 52.0.73.109
   - task: acceptance-tests
     privileged: true
     file: capi-ci/ci/scripts/run_bosh_command.yml
     input_mapping: {manifest: generated-manifest}
-    config:
-      params:
-        <<: *bosh-target-wasabi
-        DEPLOYMENT_YML: manifest/deployment.yml
-        COMMAND: 'run errand acceptance_tests --keep-alive --download-logs --logs-dir bosh-logs'
+    params:
+      <<: *bosh-target-wasabi
+      DEPLOYMENT_YML: manifest/deployment.yml
+      COMMAND: 'run errand acceptance_tests --keep-alive --download-logs --logs-dir bosh-logs'
 
 - name: clean-all-the-boshes
   plan:
@@ -522,19 +509,17 @@ jobs:
     - task: cleanup-wasabi
       privileged: true
       file: capi-ci/ci/scripts/run_bosh_cleanup.yml
-      config:
-        params: &bosh-target-wasabi
-          BOSH_DIRECTOR: https://bosh.wasabi.cf-app.com:25555
-          BOSH_USER: {{wasabi_bosh_user}}
-          BOSH_PASSWORD: {{wasabi_bosh_password}}
+      params: &bosh-target-wasabi
+        BOSH_DIRECTOR: https://bosh.wasabi.cf-app.com:25555
+        BOSH_USER: {{wasabi_bosh_user}}
+        BOSH_PASSWORD: {{wasabi_bosh_password}}
     - task: cleanup-xena
       privileged: true
       file: capi-ci/ci/scripts/run_bosh_cleanup.yml
-      config:
-        params: &bosh-target-xena
-          BOSH_DIRECTOR: https://bosh.xena.cf-app.com:25555
-          BOSH_USER: {{xena_bosh_user}}
-          BOSH_PASSWORD: {{xena_bosh_password}}
+      params: &bosh-target-xena
+        BOSH_DIRECTOR: https://bosh.xena.cf-app.com:25555
+        BOSH_USER: {{xena_bosh_user}}
+        BOSH_PASSWORD: {{xena_bosh_password}}
 
 - name: deploy-xena-datadog-firehose-nozzle
   serial_groups: [deploy-xena-datadog]
@@ -550,9 +535,8 @@ jobs:
     - get: capi-ci
   - task: manifest
     file: capi-ci/ci/scripts/create_datadog_firehose_nozzle_manifest.yml
-    config:
-      params:
-        ENVIRONMENT: xena
+    params:
+      ENVIRONMENT: xena
   - put: xena-datadog-firehose-nozzle-deployment
     params:
       manifest: generated-manifest/deployment.yml
@@ -572,12 +556,11 @@ jobs:
           - src/capi-release
   - task: push-rc-docs
     file: capi-ci/ci/scripts/push_rc_docs.yml
-    config:
-      params: &docs-aws-account
-        AWS_DEFAULT_REGION: us-east-1
-        AWS_ACCESS_KEY_ID: {{docs_s3_access_key}}
-        AWS_SECRET_ACCESS_KEY: {{docs_s3_secret_key}}
-        GITHUB_PUSH_KEY: {{private_key}}
+    params: &docs-aws-account
+      AWS_DEFAULT_REGION: us-east-1
+      AWS_ACCESS_KEY_ID: {{docs_s3_access_key}}
+      AWS_SECRET_ACCESS_KEY: {{docs_s3_secret_key}}
+      GITHUB_PUSH_KEY: {{private_key}}
 
 - name: wait-for-sunday
   plan:
@@ -606,10 +589,9 @@ jobs:
       trigger: true
   - task: freshen-wasabi
     file: capi-ci/ci/scripts/freshen_bosh.yml
-    config:
-      params:
-        BOSH_INIT_CONFIG_DIR: capi-ci-private/wasabi/deployments/bosh
-        BOSH_ENVIRONMENT_NAME: wasabi
+    params:
+      BOSH_INIT_CONFIG_DIR: capi-ci-private/wasabi/deployments/bosh
+      BOSH_ENVIRONMENT_NAME: wasabi
   - put: capi-ci-private
     params:
       repository: freshened-config/capi-ci-private
@@ -634,10 +616,9 @@ jobs:
       trigger: true
   - task: freshen-xena
     file: capi-ci/ci/scripts/freshen_bosh.yml
-    config:
-      params:
-        BOSH_INIT_CONFIG_DIR: capi-ci-private/xena/deployments/bosh
-        BOSH_ENVIRONMENT_NAME: xena
+    params:
+      BOSH_INIT_CONFIG_DIR: capi-ci-private/xena/deployments/bosh
+      BOSH_ENVIRONMENT_NAME: xena
   - put: capi-ci-private
     params:
       repository: freshened-config/capi-ci-private
