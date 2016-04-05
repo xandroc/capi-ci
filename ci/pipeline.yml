@@ -358,37 +358,39 @@ jobs:
       releases:
         - cf-release-tarball/*.tgz
         - capi-release-tarball/*.tgz
-  # - put: xena-diego-cats-deployment
-  #   params:
-  #     manifest: capi-ci-private/xena/deployments/xena-diego-cats.yml
-  #     stemcells: [aws-stemcell/*.tgz]
-  #     releases:
-  #       - cf-release-tarball/*.tgz
+  - put: xena-diego-cats-deployment
+    params:
+      manifest: capi-ci-private/xena/deployments/xena-diego-cats.yml
+      stemcells: [aws-stemcell/*.tgz]
+      releases:
+        - cf-release-tarball/*.tgz
   - aggregate:
     - task: acceptance-tests
       privileged: true
       file: capi-ci/ci/scripts/run_bosh_command.yml
+      input_mapping: {manifest: generated-manifest}
       config:
         params:
           <<: *bosh-target-xena
-          DEPLOYMENT_YML: generated-manifest/deployment.yml
+          DEPLOYMENT_YML: manifest/deployment.yml
           COMMAND: 'run errand acceptance_tests --keep-alive --download-logs --logs-dir bosh-logs'
       ensure:
         put: xena-acceptance-tests-logs
         params:
           from: bosh-logs/acceptance_tests(.*).tgz
-    # - task: diego-acceptance-tests
-    #   privileged: true
-    #   file: capi-ci/ci/scripts/run_bosh_command.yml
-    #   config:
-    #     params:
-    #       <<: *bosh-target-xena
-    #       DEPLOYMENT_YML: capi-ci-private/xena/deployments/xena-diego-cats.yml
-    #       COMMAND: 'run errand diego_acceptance_tests --keep-alive --download-logs --logs-dir bosh-logs'
-    #   ensure:
-    #     put: xena-diego-acceptance-tests-logs
-    #     params:
-    #       from: bosh-logs/diego_acceptance_tests(.*).tgz
+    - task: diego-acceptance-tests
+      privileged: true
+      file: capi-ci/ci/scripts/run_bosh_command.yml
+      input_mapping: {manifest: capi-ci-private}
+      config:
+        params:
+          <<: *bosh-target-xena
+          DEPLOYMENT_YML: manifest/xena/deployments/xena-diego-cats.yml
+          COMMAND: 'run errand diego_acceptance_tests --keep-alive --download-logs --logs-dir bosh-logs'
+      ensure:
+        put: xena-diego-acceptance-tests-logs
+        params:
+          from: bosh-logs/diego_acceptance_tests(.*).tgz
 
 - name: bump-cf-release
   serial: true
@@ -471,10 +473,11 @@ jobs:
   - task: delete-wasabi-deployment
     privileged: true
     file: capi-ci/ci/scripts/run_bosh_command.yml
+    intput_mapping: {manifest: generated-manifest}
     config:
       params:
         <<: *bosh-target-wasabi
-        DEPLOYMENT_YML: generated-manifest/deployment.yml
+        DEPLOYMENT_YML: manifest/deployment.yml
         COMMAND: 'delete deployment cf-wasabi'
   - put: cf-wasabi-deployment
     params:
@@ -484,10 +487,11 @@ jobs:
   - task: smoke-tests
     privileged: true
     file: capi-ci/ci/scripts/run_bosh_command.yml
+    input_mapping: {manifest: generated-manifest}
     config:
       params:
         <<: *bosh-target-wasabi
-        DEPLOYMENT_YML: generated-manifest/deployment.yml
+        DEPLOYMENT_YML: manifest/deployment.yml
         COMMAND: 'run errand smoke_tests --keep-alive'
   - task: apply-migrations
     privileged: true
@@ -501,10 +505,11 @@ jobs:
   - task: acceptance-tests
     privileged: true
     file: capi-ci/ci/scripts/run_bosh_command.yml
+    input_mapping: {manifest: generated-manifest}
     config:
       params:
         <<: *bosh-target-wasabi
-        DEPLOYMENT_YML: generated-manifest/deployment.yml
+        DEPLOYMENT_YML: manifest/deployment.yml
         COMMAND: 'run errand acceptance_tests --keep-alive --download-logs --logs-dir bosh-logs'
 
 - name: clean-all-the-boshes

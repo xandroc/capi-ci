@@ -8,7 +8,7 @@ image_resource:
 
 inputs:
   - name: capi-ci
-  - name: generated-manifest
+  - name: manifest
 
 outputs:
   - name: bosh-logs
