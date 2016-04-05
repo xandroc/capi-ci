@@ -35,10 +35,6 @@ resources:
 - name: concourse-config
   type: git
   source:
-    paths:
-    - wasabi
-    ignore_paths:
-    - wasabi/deployments/pipeline.yml
     private_key: {{private_key}}
     uri: git@github.com:cloudfoundry/capi-ci-private.git
 
@@ -57,7 +53,7 @@ jobs:
     - get: capi-ci-private
   - put: concourse-deployment
     params:
-      manifest: concourse-config/wasabi/deployments/concourse.yml
+      manifest: concourse-config/ci/concourse.yml
       releases:
         - concourse/concourse-*.tgz
         - concourse/garden-linux-*.tgz
