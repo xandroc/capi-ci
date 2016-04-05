@@ -136,6 +136,15 @@ resources:
     deployment: cf-xena
     ignore_ssl: true
 
+- name: xena-diego-cats-deployment
+  type: bosh-deployment
+  source:
+    target: https://bosh.xena.cf-app.com:25555
+    username: {{xena_bosh_user}}
+    password: {{xena_bosh_password}}
+    deployment: cf-xena-diego-cats
+    ignore_ssl: true
+
 - name: xena-diego-deployment
   type: bosh-deployment
   source:
