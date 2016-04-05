@@ -317,7 +317,7 @@ jobs:
         bump: major
   - put: capi-release-version
     params:
-      file: version/number
+      file: version/version
   - task: create-release-tarball
     file: capi-ci/ci/scripts/create_capi_release.yml
   - put: capi-release-tarball

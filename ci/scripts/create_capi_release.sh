@@ -4,7 +4,7 @@ set -e -x
 
 source ~/.bashrc
 
-VERSION=`cat version/number`
+VERSION=`cat version/version`
 
 pushd capi-release
   CAPI_COMMIT_SHA=$(git rev-parse HEAD)
