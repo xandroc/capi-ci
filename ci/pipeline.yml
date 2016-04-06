@@ -13,6 +13,7 @@ groups:
   - migration-backwards-compatibility-test
   - check-cc-dependencies
   - rc-docs
+  - update-checkman
 - name: bosh
   jobs:
   - wait-for-sunday
@@ -238,6 +239,13 @@ resources:
   type: git
   source:
     uri: https://github.com/cloudfoundry-incubator/diego-ci
+
+- name: capi-checkman
+  type: git
+  source:
+    branch: master
+    private_key: {{private_key}}
+    uri: git@github.com:cloudfoundry/capi-checkman.git
 
 - name: diego-release
   type: git
@@ -562,6 +570,19 @@ jobs:
       AWS_SECRET_ACCESS_KEY: {{docs_s3_secret_key}}
       GITHUB_PUSH_KEY: {{private_key}}
 
+- name: update-checkman
+  plan:
+    - aggregate:
+      - get: capi-ci
+        trigger: true
+      - get: capi-checkman
+    - task: update-checkman
+      file: capi-ci/ci/scripts/update_checkman.yml
+    - put: capi-checkman
+      params:
+        repository: updated-capi-checkman
+        rebase: true
+
 - name: wait-for-sunday
   plan:
   - aggregate:
@@ -596,7 +617,6 @@ jobs:
     params:
       repository: freshened-config/capi-ci-private
       rebase: true
-
 
 - name: freshen-xena
   serial: true
