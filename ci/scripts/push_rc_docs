@@ -14,14 +14,20 @@ function setup_v2() {
   bundle install
 }
 
-function setup_v3() {
+function setup_v3_ssh() {
+  mkdir ${HOME}/.ssh
+  chmod 0700 ${HOME}/.ssh
+  ssh-keyscan -H github.com >> ${HOME}/.ssh/known_hosts
+  chmod 0644 ${HOME}/.ssh/known_hosts
+
   echo "${GITHUB_PUSH_KEY}" > /tmp/push_rc_docs_key
   chmod 600 /tmp/push_rc_docs_key
   eval $(ssh-agent -s)
   ssh-add /tmp/push_rc_docs_key
   rm /tmp/push_rc_docs_key
+}
 
-  ssh-keyscan -H github.com >> ${HOME}/.ssh/known_hosts
+function setup_v3() {
 
   git config user.name 'CAPI CI'
   git config user.email 'cf-capi-eng+ci@pivotal.io'
@@ -46,6 +52,7 @@ function main() {
     setup_v2
     build_v2_docs
 
+    setup_v3_ssh
     setup_v3
     build_v3_docs
   popd
