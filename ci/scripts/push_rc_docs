@@ -21,6 +21,8 @@ function setup_v3() {
   ssh-add /tmp/push_rc_docs_key
   rm /tmp/push_rc_docs_key
 
+  ssh-keyscan -H github.com >> ${HOME}/.ssh/known_hosts
+
   git config user.name 'CAPI CI'
   git config user.email 'cf-capi-eng+ci@pivotal.io'
 }
