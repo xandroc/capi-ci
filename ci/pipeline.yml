@@ -21,6 +21,12 @@ groups:
   - freshen-wasabi
   - freshen-xena
 
+resource_types:
+- name: slack-notification
+  type: docker-image
+  source:
+    repository: cfcommunity/slack-notification-resource
+
 resources:
 - name: weekly-sunday
   type: time
@@ -260,6 +266,16 @@ resources:
     private_key: {{private_key}}
     uri: git@github.com:cloudfoundry/cloud_controller_ng.git
 
+- name: slack-alert
+  type: slack-notification
+  source:
+    url: {{slack_failure_hook_url}}
+
+- name: slack-notice
+  type: slack-notification
+  source:
+    url: {{slack_capi_hook_url}}
+
 jobs:
 - name: check-cc-dependencies
   serial: true
@@ -287,11 +303,21 @@ jobs:
       file: capi-ci/ci/scripts/run_cc_unit_tests.yml
       params:
         DB: mysql
+      on_failure:
+        put: slack-alert
+        params:
+          text: '[cc-unit-tests] OH NO! Failed when running with mysql'
+          icon_emoji: {{slack_failure_emoji}}
     - task: run-cc-unit-tests-postgres
       privileged: true
       file: capi-ci/ci/scripts/run_cc_unit_tests.yml
       params:
         DB: postgres
+      on_failure:
+        put: slack-alert
+        params:
+          text: '[cc-unit-tests] OH NO! Failed when running with postgres'
+          icon_emoji: {{slack_failure_emoji}}
   - task: bump-capi-release
     file: capi-ci/ci/scripts/bump_capi_release.yml
     params:
@@ -361,6 +387,11 @@ jobs:
       releases:
         - cf-release-tarball/*.tgz
         - capi-release-tarball/*.tgz
+    on_failure:
+      put: slack-alert
+      params:
+        text: '[deploy-and-test-xena] OH NO! Failed on xena-deployment'
+        icon_emoji: {{slack_failure_emoji}}
   - put: xena-diego-cats-deployment
     params:
       manifest: capi-ci-private/xena/deployments/xena-diego-cats.yml
@@ -380,6 +411,11 @@ jobs:
         put: xena-acceptance-tests-logs
         params:
           from: bosh-logs/acceptance_tests(.*).tgz
+      on_failure:
+        put: slack-alert
+        params:
+          text: '[deploy-and-test-xena] OH NO! Failed on acceptance-tests'
+          icon_emoji: {{slack_failure_emoji}}
     - task: diego-acceptance-tests
       privileged: true
       file: capi-ci/ci/scripts/run_bosh_command.yml
@@ -392,6 +428,11 @@ jobs:
         put: xena-diego-acceptance-tests-logs
         params:
           from: bosh-logs/diego_acceptance_tests(.*).tgz
+      on_failure:
+        put: slack-alert
+        params:
+          text: '[deploy-and-test-xena] OH NO! Failed on diego-acceptance-tests'
+          icon_emoji: {{slack_failure_emoji}}
 
 - name: bump-cf-release
   serial: true
@@ -528,6 +569,11 @@ jobs:
         BOSH_DIRECTOR: https://bosh.xena.cf-app.com:25555
         BOSH_USER: {{xena_bosh_user}}
         BOSH_PASSWORD: {{xena_bosh_password}}
+      on_failure:
+        put: slack-alert
+        params:
+          text: '[clean-all-the-boshes] OH NO! Failed to clean old boshes https://capi.ci.cf-app.com/?groups=bosh'
+          icon_emoji: {{slack_failure_emoji}}
 
 - name: deploy-xena-datadog-firehose-nozzle
   serial_groups: [deploy-xena-datadog]
@@ -569,6 +615,11 @@ jobs:
       AWS_ACCESS_KEY_ID: {{docs_s3_access_key}}
       AWS_SECRET_ACCESS_KEY: {{docs_s3_secret_key}}
       GITHUB_PUSH_KEY: {{private_key}}
+    on_failure:
+      put: slack-alert
+      params:
+        text: '[rc-docs] OH NO! Failed to update documentation https://capi.ci.cf-app.com/?groups=migrations-dependencies-docs'
+        icon_emoji: {{slack_failure_emoji}}
 
 - name: update-checkman
   plan:
@@ -578,6 +629,16 @@ jobs:
       - get: capi-checkman
     - task: update-checkman
       file: capi-ci/ci/scripts/update_checkman.yml
+      on_success:
+        put: slack-alert
+        params:
+          text: '[update-checkman] Checkman configuration successfully updated'
+          icon_emoji: ':capi:'
+      on_failure:
+        put: slack-alert
+        params:
+          text: '[update-checkman] OH NO! There was a problem updating configuration! https://capi.ci.cf-app.com/?groups=migrations-dependencies-docs'
+          icon_emoji: {{slack_failure_emoji}}
     - put: capi-checkman
       params:
         repository: updated-capi-checkman
@@ -613,6 +674,11 @@ jobs:
     params:
       BOSH_INIT_CONFIG_DIR: capi-ci-private/wasabi/deployments/bosh
       BOSH_ENVIRONMENT_NAME: wasabi
+    on_failure:
+      put: slack-alert
+      params:
+        text: '[freshen-wasabi] OH NO! Failed to freshen wasabi https://capi.ci.cf-app.com/?groups=bosh'
+        icon_emoji: {{slack_failure_emoji}}
   - put: capi-ci-private
     params:
       repository: freshened-config/capi-ci-private
@@ -639,6 +705,11 @@ jobs:
     params:
       BOSH_INIT_CONFIG_DIR: capi-ci-private/xena/deployments/bosh
       BOSH_ENVIRONMENT_NAME: xena
+    on_failure:
+      put: slack-alert
+      params:
+        text: '[freshen-xena] OH NO! Failed to freshen xena https://capi.ci.cf-app.com/?groups=bosh'
+        icon_emoji: {{slack_failure_emoji}}
   - put: capi-ci-private
     params:
       repository: freshened-config/capi-ci-private
