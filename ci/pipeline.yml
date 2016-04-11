@@ -374,6 +374,8 @@ jobs:
     - get: aws-stemcell
     - get: cf-release
       resource: cf-release-develop
+    - get: xena-diego-deployment
+      trigger: true
   - task: manifest
     privileged: true
     file: capi-ci/ci/scripts/create_cf_deployment_manifest.yml
