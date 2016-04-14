@@ -334,6 +334,8 @@ properties:
       transaction_tracer:
         enabled: true
         record_sql: raw
+    security_event_logging:
+      enabled: true
 
   router:
     status:
