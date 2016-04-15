@@ -8,6 +8,8 @@ groups:
   - bump-cf-release
   - deploy-diego-xena
   - deploy-xena-datadog-firehose-nozzle
+  - migration-backwards-compatibility-test
+  - bump-capi-release
 - name: migrations-dependencies-docs
   jobs:
   - migration-backwards-compatibility-test
@@ -211,7 +213,7 @@ resources:
     branch: acceptance-deployed
     uri: https://github.com/cloudfoundry/cf-release.git
 
-- name: cloud-controller-master-migrations
+- name: cloud_controller_ng-master-migrations
   type: git
   source:
     branch: master
@@ -295,7 +297,6 @@ jobs:
   - aggregate:
     - get: cloud_controller_ng
       trigger: true
-    - get: capi-release
     - get: capi-ci
   - aggregate:
     - task: run-cc-unit-tests-mysql
@@ -318,15 +319,25 @@ jobs:
         params:
           text: '[cc-unit-tests] OH NO! Failed when running with postgres'
           icon_emoji: {{slack_failure_emoji}}
+
+- name: bump-capi-release
+  plan:
+  - aggregate:
+    - get: capi-ci
+    - get: capi-release
+    - get: cloud_controller_ng-master-migrations
+      passed: [migration-backwards-compatibility-test]
+      trigger: true
+    - get: cloud_controller_ng
+      passed: [cc-unit-tests]
+      trigger: true
   - task: bump-capi-release
-    file: capi-ci/ci/scripts/bump_capi_release.yml
-    params:
-      SOURCE_REPO: cloud_controller_ng
-      DESTINATION_SUBMODULE: src/cloud_controller_ng
+    file: capi-ci/ci/scripts/bump_capi_release_conditionally.yml
   - put: capi-release
     params:
       repository: bumped/capi-release
       rebase: true
+
 
 - name: bridge-unit-tests
   plan:
@@ -504,7 +515,7 @@ jobs:
     - get: capi-ci-private
     - get: aws-stemcell
     - get: cloud_controller_ng
-      resource: cloud-controller-master-migrations
+      resource: cloud_controller_ng-master-migrations
       trigger: true
   - task: manifest
     privileged: true

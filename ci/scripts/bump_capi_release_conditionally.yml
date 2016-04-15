@@ -7,6 +7,7 @@ image_resource:
 
 inputs:
   - name: cloud_controller_ng
+  - name: cloud_controller_ng-master-migrations
   - name: capi-release
   - name: capi-ci
 
@@ -14,8 +15,4 @@ outputs:
   - name: bumped
 
 run:
-  path: capi-ci/ci/scripts/bump_capi_release.sh
-
-params:
-  SOURCE_REPO:
-  DESTINATION_SUBMODULE:
+  path: capi-ci/ci/scripts/bump_capi_release_conditionally.sh
