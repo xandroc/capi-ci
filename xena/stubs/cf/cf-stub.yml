@@ -180,7 +180,7 @@ env_specific:
 properties:
   domain: xena.cf-app.com
   ssl:
-    skip_cert_verify: true
+    skip_cert_verify: false
   system_domain: xena.cf-app.com
   system_domain_organization: pivotal
   app_domains:    # the domain at which cf apps should be hosted
