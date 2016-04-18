@@ -164,6 +164,12 @@ secrets:
     server_key: (( merge )) # PEM-encoded server key
     agent_cert: (( merge )) # PEM-encoded agent certificate
     agent_key: (( merge )) # PEM-encoded agent key
+  hm9000:
+    ca_cert: (( merge ))  # PEM-encoded CA certificate
+    server_cert: (( merge )) # PEM-encoded server certificate
+    server_key: (( merge )) # PEM-encoded server key
+    client_cert: (( merge )) # PEM-encoded client certificate
+    client_key: (( merge )) # PEM-encoded client key
 
 env_specific:
   aws:
@@ -398,3 +404,9 @@ properties:
     server_key: (( secrets.consul.server_key ))
     agent_cert: (( secrets.consul.agent_cert ))
     agent_key: (( secrets.consul.agent_key ))
+  hm9000:
+    ca_cert: (( secrets.hm9000.ca_cert ))
+    server_cert: (( secrets.hm9000.server_cert ))
+    server_key: (( secrets.hm9000.server_key ))
+    client_cert: (( secrets.hm9000.client_cert ))
+    client_key: (( secrets.hm9000.client_key ))
