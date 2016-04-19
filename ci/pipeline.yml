@@ -93,6 +93,11 @@ resources:
   source:
     repository: cloudfoundry/cf-release
 
+- name: cflinuxfs2-rootfs-release-final
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/cflinuxfs2-rootfs-release
+
 - name: datadog-firehose-nozzle-release-final
   type: bosh-io-release
   source:
@@ -482,6 +487,7 @@ jobs:
         submodules: none
     - get: garden-linux-release-tarball
     - get: etcd-release-tarball
+    - get: cflinuxfs2-rootfs-release-final
     - get: capi-ci
     - get: capi-ci-private
     - get: aws-stemcell
@@ -498,7 +504,7 @@ jobs:
   - put: xena-diego-deployment
     params:
       manifest: generated-manifest/diego-deployment.yml
-      releases: [diego-release-tarball/*.tgz, garden-linux-release-tarball/*.tgz, etcd-release-tarball/*.tgz]
+      releases: [diego-release-tarball/*.tgz, garden-linux-release-tarball/*.tgz, etcd-release-tarball/*.tgz, cflinuxfs2-rootfs-release-final/*.tgz]
       stemcells: [aws-stemcell/*.tgz]
 
 - name: migration-backwards-compatibility-test
