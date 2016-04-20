@@ -22,6 +22,9 @@ groups:
   - clean-all-the-boshes
   - freshen-wasabi
   - freshen-xena
+- name: crash-override
+  jobs:
+  - MANUALLY-bump-cf-release
 
 resource_types:
 - name: slack-notification
@@ -464,6 +467,25 @@ jobs:
         - src/capi-release
   - task: check-can-i-bump
     file: capi-ci/ci/scripts/check_can_i_bump.yml
+  - task: bump-cf-release
+    file: capi-ci/ci/scripts/bump_cf_release.yml
+  - put: cf-release-develop
+    params:
+      repository: bumped/cf-release
+      rebase: true
+
+- name: MANUALLY-bump-cf-release
+  serial: true
+  plan:
+  - aggregate:
+    - get: capi-ci
+    - get: capi-release
+      passed: [deploy-and-test-xena]
+    - get: cf-release
+      resource: cf-release-develop
+      params:
+        submodules:
+        - src/capi-release
   - task: bump-cf-release
     file: capi-ci/ci/scripts/bump_cf_release.yml
   - put: cf-release-develop
