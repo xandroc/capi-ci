@@ -10,9 +10,8 @@ groups:
   - deploy-xena-datadog-firehose-nozzle
   - migration-backwards-compatibility-test
   - bump-capi-release
-- name: migrations-dependencies-docs
+- name: dependencies-docs
   jobs:
-  - migration-backwards-compatibility-test
   - check-cc-dependencies
   - rc-docs
   - update-checkman
