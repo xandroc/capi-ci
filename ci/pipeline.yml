@@ -1,13 +1,11 @@
 groups:
-- name: can-we-bump
+- name: capi-release
   jobs:
   - cc-unit-tests
   - bridge-unit-tests
   - create-capi-release
   - deploy-and-test-xena
   - bump-cf-release
-  - deploy-diego-xena
-  - deploy-xena-datadog-firehose-nozzle
   - migration-backwards-compatibility-test
   - bump-capi-release
 - name: dependencies-docs
@@ -15,6 +13,10 @@ groups:
   - check-cc-dependencies
   - rc-docs
   - update-checkman
+- name: xena-deployments
+  jobs:
+  - deploy-diego-xena
+  - deploy-xena-datadog-firehose-nozzle
 - name: bosh
   jobs:
   - wait-for-sunday
