@@ -111,6 +111,11 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry-incubator/etcd-release
+    
+- name: cflinuxfs2-rootfs-tarball
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/cflinuxfs2-rootfs-tarball
 
 - name: bosh
   type: bosh-io-release
@@ -509,6 +514,7 @@ jobs:
     - get: capi-ci-private
     - get: aws-stemcell
     - get: diego-release-tarball
+    - get: cflinuxfs2-rootfs-tarball
       trigger: true
   - task: generate-deployment-manifests
     file: capi-ci/ci/scripts/create_diego_release_manifest.yml
@@ -521,7 +527,11 @@ jobs:
   - put: xena-diego-deployment
     params:
       manifest: generated-manifest/diego-deployment.yml
-      releases: [diego-release-tarball/*.tgz, garden-linux-release-tarball/*.tgz, etcd-release-tarball/*.tgz]
+      releases:
+        - diego-release-tarball/*.tgz
+        - garden-linux-release-tarball/*.tgz
+        - etcd-release-tarball/*.tgz
+        - cflinuxfs2-rootfs-tarball/*.tgz]
       stemcells: [aws-stemcell/*.tgz]
 
 - name: migration-backwards-compatibility-test
