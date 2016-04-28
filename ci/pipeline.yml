@@ -309,7 +309,6 @@ jobs:
     - get: capi-ci
   - aggregate:
     - task: run-cc-unit-tests-mysql
-      privileged: true
       file: capi-ci/ci/scripts/run_cc_unit_tests.yml
       params:
         DB: mysql
@@ -319,7 +318,6 @@ jobs:
           text: '[cc-unit-tests] OH NO! Failed when running with mysql'
           icon_emoji: {{slack_failure_emoji}}
     - task: run-cc-unit-tests-postgres
-      privileged: true
       file: capi-ci/ci/scripts/run_cc_unit_tests.yml
       params:
         DB: postgres
