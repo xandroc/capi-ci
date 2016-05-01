@@ -1,15 +1,4 @@
-#!/usr/bin/env bash
-
-set -e -x
-
-source ~/.bashrc
-
-# because our pipeline image adds ruby to the PATH via the bashrc, we have to
-# source it.  concourse does not source it when running a build.  so we start
-# as a bash script and use exec to replace the bash process with a ruby process
-
-exec /usr/bin/env ruby -x "$0" $*
-#!ruby
+#!/usr/bin/env ruby
 
 require 'open-uri'
 require 'json'

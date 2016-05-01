@@ -4,8 +4,7 @@ platform: linux
 image_resource:
   type: docker-image
   source:
-    repository: cloudfoundry/runtime-ci
-
+    repository: ruby
 
 inputs:
   - name: capi-ci
