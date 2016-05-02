@@ -591,6 +591,15 @@ jobs:
       <<: *bosh-target-wasabi
       DEPLOYMENT_YML: manifest/deployment.yml
       COMMAND: 'run errand acceptance_tests --keep-alive --download-logs --logs-dir bosh-logs'
+    on_success:
+      task: cleanup-wasabi-deployment
+      privileged: true
+      file: capi-ci/ci/scripts/run_bosh_command.yml
+      input_mapping: {manifest: generated-manifest}
+      params:
+        <<: *bosh-target-wasabi
+        DEPLOYMENT_YML: manifest/deployment.yml
+        COMMAND: 'delete deployment cf-wasabi'
 
 - name: clean-all-the-boshes
   plan:
