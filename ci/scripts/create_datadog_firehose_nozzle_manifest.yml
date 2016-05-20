@@ -4,7 +4,8 @@ platform: linux
 image_resource:
   type: docker-image
   source:
-    repository: cloudfoundry/capi:runtime-ci
+    repository: cloudfoundry/capi
+    tag: runtime-ci
 
 inputs:
   - name: datadog-firehose-nozzle-release
