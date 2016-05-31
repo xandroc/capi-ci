@@ -7,6 +7,7 @@ groups:
   - deploy-and-test-xena
   - bump-cf-release
   - migration-backwards-compatibility-test
+  - ship-it
   - bump-capi-release
 - name: dependencies-docs
   jobs:
@@ -454,16 +455,29 @@ jobs:
           text: '[deploy-and-test-xena] OH NO! Failed on diego-acceptance-tests'
           icon_emoji: {{slack_failure_emoji}}
 
+- name: ship-it
+  plan:
+  - aggregate:
+    - get: capi-release
+      passed: [deploy-and-test-xena]
+  - task: block
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source: {repository: ubuntu}
+      run:
+        path: echo
+        args: ["Way to go, Nick!"]
+
 - name: bump-cf-release
   serial: true
   plan:
   - aggregate:
-    - get: bump-hourly
-      trigger: true
     - get: capi-ci
     - get: capi-release
       trigger: true
-      passed: [deploy-and-test-xena]
+      passed: [ship-it]
     - get: cf-release
       resource: cf-release-develop
       params:
