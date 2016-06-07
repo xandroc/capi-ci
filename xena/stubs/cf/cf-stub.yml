@@ -60,9 +60,13 @@ resource_pools:
 
 jobs:
 - name: runner_z1
-  instances: 2
+  instances: 0
 - name: runner_z2
-  instances: 2
+  instances: 0
+- name: hm9000_z1
+  instances: 0
+- name: hm9000_z2
+  instances: 0
 - name: acceptance_tests
   resource_pool: xlarge_errand
 - name: consul_z1
@@ -139,6 +143,8 @@ secrets:
       buildpack_directory_key: (( merge )) # S3 key for the bucket holding buildpacks
     newrelic:
       license_key: (( merge ))
+    users_can_select_backend: false
+    default_to_diego_backend: true
   router:
     status:
       password: (( merge ))
@@ -164,12 +170,6 @@ secrets:
     server_key: (( merge )) # PEM-encoded server key
     agent_cert: (( merge )) # PEM-encoded agent certificate
     agent_key: (( merge )) # PEM-encoded agent key
-  hm9000:
-    ca_cert: (( merge ))  # PEM-encoded CA certificate
-    server_cert: (( merge )) # PEM-encoded server certificate
-    server_key: (( merge )) # PEM-encoded server key
-    client_cert: (( merge )) # PEM-encoded client certificate
-    client_key: (( merge )) # PEM-encoded client key
 
 env_specific:
   aws:
@@ -354,13 +354,6 @@ properties:
   metron_endpoint:
     shared_secret: (( secrets.logging.shared_secret )) # same as loggregator_endpoint
 
-  dea_next:
-    disk_mb: 100001
-    memory_mb: 6656
-    allow_networks:   # an array of allowed networks
-      - 10.10.0.2/32
-      - 10.10.32.0/20
-
   collector:
     deployment_name: (( meta.environment ))
     use_datadog: true
@@ -377,7 +370,7 @@ properties:
     apps_domain: (( app_domains ))
     admin_user: (( secrets.acceptance_tests.admin_user ))
     admin_password: (( secrets.acceptance_tests.admin_password ))
-    nodes: 4
+    backend: diego
     include_sso: true
     include_security_groups: true
     include_services: true
@@ -385,6 +378,11 @@ properties:
     include_logging: true
     include_v3: true
     include_internet_dependent: true
+    include_diego_docker: true
+    include_route_services: false
+    include_tasks: true
+    nodes: 6
+    skip_diego_unsupported_tests: true
     skip_ssl_validation: true
 
   smoke_tests:
@@ -404,9 +402,3 @@ properties:
     server_key: (( secrets.consul.server_key ))
     agent_cert: (( secrets.consul.agent_cert ))
     agent_key: (( secrets.consul.agent_key ))
-  hm9000:
-    ca_cert: (( secrets.hm9000.ca_cert ))
-    server_cert: (( secrets.hm9000.server_cert ))
-    server_key: (( secrets.hm9000.server_key ))
-    client_cert: (( secrets.hm9000.client_cert ))
-    client_key: (( secrets.hm9000.client_key ))

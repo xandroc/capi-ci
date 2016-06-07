@@ -182,15 +182,6 @@ resources:
     access_key_id: {{xena_s3_access_key}}
     secret_access_key: {{xena_s3_secret_key}}
 
-- name: xena-diego-acceptance-tests-logs
-  type: s3
-  source:
-    private: true
-    bucket: xena-acceptance-tests-logs
-    regexp: diego_acceptance_tests.*.tgz
-    access_key_id: {{xena_s3_access_key}}
-    secret_access_key: {{xena_s3_secret_key}}
-
 - name: datadog-firehose-nozzle-release
   type: git
   source:
@@ -419,41 +410,23 @@ jobs:
       stemcells: [aws-stemcell/*.tgz]
       releases:
         - cf-release-tarball/*.tgz
-  - aggregate:
-    - task: acceptance-tests
-      privileged: true
-      file: capi-ci/ci/scripts/run_bosh_command.yml
-      input_mapping: {manifest: generated-manifest}
+  - task: acceptance-tests
+    privileged: true
+    file: capi-ci/ci/scripts/run_bosh_command.yml
+    input_mapping: {manifest: generated-manifest}
+    params:
+      <<: *bosh-target-xena
+      DEPLOYMENT_YML: manifest/deployment.yml
+      COMMAND: 'run errand acceptance_tests --keep-alive --download-logs --logs-dir bosh-logs'
+    ensure:
+      put: xena-acceptance-tests-logs
       params:
-        <<: *bosh-target-xena
-        DEPLOYMENT_YML: manifest/deployment.yml
-        COMMAND: 'run errand acceptance_tests --keep-alive --download-logs --logs-dir bosh-logs'
-      ensure:
-        put: xena-acceptance-tests-logs
-        params:
-          from: bosh-logs/acceptance_tests(.*).tgz
-      on_failure:
-        put: slack-alert
-        params:
-          text: '[deploy-and-test-xena] OH NO! Failed on acceptance-tests'
-          icon_emoji: {{slack_failure_emoji}}
-    - task: diego-acceptance-tests
-      privileged: true
-      file: capi-ci/ci/scripts/run_bosh_command.yml
-      input_mapping: {manifest: capi-ci-private}
+        from: bosh-logs/acceptance_tests(.*).tgz
+    on_failure:
+      put: slack-alert
       params:
-        <<: *bosh-target-xena
-        DEPLOYMENT_YML: manifest/xena/deployments/xena-diego-cats.yml
-        COMMAND: 'run errand diego_acceptance_tests --keep-alive --download-logs --logs-dir bosh-logs'
-      ensure:
-        put: xena-diego-acceptance-tests-logs
-        params:
-          from: bosh-logs/diego_acceptance_tests(.*).tgz
-      on_failure:
-        put: slack-alert
-        params:
-          text: '[deploy-and-test-xena] OH NO! Failed on diego-acceptance-tests'
-          icon_emoji: {{slack_failure_emoji}}
+        text: '[deploy-and-test-xena] OH NO! Failed on acceptance-tests'
+        icon_emoji: {{slack_failure_emoji}}
 
 - name: ship-it
   plan:
