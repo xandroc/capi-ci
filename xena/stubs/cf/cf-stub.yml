@@ -143,8 +143,6 @@ secrets:
       buildpack_directory_key: (( merge )) # S3 key for the bucket holding buildpacks
     newrelic:
       license_key: (( merge ))
-    users_can_select_backend: false
-    default_to_diego_backend: true
   router:
     status:
       password: (( merge ))
@@ -342,6 +340,8 @@ properties:
         record_sql: raw
     security_event_logging:
       enabled: true
+    users_can_select_backend: false
+    default_to_diego_backend: true
 
   router:
     status:
