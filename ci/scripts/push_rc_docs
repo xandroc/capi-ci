@@ -8,12 +8,6 @@ function global_setup() {
   gem install bundler
 }
 
-function setup_v2() {
-  chmod 777 /tmp
-  service mysql restart
-  bundle install
-}
-
 function setup_v3_ssh() {
   mkdir ${HOME}/.ssh
   chmod 0700 ${HOME}/.ssh
@@ -28,17 +22,13 @@ function setup_v3_ssh() {
 }
 
 function setup_v3() {
-
   git config user.name 'CAPI CI'
   git config user.email 'cf-capi-eng+ci@pivotal.io'
 }
 
 function build_v2_docs() {
-  # We don't care which database we use, but we don't want to bother starting postgres
-  DB=mysql bundle exec rake spec:api
-
   aws s3 rm s3://cc-api-docs/release-candidate/ --recursive
-  aws s3 cp doc/api s3://cc-api-docs/release-candidate --recursive
+  aws s3 cp docs/v2 s3://cc-api-docs/release-candidate --recursive
 }
 
 function build_v3_docs() {
@@ -49,7 +39,6 @@ function main() {
   pushd cf-release/src/capi-release/src/cloud_controller_ng
     global_setup
 
-    setup_v2
     build_v2_docs
 
     setup_v3_ssh
