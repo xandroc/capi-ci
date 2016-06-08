@@ -404,12 +404,6 @@ jobs:
       params:
         text: '[deploy-and-test-xena] OH NO! Failed on xena-deployment'
         icon_emoji: {{slack_failure_emoji}}
-  - put: xena-diego-cats-deployment
-    params:
-      manifest: capi-ci-private/xena/deployments/xena-diego-cats.yml
-      stemcells: [aws-stemcell/*.tgz]
-      releases:
-        - cf-release-tarball/*.tgz
   - task: acceptance-tests
     privileged: true
     file: capi-ci/ci/scripts/run_bosh_command.yml
