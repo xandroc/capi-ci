@@ -1,13 +1,6 @@
 #!/usr/bin/env bash
 set -e -x
 
-source ~/.bashrc
-
-function global_setup() {
-  chruby $(cat .ruby-version)
-  gem install bundler
-}
-
 function setup_v3_ssh() {
   mkdir ${HOME}/.ssh
   chmod 0700 ${HOME}/.ssh
@@ -37,8 +30,6 @@ function build_v3_docs() {
 
 function main() {
   pushd capi-release/src/cloud_controller_ng
-    global_setup
-
     build_v2_docs
 
     setup_v3_ssh
