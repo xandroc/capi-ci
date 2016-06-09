@@ -8,7 +8,7 @@ image_resource:
     tag: runtime-ci
 
 inputs:
-  - name: cf-release
+  - name: capi-release
   - name: capi-ci
 
 run:

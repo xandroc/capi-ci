@@ -36,7 +36,7 @@ function build_v3_docs() {
 }
 
 function main() {
-  pushd cf-release/src/capi-release/src/cloud_controller_ng
+  pushd capi-release/src/cloud_controller_ng
     global_setup
 
     build_v2_docs
