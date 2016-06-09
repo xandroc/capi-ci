@@ -195,6 +195,13 @@ resources:
     private_key: {{private_key}}
     uri: git@github.com:cloudfoundry/capi-release.git
 
+- name: capi-release-ci-passed
+  type: git
+  source:
+    branch: ci-passed
+    private_key: {{private_key}}
+    uri: git@github.com:cloudfoundry/capi-release.git
+
 - name: cf-release-master
   type: git
   source:
@@ -421,6 +428,9 @@ jobs:
       params:
         text: '[deploy-and-test-xena] OH NO! Failed on acceptance-tests'
         icon_emoji: {{slack_failure_emoji}}
+  - put: capi-release-ci-passed
+    params:
+      repository: capi-release
 
 - name: ship-it
   plan:
