@@ -14,6 +14,7 @@ groups:
   - check-cc-dependencies
   - rc-docs
   - update-checkman
+  - deliver-stories
 - name: xena-deployments
   jobs:
   - deploy-diego-xena
@@ -53,6 +54,13 @@ resources:
   type: time
   source:
     interval: 1h
+
+- name: deliver-capi-stories
+  type: tracker
+  source:
+    token: {{deliver_capi_tracker_token}}
+    project_id: '966314'
+    tracker_url: https://www.pivotaltracker.com
 
 - name: capi-release-version
   type: semver
@@ -752,3 +760,14 @@ jobs:
     params:
       repository: freshened-config/capi-ci-private
       rebase: true
+
+- name: deliver-stories
+  serial: true
+  plan:
+    - get: capi-release
+      resource: capi-release-ci-passed
+      trigger: true
+    - put: deliver-capi-stories
+      params:
+        repos:
+        - capi-release/src/cloud_controller_ng
