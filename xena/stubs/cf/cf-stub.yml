@@ -381,7 +381,7 @@ properties:
     include_diego_docker: true
     include_route_services: false
     include_tasks: true
-    nodes: 6
+    nodes: 4
     skip_diego_unsupported_tests: true
     skip_ssl_validation: true
 
