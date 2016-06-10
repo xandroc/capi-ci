@@ -49,16 +49,41 @@ networks: # Bosh creates these subnets based in warden_networks.rb in cf-release
           subnet: (( properties.template_only.aws.subnet_ids.cf2 ))
 
 resource_pools:
+  - name: small_z1
+    cloud_properties:
+      instance_type: t2.medium
+  - name: small_z2
+    cloud_properties:
+      instance_type: t2.medium
+
   - name: router_z1
     cloud_properties:
+      instance_type: t2.medium
       elbs:
         (( env_specific.aws.router_z1.elbs ))
   - name: router_z2
     cloud_properties:
+      instance_type: t2.medium
       elbs:
         (( env_specific.aws.router_z2.elbs ))
 
 jobs:
+- name: clock_global
+  instances: 1
+  resource_pool: small_z1
+- name: uaa_z1
+  instances: 1
+  resource_pool: small_z1
+- name: uaa_z2
+  instances: 1
+  resource_pool: small_z2
+- name: doppler_z1
+  instances: 1
+  resource_pool: small_z1
+- name: doppler_z1
+  instances: 1
+  resource_pool: small_z2
+
 - name: runner_z1
   instances: 0
 - name: runner_z2
