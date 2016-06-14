@@ -122,6 +122,9 @@ jobs:
 secrets:
   app_ssh:
     host_key_fingerprint: (( merge ))
+  aws:
+    access_key_id: (( merge ))
+    secret_access_key: (( merge ))
   ccdb_admin_password: (( merge ))
   hm9000:
     ca_cert: (( merge ))  # PEM-encoded CA certificate
@@ -177,34 +180,6 @@ secrets:
     db_encryption_key: (( merge ))
     newrelic:
       license_key: (( merge ))
-    resource_pool:
-      fog_connection:
-        blobstore_timeout: (( merge ))
-        aws_access_key_id: (( merge ))
-        aws_secret_access_key: (( merge ))
-        provider: (( merge ))
-        region: (( merge ))
-    packages:
-      fog_connection:
-        blobstore_timeout: (( merge ))
-        aws_access_key_id: (( merge ))
-        aws_secret_access_key: (( merge ))
-        provider: (( merge ))
-        region: (( merge ))
-    buildpacks:
-      fog_connection:
-        blobstore_timeout: (( merge ))
-        aws_access_key_id: (( merge ))
-        aws_secret_access_key: (( merge ))
-        provider: (( merge ))
-        region: (( merge ))
-    droplets:
-      fog_connection:
-        blobstore_timeout: (( merge ))
-        aws_access_key_id: (( merge ))
-        aws_secret_access_key: (( merge ))
-        provider: (( merge ))
-        region: (( merge ))
   router:
     status:
       password: (( merge ))
@@ -250,6 +225,8 @@ properties:
 
   template_only:
     aws:
+      access_key_id: (( secrets.aws.access_key_id ))
+      secret_access_key: (( secrets.aws.secret_access_key ))
       availability_zone: us-east-1a
       availability_zone2: us-east-1c
       subnet_ids:
@@ -404,18 +381,14 @@ properties:
     resource_pool:
       blobstore_type: fog
       resource_directory_key: wasabi-cf-app-com-cc-resources
-      fog_connection: (( secrets.cc.resource_pool.fog_connection ))
     packages:
       blobstore_type: fog
-      fog_connection: (( secrets.cc.packages.fog_connection ))
       app_package_directory_key: wasabi-cf-app-com-cc-packages
     droplets:
       blobstore_type: fog
-      fog_connection: (( secrets.cc.droplets.fog_connection ))
       droplet_directory_key: wasabi-cf-app-com-cc-droplets
     buildpacks:
       blobstore_type: fog
-      fog_connection: (( secrets.cc.buildpacks.fog_connection ))
       buildpack_directory_key: wasabi-cf-app-com-cc-buildpacks
     newrelic:
       license_key: (( secrets.cc.newrelic.license_key ))

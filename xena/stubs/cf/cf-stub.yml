@@ -152,44 +152,20 @@ secrets:
     db_encryption_key: (( merge )) # key for encrypting sensitive values in the CC database
     resource_pool:
       resource_directory_key: (( merge )) # S3 key for the bucket holding CC resources (used when uploading app resources)
-      fog_connection:
-        blobstore_timeout: (( merge ))
-        aws_access_key_id: (( merge ))
-        aws_secret_access_key: (( merge ))
-        provider: (( merge ))
-        region: (( merge ))
       cdn:
         uri: (( merge ))
         key_pair_id: (( merge ))
         private_key: (( merge ))
     packages:
       app_package_directory_key: (( merge )) # S3 key for the bucket holding CC packages
-      fog_connection:
-        blobstore_timeout: (( merge ))
-        aws_access_key_id: (( merge ))
-        aws_secret_access_key: (( merge ))
-        provider: (( merge ))
-        region: (( merge ))
     droplets:
       droplet_directory_key: (( merge )) # S3 key for the bucket holding CC droplets
-      fog_connection:
-        blobstore_timeout: (( merge ))
-        aws_access_key_id: (( merge ))
-        aws_secret_access_key: (( merge ))
-        provider: (( merge ))
-        region: (( merge ))
       cdn:
         uri: (( merge ))
         key_pair_id: (( merge ))
         private_key: (( merge ))
     buildpacks:
       buildpack_directory_key: (( merge )) # S3 key for the bucket holding buildpacks
-      fog_connection:
-        blobstore_timeout: (( merge ))
-        aws_access_key_id: (( merge ))
-        aws_secret_access_key: (( merge ))
-        provider: (( merge ))
-        region: (( merge ))
     newrelic:
       license_key: (( merge ))
   router:
@@ -243,6 +219,8 @@ properties:
 
   template_only:
     aws:
+      access_key_id: (( merge )) # AWS access key ID
+      secret_access_key: (( merge )) # AWS secret access key
       availability_zone: us-east-1b
       availability_zone2: us-east-1c
       subnet_ids:
@@ -363,24 +341,20 @@ properties:
         non_basic_services_allowed: true
     default_app_memory: 256
     resource_pool:
-      fog_connection: (( secrets.cc.resource_pool.fog_connection ))
       resource_directory_key: (( secrets.cc.resource_pool.resource_directory_key ))
       cdn:
         uri: (( secrets.cc.resource_pool.cdn.uri ))
         key_pair_id: (( secrets.cc.resource_pool.cdn.key_pair_id ))
         private_key: (( secrets.cc.resource_pool.cdn.private_key ))
     packages:
-      fog_connection: (( secrets.cc.packages.fog_connection ))
       app_package_directory_key: (( secrets.cc.packages.app_package_directory_key ))
     droplets:
-      fog_connection: (( secrets.cc.droplets.fog_connection ))
       droplet_directory_key: (( secrets.cc.droplets.droplet_directory_key ))
       cdn:
         uri: (( secrets.cc.droplets.cdn.uri ))
         key_pair_id: (( secrets.cc.droplets.cdn.key_pair_id ))
         private_key: (( secrets.cc.droplets.cdn.private_key ))
     buildpacks:
-      fog_connection: (( secrets.cc.buildpacks.fog_connection ))
       buildpack_directory_key: (( secrets.cc.buildpacks.buildpack_directory_key ))
     newrelic:
       license_key: (( secrets.cc.newrelic.license_key ))
