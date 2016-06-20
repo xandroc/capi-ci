@@ -330,6 +330,7 @@ properties:
     staging_upload_user: (( secrets.cc.staging_upload_user ))
     staging_upload_password: (( secrets.cc.staging_upload_password ))
     db_encryption_key: (( secrets.cc.db_encryption_key ))
+    logging_level: debug2
     default_quota_definition: runaway
     generic:
       number_of_workers: 2
