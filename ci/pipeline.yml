@@ -371,11 +371,26 @@ jobs:
   - put: capi-release-version
     params:
       file: version/version
+    on_failure:
+      put: slack-alert
+      params:
+        text: '[create-capi-release] OH NO! Failed to update version'
+        icon_emoji: {{slack_failure_emoji}}
   - task: create-release-tarball
     file: capi-ci/ci/scripts/create_capi_release.yml
+    on_failure:
+      put: slack-alert
+      params:
+        text: '[create-capi-release] OH NO! Failed to create tarball'
+        icon_emoji: {{slack_failure_emoji}}
   - put: capi-release-tarball
     params:
-      from: created-capi-release/capi-(.*).tgz
+      file: created-capi-release/capi-*.tgz
+    on_failure:
+      put: slack-alert
+      params:
+        text: '[create-capi-release] OH NO! Failed to upload tarball'
+        icon_emoji: {{slack_failure_emoji}}
 
 - name: deploy-and-test-xena
   serial: true
@@ -424,7 +439,7 @@ jobs:
     ensure:
       put: xena-acceptance-tests-logs
       params:
-        from: bosh-logs/acceptance_tests(.*).tgz
+        file: bosh-logs/acceptance_tests*.tgz
     on_failure:
       put: slack-alert
       params:
