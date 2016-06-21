@@ -3,6 +3,8 @@ groups:
   jobs:
   - rc-docs-docker
   - ruby-units-docker
+  - go-units-docker
+  - bosh-init-docker
 
 resources:
 - name: weekly
@@ -42,6 +44,36 @@ resources:
     password: {{dockerhub_pass}}
     email: {{dockerhub_email}}
 
+- name: capi-dockerfiles-go-units
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/capi-dockerfiles.git
+    paths: [capi-go-units/Dockerfile]
+- name: docker-image-go-units
+  type: docker-image
+  source:
+    repository: cloudfoundry/capi
+    tag: go-units
+    username: {{dockerhub_user}}
+    password: {{dockerhub_pass}}
+    email: {{dockerhub_email}}
+
+- name: capi-dockerfiles-bosh-init
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/capi-dockerfiles.git
+    paths: [bosh-init/Dockerfile]
+- name: docker-image-bosh-init
+  type: docker-image
+  source:
+    repository: cloudfoundry/capi
+    tag: bosh-init
+    username: {{dockerhub_user}}
+    password: {{dockerhub_pass}}
+    email: {{dockerhub_email}}
+
 jobs:
 - name: rc-docs-docker
   serial: true
@@ -63,3 +95,23 @@ jobs:
   - put: docker-image-ruby-units
     params:
       build: capi-dockerfiles-ruby-units/capi-ruby-units
+- name: go-units-docker
+  serial: true
+  plan:
+  - aggregate:
+    - get: weekly
+      trigger: true
+    - get: capi-dockerfiles-go-units
+  - put: docker-image-go-units
+    params:
+      build: capi-dockerfiles-go-units/capi-go-units
+- name: bosh-init-docker
+  serial: true
+  plan:
+  - aggregate:
+    - get: weekly
+      trigger: true
+    - get: capi-dockerfiles-bosh-init
+  - put: docker-image-bosh-init
+    params:
+      build: capi-dockerfiles-bosh-init/bosh-init
