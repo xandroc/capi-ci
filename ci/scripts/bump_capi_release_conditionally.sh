@@ -12,23 +12,23 @@ pushd cloud_controller_ng-master-migrations
   PASSED_DB_MIGRATIONS_SHA=$(git log -n1 --format="%H" -- db)
 popd
 
-push bbs
+pushd bbs
   BBS_SHA=$(git rev-parse HEAD)
 popd
 
-push cc-uploader
+pushd cc-uploader
   CC_UPLOADER_SHA=$(git rev-parse HEAD)
 popd
 
-push nsync
+pushd nsync
   NSYNC_SHA=$(git rev-parse HEAD)
 popd
 
-push stager
+pushd stager
   STAGER_SHA=$(git rev-parse HEAD)
 popd
 
-push tps
+pushd tps
   TPS_SHA=$(git rev-parse HEAD)
 popd
 
