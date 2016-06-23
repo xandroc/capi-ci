@@ -10,6 +10,11 @@ image_resource:
 inputs:
   - name: capi-release
   - name: capi-ci
+  - name: bbs
+  - name: cc-uploader
+  - name: nsync
+  - name: stager
+  - name: tps
 
 run:
   path: capi-ci/ci/scripts/run_bridge_unit_tests

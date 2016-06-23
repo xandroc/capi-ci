@@ -271,6 +271,36 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry-incubator/diego-release.git
 
+- name: bbs
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry-incubator/bbs.git
+
+- name: cc-uploader
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry-incubator/cc-uploader.git
+
+- name: nsync
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry-incubator/nsync.git
+
+- name: stager
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry-incubator/stager.git
+
+- name: tps
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry-incubator/tps.git
+
 - name: cloud_controller_ng
   type: git
   source:
@@ -346,11 +376,19 @@ jobs:
       repository: bumped/capi-release
       rebase: true
 
-
 - name: bridge-unit-tests
   plan:
   - aggregate:
     - get: capi-release
+    - get: bbs
+      trigger: true
+    - get: cc-uploader
+      trigger: true
+    - get: nsync
+      trigger: true
+    - get: stager
+      trigger: true
+    - get: tps
       trigger: true
     - get: capi-ci
   - task: run-bridge-unit-tests
