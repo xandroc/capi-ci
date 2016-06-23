@@ -332,9 +332,26 @@ properties:
         secret: (( secrets.uaa.clients.tcp_router.secret ))
     scim:
       users:
-      - (( "admin|" secrets.uaa.scm.admin.password "|scim.write,scim.read,openid,cloud_controller.admin,doppler.firehose" ))
-      - (( "services|" secrets.uaa.scm.services.password "|scim.write,scim.read,openid,cloud_controller.admin" ))
-      - (( "v1-dummy-broker|" secrets.uaa.scm.broker.password "|cloud_controller.admin" ))
+        - name: "admin"
+          password: (( secrets.uaa.scm.admin.password ))
+          groups:
+            - scim.write
+            - scim.read
+            - openid
+            - cloud_controller.admin
+            - doppler.firehose
+        - name: "services"
+          password: (( secrets.uaa.scm.services.password ))
+          groups:
+            - scim.write
+            - scim.read
+            - openid
+            - cloud_controller.admin
+        - name: "v1-dummy-broker"
+          password: (( secrets.uaa.scm.broker.password ))
+          groups:
+            - cloud_controller.admin
+
   consul:
     require_ssl: false
 

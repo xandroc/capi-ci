@@ -316,7 +316,14 @@ properties:
         secret: (( secrets.uaa.clients.tcp_router.secret ))
     scim:
       users:
-      - (( secrets.uaa.scim.user "|" secrets.uaa.scim.password "|scim.write,scim.read,openid,cloud_controller.admin,doppler.firehose" ))
+        - name: (( secrets.uaa.scim.user ))
+          password: (( secrets.uaa.scim.password ))
+          groups:
+            - scim.write
+            - scim.read
+            - openid
+            - cloud_controller.admin
+            - doppler.firehose
 
   nats:
     user: nats
