@@ -369,6 +369,21 @@ jobs:
     - get: cloud_controller_ng
       passed: [cc-unit-tests]
       trigger: true
+    - get: bbs
+      passed: [bridge-unit-tests]
+      trigger: true
+    - get: cc-uploader
+      passed: [bridge-unit-tests]
+      trigger: true
+    - get: nsync
+      passed: [bridge-unit-tests]
+      trigger: true
+    - get: stager
+      passed: [bridge-unit-tests]
+      trigger: true
+    - get: tps
+      passed: [bridge-unit-tests]
+      trigger: true
   - task: bump-capi-release
     file: capi-ci/ci/scripts/bump_capi_release_conditionally.yml
   - put: capi-release
@@ -399,7 +414,6 @@ jobs:
   plan:
   - aggregate:
     - get: capi-release
-      passed: [bridge-unit-tests]
       trigger: true
     - get: capi-ci
     - get: version

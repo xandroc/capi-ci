@@ -12,6 +12,11 @@ inputs:
   - name: cloud_controller_ng-master-migrations
   - name: capi-release
   - name: capi-ci
+  - name: bbs
+  - name: cc-uploader
+  - name: nsync
+  - name: stager
+  - name: tps
 
 outputs:
   - name: bumped
