@@ -17,7 +17,6 @@ groups:
   - deliver-stories
 - name: xena-deployments
   jobs:
-  - deploy-diego-xena
   - deploy-xena-datadog-firehose-nozzle
 - name: bosh
   jobs:
