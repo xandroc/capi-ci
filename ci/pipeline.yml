@@ -462,24 +462,56 @@ jobs:
       resource: cf-release-develop
     - get: xena-diego-deployment
       trigger: true
+    - get: diego-ci
+    - get: diego-release
+      params:
+        submodules: none
+    - get: garden-linux-release-tarball
+    - get: etcd-release-tarball
+    - get: diego-release-tarball
+      trigger: true
+    - get: cflinuxfs2-rootfs-tarball
   - task: manifest
     privileged: true
     file: capi-ci/ci/scripts/create_cf_deployment_manifest.yml
     params:
       INFRASTRUCTURE: aws
       ENVIRONMENT: xena
-  - put: xena-deployment
+  - task: generate-deployment-manifests
+    file: capi-ci/ci/scripts/create_diego_release_manifest.yml
     params:
-      manifest: generated-manifest/deployment.yml
-      stemcells: [aws-stemcell/*.tgz]
-      releases:
-        - cf-release-tarball/*.tgz
-        - capi-release-tarball/*.tgz
-    on_failure:
-      put: slack-alert
+      BOSH_TARGET: bosh.xena.cf-app.com
+      BOSH_USER: {{xena_bosh_user}}
+      BOSH_PASSWORD: {{xena_bosh_password}}
+      DEPLOYMENTS_DIR: capi-ci-private
+      ENVIRONMENT_NAME: xena
+  - aggregate:
+    - put: xena-deployment
       params:
-        text: '[deploy-and-test-xena] OH NO! Failed on xena-deployment'
-        icon_emoji: {{slack_failure_emoji}}
+        manifest: generated-manifest/deployment.yml
+        stemcells: [aws-stemcell/*.tgz]
+        releases:
+          - cf-release-tarball/*.tgz
+          - capi-release-tarball/*.tgz
+      on_failure:
+        put: slack-alert
+        params:
+          text: '[deploy-and-test-xena] OH NO! Failed deploying cf-release to xena'
+          icon_emoji: {{slack_failure_emoji}}
+    - put: xena-diego-deployment
+      params:
+        manifest: generated-manifest/diego-deployment.yml
+        releases:
+          - diego-release-tarball/*.tgz
+          - garden-linux-release-tarball/*.tgz
+          - etcd-release-tarball/*.tgz
+          - cflinuxfs2-rootfs-tarball/*.tgz
+        stemcells: [aws-stemcell/*.tgz]
+      on_failure:
+        put: slack-alert
+        params:
+          text: '[deploy-and-test-xena] OH NO! Failed deploying diego to xena'
+          icon_emoji: {{slack_failure_emoji}}
   - task: acceptance-tests
     privileged: true
     file: capi-ci/ci/scripts/run_bosh_command.yml
@@ -556,41 +588,6 @@ jobs:
     params:
       repository: bumped/cf-release
       rebase: true
-
-- name: deploy-diego-xena
-  serial: true
-  serial_groups: [deploy-xena-diego]
-  plan:
-  - aggregate:
-    - get: diego-ci
-    - get: diego-release
-      params:
-        submodules: none
-    - get: garden-linux-release-tarball
-    - get: etcd-release-tarball
-    - get: capi-ci
-    - get: capi-ci-private
-    - get: aws-stemcell
-    - get: diego-release-tarball
-      trigger: true
-    - get: cflinuxfs2-rootfs-tarball
-  - task: generate-deployment-manifests
-    file: capi-ci/ci/scripts/create_diego_release_manifest.yml
-    params:
-      BOSH_TARGET: bosh.xena.cf-app.com
-      BOSH_USER: {{xena_bosh_user}}
-      BOSH_PASSWORD: {{xena_bosh_password}}
-      DEPLOYMENTS_DIR: capi-ci-private
-      ENVIRONMENT_NAME: xena
-  - put: xena-diego-deployment
-    params:
-      manifest: generated-manifest/diego-deployment.yml
-      releases:
-        - diego-release-tarball/*.tgz
-        - garden-linux-release-tarball/*.tgz
-        - etcd-release-tarball/*.tgz
-        - cflinuxfs2-rootfs-tarball/*.tgz
-      stemcells: [aws-stemcell/*.tgz]
 
 - name: migration-backwards-compatibility-test
   serial: true
