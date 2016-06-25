@@ -14,8 +14,6 @@ bosh -n target ${BOSH_TARGET}
 bosh -n login ${BOSH_USER} ${BOSH_PASSWORD}
 
 pushd diego-release
-  bosh download manifest ${cf_deployment_name} /tmp/cf.yml
-
   ./scripts/generate-deployment-manifest \
     -c ../generated-manifest/deployment.yml \
     -i ${stubs_path}/diego/iaas-settings.yml \
