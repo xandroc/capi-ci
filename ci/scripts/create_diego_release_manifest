@@ -17,7 +17,7 @@ pushd diego-release
   bosh download manifest ${cf_deployment_name} /tmp/cf.yml
 
   ./scripts/generate-deployment-manifest \
-    -c /tmp/cf.yml \
+    -c ../generated-manifest/deployment.yml \
     -i ${stubs_path}/diego/iaas-settings.yml \
     -p ${stubs_path}/diego/property-overrides.yml \
     -n ${stubs_path}/diego/instance-count-overrides.yml \
