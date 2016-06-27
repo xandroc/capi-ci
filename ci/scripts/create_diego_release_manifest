@@ -22,7 +22,7 @@ pushd diego-release
     -k ${stubs_path}/diego/persistent-disk-overrides.yml \
     -v ${stubs_path}/diego/release-versions.yml \
     -b \
-    > ../generated-manifest/diego-deployment.yml
+    > ../generated-diego-manifest/diego-deployment.yml
 
-    cat ../generated-manifest/diego-deployment.yml
+    cat ../generated-diego-manifest/diego-deployment.yml
 popd
