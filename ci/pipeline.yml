@@ -499,7 +499,7 @@ jobs:
           icon_emoji: {{slack_failure_emoji}}
     - put: xena-diego-deployment
       params:
-        manifest: generated-manifest/diego-deployment.yml
+        manifest: generated-diego-manifest/diego-deployment.yml
         releases:
           - diego-release-tarball/*.tgz
           - garden-linux-release-tarball/*.tgz

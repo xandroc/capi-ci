@@ -15,7 +15,7 @@ inputs:
   - name: generated-manifest
 
 outputs:
-  - name: generated-manifest
+  - name: generated-diego-manifest
 
 params:
   BOSH_PASSWORD: ~
