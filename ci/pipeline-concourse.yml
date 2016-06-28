@@ -47,7 +47,7 @@ jobs:
       params:
         globs:
         - concourse-*.tgz
-        - garden-linux-*.tgz
+        - garden-runc-*.tgz
     - get: concourse-config
     - get: aws-stemcell
     - get: capi-ci-private
@@ -56,6 +56,6 @@ jobs:
       manifest: concourse-config/ci/concourse.yml
       releases:
         - concourse/concourse-*.tgz
-        - concourse/garden-linux-*.tgz
+        - concourse/garden-runc-*.tgz
       stemcells:
         - aws-stemcell/*.tgz
