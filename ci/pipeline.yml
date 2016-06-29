@@ -362,6 +362,11 @@ jobs:
     - get: cloud_controller_ng
       passed: [cc-unit-tests]
       trigger: true
+    - get: diego-release
+      passed: [bridge-unit-tests]
+      params:
+        submodules:
+        - src/github.com/cloudfoundry-incubator/bbs
     - get: cc-uploader
       passed: [bridge-unit-tests]
       trigger: true
