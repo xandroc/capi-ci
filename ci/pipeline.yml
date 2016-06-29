@@ -270,12 +270,6 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/diego-release.git
 
-- name: bbs
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/bbs.git
-
 - name: cc-uploader
   type: git
   source:
@@ -368,9 +362,6 @@ jobs:
     - get: cloud_controller_ng
       passed: [cc-unit-tests]
       trigger: true
-    - get: bbs
-      passed: [bridge-unit-tests]
-      trigger: true
     - get: cc-uploader
       passed: [bridge-unit-tests]
       trigger: true
@@ -394,8 +385,6 @@ jobs:
   plan:
   - aggregate:
     - get: capi-release
-    - get: bbs
-      trigger: true
     - get: cc-uploader
       trigger: true
     - get: nsync
@@ -405,6 +394,9 @@ jobs:
     - get: tps
       trigger: true
     - get: capi-ci
+    - get: diego-release
+      params:
+        submodules: src/github.com/cloudfoundry-incubator/bbs
   - task: run-bridge-unit-tests
     file: capi-ci/ci/scripts/run_bridge_unit_tests.yml
 
