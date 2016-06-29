@@ -396,7 +396,8 @@ jobs:
     - get: capi-ci
     - get: diego-release
       params:
-        submodules: src/github.com/cloudfoundry-incubator/bbs
+        submodules:
+        - src/github.com/cloudfoundry-incubator/bbs
   - task: run-bridge-unit-tests
     file: capi-ci/ci/scripts/run_bridge_unit_tests.yml
 

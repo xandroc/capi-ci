@@ -10,7 +10,7 @@ image_resource:
 inputs:
   - name: capi-release
   - name: capi-ci
-  - name: bbs
+  - name: diego-release
   - name: cc-uploader
   - name: nsync
   - name: stager
