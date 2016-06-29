@@ -42,4 +42,4 @@ pushd capi-release
   fi
 popd
 
-mv $TARBALL created-capi-release/capi-${CAPI_COMMIT_SHA}-cc-${CC_COMMIT_SHA}.tgz
+mv $TARBALL created-capi-release/capi-${VERSION}-${CAPI_COMMIT_SHA}-${CC_COMMIT_SHA}.tgz
