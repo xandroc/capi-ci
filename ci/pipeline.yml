@@ -185,7 +185,7 @@ resources:
   source:
     private: true
     bucket: xena-acceptance-tests-logs
-    regexp: acceptance_tests.*.tgz
+    regexp: acceptance_tests-(.*).tgz
     access_key_id: {{xena_s3_access_key}}
     secret_access_key: {{xena_s3_secret_key}}
 
@@ -518,9 +518,11 @@ jobs:
       DEPLOYMENT_YML: manifest/deployment.yml
       COMMAND: 'run errand acceptance_tests --keep-alive --download-logs --logs-dir bosh-logs'
     ensure:
-      put: xena-acceptance-tests-logs
+    - put: xena-acceptance-tests-logs
       params:
         file: bosh-logs/acceptance_tests*.tgz
+    - task: run-cats-cf-trace-logs
+      file: capi-ci/ci/scripts/run_cats_cf_trace_logs.yml
     on_failure:
       put: slack-alert
       params:

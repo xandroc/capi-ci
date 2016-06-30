@@ -1,0 +1,15 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: cloudfoundry/capi
+    tag: runtime-ci
+
+inputs:
+  - name: bosh-logs
+  - name: capi-ci
+
+run:
+  path: capi-ci/ci/scripts/run_cats_cf_trace_logs
