@@ -8,5 +8,4 @@ if [ -n "$LOGS_DIR" ]; then
 fi
 
 bosh -n --color -t $BOSH_DIRECTOR -d $DEPLOYMENT_YML $COMMAND
-mv acceptance_tests*.tgz "bosh-logs/acceptance_tests-$(date '+%s').tgz"
 
