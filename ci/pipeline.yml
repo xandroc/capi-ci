@@ -482,33 +482,32 @@ jobs:
       BOSH_PASSWORD: {{xena_bosh_password}}
       DEPLOYMENTS_DIR: capi-ci-private
       ENVIRONMENT_NAME: xena
-  - aggregate:
-    - put: xena-deployment
+  - put: xena-deployment
+    params:
+      manifest: generated-manifest/deployment.yml
+      stemcells: [aws-stemcell/*.tgz]
+      releases:
+        - cf-release-tarball/*.tgz
+        - capi-release-tarball/*.tgz
+    on_failure:
+      put: slack-alert
       params:
-        manifest: generated-manifest/deployment.yml
-        stemcells: [aws-stemcell/*.tgz]
-        releases:
-          - cf-release-tarball/*.tgz
-          - capi-release-tarball/*.tgz
-      on_failure:
-        put: slack-alert
-        params:
-          text: '[deploy-and-test-xena] OH NO! Failed deploying cf-release to xena'
-          icon_emoji: {{slack_failure_emoji}}
-    - put: xena-diego-deployment
+        text: '[deploy-and-test-xena] OH NO! Failed deploying cf-release to xena'
+        icon_emoji: {{slack_failure_emoji}}
+  - put: xena-diego-deployment
+    params:
+      manifest: generated-diego-manifest/diego-deployment.yml
+      releases:
+        - diego-release-tarball/*.tgz
+        - garden-linux-release-tarball/*.tgz
+        - etcd-release-tarball/*.tgz
+        - cflinuxfs2-rootfs-tarball/*.tgz
+      stemcells: [aws-stemcell/*.tgz]
+    on_failure:
+      put: slack-alert
       params:
-        manifest: generated-diego-manifest/diego-deployment.yml
-        releases:
-          - diego-release-tarball/*.tgz
-          - garden-linux-release-tarball/*.tgz
-          - etcd-release-tarball/*.tgz
-          - cflinuxfs2-rootfs-tarball/*.tgz
-        stemcells: [aws-stemcell/*.tgz]
-      on_failure:
-        put: slack-alert
-        params:
-          text: '[deploy-and-test-xena] OH NO! Failed deploying diego to xena'
-          icon_emoji: {{slack_failure_emoji}}
+        text: '[deploy-and-test-xena] OH NO! Failed deploying diego to xena'
+        icon_emoji: {{slack_failure_emoji}}
   - task: acceptance-tests
     privileged: true
     file: capi-ci/ci/scripts/run_bosh_command.yml
