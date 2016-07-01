@@ -12,5 +12,5 @@ inputs:
   - name: capi-ci
 
 run:
-  path: capi-ci/ci/scripts/run_cats_cf_trace_logs
+  path: capi-ci/ci/scripts/move_cats_cf_trace_logs
 

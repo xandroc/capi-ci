@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -e -x
+
+version=$(date '+%s')
+mv acceptance_tests*.tgz "bosh-logs/acceptance_tests-$version.tgz"

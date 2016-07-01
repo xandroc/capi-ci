@@ -1,4 +1,0 @@
-#!/usr/bin/env bash
-set -e -x
-
-mv acceptance_tests*.tgz "bosh-logs/acceptance_tests-$(date '+%s').tgz"

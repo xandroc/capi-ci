@@ -521,9 +521,9 @@ jobs:
       put: xena-acceptance-tests-logs
       params:
         file: bosh-logs/acceptance_tests*.tgz
-    ensure:    
-      task: run-cats-cf-trace-logs
-      file: capi-ci/ci/scripts/run_cats_cf_trace_logs.yml
+    ensure:
+      task: move-cats-cf-trace-logs
+      file: capi-ci/ci/scripts/move_cats_cf_trace_logs.yml
     on_failure:
       put: slack-alert
       params:
