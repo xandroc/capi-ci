@@ -185,7 +185,7 @@ resources:
   source:
     private: true
     bucket: xena-acceptance-tests-logs
-    regexp: acceptance_tests-(.*).tgz
+    regexp: acceptance_tests.(0)..*.tgz
     access_key_id: {{xena_s3_access_key}}
     secret_access_key: {{xena_s3_secret_key}}
 
@@ -520,9 +520,6 @@ jobs:
       put: xena-acceptance-tests-logs
       params:
         file: bosh-logs/acceptance_tests*.tgz
-    ensure:
-      task: move-cats-cf-trace-logs
-      file: capi-ci/ci/scripts/move_cats_cf_trace_logs.yml
     on_failure:
       put: slack-alert
       params:
