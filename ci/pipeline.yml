@@ -591,23 +591,39 @@ jobs:
   plan:
   - aggregate:
     - get: cf-release-final
+      tags:
+      - concourse-bug
       params:
         tarball: true
     - get: cf-release
+      tags:
+      - concourse-bug
       resource: cf-release-master
     - get: capi-ci
+      tags:
+      - concourse-bug
     - get: capi-ci-private
+      tags:
+      - concourse-bug
     - get: aws-stemcell
+      tags:
+      - concourse-bug
     - get: cloud_controller_ng
+      tags:
+      - concourse-bug
       resource: cloud_controller_ng-master-migrations
       trigger: true
   - task: manifest
+    tags:
+    - concourse-bug
     privileged: true
     file: capi-ci/ci/scripts/create_cf_deployment_manifest.yml
     params:
       INFRASTRUCTURE: aws
       ENVIRONMENT: wasabi
   - task: delete-wasabi-deployment
+    tags:
+    - concourse-bug
     privileged: true
     file: capi-ci/ci/scripts/run_bosh_command.yml
     input_mapping: {manifest: generated-manifest}
@@ -616,11 +632,15 @@ jobs:
       DEPLOYMENT_YML: manifest/deployment.yml
       COMMAND: 'delete deployment cf-wasabi'
   - put: cf-wasabi-deployment
+    tags:
+    - concourse-bug
     params:
       manifest: generated-manifest/deployment.yml
       stemcells: [aws-stemcell/*.tgz]
       releases: [ cf-release-final/release.tgz]
   - task: smoke-tests
+    tags:
+    - concourse-bug
     privileged: true
     file: capi-ci/ci/scripts/run_bosh_command.yml
     input_mapping: {manifest: generated-manifest}
@@ -629,6 +649,8 @@ jobs:
       DEPLOYMENT_YML: manifest/deployment.yml
       COMMAND: 'run errand smoke_tests --keep-alive'
   - task: apply-migrations
+    tags:
+    - concourse-bug
     privileged: true
     file: capi-ci/ci/scripts/apply_cc_migrations.yml
     params:
@@ -637,6 +659,8 @@ jobs:
       DB_HOST: 10.0.32.30
       TUNNEL_HOST: 52.0.73.109
   - task: acceptance-tests
+    tags:
+    - concourse-bug
     privileged: true
     file: capi-ci/ci/scripts/run_bosh_command.yml
     input_mapping: {manifest: generated-manifest}
