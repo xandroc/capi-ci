@@ -9,6 +9,9 @@ groups:
   - migration-backwards-compatibility-test
   - ship-it
   - bump-capi-release
+- name: great-migration
+  jobs:
+  - cc-unit-tests-with-migrations
 - name: dependencies-docs
   jobs:
   - check-cc-dependencies
@@ -301,6 +304,13 @@ resources:
     private_key: {{private_key}}
     uri: git@github.com:cloudfoundry/cloud_controller_ng.git
 
+- name: cloud_controller_ng_migrate
+  type: git
+  source:
+    branch: "migrate"
+    private_key: {{private_key}}
+    uri: git@github.com:cloudfoundry/cloud_controller_ng.git
+
 - name: slack-alert
   type: slack-notification
   source:
@@ -312,6 +322,34 @@ resources:
     url: {{slack_capi_hook_url}}
 
 jobs:
+
+- name: cc-unit-tests-with-migrations
+  plan:
+  - aggregate:
+    - get: cloud_controller_ng
+      resource: cloud_controller_ng_migrate
+      trigger: true
+    - get: capi-ci
+  - aggregate:
+    - task: run-cc-unit-tests-mysql
+      file: capi-ci/ci/scripts/run_cc_unit_tests.yml
+      params:
+        DB: mysql
+      on_failure:
+        put: slack-alert
+        params:
+          text: '[cc-unit-tests-with-migrations] OH NO! Failed when running with mysql'
+          icon_emoji: {{slack_failure_emoji}}
+    - task: run-cc-unit-tests-postgres
+      file: capi-ci/ci/scripts/run_cc_unit_tests.yml
+      params:
+        DB: postgres
+      on_failure:
+        put: slack-alert
+        params:
+          text: '[cc-unit-tests-with-migrations] OH NO! Failed when running with postgres'
+          icon_emoji: {{slack_failure_emoji}}
+
 - name: check-cc-dependencies
   serial: true
   plan:
