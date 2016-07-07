@@ -487,66 +487,34 @@ jobs:
   plan:
   - aggregate:
     - get: cf-release-tarball
-      tags:
-      - deploy-and-test-xena-worker
     - get: capi-release-tarball
-      tags:
-      - deploy-and-test-xena-worker
       passed: [create-capi-release]
       trigger: true
     - get: capi-release
-      tags:
-      - deploy-and-test-xena-worker
       passed: [create-capi-release]
     - get: capi-ci
-      tags:
-      - deploy-and-test-xena-worker
     - get: capi-ci-private
-      tags:
-      - deploy-and-test-xena-worker
     - get: aws-stemcell
-      tags:
-      - deploy-and-test-xena-worker
     - get: cf-release
-      tags:
-      - deploy-and-test-xena-worker
       resource: cf-release-develop
     - get: xena-diego-deployment
-      tags:
-      - deploy-and-test-xena-worker
       trigger: true
     - get: diego-ci
-      tags:
-      - deploy-and-test-xena-worker
     - get: diego-release
-      tags:
-      - deploy-and-test-xena-worker
       params:
         submodules: none
     - get: garden-linux-release-tarball
-      tags:
-      - deploy-and-test-xena-worker
     - get: etcd-release-tarball
-      tags:
-      - deploy-and-test-xena-worker
     - get: diego-release-tarball
-      tags:
-      - deploy-and-test-xena-worker
       trigger: true
     - get: cflinuxfs2-rootfs-tarball
-      tags:
-      - deploy-and-test-xena-worker
   - task: manifest
-    tags:
-    - deploy-and-test-xena-worker
     privileged: true
     file: capi-ci/ci/scripts/create_cf_deployment_manifest.yml
     params:
       INFRASTRUCTURE: aws
       ENVIRONMENT: xena
   - task: generate-deployment-manifests
-    tags:
-    - deploy-and-test-xena-worker
     file: capi-ci/ci/scripts/create_diego_release_manifest.yml
     params:
       BOSH_TARGET: bosh.xena.cf-app.com
@@ -555,8 +523,6 @@ jobs:
       DEPLOYMENTS_DIR: capi-ci-private
       ENVIRONMENT_NAME: xena
   - put: xena-deployment
-    tags:
-    - deploy-and-test-xena-worker
     params:
       manifest: generated-manifest/deployment.yml
       stemcells: [aws-stemcell/*.tgz]
@@ -569,8 +535,6 @@ jobs:
         text: '[deploy-and-test-xena] OH NO! Failed deploying cf-release to xena'
         icon_emoji: {{slack_failure_emoji}}
   - put: xena-diego-deployment
-    tags:
-    - deploy-and-test-xena-worker
     params:
       manifest: generated-diego-manifest/diego-deployment.yml
       releases:
@@ -585,8 +549,6 @@ jobs:
         text: '[deploy-and-test-xena] OH NO! Failed deploying diego to xena'
         icon_emoji: {{slack_failure_emoji}}
   - task: acceptance-tests
-    tags:
-    - deploy-and-test-xena-worker
     privileged: true
     file: capi-ci/ci/scripts/run_bosh_command.yml
     input_mapping: {manifest: generated-manifest}
@@ -604,8 +566,6 @@ jobs:
         text: '[deploy-and-test-xena] OH NO! Failed on acceptance-tests'
         icon_emoji: {{slack_failure_emoji}}
   - put: capi-release-ci-passed
-    tags:
-    - deploy-and-test-xena-worker
     params:
       repository: capi-release
 
@@ -671,39 +631,23 @@ jobs:
   plan:
   - aggregate:
     - get: cf-release-final
-      tags:
-      - migrations-worker
       params:
         tarball: true
     - get: cf-release
-      tags:
-      - migrations-worker
       resource: cf-release-master
     - get: capi-ci
-      tags:
-      - migrations-worker
     - get: capi-ci-private
-      tags:
-      - migrations-worker
     - get: aws-stemcell
-      tags:
-      - migrations-worker
     - get: cloud_controller_ng
-      tags:
-      - migrations-worker
       resource: cloud_controller_ng-master-migrations
       trigger: true
   - task: manifest
-    tags:
-    - migrations-worker
     privileged: true
     file: capi-ci/ci/scripts/create_cf_deployment_manifest.yml
     params:
       INFRASTRUCTURE: aws
       ENVIRONMENT: wasabi
   - task: delete-wasabi-deployment
-    tags:
-    - migrations-worker
     privileged: true
     file: capi-ci/ci/scripts/run_bosh_command.yml
     input_mapping: {manifest: generated-manifest}
@@ -712,15 +656,11 @@ jobs:
       DEPLOYMENT_YML: manifest/deployment.yml
       COMMAND: 'delete deployment cf-wasabi'
   - put: cf-wasabi-deployment
-    tags:
-    - migrations-worker
     params:
       manifest: generated-manifest/deployment.yml
       stemcells: [aws-stemcell/*.tgz]
       releases: [ cf-release-final/release.tgz]
   - task: smoke-tests
-    tags:
-    - migrations-worker
     privileged: true
     file: capi-ci/ci/scripts/run_bosh_command.yml
     input_mapping: {manifest: generated-manifest}
@@ -729,8 +669,6 @@ jobs:
       DEPLOYMENT_YML: manifest/deployment.yml
       COMMAND: 'run errand smoke_tests --keep-alive'
   - task: apply-migrations
-    tags:
-    - migrations-worker
     privileged: true
     file: capi-ci/ci/scripts/apply_cc_migrations.yml
     params:
@@ -739,8 +677,6 @@ jobs:
       DB_HOST: 10.0.32.30
       TUNNEL_HOST: 52.0.73.109
   - task: acceptance-tests
-    tags:
-    - migrations-worker
     privileged: true
     file: capi-ci/ci/scripts/run_bosh_command.yml
     input_mapping: {manifest: generated-manifest}
