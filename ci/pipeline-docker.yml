@@ -5,6 +5,7 @@ groups:
   - ruby-units-docker
   - go-units-docker
   - bosh-init-docker
+  - bosh-lite-docker
 
 resources:
 - name: weekly
@@ -74,6 +75,21 @@ resources:
     password: {{dockerhub_pass}}
     email: {{dockerhub_email}}
 
+- name: capi-dockerfiles-bosh-lite
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/capi-dockerfiles.git
+    paths: [bosh-lite/Dockerfile]
+- name: docker-image-bosh-lite
+  type: docker-image
+  source:
+    repository: cloudfoundry/capi
+    tag: bosh-lite
+    username: {{dockerhub_user}}
+    password: {{dockerhub_pass}}
+    email: {{dockerhub_email}}
+
 jobs:
 - name: rc-docs-docker
   serial: true
@@ -115,3 +131,13 @@ jobs:
   - put: docker-image-bosh-init
     params:
       build: capi-dockerfiles-bosh-init/bosh-init
+- name: bosh-lite-docker
+  serial: true
+  plan:
+  - aggregate:
+    - get: weekly
+      trigger: true
+    - get: capi-dockerfiles-bosh-lite
+  - put: docker-image-bosh-lite
+    params:
+      build: capi-dockerfiles-bosh-lite/bosh-lite
