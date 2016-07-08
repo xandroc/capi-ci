@@ -12,6 +12,7 @@ groups:
 - name: great-migration
   jobs:
   - cc-unit-tests-with-migrations
+  - app-availability-during-migration
 - name: dependencies-docs
   jobs:
   - check-cc-dependencies
@@ -351,6 +352,22 @@ jobs:
         params:
           text: '[cc-unit-tests-with-migrations] OH NO! Failed when running with postgres'
           icon_emoji: {{slack_failure_emoji}}
+
+- name: app-availability-during-migration
+  plan:
+  - aggregate:
+    - get: cloud_controller_ng
+  - task: provision-bosh-lite
+    file: capi-ci/scripts/ci/provision_bosh_lite.yml
+    params:
+      AWS_ACCESS_KEY_ID: {{buffy_access_key}}
+      AWS_SECRET_ACCESS_KEY: {{buffy_secret_key}}
+      AWS_DEFAULT_REGION: {{buffy_aws_default_region}}
+      AWS_SECURITY_GROUP_TAG: {{buffy_security_group_tag}}
+      AWS_SUBNET_NAME: {{buffy_subnet_name}}
+      BOSH_LITE_ELASTIC_IP: {{buffy_elastic_ip}}
+      BOSH_LITE_KEYPAIR: {{buffy_keypair_name}}
+      SSH_KEY: {{buffy_private_key}}
 
 - name: check-cc-dependencies
   serial: true

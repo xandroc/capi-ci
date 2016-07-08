@@ -1,0 +1,33 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: cloudfoundry/capi
+    tag: bosh-lite
+
+inputs:
+- name: capi-ci
+- name: bosh-lite
+
+outputs:
+- name: deployments
+- name: bosh-lite-creds
+
+run:
+  path: capi-ci/ci/scripts/provision_bosh_lite
+
+params:
+  BOSH_LITE_NAME: bosh-lite-ci
+  BOSH_LITE_SECURITY_GROUP:
+  BOSH_LITE_PRIVATE_IP:
+  BOSH_LITE_ELASTIC_IP:
+  AWS_ACCESS_KEY_ID:
+  AWS_SECRET_ACCESS_KEY:
+  AWS_DEFAULT_REGION:
+  AWS_SECURITY_GROUP_TAG:
+  AWS_SUBNET_NAME:
+  BOSH_LITE_KEYPAIR:
+  SSH_KEY:
+
