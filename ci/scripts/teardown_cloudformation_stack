@@ -44,7 +44,8 @@ function wait_for_stack() {
     fi
 
     if echo "${status}" | grep -q "does not exist"; then
-      echo "\nSuccessfully deleted stack"
+      echo
+      echo "Successfully deleted stack"
       exit 0
     fi
 
