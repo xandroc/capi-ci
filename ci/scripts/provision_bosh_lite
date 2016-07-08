@@ -56,6 +56,8 @@ properties:
 
 EOF
 
+  echo "${BOSH_LITE_ELASTIC_IP}" > ../deployments/target
+
   echo "admin" > ../bosh-lite-creds/username
   echo "admin" > ../bosh-lite-creds/password
   popd
