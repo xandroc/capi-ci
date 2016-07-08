@@ -11,10 +11,10 @@ inputs:
 - name: capi-ci
 
 run:
-  path: capi-ci/ci/scripts/teardown_cloudformation_stack
+  path: capi-ci/ci/scripts/deprovision_bosh_lite
 
 params:
   AWS_DEFAULT_REGION: us-east-1
   AWS_ACCESS_KEY_ID:
   AWS_SECRET_ACCESS_KEY:
-  STACK_NAME:
+  BOSH_LITE_NAME:
