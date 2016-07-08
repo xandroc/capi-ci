@@ -82,6 +82,12 @@ resources:
   source:
     repository: cloudfoundry-incubator/bosh-aws-cpi-release
 
+- name: bosh-lite
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/bosh-lite.git
+
 - name: capi-checkman
   type: git
   source:
@@ -356,9 +362,10 @@ jobs:
 - name: app-availability-during-migration
   plan:
   - aggregate:
-    - get: cloud_controller_ng
+    - get: capi-ci
+    - get: bosh-lite
   - task: provision-bosh-lite
-    file: capi-ci/scripts/ci/provision_bosh_lite.yml
+    file: capi-ci/ci/scripts/provision_bosh_lite.yml
     params:
       AWS_ACCESS_KEY_ID: {{buffy_access_key}}
       AWS_SECRET_ACCESS_KEY: {{buffy_secret_key}}
