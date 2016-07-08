@@ -364,15 +364,22 @@ jobs:
   - aggregate:
     - get: capi-ci
     - get: bosh-lite
+  - task: create-cloudformation
+    file: capi-ci/ci/scripts/create_cloudformation_stack.yml
+    params:
+      AWS_ACCESS_KEY_ID: {{buffy_access_key}}
+      AWS_SECRET_ACCESS_KEY: {{buffy_secret_key}}
+      STACK_NAME: buffy-stack
+      CLOUDFORMATION_PATH: capi-ci/buffy/cloudformation.json
   - task: provision-bosh-lite
     file: capi-ci/ci/scripts/provision_bosh_lite.yml
     params:
+      BOSH_LITE_NAME: buffy-bosh-lite
       AWS_ACCESS_KEY_ID: {{buffy_access_key}}
       AWS_SECRET_ACCESS_KEY: {{buffy_secret_key}}
       AWS_DEFAULT_REGION: {{buffy_aws_default_region}}
       AWS_SECURITY_GROUP_TAG: {{buffy_security_group_tag}}
       AWS_SUBNET_NAME: {{buffy_subnet_name}}
-      BOSH_LITE_ELASTIC_IP: {{buffy_elastic_ip}}
       BOSH_LITE_KEYPAIR: {{buffy_keypair_name}}
       SSH_KEY: {{buffy_private_key}}
 

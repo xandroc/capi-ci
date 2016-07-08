@@ -1,0 +1,21 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: cloudfoundry/capi
+    tag: bosh-lite
+
+inputs:
+- name: capi-ci
+
+run:
+  path: capi-ci/ci/scripts/create_cloudformation_stack
+
+params:
+  AWS_DEFAULT_REGION: us-east-1
+  AWS_ACCESS_KEY_ID:
+  AWS_SECRET_ACCESS_KEY:
+  STACK_NAME:
+  CLOUDFORMATION_PATH:

@@ -18,14 +18,14 @@ setup_env() {
   export BOSH_LITE_SECURITY_GROUP
   BOSH_LITE_SECURITY_GROUP=$(aws ec2 describe-security-groups --filters Name=tag-value,Values=${AWS_SECURITY_GROUP_TAG} | jq -r '.SecurityGroups[0].GroupId')
 
+  export BOSH_LITE_ELASTIC_IP
+  BOSH_LITE_ELASTIC_IP=$(aws ec2 describe-addresses --filters 'Name=domain,Values=vpc' | jq -r 'select(.Addresses[].InstanceId == null).Addresses[].PublicIp' | head -1)
+
   export BOSH_LITE_PRIVATE_KEY=/tmp/bosh_lite_key
 }
 
 provision_bosh_lite() {
   pushd bosh-lite
-
-  if [[ -z "$BOSH_LITE_ELASTIC_IP" ]]; then unset BOSH_LITE_ELASTIC_IP; fi
-  if [[ -z "$BOSH_LITE_PRIVATE_IP" ]]; then unset BOSH_LITE_PRIVATE_IP; fi
 
   BOSH_LITE_INSTANCE_TYPE="m3.2xlarge" vagrant up --provider=aws
   BOSH_LITE_IP="$(vagrant ssh-config 2>/dev/null | grep HostName | awk '{print $2}')"
