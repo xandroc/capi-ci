@@ -11,7 +11,7 @@ function setup_env() {
 function find_instance_id() {
   declare instance_name=$1
 
-  aws ec2 describe-instances --filters "Name=tag:Name,Values=${instance_name}" \
+  aws ec2 describe-instances --filters "Name=tag:Name,Values=${instance_name}" 'Name=instance-state-name,Values=running' \
       --output text --query 'Reservations[*].Instances[*].InstanceId' \
       | tr -d "\n"
 }
@@ -32,6 +32,12 @@ function main() {
   setup_env
 
   local instance_id="$(find_instance_id "${BOSH_LITE_NAME}")"
+
+  if [ -z ${instance_id} ]; then
+    echo "No instance found"
+    exit 0
+  fi
+
   deprovision_bosh_lite "${instance_id}"
   wait_for_deprovisioning "${instance_id}"
 }
