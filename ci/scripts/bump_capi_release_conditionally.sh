@@ -80,7 +80,7 @@ if [[ $PASSED_UNIT_TESTS_SHA == $PASSED_DB_MIGRATIONS_SHA ]]; then
       git config user.email "cf-capi-eng+ci@pivotal.io"
 
       git add src/cloud_controller_ng
-      git add src/github.com/cloudfoundry-incubator
+      git add src/code.cloudfoundry.org
 
       scripts/staged_shortlog
       scripts/staged_shortlog | git commit -F -
