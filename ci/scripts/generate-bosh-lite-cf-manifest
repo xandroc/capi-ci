@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+set -exu
+
+function generate_manifest() {
+  declare infrastructure=$1 stub=$2 generated_manifest=$3
+
+  tee "${generated_manifest}" cf-release/scripts/generate_deployment_manifest \
+    "${infrastructure}" \
+    "${stub}"
+}
+
+function main() {
+  generate_manifest "${INFRASTRUCTURE}" "${STUBS_PATH}" "generated-manifests/cf-deployment.yml"
+}
+
+main
