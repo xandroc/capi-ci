@@ -1,0 +1,18 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "Buffy hosted zones",
+  "Resources": {
+    "BuffyHostedZone": {
+      "Type": "AWS::Route53::HostedZone",
+      "Properties": {
+        "Name": "buffy.cf-app.com."
+      }
+    },
+    "BuffyAppHostedZone": {
+      "Type": "AWS::Route53::HostedZone",
+      "Properties": {
+        "Name": "buffy-app.cf-app.com."
+      }
+    }
+  }
+}
