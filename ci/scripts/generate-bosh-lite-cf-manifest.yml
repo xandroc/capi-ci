@@ -5,7 +5,7 @@ image_resource:
   type: docker-image
   source:
     repository: cloudfoundry/capi
-    tag: bosh-lite
+    tag: spiff
 
 inputs:
 - name: capi-ci
