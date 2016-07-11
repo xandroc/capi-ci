@@ -5,13 +5,13 @@
     "BuffyHostedZone": {
       "Type": "AWS::Route53::HostedZone",
       "Properties": {
-        "Name": "buffy.cf-app.com."
+        "Name": "buffy.capi.cf-app.com."
       }
     },
     "BuffyAppHostedZone": {
       "Type": "AWS::Route53::HostedZone",
       "Properties": {
-        "Name": "buffy-app.cf-app.com."
+        "Name": "buffy-apps.capi.cf-app.com."
       }
     }
   }
