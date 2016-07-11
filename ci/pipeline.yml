@@ -28,6 +28,7 @@ groups:
   - clean-all-the-boshes
   - freshen-wasabi
   - freshen-xena
+  - configure-buffy-networking
 - name: crash-override
   jobs:
   - MANUALLY-bump-cf-release
@@ -424,6 +425,44 @@ jobs:
     file: capi-ci/ci/scripts/cloud_controller_ng_dependencies.yml
     params:
       GEMNASIUM_API_KEY: {{gemnasium_api_key}}
+
+- name: configure-buffy-networking
+  plan:
+  - aggregate:
+    - get: capi-ci
+  - task: delete-cloudformation
+    file: capi-ci/ci/scripts/teardown_cloudformation_stack.yml
+    params:
+      AWS_DEFAULT_REGION: {{buffy_aws_default_region}}
+      AWS_ACCESS_KEY_ID: {{buffy_access_key}}
+      AWS_SECRET_ACCESS_KEY: {{buffy_secret_key}}
+      STACK_NAME: buffy-hosted-zones
+  - task: create-cloudformation
+    file: capi-ci/ci/scripts/create_cloudformation_stack.yml
+    params:
+      AWS_DEFAULT_REGION: {{buffy_aws_default_region}}
+      AWS_ACCESS_KEY_ID: {{buffy_access_key}}
+      AWS_SECRET_ACCESS_KEY: {{buffy_secret_key}}
+      STACK_NAME: buffy-hosted-zones
+      CLOUDFORMATION_PATH: capi-ci/buffy/cloudformation-hosted-zones.json
+  - task: delegate-buffy-dns
+    file: capi-ci/ci/scripts/configure_route53_zone_delegation.yml
+    params:
+      DELEGATION_ZONE: capi.cf-app.com.
+      DELEGATION_ACCESS_KEY_ID: {{wasabi_route53_access_key}}
+      DELEGATION_SECRET_ACCESS_KEY: {{wasabi_route53_secret_key}}
+      ZONE_ACCESS_KEY_ID: {{buffy_access_key}}
+      ZONE_SECRET_ACCESS_KEY: {{buffy_secret_key}}
+      ZONE: "buffy.capi.cf-app.com"
+  - task: delegate-buffy-apps-dns
+    file: capi-ci/ci/scripts/configure_route53_zone_delegation.yml
+    params:
+      DELEGATION_ZONE: capi.cf-app.com.
+      DELEGATION_ACCESS_KEY_ID: {{wasabi_route53_access_key}}
+      DELEGATION_SECRET_ACCESS_KEY: {{wasabi_route53_secret_key}}
+      ZONE_ACCESS_KEY_ID: {{buffy_access_key}}
+      ZONE_SECRET_ACCESS_KEY: {{buffy_secret_key}}
+      ZONE: "buffy-apps.capi.cf-app.com"
 
 - name: cc-unit-tests
   plan:
