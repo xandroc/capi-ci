@@ -30,7 +30,6 @@ function hosted_zone_id_from_name() {
   aws route53 list-hosted-zones-by-name --dns-name "${zone}" | jq -r '.HostedZones[0].Id' | cut -d'/' -f3
 }
 
-
 function configure_route53() {
   declare domain=$1 zone_id=$2 ip=$3
 
@@ -51,27 +50,55 @@ function configure_route53() {
     }
   ]
 }
-JSON)
+JSON
+)
 
   aws route53 change-resource-record-sets \
     --hosted-zone-id "${zone_id}" \
     --change-batch "${json}"
 }
 
+function bosh_lite_director_uuid() {
+  declare domain=$1
+
+  curl -sk https://bosh.${domain}:25555/info | jq -r '.uuid'
+}
+
+function bosh_lite_ip() {
+  declare domain=$1
+
+  dig +short "bosh.${domain}"
+}
+
+function bosh_lite_provisioned() {
+  declare bosh_target=$1 status
+  set +ex
+  curl -sk https://bosh.${bosh_target}:25555/info 2>/dev/null
+  status=$?
+  set -ex
+
+  return ${status}
+}
+
 function provision_bosh_lite() {
   pushd bosh-lite
 
-  BOSH_LITE_INSTANCE_TYPE="m3.2xlarge" vagrant up --provider=aws
-  BOSH_LITE_IP="$(vagrant ssh-config 2>/dev/null | grep HostName | awk '{print $2}')"
+    BOSH_LITE_INSTANCE_TYPE="m3.2xlarge" vagrant up --provider=aws
+    BOSH_LITE_IP="$(vagrant ssh-config 2>/dev/null | grep HostName | awk '{print $2}')"
 
-  sleep_time=80
-  echo "sleeping ${sleep_time} seconds to allow bosh-director to come online"
-  sleep "${sleep_time}"
+    sleep_time=80
+    echo "sleeping ${sleep_time} seconds to allow bosh-director to come online"
+    sleep "${sleep_time}"
 
-  bosh -t "${BOSH_LITE_IP}" login admin admin
-  DIRECTOR_UUID=$(bosh -t "${BOSH_LITE_IP}" status --uuid)
-  cat << EOF > ../deployments/stub.yml
-director_uuid: $DIRECTOR_UUID
+    bosh -t "${BOSH_LITE_IP}" login admin admin
+  popd
+}
+
+function write_deployment_files() {
+  declare director_uuid=$1 bosh_ip=$2
+
+    cat << EOF > deployments/stub.yml
+director_uuid: ${director_uuid}
 properties:
   system_domain: ${SYSTEM_DOMAIN}
   apps_domain: ${APP_DOMAIN}
@@ -88,29 +115,36 @@ properties:
       - name: load_balancer
         rules:
         - protocol: all
-          destination: ${BOSH_LITE_IP}
+          destination: ${bosh_ip}
 
 EOF
 
-  echo "${BOSH_LITE_ELASTIC_IP}" > ../deployments/target
+  echo "${bosh_ip}" > deployments/target
 
-  echo "admin" > ../bosh-lite-creds/username
-  echo "admin" > ../bosh-lite-creds/password
-  popd
+  echo "admin" > bosh-lite-creds/username
+  echo "admin" > bosh-lite-creds/password
 }
 
 function main() {
-  declare system_zone_id app_zone_id
+  declare system_zone_id app_zone_id director_uuid
 
-  setup_env
+  if bosh_lite_provisioned "${SYSTEM_DOMAIN}"; then
+    director_uuid="$(bosh_lite_director_uuid "${SYSTEM_DOMAIN}")"
+    bosh_ip="$(bosh_lite_ip "${SYSTEM_DOMAIN}")"
+    write_deployment_files ${director_uuid} ${bosh_ip}
+  else
+    setup_env
 
-  system_zone_id="$(hosted_zone_id_from_name "${SYSTEM_DOMAIN}")"
-  configure_route53 "${SYSTEM_DOMAIN}" "${system_zone_id}" "${BOSH_LITE_ELASTIC_IP}"
+    system_zone_id="$(hosted_zone_id_from_name "${SYSTEM_DOMAIN}")"
+    configure_route53 "${SYSTEM_DOMAIN}" "${system_zone_id}" "${BOSH_LITE_ELASTIC_IP}"
 
-  app_zone_id="$(hosted_zone_id_from_name "${APP_DOMAIN}")"
-  configure_route53 "${APP_DOMAIN}" "${app_zone_id}" "${BOSH_LITE_ELASTIC_IP}"
+    app_zone_id="$(hosted_zone_id_from_name "${APP_DOMAIN}")"
+    configure_route53 "${APP_DOMAIN}" "${app_zone_id}" "${BOSH_LITE_ELASTIC_IP}"
 
-  provision_bosh_lite
+    provision_bosh_lite
+    director_uuid="$(bosh_lite_director_uuid "${SYSTEM_DOMAIN}")"
+    write_deployment_files "${director_uuid}" "${BOSH_LITE_ELASTIC_IP}"
+  fi
 }
 
 main
