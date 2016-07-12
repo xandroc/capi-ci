@@ -89,6 +89,27 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/bosh-lite.git
 
+- name: bosh-lite-cf-deployment
+  type: bosh-deployment
+  source:
+    username: admin
+    password: admin
+    deployment: cf-warden
+    ignore_ssl: true
+
+- name: bosh-lite-diego-deployment
+  type: bosh-deployment
+  source:
+    username: admin
+    password: admin
+    deployment: cf-warden-diego
+    ignore_ssl: true
+
+- name: bosh-lite-stemcell
+  type: bosh-io-stemcell
+  source:
+    name: bosh-warden-boshlite-ubuntu-trusty-go_agent
+
 - name: capi-checkman
   type: git
   source:
@@ -363,8 +384,19 @@ jobs:
 - name: app-availability-during-migration
   plan:
   - aggregate:
-    - get: capi-ci
     - get: bosh-lite
+    - get: bosh-lite-stemcell
+    - get: capi-ci
+    - get: capi-release-tarball
+      passed: [create-capi-release]
+    - get: cf-release
+      resource: cf-release-develop
+    - get: cf-release-tarball
+    - get: cflinuxfs2-rootfs-tarball
+    - get: diego-release
+    - get: diego-release-tarball
+    - get: etcd-release-tarball
+    - get: garden-linux-release-tarball
   - task: ensure-bosh-lite-terminated
     file: capi-ci/ci/scripts/deprovision_bosh_lite.yml
     params:
@@ -390,6 +422,7 @@ jobs:
   - task: provision-bosh-lite
     file: capi-ci/ci/scripts/provision_bosh_lite.yml
     params:
+      BOSH_LITE_INSTANCE_TYPE: m4.4xlarge
       BOSH_LITE_NAME: buffy-bosh-lite
       AWS_ACCESS_KEY_ID: {{buffy_access_key}}
       AWS_SECRET_ACCESS_KEY: {{buffy_secret_key}}
@@ -398,6 +431,34 @@ jobs:
       AWS_SUBNET_NAME: {{buffy_subnet_name}}
       BOSH_LITE_KEYPAIR: {{buffy_keypair_name}}
       SSH_KEY: {{buffy_private_key}}
+      APP_DOMAIN: buffy-apps.capi.cf-app.com
+      SYSTEM_DOMAIN: buffy.capi.cf-app.com
+  - task: generate-bosh-lite-cf-manifest
+    file: capi-ci/ci/scripts/generate-bosh-lite-cf-manifest.yml
+    params:
+      ENVIRONMENT_STUB: capi-ci/buffy/stubs/cf/cf-stub.yml
+      STUBS_PATH: deployments/stub.yml
+  - put: bosh-lite-cf-deployment
+    params:
+      target_file: deployments/target
+      manifest: generated-manifests/cf-deployment.yml
+      stemcells:
+        - bosh-lite-stemcell/*.tgz
+      releases:
+        - cf-release-tarball/*.tgz
+        - capi-release-tarball/*.tgz
+  - put: bosh-lite-diego-deployment
+    params:
+      target_file: deployments/target
+      manifest: generated-manifests/diego-deployment.yml
+      stemcells:
+        - bosh-lite-stemcell/*.tgz
+      releases:
+        - capi-release-tarball/*.tgz
+        - diego-release-tarball/*.tgz
+        - garden-linux-release-tarball/*.tgz
+        - etcd-release-tarball/*.tgz
+        - cflinuxfs2-rootfs-tarball/*.tgz
   - task: deprovision-bosh-lite
     file: capi-ci/ci/scripts/deprovision_bosh_lite.yml
     params:
