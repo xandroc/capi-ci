@@ -19,6 +19,7 @@ run:
   path: capi-ci/ci/scripts/provision_bosh_lite
 
 params:
+  BOSH_LITE_INSTANCE_TYPE: m3.2xlarge
   BOSH_LITE_NAME: bosh-lite-ci
   BOSH_LITE_SECURITY_GROUP:
   AWS_ACCESS_KEY_ID:
