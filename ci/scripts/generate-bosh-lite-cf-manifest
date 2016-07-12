@@ -12,7 +12,7 @@ function generate_cf_manifest() {
 }
 
 function generate_diego_manifest() {
-  declare cf_manifest=$2 generated_manifest=$3
+  declare cf_manifest=$1 generated_manifest=$2
 
   pushd diego-release >/dev/null
     ./scripts/generate-deployment-manifest \
