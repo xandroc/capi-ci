@@ -2,7 +2,7 @@
 
 set -exu
 
-setup_env() {
+function setup_env() {
   set +x
   export AWS_ACCESS_KEY_ID
   export AWS_SECRET_ACCESS_KEY
@@ -24,7 +24,41 @@ setup_env() {
   export BOSH_LITE_PRIVATE_KEY=/tmp/bosh_lite_key
 }
 
-provision_bosh_lite() {
+function hosted_zone_id_from_name() {
+  declare zone=$1
+
+  aws route53 list-hosted-zones-by-name --dns-name "${zone}" | jq -r '.HostedZones[0].Id' | cut -d'/' -f3
+}
+
+
+function configure_route53() {
+  declare system_domain=$1 zone_id=$2 ip=$3
+
+  json=$(cat <<JSON
+{
+  "Comment": "Update name server records",
+  "Changes": [
+    {
+      "Action": "UPSERT",
+      "ResourceRecordSet": {
+        "Name":"*.${SYSTEM_DOMAIN}",
+        "Type":"A",
+        "TTL": 60,
+        "ResourceRecords": [
+          {"Value":"${BOSH_LITE_ELASTIC_IP}"}
+        ]
+      }
+    }
+  ]
+}
+JSON)
+
+  aws route53 change-resource-record-sets \
+    --hosted-zone-id "${zone_id}" \
+    --change-batch "${json}"
+}
+
+function provision_bosh_lite() {
   pushd bosh-lite
 
   BOSH_LITE_INSTANCE_TYPE="m3.2xlarge" vagrant up --provider=aws
@@ -39,6 +73,8 @@ provision_bosh_lite() {
   cat << EOF > ../deployments/stub.yml
 director_uuid: $DIRECTOR_UUID
 properties:
+  system_domain: ${SYSTEM_DOMAIN}
+  apps_domain: ${APP_DOMAIN}
   acceptance_tests:
     nodes: 1
     include_sso: true
@@ -63,8 +99,17 @@ EOF
   popd
 }
 
-main() {
+function main() {
+  declare system_zone_id app_zone_id
+
   setup_env
+
+  system_zone_id="$(hosted_zone_id_from_name "${SYSTEM_DOMAIN}")"
+  configure_route53 "${SYSTEM_DOMAIN}" "${system_zone_id}" "${BOSH_LITE_ELASTIC_IP}"
+
+  app_zone_id="$(hosted_zone_id_from_name "${APP_DOMAIN}")"
+  configure_route53 "${APP_DOMAIN}" "${app_zone_id}" "${BOSH_LITE_ELASTIC_IP}"
+
   provision_bosh_lite
 }
 
