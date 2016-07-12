@@ -16,7 +16,7 @@ function generate_diego_manifest() {
 
   pushd diego-release >/dev/null
     ./scripts/generate-deployment-manifest \
-                              -c "${cf_manifest}" \
+                              -c "../${cf_manifest}" \
                               -i manifest-generation/bosh-lite-stubs/iaas-settings.yml \
                               -p manifest-generation/bosh-lite-stubs/property-overrides.yml \
                               -n manifest-generation/bosh-lite-stubs/instance-count-overrides.yml \
