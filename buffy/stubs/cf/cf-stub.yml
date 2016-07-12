@@ -1,0 +1,10 @@
+---
+meta:
+  capi_release:
+      name: capi
+
+releases:
+- name: cf
+  version: latest
+- name: capi
+  version: latest

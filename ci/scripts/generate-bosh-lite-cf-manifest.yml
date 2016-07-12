@@ -10,6 +10,7 @@ image_resource:
 inputs:
 - name: capi-ci
 - name: cf-release
+- name: diego-release
 - name: deployments
 
 outputs:
@@ -19,5 +20,5 @@ run:
   path: capi-ci/ci/scripts/generate-bosh-lite-cf-manifest
 
 params:
-  INFRASTRUCTURE:
+  ENVIRONMENT_STUB:
   STUBS_PATH:
