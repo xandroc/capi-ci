@@ -15,6 +15,18 @@ function create_stack() {
     --template-body "$(cat "${cf_path}")"
 }
 
+function exit_if_stack_exists() {
+  declare stack_name=$1
+
+  set +ex
+  aws cloudformation describe-stacks --stack-name "${stack_name}" 2>/dev/null
+  if [ $? -eq 0 ]; then
+    echo "Stack ${stack_name} already exists, bailing out"
+    exit 0
+  fi
+  set -ex
+}
+
 function wait_for_stack() {
   declare stack_name=$1 timeout=$2
 
@@ -43,6 +55,7 @@ function main() {
   local stack_id
 
   setup_env
+  exit_if_stack_exists "${STACK_NAME}"
   create_stack "${STACK_NAME}" "${CLOUDFORMATION_PATH}"
   wait_for_stack "${STACK_NAME}" 120
 }
