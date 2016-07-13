@@ -1,0 +1,22 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: cloudfoundry/capi
+    tag: runtime-ci
+
+inputs:
+  - name: cf-release
+  - name: capi-ci
+  - name: deployments
+  - name: bosh-lite-creds
+
+run:
+  path: capi-ci/ci/scripts/app_availability_test.sh
+
+params:
+  APP_DOMAIN:
+  API_DOMAIN:
+  CLOUD_CONTROLLER_BRANCH:
