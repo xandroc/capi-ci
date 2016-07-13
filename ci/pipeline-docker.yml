@@ -22,6 +22,7 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/capi-dockerfiles.git
     paths: [rc-docs/Dockerfile]
+
 - name: docker-image-rc-docs
   type: docker-image
   source:
@@ -52,6 +53,7 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/capi-dockerfiles.git
     paths: [capi-go-units/Dockerfile]
+
 - name: docker-image-go-units
   type: docker-image
   source:
@@ -67,6 +69,7 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/capi-dockerfiles.git
     paths: [bosh-init/Dockerfile]
+
 - name: docker-image-bosh-init
   type: docker-image
   source:
@@ -82,6 +85,7 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/capi-dockerfiles.git
     paths: [bosh-lite/Dockerfile]
+
 - name: docker-image-bosh-lite
   type: docker-image
   source:
@@ -97,6 +101,7 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/capi-dockerfiles.git
     paths: [spiff/Dockerfile]
+
 - name: docker-image-spiff
   type: docker-image
   source:
