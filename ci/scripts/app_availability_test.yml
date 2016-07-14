@@ -14,6 +14,7 @@ inputs:
   - name: cloud_controller_ng
   - name: deployments
   - name: bosh-lite-creds
+  - name: generated-manifests
 
 run:
   path: capi-ci/ci/scripts/app_availability_test.sh

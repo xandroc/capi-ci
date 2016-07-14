@@ -53,7 +53,7 @@ function deploy_migrate_and_kill() {
       exit $EXIT_STATUS
     fi
 
-    bosh -n deploy
+    bosh -d generated-manifests/cf-deployment.yml -n deploy
     if [ ! "$EXIT_STATUS" = "0" ]; then
       echo "Failed to deploy cf release"
       kill -TERM "${polling_pid}"
