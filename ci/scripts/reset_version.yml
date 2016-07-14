@@ -11,5 +11,8 @@ inputs:
   - name: capi-ci
   - name: version
 
+outputs:
+  - name: updated-version
+
 run:
   path: capi-ci/ci/scripts/reset_version

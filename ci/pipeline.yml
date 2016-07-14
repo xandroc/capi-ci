@@ -1079,4 +1079,4 @@ jobs:
     file: capi-ci/ci/scripts/reset_version.yml
   - put: capi-release-version
     params:
-      file: version/version
+      file: updated-version/version
