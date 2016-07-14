@@ -1075,7 +1075,7 @@ jobs:
   - get: version
     resource: capi-release-version
   - task: set-version
-    file: capi-ci/scripts/reset_version.yml
+    file: capi-ci/ci/scripts/reset_version.yml
   - put: capi-release-version
     params:
       file: version/version
