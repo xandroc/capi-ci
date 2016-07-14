@@ -42,7 +42,7 @@ function migrate_and_kill() {
     ssh -Af \
       -o StrictHostKeyChecking=no \
       -o ExitOnForwardFailure=yes \
-      -l vcap \
+      -l ubuntu \
       ${TUNNEL_HOST} -L 9000:localhost:9000 \
         ssh -Af \
         -o UserKnownHostsFile=/dev/null \
