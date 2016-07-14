@@ -215,12 +215,19 @@ resources:
     private_key: {{private_key}}
     uri: git@github.com:cloudfoundry/cloud_controller_ng.git
 
-- name: cloud_controller_ng_migrate
+- name: cloud_controller_ng-migrate
   type: git
   source:
-    branch: "migrate"
+    branch: migrate
     private_key: {{private_key}}
     uri: git@github.com:cloudfoundry/cloud_controller_ng.git
+
+- name: cloud_controller_ng-migrate-migrations
+  type: git
+  source:
+    branch: migrate
+    uri: https://github.com/cloudfoundry/cloud_controller_ng.git
+    paths: ['db']
 
 - name: cloud_controller_ng-master-migrations
   type: git
@@ -358,7 +365,7 @@ jobs:
   plan:
   - aggregate:
     - get: cloud_controller_ng
-      resource: cloud_controller_ng_migrate
+      resource: cloud_controller-ng_migrate
       trigger: true
     - get: capi-ci
   - aggregate:
@@ -392,6 +399,8 @@ jobs:
       passed: [create-capi-release]
     - get: cf-release
       resource: cf-release-develop
+    - get: cloud_controller_ng
+      resource: cloud_controller_ng-migrate-migrations
     - get: cf-release-tarball
     - get: cflinuxfs2-rootfs-tarball
     - get: diego-release

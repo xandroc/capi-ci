@@ -11,6 +11,7 @@ inputs:
   - name: cf-release
   - name: capi-ci
   - name: capi-ci-private
+  - name: cloud_controller_ng
   - name: deployments
   - name: bosh-lite-creds
 

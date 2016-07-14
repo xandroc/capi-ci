@@ -23,35 +23,43 @@ function target_cf() {
   cf auth admin admin
 }
 
-function migrate_and_kill() {
-  declare cloud_controller_branch=$1 tunnel_host=$2 db_host=$3 polling_pid=$4
-
-  key="capi-ci-private/${ENVIRONMENT}/keypair/bosh.pem"
-  chmod 600 ${key}
-  eval `ssh-agent -s`
-  ssh-add ${key}
-
+function deploy_migrate_and_kill() {
+  declare cloud_controller_branch=$1 polling_pid=$2
   bosh_target=$(cat deployments/target)
   bosh_lite_username=$(cat bosh-lite-creds/username)
   bosh_lite_password=$(cat bosh-lite-creds/password)
 
-  pushd cf-release/src/capi-release/src/cloud_controller_ng
-    git checkout "${cloud_controller_branch}"
-    bundle install --without development test
+  mv cloud_controller_ng/db/migrations/* cf-release/src/capi-release/src/cloud_controller_ng/db/migrations/*
 
-    ssh -Af \
-      -o StrictHostKeyChecking=no \
-      -o ExitOnForwardFailure=yes \
-      -l ubuntu \
-      ${TUNNEL_HOST} -L 9000:localhost:9000 \
-        ssh -Af \
-        -o UserKnownHostsFile=/dev/null \
-        -o StrictHostKeyChecking=no \
-        -l ubuntu \
-        ${DB_HOST} -L 9000:localhost:5524 \
-          sleep 60
+  pushd cf-release
+    set +e
 
-    bundle exec rake db:migrate
+    bosh target "${bosh_target}"
+    bosh login "${bosh_lite_username}" "${bosh_lite_password}"
+
+    bosh create release --force
+    EXIT_STATUS=${PIPESTATUS[0]}
+    if [ ! "$EXIT_STATUS" = "0" ]; then
+      echo "Failed to create cf release"
+      kill -TERM "${polling_pid}"
+      exit $EXIT_STATUS
+    fi
+
+    bosh upload release
+    EXIT_STATUS=${PIPESTATUS[0]}
+    if [ ! "$EXIT_STATUS" = "0" ]; then
+      echo "Failed to upload cf release"
+      kill -TERM "${polling_pid}"
+      exit $EXIT_STATUS
+    fi
+
+    bosh -n deploy
+    if [ ! "$EXIT_STATUS" = "0" ]; then
+      echo "Failed to deploy cf release"
+      kill -TERM "${polling_pid}"
+      exit $EXIT_STATUS
+    fi
+    set -e
   popd
 
   # wait for nsync bulker to poll and bbs to potentially kill running app instances
@@ -87,7 +95,7 @@ function main() {
   prepare_cf
   deploy_app
 
-  migrate_and_kill "${CLOUD_CONTROLLER_BRANCH}" "${TUNNEL_HOST}" "${DB_HOST}" $$ &
+  deploy_migrate_and_kill "${CLOUD_CONTROLLER_BRANCH}" $$ &
   poll_app "${APP_DOMAIN}"
 }
 
