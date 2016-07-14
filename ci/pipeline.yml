@@ -481,6 +481,7 @@ jobs:
       TUNNEL_HOST: bosh.buffy.capi.cf-app.com
       DB_HOST: 10.244.0.30
       ENVIRONMENT: buffy
+      CONNECTION_STRING: {{buffy_cc_db_connection_string}}
 #  - task: deprovision-bosh-lite
 #    file: capi-ci/ci/scripts/deprovision_bosh_lite.yml
 #    params:

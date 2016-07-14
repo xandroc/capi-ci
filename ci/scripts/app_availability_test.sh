@@ -28,6 +28,7 @@ function deploy_migrate_and_kill() {
   bosh_target=$(cat deployments/target)
   bosh_lite_username=$(cat bosh-lite-creds/username)
   bosh_lite_password=$(cat bosh-lite-creds/password)
+  export DB_CONNECTION_STRING="${CONNECTION_STRING}"
 
   key="capi-ci-private/${ENVIRONMENT}/keypair/bosh.pem"
   chmod 600 ${key}
@@ -39,16 +40,12 @@ function deploy_migrate_and_kill() {
     bundle install --without development test
 
     ssh -Af \
+      -i "capi-ci-private/${ENVIRONMENT}/keypair/bosh.pem" \
       -o StrictHostKeyChecking=no \
       -o ExitOnForwardFailure=yes \
       -l ubuntu \
       ${TUNNEL_HOST} -L 9000:localhost:9000 \
-        ssh -Af \
-        -o UserKnownHostsFile=/dev/null \
-        -o StrictHostKeyChecking=no \
-        -l vcap \
-        ${DB_HOST} -L 9000:localhost:5524 \
-          sleep 60
+        bash -c "sudo iptables -t nat -A PREROUTING -p tcp -d ${TUNNEL_HOST} --dport 9000 -j DNAT --to ${DB_HOST}:5524 && sleep 60" &
 
     bundle exec rake db:migrate
   popd
