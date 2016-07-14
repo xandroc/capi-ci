@@ -365,7 +365,7 @@ jobs:
   plan:
   - aggregate:
     - get: cloud_controller_ng
-      resource: cloud_controller-ng_migrate
+      resource: cloud_controller_ng-migrate
       trigger: true
     - get: capi-ci
   - aggregate:
