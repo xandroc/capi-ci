@@ -37,7 +37,7 @@ function deploy_migrate_and_kill() {
     bosh target "${bosh_target}"
     bosh login "${bosh_lite_username}" "${bosh_lite_password}"
 
-    bosh create release --force | tee -a cf
+    bosh -n create release --force
     EXIT_STATUS=${PIPESTATUS[0]}
     if [ ! "$EXIT_STATUS" = "0" ]; then
       echo "Failed to create cf release"
