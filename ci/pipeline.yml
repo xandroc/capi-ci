@@ -756,16 +756,16 @@ jobs:
     - get: version
       resource: capi-release-version
       bump: final
-  - put: version
+  - put: capi-release-version
     params:
       file: version/version
   - put: capi-release
     params:
-      repository: cloudfoundry/capi-release
+      repository: capi-release
       only_tag: true
       tag: version/version
       tag_prefix: v
-  - put: version
+  - put: capi-release-version
     params:
       bump: minor
   - task: block
