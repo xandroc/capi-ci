@@ -1072,6 +1072,7 @@ jobs:
 - name: reset-version
   serial: true
   plan:
+  - get: capi-ci
   - get: version
     resource: capi-release-version
   - task: set-version
