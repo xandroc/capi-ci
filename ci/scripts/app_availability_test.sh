@@ -29,40 +29,32 @@ function deploy_migrate_and_kill() {
   bosh_lite_username=$(cat bosh-lite-creds/username)
   bosh_lite_password=$(cat bosh-lite-creds/password)
 
-  mv cloud_controller_ng/db/migrations/* cf-release/src/capi-release/src/cloud_controller_ng/db/migrations
+  key="capi-ci-private/${ENVIRONMENT}/keypair/bosh.pem"
+  chmod 600 ${key}
+  eval `ssh-agent -s`
+  ssh-add ${key}
 
-  pushd cf-release
-    set +e
+  pushd cf-release/src/capi-release/src/cloud_controller_ng
+    git checkout "${cloud_controller_branch}"
+    bundle install --without development test
 
-    bosh target "${bosh_target}"
-    bosh login "${bosh_lite_username}" "${bosh_lite_password}"
+    ssh -Af \
+      -o StrictHostKeyChecking=no \
+      -o ExitOnForwardFailure=yes \
+      -l ubuntu \
+      ${TUNNEL_HOST} -L 9000:localhost:9000 \
+        ssh -Af \
+        -o UserKnownHostsFile=/dev/null \
+        -o StrictHostKeyChecking=no \
+        -l vcap \
+        ${DB_HOST} -L 9000:localhost:5524 \
+          sleep 60
 
-    bosh -n create release --force
-    EXIT_STATUS=${PIPESTATUS[0]}
-    if [ ! "$EXIT_STATUS" = "0" ]; then
-      echo "Failed to create cf release"
-      kill -TERM "${polling_pid}"
-      exit $EXIT_STATUS
-    fi
-
-    bosh upload release
-    if [ ! "$EXIT_STATUS" = "0" ]; then
-      echo "Failed to upload cf release"
-      kill -TERM "${polling_pid}"
-      exit $EXIT_STATUS
-    fi
-
-    bosh -d ../generated-manifests/cf-deployment.yml -n deploy
-    if [ ! "$EXIT_STATUS" = "0" ]; then
-      echo "Failed to deploy cf release"
-      kill -TERM "${polling_pid}"
-      exit $EXIT_STATUS
-    fi
-    set -e
+    bundle exec rake db:migrate
   popd
 
   # wait for nsync bulker to poll and bbs to potentially kill running app instances
-  sleep 180
+  # sleep 180
 
   kill -TERM "${polling_pid}"
   exit $EXIT_STATUS
