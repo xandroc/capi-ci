@@ -1,0 +1,13 @@
+---
+platform: linux
+
+image: docker:///cloudfoundry/capi-pipeline
+
+inputs:
+  - name: version
+
+outputs:
+  - name: version
+
+run:
+  path: capi-ci/ci/scripts/reset_version

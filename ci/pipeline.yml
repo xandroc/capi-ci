@@ -32,6 +32,9 @@ groups:
 - name: crash-override
   jobs:
   - MANUALLY-bump-cf-release
+- name: version-reset
+  jobs:
+  - reset-version
 
 resource_types:
 - name: slack-notification
@@ -1065,3 +1068,14 @@ jobs:
       params:
         repos:
         - capi-release/src/cloud_controller_ng
+
+- name: reset-version
+  serial: true
+  plan:
+  - get: version
+    resource: capi-release-version
+  - task: set-version
+    file: capi-ci/scripts/reset_version.yml
+  - put: capi-release-version
+    params:
+      file: version/version
