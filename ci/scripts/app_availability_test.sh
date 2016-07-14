@@ -46,14 +46,13 @@ function deploy_migrate_and_kill() {
     fi
 
     bosh upload release
-    EXIT_STATUS=${PIPESTATUS[0]}
     if [ ! "$EXIT_STATUS" = "0" ]; then
       echo "Failed to upload cf release"
       kill -TERM "${polling_pid}"
       exit $EXIT_STATUS
     fi
 
-    bosh -d generated-manifests/cf-deployment.yml -n deploy
+    bosh -d ../generated-manifests/cf-deployment.yml -n deploy
     if [ ! "$EXIT_STATUS" = "0" ]; then
       echo "Failed to deploy cf release"
       kill -TERM "${polling_pid}"
@@ -66,6 +65,7 @@ function deploy_migrate_and_kill() {
   sleep 180
 
   kill -TERM "${polling_pid}"
+  exit $EXIT_STATUS
 }
 
 function poll_app() {
