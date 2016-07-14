@@ -47,7 +47,7 @@ function migrate_and_kill() {
         ssh -Af \
         -o UserKnownHostsFile=/dev/null \
         -o StrictHostKeyChecking=no \
-        -l vcap \
+        -l ubuntu \
         ${DB_HOST} -L 9000:localhost:5524 \
           sleep 60
 
