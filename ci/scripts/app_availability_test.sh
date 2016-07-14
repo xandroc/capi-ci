@@ -29,7 +29,7 @@ function deploy_migrate_and_kill() {
   bosh_lite_username=$(cat bosh-lite-creds/username)
   bosh_lite_password=$(cat bosh-lite-creds/password)
 
-  mv cloud_controller_ng/db/migrations/* cf-release/src/capi-release/src/cloud_controller_ng/db/migrations/*
+  mv cloud_controller_ng/db/migrations/* cf-release/src/capi-release/src/cloud_controller_ng/db/migrations
 
   pushd cf-release
     set +e
