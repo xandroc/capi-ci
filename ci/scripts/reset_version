@@ -3,7 +3,7 @@
 set -e -x
 
 function reset_version() {
-  echo "0.0.0" > version/version
+  echo "0.0.0" > version/number
 }
 
 function main() {
