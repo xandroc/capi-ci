@@ -4,6 +4,7 @@ platform: linux
 image: docker:///cloudfoundry/capi-pipeline
 
 inputs:
+  - name: capi-ci
   - name: version
 
 outputs:
