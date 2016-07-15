@@ -44,8 +44,9 @@ function deploy_migrate_and_kill() {
       -o StrictHostKeyChecking=no \
       -o ExitOnForwardFailure=yes \
       -l ubuntu \
-      ${TUNNEL_HOST} -L 9000:localhost:9000 \
-        sudo bash -c "iptables -t nat -A PREROUTING -p tcp -d localhost --dport 9000 -j DNAT --to ${DB_HOST}:5524 && sleep 60" &
+      ${TUNNEL_HOST} \
+        'bash -c "export local_ip=`curl -s http://169.254.169.254/latest/meta-data/local-ipv4` && \
+        sudo iptables -t nat -A PREROUTING -p tcp -d \$local_ip --dport 9000 -j DNAT --to 10.244.0.30:5524"'
 
     bundle exec rake db:migrate
   popd
