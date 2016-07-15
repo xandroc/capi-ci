@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+set -exu
+
+( cd capi-release && git rev-parse HEAD ) > capi-final-release/commitish
+
+VERSION=$(git describe --abbrev=0 --tags)
+
+echo "CAPI v${VERSION}" > capi-final-release-release/name
+echo "v${VERSION}" > capi-final-release/version
+
+cp -R capi-final-release/* generated-release/*

@@ -8,6 +8,7 @@ groups:
   - bump-cf-release
   - migration-backwards-compatibility-test
   - ship-it
+  - push-github-release
   - bump-capi-release
 - name: great-migration
   jobs:
@@ -190,6 +191,14 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry/cf-release
+
+- name: github-release
+  type: github-release
+  source:
+    user: cloudfoundry
+    repository: capi-release
+    drafts: true
+    access_token: {{private_key}}
 
 - name: cf-release-master
   type: git
@@ -798,6 +807,25 @@ jobs:
       run:
         path: echo
         args: ["Way to go, Nick!"]
+
+- name: push-github-release
+  plan:
+  - aggregate:
+    - get: capi-ci
+    - get: capi-release
+      passed: [ship-it]
+      trigger: true
+    - get: capi-final-release
+      passed: [ship-it]
+  - task: generate-github-release
+    file: capi-ci/ci/scripts/generate_github_release.yml
+  - put: github-release
+    params:
+      commitish: generated-release/commitish
+      name: generated-release/name
+      tag: generated-release/version
+      globs:
+      - generated-release/*.tgz
 
 - name: bump-cf-release
   serial: true
