@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+set -exu
+
+FINAL_RELEASE_VERSION=$(cat version/number)
+DEV_RELEASE_TARBALL=$(ls "${PWD}/capi-dev-release/*.tgz")
+
+RELEASE_YML="releases/capi/capi-${FINAL_RELEASE_VERSION}.yml"
+RELEASE_TGZ="releases/capi/capi-${FINAL_RELEASE_VERSION}.tgz"
+
+function copy_private_yml() {
+  cp capi-ci-private/ci/private.yml capi-release/config/private.yml
+}
+
+function create_release() {
+  pushd capi-release
+    bosh -n finalize release "${DEV_RELEASE_TARBALL}" --name capi-release-final --version "${FINAL_RELEASE_VERSION}"
+    mv "${RELEASE_TGZ}" "../finalized-release/capi-${FINAL_RELEASE_VERSION}.tgz"
+  popd
+}
+
+function export_release() {
+  cp -a capi-release finalized-release/
+}
+
+function main() {
+  copy_private_yml
+  create_release
+  export_release
+}
+
+main

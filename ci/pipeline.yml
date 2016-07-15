@@ -81,6 +81,14 @@ resources:
   source:
     repository: cloudfoundry/bosh
 
+- name: capi-final-releases
+  type: s3
+  source:
+    bucket: capi-final-releases
+    regexp: capi-(.*).tgz
+    access_key_id: {{wasabi_s3_access_key}}
+    secret_access_key: {{wasabi_s3_secret_key}}
+
 - name: bosh-aws-cpi
   type: bosh-io-release
   source:
@@ -755,11 +763,20 @@ jobs:
 - name: ship-it
   plan:
   - aggregate:
+    - get: capi-ci
     - get: capi-release
       passed: [deploy-and-test-xena]
     - get: version
       resource: capi-release-version
       bump: final
+    - get: capi-ci-private
+    - get: capi-release-tarball
+      passed: [deploy-and-test-xena]
+  - task: finalize-release
+    file: capi-ci/ci/scripts/finalize-release.yml
+  - put: capi-final-releases
+    params:
+      file: finalized-release/capi-*.tgz
   - put: capi-release-version
     params:
       file: version/version
