@@ -3,7 +3,7 @@
 set -exu
 
 FINAL_RELEASE_VERSION=$(cat version/number)
-DEV_RELEASE_TARBALL=$(ls "${PWD}/capi-dev-release/*.tgz")
+DEV_RELEASE_TARBALL=$(ls "${PWD}/capi-release-tarball/*.tgz")
 
 RELEASE_YML="releases/capi/capi-${FINAL_RELEASE_VERSION}.yml"
 RELEASE_TGZ="releases/capi/capi-${FINAL_RELEASE_VERSION}.tgz"
