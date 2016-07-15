@@ -40,7 +40,7 @@ function deploy_migrate_and_kill() {
       -o ExitOnForwardFailure=yes \
       -l ubuntu \
       ${TUNNEL_HOST} \
-      'bash -c "export local_ip=`curl -s http://169.254.169.254/latest/meta-data/local-ipv4` && sudo iptables -t nat -A PREROUTING -p tcp -d \$local_ip --dport 9000 -j DNAT --to 10.244.0.30:5524"'
+      'bash -c "export local_ip=`curl -s http://169.254.169.254/latest/meta-data/local-ipv4` && sudo iptables -t nat -A PREROUTING -p tcp -d \$local_ip -j DNAT --to 10.244.0.30:5524"'
 
     export DB_CONNECTION_STRING="${CONNECTION_STRING}"
     bundle exec rake db:migrate
