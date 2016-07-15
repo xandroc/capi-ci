@@ -815,7 +815,7 @@ jobs:
     - get: capi-release
       passed: [ship-it]
       trigger: true
-    - get: capi-final-release
+    - get: capi-final-releases
       passed: [ship-it]
   - task: generate-github-release
     file: capi-ci/ci/scripts/generate_github_release.yml
