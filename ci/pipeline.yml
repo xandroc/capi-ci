@@ -435,7 +435,7 @@ jobs:
   - task: provision-bosh-lite
     file: capi-ci/ci/scripts/provision_bosh_lite.yml
     params:
-      BOSH_LITE_INSTANCE_TYPE: m4.4xlarge
+      BOSH_LITE_INSTANCE_TYPE: c3.4xlarge
       BOSH_LITE_NAME: buffy-bosh-lite
       AWS_ACCESS_KEY_ID: {{buffy_access_key}}
       AWS_SECRET_ACCESS_KEY: {{buffy_secret_key}}
