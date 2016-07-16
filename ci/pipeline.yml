@@ -427,20 +427,20 @@ jobs:
     - get: diego-release-tarball
     - get: etcd-release-tarball
     - get: garden-linux-release-tarball
-#  - task: ensure-bosh-lite-terminated
-#    file: capi-ci/ci/scripts/deprovision_bosh_lite.yml
-#    params:
-#      BOSH_LITE_NAME: buffy-bosh-lite
-#      AWS_ACCESS_KEY_ID: {{buffy_access_key}}
-#      AWS_SECRET_ACCESS_KEY: {{buffy_secret_key}}
-#      AWS_DEFAULT_REGION: {{buffy_aws_default_region}}
-#  - task: ensure-cloudformation-terminated
-#    file: capi-ci/ci/scripts/teardown_cloudformation_stack.yml
-#    params:
-#      AWS_DEFAULT_REGION: {{buffy_aws_default_region}}
-#      AWS_ACCESS_KEY_ID: {{buffy_access_key}}
-#      AWS_SECRET_ACCESS_KEY: {{buffy_secret_key}}
-#      STACK_NAME: buffy-stack
+  - task: ensure-bosh-lite-terminated
+    file: capi-ci/ci/scripts/deprovision_bosh_lite.yml
+    params:
+      BOSH_LITE_NAME: buffy-bosh-lite
+      AWS_ACCESS_KEY_ID: {{buffy_access_key}}
+      AWS_SECRET_ACCESS_KEY: {{buffy_secret_key}}
+      AWS_DEFAULT_REGION: {{buffy_aws_default_region}}
+  - task: ensure-cloudformation-terminated
+    file: capi-ci/ci/scripts/teardown_cloudformation_stack.yml
+    params:
+      AWS_DEFAULT_REGION: {{buffy_aws_default_region}}
+      AWS_ACCESS_KEY_ID: {{buffy_access_key}}
+      AWS_SECRET_ACCESS_KEY: {{buffy_secret_key}}
+      STACK_NAME: buffy-stack
   - task: create-cloudformation
     file: capi-ci/ci/scripts/create_cloudformation_stack.yml
     params:

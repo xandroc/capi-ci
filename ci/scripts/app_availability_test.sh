@@ -35,15 +35,16 @@ function deploy_migrate_and_kill() {
     git checkout "${cloud_controller_branch}"
     bundle install --without development test
 
-    ssh -Af \
-      -o StrictHostKeyChecking=no \
+    ssh \
       -o ExitOnForwardFailure=yes \
+      -o StrictHostKeyChecking=no \
+      -L 5432:${DB_HOST}:5524 \
       -l ubuntu \
       ${TUNNEL_HOST} \
-      'bash -c "export local_ip=`curl -s http://169.254.169.254/latest/meta-data/local-ipv4` && sudo iptables -t nat -A PREROUTING -p tcp -d \$local_ip -j DNAT --to 10.244.0.30:5524"'
+      -Nf
 
-    export DB_CONNECTION_STRING="${CONNECTION_STRING}"
-    bundle exec rake db:migrate
+    export DB_CONNECTION_STRING=${CONNECTION_STRING}
+    bundle exec db:migrate
   popd
 
   # wait for nsync bulker to poll and bbs to potentially kill running app instances
