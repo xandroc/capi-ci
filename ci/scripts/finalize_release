@@ -13,6 +13,9 @@ function copy_private_yml() {
 }
 
 function create_release() {
+  source /usr/local/share/chruby/chruby.sh
+  chruby 2.2.4
+
   pushd capi-release
     whoami
     echo $PATH
