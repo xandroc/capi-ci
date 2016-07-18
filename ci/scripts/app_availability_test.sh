@@ -50,6 +50,7 @@ function migrate_and_kill() {
     if [ $? -ne 0 ]; then
       echo "Aborting poller because of migration failure"
       kill -ABRT "${polling_pid}"
+      exit
     fi
   popd
 
