@@ -3,7 +3,7 @@
 set -exu
 
 pushd capi-release
-  (git rev-parse HEAD ) > capi-final-releases/commitish
+  (git rev-parse HEAD ) > ../capi-final-releases/commitish
 
   VERSION=$(git describe --abbrev=0 --tags)
 popd
