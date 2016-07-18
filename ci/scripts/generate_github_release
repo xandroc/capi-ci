@@ -11,4 +11,4 @@ popd
 echo "CAPI v${VERSION}" > capi-final-releases/name
 echo "v${VERSION}" > capi-final-releases/version
 
-cp -R capi-final-releases/* generated-release/*
+cp -R capi-final-releases/* generated-release/
