@@ -8,7 +8,7 @@ pushd capi-release
   VERSION=$(git describe --abbrev=0 --tags)
 popd
 
-echo "CAPI v${VERSION}" > capi-final-releases/name
-echo "v${VERSION}" > capi-final-releases/version
+echo "CAPI ${VERSION}" > capi-final-releases/name
+echo "${VERSION}" > capi-final-releases/version
 
 cp -R capi-final-releases/* generated-release/
