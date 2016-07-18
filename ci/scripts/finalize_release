@@ -5,8 +5,8 @@ set -exu
 FINAL_RELEASE_VERSION=$(cat version/number)
 DEV_RELEASE_TARBALL=$(ls ${PWD}/capi-release-tarball/*.tgz)
 
-RELEASE_YML="releases/capi/capi-${FINAL_RELEASE_VERSION}.yml"
-RELEASE_TGZ="releases/capi/capi-${FINAL_RELEASE_VERSION}.tgz"
+RELEASE_YML="releases/capi-release-final/capi-release-final-${FINAL_RELEASE_VERSION}.yml"
+RELEASE_TGZ="releases/capi-release-final/capi-release-final-${FINAL_RELEASE_VERSION}.tgz"
 
 function copy_private_yml() {
   cp ${PWD}/capi-ci-private/ci/private.yml ${PWD}/capi-release/config/private.yml
@@ -14,8 +14,6 @@ function copy_private_yml() {
 
 function create_release() {
   pushd capi-release
-    whoami
-    echo $PATH
     /opt/rubies/ruby-2.2.4/bin/bosh -n finalize release "${DEV_RELEASE_TARBALL}" --name capi-release-final --version "${FINAL_RELEASE_VERSION}"
     mv "${RELEASE_TGZ}" "../finalized-release/capi-${FINAL_RELEASE_VERSION}.tgz"
   popd
