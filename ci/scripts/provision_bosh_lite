@@ -73,8 +73,14 @@ function bosh_lite_ip() {
 function bosh_lite_provisioned() {
   declare bosh_target=$1 status
   set +ex
+  echo -n "Checking for presence of bosh-lite VM at ${bosh_target}... "
   curl -sk https://bosh.${bosh_target}:25555/info 2>/dev/null
   status=$?
+  if [ $status -eq 0 ]; then
+    echo "Already exists"
+  else
+    echo "Does not exist"
+  fi
   set -ex
 
   return ${status}
