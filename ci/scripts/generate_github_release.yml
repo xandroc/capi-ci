@@ -10,7 +10,7 @@ image_resource:
 inputs:
   - name: capi-ci
   - name: capi-release
-  - name: capi-final-release
+  - name: capi-final-releases
 
 outputs:
   - name: generated-release

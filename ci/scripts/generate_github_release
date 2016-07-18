@@ -2,11 +2,11 @@
 
 set -exu
 
-( cd capi-release && git rev-parse HEAD ) > capi-final-release/commitish
+( cd capi-release && git rev-parse HEAD ) > capi-final-releases/commitish
 
 VERSION=$(git describe --abbrev=0 --tags)
 
-echo "CAPI v${VERSION}" > capi-final-release-release/name
-echo "v${VERSION}" > capi-final-release/version
+echo "CAPI v${VERSION}" > capi-final-releases/name
+echo "v${VERSION}" > capi-final-releases/version
 
-cp -R capi-final-release/* generated-release/*
+cp -R capi-final-releases/* generated-release/*
