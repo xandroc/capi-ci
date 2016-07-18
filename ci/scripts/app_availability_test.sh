@@ -5,7 +5,7 @@ set -e -x
 source ~/.bashrc
 
 function deploy_app() {
-  pushd cf-release/src/github.com/cloudfoundry/cf-acceptance-tests/assets/dora
+  pushd cf-acceptance-tests/assets/dora
     cf push dora
   popd
 }
@@ -23,18 +23,17 @@ function target_cf() {
   cf auth admin admin
 }
 
-function deploy_migrate_and_kill() {
-  declare cloud_controller_branch=$1 polling_pid=$2
+function migrate_and_kill() {
+  declare environment=$1 polling_pid=$2
 
-  key="capi-ci-private/${ENVIRONMENT}/keypair/bosh.pem"
+  set +e
+
+  key="capi-ci-private/${environment}/keypair/bosh.pem"
   chmod 600 ${key}
   eval `ssh-agent -s`
   ssh-add ${key}
 
-  pushd cf-release/src/capi-release/src/cloud_controller_ng
-    git checkout "${cloud_controller_branch}"
-    bundle install --without development test
-
+  pushd cloud_controller_ng
     ssh \
       -o ExitOnForwardFailure=yes \
       -o StrictHostKeyChecking=no \
@@ -43,45 +42,67 @@ function deploy_migrate_and_kill() {
       ${TUNNEL_HOST} \
       -Nf
 
-    export DB_CONNECTION_STRING=${CONNECTION_STRING}
-    bundle exec db:migrate
+    set +x
+    export DB_CONNECTION_STRING="postgres://${DB_USERNAME}:${DB_PASSWORD}@localhost:5432/${DATABASE}"
+    set -x
+    bundle exec rake db:migrate
+
+    if [ $? -ne 0 ]; then
+      echo "Aborting poller because of migration failure"
+      kill -ABRT "${polling_pid}"
+    fi
   popd
 
-  # wait for nsync bulker to poll and bbs to potentially kill running app instances
-  # sleep 180
+  set -e
+
+  echo 'Sleeping to wait for nsync bulker or bbs to potentially kill running app instances'
+  sleep 180
 
   kill -TERM "${polling_pid}"
-  exit $EXIT_STATUS
 }
 
 function poll_app() {
-  declare app_domain=$1 failures_present=0 should_exit=0 curl_output
+  declare app_domain=$1 failures_present=0 should_exit=0 curl_output error_output=""
 
   trap "should_exit=1" SIGTERM
+  trap "failures_present=1; should_exit=1" SIGABRT
 
   set +ex
+  echo "Beginning polling for app availability"
   while [ ${should_exit} -ne 1 ]; do
     curl_output=$(curl -sk https://dora.${app_domain} 2>&1)
     if [ $? -ne 0 ]; then
       failures_present=1
-      echo >&2
-      echo 'Failed when curling app' >&2
-      echo "${curl_output}" >&2
+      error_output="${error_output}\n${curl_output}"
+      echo -n 'F' >&2
+    else
+      echo -n '.' >&2
     fi
-    echo -n '.' >&2
     sleep 1
   done
   set -ex
 
+  echo "${error_output}" >&2
   exit ${failures_present}
 }
 
+function setup_env() {
+  declare cloud_controller_branch=$1
+
+  pushd cloud_controller_ng
+    git checkout "${cloud_controller_branch}"
+    bundle install --without development test
+  popd
+}
+
 function main() {
+  setup_env "${CLOUD_CONTROLLER_BRANCH}"
+
   target_cf "${API_DOMAIN}"
   prepare_cf
   deploy_app
 
-  deploy_migrate_and_kill "${CLOUD_CONTROLLER_BRANCH}" $$ &
+  migrate_and_kill "${ENVIRONMENT}" $$ &
   poll_app "${APP_DOMAIN}"
 }
 

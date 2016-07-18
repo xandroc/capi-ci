@@ -8,13 +8,10 @@ image_resource:
     tag: runtime-ci
 
 inputs:
-  - name: cf-release
+  - name: cf-acceptance-tests
   - name: capi-ci
   - name: capi-ci-private
   - name: cloud_controller_ng
-  - name: deployments
-  - name: bosh-lite-creds
-  - name: generated-manifests
 
 run:
   path: capi-ci/ci/scripts/app_availability_test.sh
@@ -26,4 +23,6 @@ params:
   TUNNEL_HOST:
   DB_HOST:
   ENVIRONMENT:
-  CONNECTION_STRING:
+  DB_USERNAME:
+  DB_PASSWORD:
+  DATABASE:
