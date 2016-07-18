@@ -14,6 +14,8 @@ function copy_private_yml() {
 
 function create_release() {
   pushd capi-release
+    whoami
+    echo $PATH
     bosh -n finalize release "${DEV_RELEASE_TARBALL}" --name capi-release-final --version "${FINAL_RELEASE_VERSION}"
     mv "${RELEASE_TGZ}" "../finalized-release/capi-${FINAL_RELEASE_VERSION}.tgz"
   popd
