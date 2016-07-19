@@ -193,7 +193,7 @@ resources:
     user: cloudfoundry
     repository: capi-release
     drafts: true
-    access_token: {{private_key}}
+    access_token: {{github_access_token}}
 
 - name: cf-release-master
   type: git
