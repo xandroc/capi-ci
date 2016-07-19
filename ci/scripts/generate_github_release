@@ -4,9 +4,9 @@ set -exu
 
 pushd capi-release
   (git rev-parse HEAD ) > ../capi-final-releases/commitish
-
-  VERSION=$(cat capi-release-version/version)
 popd
+
+VERSION=$(cat capi-release-version/version)
 
 echo "CAPI ${VERSION}" > capi-final-releases/name
 echo "${VERSION}" > capi-final-releases/version
