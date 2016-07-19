@@ -11,6 +11,7 @@ inputs:
   - name: capi-ci
   - name: capi-release
   - name: capi-final-releases
+  - name: capi-release-version
 
 outputs:
   - name: generated-release
