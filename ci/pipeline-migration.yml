@@ -177,12 +177,16 @@ jobs:
     - get: cf-acceptance-tests
     - get: cf-release
       resource: cf-release-develop
+      params:
+        submodules: none
     - get: cf-release-tarball
     - get: cflinuxfs2-rootfs-tarball
     - get: cloud_controller_ng
       resource: cloud_controller_ng-migrate-migrations
       trigger: true
     - get: diego-release
+      params:
+        submodules: none
     - get: diego-release-tarball
     - get: etcd-release-tarball
     - get: garden-linux-release-tarball
@@ -227,28 +231,28 @@ jobs:
     params:
       ENVIRONMENT_STUB: capi-ci/buffy/stubs/cf/cf-stub.yml
       STUBS_PATH: deployments/stub.yml
-  - aggregate:
-    - put: bosh-lite-cf-deployment
-      params:
-        target_file: deployments/target
-        manifest: generated-manifests/cf-deployment.yml
-        stemcells:
-          - bosh-lite-stemcell/*.tgz
-        releases:
-          - cf-release-tarball/*.tgz
-          - capi-release-tarball/*.tgz
-    - put: bosh-lite-diego-deployment
-      params:
-        target_file: deployments/target
-        manifest: generated-manifests/diego-deployment.yml
-        stemcells:
-          - bosh-lite-stemcell/*.tgz
-        releases:
-          - capi-release-tarball/*.tgz
-          - diego-release-tarball/*.tgz
-          - garden-linux-release-tarball/*.tgz
-          - etcd-release-tarball/*.tgz
-          - cflinuxfs2-rootfs-tarball/*.tgz
+  # TODO: if the stemcell can be deployed before this step, these can be aggregated
+  - put: bosh-lite-cf-deployment
+    params:
+      target_file: deployments/target
+      manifest: generated-manifests/cf-deployment.yml
+      stemcells:
+        - bosh-lite-stemcell/*.tgz
+      releases:
+        - cf-release-tarball/*.tgz
+        - capi-release-tarball/*.tgz
+  - put: bosh-lite-diego-deployment
+    params:
+      target_file: deployments/target
+      manifest: generated-manifests/diego-deployment.yml
+      stemcells:
+        - bosh-lite-stemcell/*.tgz
+      releases:
+        - capi-release-tarball/*.tgz
+        - diego-release-tarball/*.tgz
+        - garden-linux-release-tarball/*.tgz
+        - etcd-release-tarball/*.tgz
+        - cflinuxfs2-rootfs-tarball/*.tgz
   - task: app-availability-test
     file: capi-ci/ci/scripts/app_availability_test.yml
     params:
