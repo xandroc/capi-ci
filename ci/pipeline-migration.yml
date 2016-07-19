@@ -12,6 +12,14 @@ resource_types:
   type: docker-image
   source:
     repository: cfcommunity/slack-notification-resource
+- name: bosh-stemcell
+  type: docker-image
+  source:
+    repository: cloudfoundry/bosh-stemcell-resource
+- name: bosh-release
+  type: docker-image
+  source:
+    repository: cloudfoundry/bosh-release-resource
 
 resources:
 
@@ -41,6 +49,20 @@ resources:
   type: bosh-io-stemcell
   source:
     name: bosh-warden-boshlite-ubuntu-trusty-go_agent
+
+- name: bosh-lite-stemcell-upload
+  type: bosh-stemcell
+  source:
+    username: admin
+    password: admin
+    ignore_ssl: true
+
+- name: bosh-lite-release-upload
+  type: bosh-release
+  source:
+    username: admin
+    password: admin
+    ignore_ssl: true
 
 - name: capi-ci
   type: git
@@ -231,28 +253,50 @@ jobs:
     params:
       ENVIRONMENT_STUB: capi-ci/buffy/stubs/cf/cf-stub.yml
       STUBS_PATH: deployments/stub.yml
-  # TODO: if the stemcell can be deployed before this step, these can be aggregated
-  - put: bosh-lite-cf-deployment
-    params:
-      target_file: deployments/target
-      manifest: generated-manifests/cf-deployment.yml
-      stemcells:
-        - bosh-lite-stemcell/*.tgz
-      releases:
-        - cf-release-tarball/*.tgz
-        - capi-release-tarball/*.tgz
-  - put: bosh-lite-diego-deployment
-    params:
-      target_file: deployments/target
-      manifest: generated-manifests/diego-deployment.yml
-      stemcells:
-        - bosh-lite-stemcell/*.tgz
-      releases:
-        - capi-release-tarball/*.tgz
-        - diego-release-tarball/*.tgz
-        - garden-linux-release-tarball/*.tgz
-        - etcd-release-tarball/*.tgz
-        - cflinuxfs2-rootfs-tarball/*.tgz
+  - aggregate:
+    - put: bosh-lite-stemcell-upload
+      params:
+        target_file: deployments/target
+        stemcells:
+          - bosh-lite-stemcell/*.tgz
+    - put: upload-cf-release-tarball
+      resource: bosh-lite-release-upload
+      params:
+        target_file: deployments/target
+        releases:
+          - cf-release-tarball/*.tgz
+    - put: upload-release-tarballs
+      resource: bosh-lite-release-upload
+      params:
+        target_file: deployments/target
+        releases:
+          - capi-release-tarball/*.tgz
+          - diego-release-tarball/*.tgz
+          - garden-linux-release-tarball/*.tgz
+          - etcd-release-tarball/*.tgz
+          - cflinuxfs2-rootfs-tarball/*.tgz
+  - aggregate:
+    - put: bosh-lite-cf-deployment
+      params:
+        target_file: deployments/target
+        manifest: generated-manifests/cf-deployment.yml
+        stemcells:
+          - bosh-lite-stemcell/*.tgz
+        releases:
+          - cf-release-tarball/*.tgz
+          - capi-release-tarball/*.tgz
+    - put: bosh-lite-diego-deployment
+      params:
+        target_file: deployments/target
+        manifest: generated-manifests/diego-deployment.yml
+        stemcells:
+          - bosh-lite-stemcell/*.tgz
+        releases:
+          - capi-release-tarball/*.tgz
+          - diego-release-tarball/*.tgz
+          - garden-linux-release-tarball/*.tgz
+          - etcd-release-tarball/*.tgz
+          - cflinuxfs2-rootfs-tarball/*.tgz
   - task: app-availability-test
     file: capi-ci/ci/scripts/app_availability_test.yml
     params:
@@ -265,13 +309,14 @@ jobs:
       DB_PASSWORD: {{buffy_cc_db_password}}
       ENVIRONMENT: buffy
       TUNNEL_HOST: bosh.buffy.capi.cf-app.com
-  - task: deprovision-bosh-lite
-    file: capi-ci/ci/scripts/deprovision_bosh_lite.yml
-    params:
-      BOSH_LITE_NAME: buffy-bosh-lite
-      AWS_ACCESS_KEY_ID: {{buffy_access_key}}
-      AWS_SECRET_ACCESS_KEY: {{buffy_secret_key}}
-      AWS_DEFAULT_REGION: {{buffy_aws_default_region}}
+    ensure:
+      task: deprovision-bosh-lite
+      file: capi-ci/ci/scripts/deprovision_bosh_lite.yml
+      params:
+        BOSH_LITE_NAME: buffy-bosh-lite
+        AWS_ACCESS_KEY_ID: {{buffy_access_key}}
+        AWS_SECRET_ACCESS_KEY: {{buffy_secret_key}}
+        AWS_DEFAULT_REGION: {{buffy_aws_default_region}}
   - task: terminate-cloudformation
     file: capi-ci/ci/scripts/teardown_cloudformation_stack.yml
     params:
