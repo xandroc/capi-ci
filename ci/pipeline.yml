@@ -28,9 +28,6 @@ groups:
 - name: crash-override
   jobs:
   - MANUALLY-bump-cf-release
-- name: version-reset
-  jobs:
-  - reset-version
 
 resource_types:
 - name: bosh-release
@@ -983,14 +980,4 @@ jobs:
         repos:
         - capi-release/src/cloud_controller_ng
 
-- name: reset-version
-  serial: true
-  plan:
-  - get: capi-ci
-  - get: version
-    resource: version
-  - task: set-version
-    file: capi-ci/ci/scripts/reset_version.yml
-  - put: version
-    params:
-      file: updated-version/version
+
