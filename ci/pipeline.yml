@@ -471,6 +471,7 @@ jobs:
     file: capi-ci/ci/scripts/run_bridge_unit_tests.yml
 
 - name: create-capi-release
+  serial_groups: [version]
   serial: true
   plan:
   - aggregate:
@@ -594,25 +595,24 @@ jobs:
       repository: capi-release
 
 - name: ship-it
+  serial_groups: [version]
   plan:
   - aggregate:
     - get: capi-ci
+    - get: capi-ci-private
     - get: capi-release
       passed: [deploy-and-test-xena]
-    - get: version
-      resource: version
-      bump: final
-    - get: capi-ci-private
     - get: capi-release-tarball
       passed: [deploy-and-test-xena]
+    - get: version
+      params: {bump: final}
+  - put: version
+    params: {file: version/version}
   - task: finalize-release
     file: capi-ci/ci/scripts/finalize-release.yml
   - put: capi-final-releases
     params:
       file: finalized-release/capi-*.tgz
-  - put: version
-    params:
-      file: version/version
   - put: capi-release
     params:
       repository: capi-release
@@ -633,6 +633,7 @@ jobs:
         args: ["Way to go, Nick!"]
 
 - name: push-github-release
+  serial_groups: [version]
   plan:
   - aggregate:
     - get: capi-ci
@@ -652,6 +653,9 @@ jobs:
       tag: generated-release/version
       globs:
       - generated-release/*.tgz
+  - put: version
+    params:
+      bump: minor
 
 - name: bump-cf-release
   serial: true
@@ -951,4 +955,4 @@ jobs:
     file: capi-ci/ci/scripts/reset_version.yml
   - put: version
     params:
-      file: updated-version/number
+      file: updated-version/version
