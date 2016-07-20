@@ -33,6 +33,14 @@ groups:
   - reset-version
 
 resource_types:
+- name: bosh-release
+  type: docker-image
+  source:
+    repository: cloudfoundry/bosh-release-resource
+- name: bosh-stemcell
+  type: docker-image
+  source:
+    repository: cloudfoundry/bosh-stemcell-resource
 - name: slack-notification
   type: docker-image
   source:
@@ -356,6 +364,22 @@ resources:
     deployment: cf-xena
     ignore_ssl: true
 
+- name: xena-stemcell-upload
+  type: bosh-stemcell
+  source:
+    target: https://bosh.xena.cf-app.com:25555
+    username: {{xena_bosh_user}}
+    password: {{xena_bosh_password}}
+    ignore_ssl: true
+
+- name: xena-release-upload
+  type: bosh-release
+  source:
+    target: https://bosh.xena.cf-app.com:25555
+    username: {{xena_bosh_user}}
+    password: {{xena_bosh_password}}
+    ignore_ssl: true
+
 - name: xena-diego-cats-deployment
   type: bosh-deployment
   source:
@@ -547,6 +571,25 @@ jobs:
       BOSH_PASSWORD: {{xena_bosh_password}}
       DEPLOYMENTS_DIR: capi-ci-private
       ENVIRONMENT_NAME: xena
+  - aggregate:
+    - put: xena-stemcell-upload
+      params:
+        stemcells:
+          - aws-stemcell/*.tgz
+    - put: upload-cf-release-tarball
+      resource: xena-release-upload
+      params:
+        releases:
+          - cf-release-tarball/*.tgz
+    - put: upload-release-tarballs
+      resource: xena-release-upload
+      params:
+        releases:
+          - capi-release-tarball/*.tgz
+          - diego-release-tarball/*.tgz
+          - garden-linux-release-tarball/*.tgz
+          - etcd-release-tarball/*.tgz
+          - cflinuxfs2-rootfs-tarball/*.tgz
   - put: xena-deployment
     params:
       manifest: generated-manifest/deployment.yml
