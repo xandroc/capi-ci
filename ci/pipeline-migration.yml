@@ -275,28 +275,27 @@ jobs:
           - garden-linux-release-tarball/*.tgz
           - etcd-release-tarball/*.tgz
           - cflinuxfs2-rootfs-tarball/*.tgz
-  - aggregate:
-    - put: bosh-lite-cf-deployment
-      params:
-        target_file: deployments/target
-        manifest: generated-manifests/cf-deployment.yml
-        stemcells:
-          - bosh-lite-stemcell/*.tgz
-        releases:
-          - cf-release-tarball/*.tgz
-          - capi-release-tarball/*.tgz
-    - put: bosh-lite-diego-deployment
-      params:
-        target_file: deployments/target
-        manifest: generated-manifests/diego-deployment.yml
-        stemcells:
-          - bosh-lite-stemcell/*.tgz
-        releases:
-          - capi-release-tarball/*.tgz
-          - diego-release-tarball/*.tgz
-          - garden-linux-release-tarball/*.tgz
-          - etcd-release-tarball/*.tgz
-          - cflinuxfs2-rootfs-tarball/*.tgz
+  - put: bosh-lite-cf-deployment
+    params:
+      target_file: deployments/target
+      manifest: generated-manifests/cf-deployment.yml
+      stemcells:
+        - bosh-lite-stemcell/*.tgz
+      releases:
+        - cf-release-tarball/*.tgz
+        - capi-release-tarball/*.tgz
+  - put: bosh-lite-diego-deployment
+    params:
+      target_file: deployments/target
+      manifest: generated-manifests/diego-deployment.yml
+      stemcells:
+        - bosh-lite-stemcell/*.tgz
+      releases:
+        - capi-release-tarball/*.tgz
+        - diego-release-tarball/*.tgz
+        - garden-linux-release-tarball/*.tgz
+        - etcd-release-tarball/*.tgz
+        - cflinuxfs2-rootfs-tarball/*.tgz
   - task: app-availability-test
     file: capi-ci/ci/scripts/app_availability_test.yml
     params:
