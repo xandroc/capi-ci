@@ -653,12 +653,6 @@ jobs:
   - put: capi-final-releases
     params:
       file: finalized-release/capi-*.tgz
-  - put: capi-release
-    params:
-      repository: capi-release
-      only_tag: true
-      tag: version/version
-      tag_prefix: v
   - put: version
     params:
       bump: minor
