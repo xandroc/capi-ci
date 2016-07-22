@@ -16,6 +16,9 @@ function create_release() {
   pushd capi-release
     /opt/rubies/ruby-2.2.4/bin/bosh -n finalize release "${DEV_RELEASE_TARBALL}" --name capi-release-final --version "${FINAL_RELEASE_VERSION}"
     mv "${RELEASE_TGZ}" "../finalized-release/capi-${FINAL_RELEASE_VERSION}.tgz"
+
+    git add -A
+    git commit -m "Create final release ${FINAL_RELEASE_VERSION}"
   popd
 }
 
