@@ -13,6 +13,7 @@ function setup_git_user() {
     git config user.name 'CAPI CI'
     git config user.email cf-capi-eng+ci@pivotal.io
   popd
+}
 
 function copy_private_yml() {
   cp ${PWD}/capi-ci-private/ci/private.yml ${PWD}/capi-release/config/private.yml
