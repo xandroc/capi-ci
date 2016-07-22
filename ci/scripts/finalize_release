@@ -8,6 +8,12 @@ DEV_RELEASE_TARBALL=$(ls ${PWD}/capi-release-tarball/*.tgz)
 RELEASE_YML="releases/capi-release-final/capi-release-final-${FINAL_RELEASE_VERSION}.yml"
 RELEASE_TGZ="releases/capi-release-final/capi-release-final-${FINAL_RELEASE_VERSION}.tgz"
 
+function setup_git_user() {
+  pushd capi-release
+    git config user.name 'CAPI CI'
+    git config user.email cf-capi-eng+ci@pivotal.io
+  popd
+
 function copy_private_yml() {
   cp ${PWD}/capi-ci-private/ci/private.yml ${PWD}/capi-release/config/private.yml
 }
@@ -27,6 +33,7 @@ function export_release() {
 }
 
 function main() {
+  setup_git_user
   copy_private_yml
   create_release
   export_release
