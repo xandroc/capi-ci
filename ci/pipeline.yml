@@ -655,7 +655,7 @@ jobs:
       file: finalized-release/capi-*.tgz
   - put: capi-release
     params:
-      repository: finalize-release/capi-release
+      repository: finalized-release/capi-release
       tag: version/version
   - put: version
     params:

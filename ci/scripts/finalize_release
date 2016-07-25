@@ -30,7 +30,7 @@ function create_release() {
 }
 
 function export_release() {
-  cp -a capi-release finalized-release/
+  cp -ar capi-release finalized-release/
 }
 
 function main() {
