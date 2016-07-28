@@ -57,7 +57,7 @@ function main() {
   setup_env
   exit_if_stack_exists "${STACK_NAME}"
   create_stack "${STACK_NAME}" "${CLOUDFORMATION_PATH}"
-  wait_for_stack "${STACK_NAME}" 120
+  wait_for_stack "${STACK_NAME}" 300
 }
 
 main
