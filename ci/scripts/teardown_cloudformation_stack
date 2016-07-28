@@ -59,7 +59,7 @@ function wait_for_stack() {
 function main() {
   setup_env
   delete_stack "${STACK_NAME}"
-  wait_for_stack "${STACK_NAME}" 180
+  wait_for_stack "${STACK_NAME}" 300
 }
 
 main
