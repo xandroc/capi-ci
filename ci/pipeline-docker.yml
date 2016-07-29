@@ -7,6 +7,7 @@ groups:
   - bosh-init-docker
   - bosh-lite-docker
   - spiff-docker
+  - runtime-ci
 
 resources:
 - name: weekly
@@ -32,12 +33,29 @@ resources:
     password: {{dockerhub_pass}}
     email: {{dockerhub_email}}
 
+- name: capi-dockerfiles-runtime-ci
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/capi-dockerfiles.git
+    paths: [capi-runtime-ci/Dockerfile]
+
+- name: docker-image-runtime-ci
+  type: docker-image
+  source:
+    repository: cloudfoundry/capi
+    tag: runtime-ci
+    username: {{dockerhub_user}}
+    password: {{dockerhub_pass}}
+    email: {{dockerhub_email}}
+
 - name: capi-dockerfiles-ruby-units
   type: git
   source:
     branch: master
     uri: https://github.com/cloudfoundry/capi-dockerfiles.git
     paths: [capi-ruby-units/Dockerfile]
+
 - name: docker-image-ruby-units
   type: docker-image
   source:
@@ -152,6 +170,16 @@ jobs:
   - put: docker-image-bosh-init
     params:
       build: capi-dockerfiles-bosh-init/bosh-init
+- name: runtime-ci
+  serial: true
+  plan:
+  - aggregate:
+    - get: weekly
+      trigger: true
+    - get: capi-dockerfiles-runtime-ci
+  - put: docker-image-runtime-ci
+    params:
+      build: capi-dockerfiles-runtime-ci/runtime-ci
 - name: bosh-lite-docker
   serial: true
   plan:
