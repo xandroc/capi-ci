@@ -5,7 +5,7 @@ set -exu
 FINAL_RELEASE_VERSION=$(cat version/version)
 DEV_RELEASE_TARBALL=$(ls ${PWD}/capi-release-tarball/*.tgz)
 
-RELEASE_TGZ="releases/capi-release/capi-release-${FINAL_RELEASE_VERSION}.tgz"
+RELEASE_TGZ="releases/capi/capi-${FINAL_RELEASE_VERSION}.tgz"
 
 function setup_git_user() {
   pushd capi-release
@@ -20,7 +20,7 @@ function copy_private_yml() {
 
 function create_release() {
   pushd capi-release
-    /opt/rubies/ruby-2.2.4/bin/bosh -n finalize release "${DEV_RELEASE_TARBALL}" --name capi-release --version "${FINAL_RELEASE_VERSION}"
+    /opt/rubies/ruby-2.2.4/bin/bosh -n finalize release "${DEV_RELEASE_TARBALL}" --name capi --version "${FINAL_RELEASE_VERSION}"
     mv "${RELEASE_TGZ}" "../finalized-release/capi-${FINAL_RELEASE_VERSION}.tgz"
 
     git add -A
