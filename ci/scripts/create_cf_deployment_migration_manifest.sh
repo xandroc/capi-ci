@@ -4,14 +4,7 @@ set -e -x
 
 source ~/.bashrc
 
-echo $PWD
-ls cf-release
-ls cf-release/src
-ls cf-release/src/capi-release
-ls cf-release/src/capi-release/src
-ls cf-release/src/capi-release/src/cloud_controller_ng
-
-pushd cf-release/src/capi-release/src/cloud_controller
+pushd cf-release/src/capi-release/src/cloud_controller_ng
   git checkout migrate
   git pull
 popd
