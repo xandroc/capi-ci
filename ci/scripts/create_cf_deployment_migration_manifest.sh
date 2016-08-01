@@ -5,7 +5,11 @@ set -e -x
 source ~/.bashrc
 
 echo $PWD
-ls
+ls cf-release
+ls cf-release/src
+ls cf-release/src/capi-release
+ls cf-release/src/capi-release/src
+ls cf-release/src/capi-release/src/cloud_controller_ng
 
 pushd cf-release/src/capi-release/src/cloud_controller
   git checkout migrate
