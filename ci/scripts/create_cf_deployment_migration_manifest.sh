@@ -4,6 +4,9 @@ set -e -x
 
 source ~/.bashrc
 
+echo $PWD
+ls
+
 pushd cf-release/src/capi-release/src/cloud_controller
   git checkout migrate
   git pull
