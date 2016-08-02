@@ -3,6 +3,7 @@ groups:
   jobs:
   - cc-unit-tests-with-migrations
   - app-availability-during-migration
+  - deploy-and-test-arya
 - name: environment-setup
   jobs:
   - configure-buffy-networking
@@ -22,6 +23,20 @@ resource_types:
     repository: cloudfoundry/bosh-release-resource
 
 resources:
+
+- name: arya-diego-deployment
+  type: bosh-deployment
+  source:
+    target: https://bosh.xena.cf-app.com:25555
+    username: {{arya_bosh_user}}
+    password: {{arya_bosh_password}}
+    deployment: cf-xena-diego
+    ignore_ssl: true
+
+- name: aws-stemcell
+  type: bosh-io-stemcell
+  source:
+    name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
 
 - name: bosh-lite
   type: git
@@ -125,6 +140,11 @@ resources:
     branch: migrate
     uri: https://github.com/cloudfoundry/cloud_controller_ng.git
     paths: ['db']
+
+- name: diego-ci
+  type: git
+  source:
+    uri: https://github.com/cloudfoundry-incubator/diego-ci
 
 - name: diego-release
   type: git
@@ -362,3 +382,30 @@ jobs:
       ZONE_SECRET_ACCESS_KEY: {{buffy_secret_key}}
       ZONE: "buffy-apps.capi.cf-app.com"
 
+- name: deploy-and-test-arya
+  serial: true
+  plan:
+  - aggregate:
+#    - get: cf-release-tarball
+    - get: capi-ci
+    - get: capi-ci-private
+    - get: aws-stemcell
+    - get: cf-release
+      resource: cf-release-develop
+#    - get: arya-diego-deployment
+#      trigger: true
+    - get: diego-ci
+    - get: diego-release
+      params:
+        submodules: none
+    - get: garden-linux-release-tarball
+    - get: etcd-release-tarball
+    - get: diego-release-tarball
+      trigger: true
+    - get: cflinuxfs2-rootfs-tarball
+  - task: manifest
+    privileged: true
+    file: capi-ci/ci/scripts/create_cf_deployment_migration_manifest.yml
+    params:
+      INFRASTRUCTURE: aws
+      ENVIRONMENT: arya
