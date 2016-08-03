@@ -24,13 +24,38 @@ resource_types:
 
 resources:
 
+- name: arya-deployment
+  type: bosh-deployment
+  source:
+    target: https://bosh.arya.cf-app.com:25555
+    username: {{arya_bosh_user}}
+    password: {{arya_bosh_password}}
+    deployment: cf-arya
+    ignore_ssl: true
+
 - name: arya-diego-deployment
   type: bosh-deployment
   source:
-    target: https://bosh.xena.cf-app.com:25555
+    target: https://bosh.arya.cf-app.com:25555
     username: {{arya_bosh_user}}
     password: {{arya_bosh_password}}
-    deployment: cf-xena-diego
+    deployment: cf-arya-diego
+    ignore_ssl: true
+
+- name: arya-release-upload
+  type: bosh-release
+  source:
+    target: https://bosh.arya.cf-app.com:25555
+    username: {{arya_bosh_user}}
+    password: {{arya_bosh_password}}
+    ignore_ssl: true
+
+- name: arya-stemcell-upload
+  type: bosh-stemcell
+  source:
+    target: https://bosh.arya.cf-app.com:25555
+    username: {{arya_bosh_user}}
+    password: {{arya_bosh_password}}
     ignore_ssl: true
 
 - name: aws-stemcell
@@ -92,6 +117,13 @@ resources:
     private_key: {{private_key}}
     uri: git@github.com:cloudfoundry/capi-ci-private.git
 
+- name: capi-release
+  type: git
+  source:
+    branch: master
+    private_key: {{private_key}}
+    uri: git@github.com:cloudfoundry/capi-release.git
+
 - name: capi-release-tarball
   type: s3
   source:
@@ -133,6 +165,7 @@ resources:
     branch: migrate
     private_key: {{private_key}}
     uri: git@github.com:cloudfoundry/cloud_controller_ng.git
+
 
 - name: cloud_controller_ng-migrate-migrations
   type: git
@@ -386,14 +419,16 @@ jobs:
   serial: true
   plan:
   - aggregate:
-#    - get: cf-release-tarball
+    - get: cf-release-tarball
+    - get: capi-release-tarball
+    - get: capi-release
     - get: capi-ci
     - get: capi-ci-private
     - get: aws-stemcell
     - get: cf-release
       resource: cf-release-develop
-#    - get: arya-diego-deployment
-#      trigger: true
+    # - get: arya-diego-deployment
+    #   trigger: true
     - get: diego-ci
     - get: diego-release
       params:
@@ -401,7 +436,6 @@ jobs:
     - get: garden-linux-release-tarball
     - get: etcd-release-tarball
     - get: diego-release-tarball
-      trigger: true
     - get: cflinuxfs2-rootfs-tarball
   - task: manifest
     privileged: true
@@ -409,3 +443,46 @@ jobs:
     params:
       INFRASTRUCTURE: aws
       ENVIRONMENT: arya
+  - task: generate-deployment-manifests
+    file: capi-ci/ci/scripts/create_diego_release_manifest.yml
+    params:
+      BOSH_TARGET: bosh.arya.cf-app.com
+      BOSH_USER: {{arya_bosh_user}}
+      BOSH_PASSWORD: {{arya_bosh_password}}
+      DEPLOYMENTS_DIR: capi-ci-private
+      ENVIRONMENT_NAME: arya
+  - aggregate:
+    - put: arya-stemcell-upload
+      params:
+        stemcells:
+          - aws-stemcell/*.tgz
+    - put: upload-cf-release-tarball
+      resource: arya-release-upload
+      params:
+        releases:
+          - cf-release-tarball/*.tgz
+    - put: upload-release-tarballs
+      resource: arya-release-upload
+      params:
+        releases:
+          - capi-release-tarball/*.tgz
+          - diego-release-tarball/*.tgz
+          - garden-linux-release-tarball/*.tgz
+          - etcd-release-tarball/*.tgz
+          - cflinuxfs2-rootfs-tarball/*.tgz
+  - put: arya-deployment
+    params:
+      manifest: generated-manifest/deployment.yml
+      stemcells: [aws-stemcell/*.tgz]
+      releases:
+        - cf-release-tarball/*.tgz
+        - capi-release-tarball/*.tgz
+  - put: arya-diego-deployment
+    params:
+      manifest: generated-diego-manifest/diego-deployment.yml
+      releases:
+        - diego-release-tarball/*.tgz
+        - garden-linux-release-tarball/*.tgz
+        - etcd-release-tarball/*.tgz
+        - cflinuxfs2-rootfs-tarball/*.tgz
+      stemcells: [aws-stemcell/*.tgz]
