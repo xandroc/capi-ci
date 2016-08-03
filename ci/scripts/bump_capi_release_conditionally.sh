@@ -8,10 +8,6 @@ pushd cloud_controller_ng
   PASSED_UNIT_TESTS_SHA=$(git log -n1 --format="%H" -- db)
 popd
 
-pushd cloud_controller_ng-master-migrations
-  PASSED_DB_MIGRATIONS_SHA=$(git log -n1 --format="%H" -- db)
-popd
-
 pushd diego-release/src/code.cloudfoundry.org/bbs
   BBS_SHA=$(git rev-parse HEAD)
 popd
@@ -31,8 +27,6 @@ popd
 pushd tps
   TPS_SHA=$(git rev-parse HEAD)
 popd
-
-echo "Checking if db folder from unit tests is same as db folder from migration tests..."
 
 pushd capi-release
   pushd src/cloud_controller_ng
