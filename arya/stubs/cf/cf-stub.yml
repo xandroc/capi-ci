@@ -1,6 +1,6 @@
 ---
 meta:
-  environment: cf-xena
+  environment: cf-arya
 
   capi_release:
       name: capi
@@ -32,16 +32,16 @@ networks: # Bosh creates these subnets based in warden_networks.rb in cf-release
   - name: cf2
     type: manual
     subnets:
-      - range: 10.0.80.0/20
+      - range: 10.0.90.0/20
         name: default_unused
         reserved:
-          - 10.0.80.2 - 10.0.80.9
-          - 10.0.81.3
-          - 10.0.81.18
-          - 10.0.81.1
+          - 10.0.90.2 - 10.0.90.9
+          - 10.0.91.3
+          - 10.0.91.18
+          - 10.0.91.1
         static:
-          - 10.0.80.10 - 10.0.80.255
-        gateway: 10.0.80.1
+          - 10.0.90.10 - 10.0.90.255
+        gateway: 10.0.90.1
         dns:
           - 10.0.0.2 # amazon has only 1 DNS server for the whole VPC at x.x.0.2
         cloud_properties:
@@ -207,13 +207,13 @@ env_specific:
 
 
 properties:
-  domain: xena.cf-app.com
+  domain: arya.cf-app.com
   ssl:
     skip_cert_verify: true
-  system_domain: xena.cf-app.com
+  system_domain: arya.cf-app.com
   system_domain_organization: pivotal
   app_domains:    # the domain at which cf apps should be hosted
-  - xena-app.cf-app.com
+  - arya-app.cf-app.com
   app_ssh:
     host_key_fingerprint: (( secrets.app_ssh.host_key_fingerprint ))
 
@@ -221,7 +221,7 @@ properties:
     aws:
       access_key_id: (( merge )) # AWS access key ID
       secret_access_key: (( merge )) # AWS secret access key
-      availability_zone: us-east-1b
+      availability_zone: us-east-1a
       availability_zone2: us-east-1c
       subnet_ids:
         cf1: (( merge )) # subnet ID for cf1
