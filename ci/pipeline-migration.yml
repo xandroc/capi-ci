@@ -224,7 +224,7 @@ jobs:
     - get: cf-release-tarball
     - get: cflinuxfs2-rootfs-tarball
     - get: cloud_controller_ng
-      resource: cloud_controller_ng-migrate-migrations
+      resource: cloud_controller_ng-migrate
       trigger: true
     - get: diego-release
       params:
