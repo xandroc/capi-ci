@@ -1,0 +1,16 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: cloudfoundry/capi
+    tag: runtime-ci
+
+inputs:
+  - name: cloud_controller_ng
+  - name: capi-release
+  - name: capi-ci
+
+run:
+  path: capi-ci/ci/scripts/checkout-cc-branch-in-capi-release.sh
