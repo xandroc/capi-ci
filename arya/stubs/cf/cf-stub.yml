@@ -19,7 +19,6 @@ networks: # Bosh creates these subnets based in warden_networks.rb in cf-release
         name: default_unused
         reserved:
           - 10.0.32.2 - 10.0.32.9
-          - 10.0.33.0
         static:
           - 10.0.32.10 - 10.0.32.255
         gateway: 10.0.32.1
@@ -32,16 +31,13 @@ networks: # Bosh creates these subnets based in warden_networks.rb in cf-release
   - name: cf2
     type: manual
     subnets:
-      - range: 10.0.90.0/20
+      - range: 10.0.80.0/20
         name: default_unused
         reserved:
-          - 10.0.90.2 - 10.0.90.9
-          - 10.0.91.3
-          - 10.0.91.18
-          - 10.0.91.1
+          - 10.0.80.2 - 10.0.80.9
         static:
-          - 10.0.90.10 - 10.0.90.255
-        gateway: 10.0.90.1
+          - 10.0.80.10 - 10.0.80.255
+        gateway: 10.0.80.1
         dns:
           - 10.0.0.2 # amazon has only 1 DNS server for the whole VPC at x.x.0.2
         cloud_properties:
