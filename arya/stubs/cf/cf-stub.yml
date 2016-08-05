@@ -100,11 +100,11 @@ jobs:
 - name: nats_z2
   instances: 0
 - name: runner_z1
-  instances: 0
+  instances: 1
 - name: runner_z2
   instances: 0
 - name: hm9000_z1
-  instances: 0
+  instances: 1
 - name: hm9000_z2
   instances: 0
 
