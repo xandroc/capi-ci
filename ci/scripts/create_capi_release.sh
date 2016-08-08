@@ -16,7 +16,7 @@ pushd capi-release
   CAPI_COMMIT_SHA=$(git rev-parse HEAD)
 
   pushd src/cloud_controller_ng
-    if [ -n "$CC_COMMIT_SHA" ]; then
+    if [ -z "$CC_COMMIT_SHA" ]; then
       CC_COMMIT_SHA=$(git rev-parse HEAD)
     fi
     git fetch
