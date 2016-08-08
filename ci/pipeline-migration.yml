@@ -451,8 +451,6 @@ jobs:
   - put: version
     params:
       file: version/version
-  - task: checkout-migration-branch
-    file: capi-ci/ci/scripts/checkout-cc-branch-in-capi-release.yml
   - task: manifest
     privileged: true
     file: capi-ci/ci/scripts/create_cf_deployment_migration_manifest.yml
@@ -469,6 +467,8 @@ jobs:
       ENVIRONMENT_NAME: arya
   - task: create-release-tarball
     file: capi-ci/ci/scripts/create_capi_release.yml
+    params:
+      CC_BRANCH: migrate
   - aggregate:
     - put: arya-stemcell-upload
       params:

@@ -11,6 +11,7 @@ inputs:
   - name: capi-release
   - name: capi-ci
   - name: version
+  - name: cloud_controller_ng
 
 outputs:
   - name: created-capi-release
