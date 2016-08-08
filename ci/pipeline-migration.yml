@@ -24,6 +24,16 @@ resource_types:
 
 resources:
 
+- name: version
+  type: semver
+  source:
+    access_key_id: {{wasabi_semver_access_key}}
+    secret_access_key: {{wasabi_semver_secret_key}}
+    initial_version: 0.0.1
+    bucket: capi-release-versions
+    key: migrate-capi-release-version
+    region_name: us-east-1
+
 - name: arya-deployment
   type: bosh-deployment
   source:
@@ -165,7 +175,6 @@ resources:
     branch: migrate
     private_key: {{private_key}}
     uri: git@github.com:cloudfoundry/cloud_controller_ng.git
-
 
 - name: cloud_controller_ng-migrate-migrations
   type: git
@@ -420,15 +429,17 @@ jobs:
   plan:
   - aggregate:
     - get: cf-release-tarball
-    - get: capi-release-tarball
     - get: capi-release
+    - get: cloud_controller_ng
+      resource: cloud_controller_ng-migrate
+    - get: version
+      params:
+        pre: migrate
     - get: capi-ci
     - get: capi-ci-private
     - get: aws-stemcell
     - get: cf-release
       resource: cf-release-develop
-    # - get: arya-diego-deployment
-    #   trigger: true
     - get: diego-ci
     - get: diego-release
       params:
@@ -437,6 +448,11 @@ jobs:
     - get: etcd-release-tarball
     - get: diego-release-tarball
     - get: cflinuxfs2-rootfs-tarball
+  - put: version
+    params:
+      file: version/version
+  - task: checkout-migration-branch
+    file: capi-ci/ci/scripts/checkout-cc-branch-in-capi-release.yml
   - task: manifest
     privileged: true
     file: capi-ci/ci/scripts/create_cf_deployment_migration_manifest.yml
@@ -451,6 +467,8 @@ jobs:
       BOSH_PASSWORD: {{arya_bosh_password}}
       DEPLOYMENTS_DIR: capi-ci-private
       ENVIRONMENT_NAME: arya
+  - task: create-release-tarball
+    file: capi-ci/ci/scripts/create_capi_release.yml
   - aggregate:
     - put: arya-stemcell-upload
       params:
@@ -465,7 +483,7 @@ jobs:
       resource: arya-release-upload
       params:
         releases:
-          - capi-release-tarball/*.tgz
+          - created-capi-release/capi-*.tgz
           - diego-release-tarball/*.tgz
           - garden-linux-release-tarball/*.tgz
           - etcd-release-tarball/*.tgz
@@ -476,13 +494,13 @@ jobs:
       stemcells: [aws-stemcell/*.tgz]
       releases:
         - cf-release-tarball/*.tgz
-        - capi-release-tarball/*.tgz
-  - put: arya-diego-deployment
-    params:
-      manifest: generated-diego-manifest/diego-deployment.yml
-      releases:
-        - diego-release-tarball/*.tgz
-        - garden-linux-release-tarball/*.tgz
-        - etcd-release-tarball/*.tgz
-        - cflinuxfs2-rootfs-tarball/*.tgz
-      stemcells: [aws-stemcell/*.tgz]
+        - created-capi-release/capi-*.tgz
+#  - put: arya-diego-deployment
+#    params:
+#      manifest: generated-diego-manifest/diego-deployment.yml
+#      releases:
+#        - diego-release-tarball/*.tgz
+#        - garden-linux-release-tarball/*.tgz
+#        - etcd-release-tarball/*.tgz
+#        - cflinuxfs2-rootfs-tarball/*.tgz
+#      stemcells: [aws-stemcell/*.tgz]
