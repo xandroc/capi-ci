@@ -6,11 +6,21 @@ source ~/.bashrc
 
 VERSION=`cat version/version`
 
+pushd cloud_controller_ng
+  if [ -n "$CC_BRANCH" ]; then
+    CC_COMMIT_SHA=$(git rev-parse HEAD)
+  fi
+popd
+
 pushd capi-release
   CAPI_COMMIT_SHA=$(git rev-parse HEAD)
 
   pushd src/cloud_controller_ng
-    CC_COMMIT_SHA=$(git rev-parse HEAD)
+    if [ -n "$CC_COMMIT_SHA" ]; then
+      CC_COMMIT_SHA=$(git rev-parse HEAD)
+    fi
+    git fetch
+    git checkout $CC_COMMIT_SHA
   popd
 
   CAPI_RELEASE_OUT="../create-release.out"

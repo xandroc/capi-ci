@@ -17,3 +17,6 @@ outputs:
 
 run:
   path: capi-ci/ci/scripts/create_capi_release.sh
+
+params:
+  CC_BRANCH:
