@@ -65,18 +65,18 @@ resource_pools:
 
 jobs:
 - name: api_z1
-  instances: 1
+  instances: 0
 - name: api_z2
   instances: 0
 - name: api_worker_z1
-  instances: 1
+  instances: 0
 - name: api_worker_z2
   instances: 0
 - name: clock_global
-  instances: 1
+  instances: 0
   resource_pool: small_z1
 - name: uaa_z1
-  instances: 1
+  instances: 0
   resource_pool: small_z1
 - name: uaa_z2
   instances: 0
@@ -100,7 +100,7 @@ jobs:
 - name: nats_z2
   instances: 0
 - name: runner_z1
-  instances: 1
+  instances: 0
 - name: runner_z2
   instances: 0
 - name: hm9000_z1
