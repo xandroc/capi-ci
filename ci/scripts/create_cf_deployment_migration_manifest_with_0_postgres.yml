@@ -13,6 +13,9 @@ inputs:
   - name: capi-ci
   - name: generated-manifest
 
+outputs:
+  - name: generated-manifest
+
 run:
   path: capi-ci/ci/scripts/create_cf_deployment_migration_manifest_with_0_postgres.sh
 
