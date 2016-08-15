@@ -457,6 +457,12 @@ jobs:
     params:
       INFRASTRUCTURE: aws
       ENVIRONMENT: arya
+  - task: manifest-with-0-postgres
+    privileged: true
+    file: capi-ci/ci/scripts/create_cf_deployment_migration_manifest_with_0_postgres.yml
+    params:
+      INFRASTRUCTURE: aws
+      ENVIRONMENT: arya
   - task: generate-deployment-manifests
     file: capi-ci/ci/scripts/create_diego_release_manifest.yml
     params:
@@ -490,17 +496,34 @@ jobs:
           - cflinuxfs2-rootfs-tarball/*.tgz
   - put: arya-deployment
     params:
+      manifest: generated-manifest-with-0-postgres/deployment_with_0_postgres.yml
+      stemcells: [aws-stemcell/*.tgz]
+      releases:
+        - cf-release-tarball/*.tgz
+        - created-capi-release/capi-*.tgz
+  - put: arya-deployment
+    params:
       manifest: generated-manifest/deployment.yml
       stemcells: [aws-stemcell/*.tgz]
       releases:
         - cf-release-tarball/*.tgz
         - created-capi-release/capi-*.tgz
-#  - put: arya-diego-deployment
-#    params:
-#      manifest: generated-diego-manifest/diego-deployment.yml
-#      releases:
-#        - diego-release-tarball/*.tgz
-#        - garden-linux-release-tarball/*.tgz
-#        - etcd-release-tarball/*.tgz
-#        - cflinuxfs2-rootfs-tarball/*.tgz
-#      stemcells: [aws-stemcell/*.tgz]
+  - put: arya-diego-deployment
+    params:
+      manifest: generated-diego-manifest/diego-deployment.yml
+      releases:
+        - diego-release-tarball/*.tgz
+        - garden-linux-release-tarball/*.tgz
+        - etcd-release-tarball/*.tgz
+        - cflinuxfs2-rootfs-tarball/*.tgz
+      stemcells: [aws-stemcell/*.tgz]
+  - task: acceptance-tests
+    privileged: true
+    file: capi-ci/ci/scripts/run_bosh_command.yml
+    input_mapping: {manifest: generated-manifest}
+    params:
+      BOSH_DIRECTOR: bosh.arya.cf-app.com
+      BOSH_USER: {{arya_bosh_user}}
+      BOSH_PASSWORD: {{arya_bosh_password}}
+      DEPLOYMENT_YML: manifest/deployment.yml
+      COMMAND: 'run errand acceptance_tests --keep-alive --download-logs --logs-dir bosh-logs'
