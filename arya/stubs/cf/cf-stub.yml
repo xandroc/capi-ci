@@ -400,7 +400,7 @@ properties:
     security_event_logging:
       enabled: true
     users_can_select_backend: false
-    default_to_diego_backend: true
+    default_to_diego_backend: false
 
   router:
     status:
@@ -429,7 +429,6 @@ properties:
     apps_domain: (( app_domains ))
     admin_user: (( secrets.acceptance_tests.admin_user ))
     admin_password: (( secrets.acceptance_tests.admin_password ))
-    backend: diego
     include_sso: true
     include_security_groups: true
     include_services: true
@@ -442,7 +441,7 @@ properties:
     include_route_services: false
     include_tasks: true
     nodes: 4
-    skip_diego_unsupported_tests: true
+    skip_diego_unsupported_tests: false
     skip_ssl_validation: true
 
   smoke_tests:
