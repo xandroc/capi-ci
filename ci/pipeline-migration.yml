@@ -517,6 +517,10 @@ jobs:
         - etcd-release-tarball/*.tgz
         - cflinuxfs2-rootfs-tarball/*.tgz
       stemcells: [aws-stemcell/*.tgz]
+  - task: enable-feature-flags
+    file: capi-ci/ci/scripts/enable_feature_flags.yml
+    params:
+      CF_ADMIN_PASSWORD: {{arya_cf_admin_password}}
   - task: acceptance-tests
     privileged: true
     file: capi-ci/ci/scripts/run_bosh_command.yml
@@ -527,3 +531,7 @@ jobs:
       BOSH_PASSWORD: {{arya_bosh_password}}
       DEPLOYMENT_YML: manifest/deployment.yml
       COMMAND: 'run errand acceptance_tests --keep-alive --download-logs --logs-dir bosh-logs'
+    ensure:
+      put: arya-acceptance-tests-logs
+      params:
+        file: bosh-logs/acceptance_tests*.tgz
