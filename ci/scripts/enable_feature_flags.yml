@@ -6,7 +6,13 @@ image_resource:
   source:
     repository: cloudfoundry/capi
     tag: runtime-ci
-params:
-  CF_ADMIN_PASSWORD:
+
+inputs:
+  - name: capi-ci
+
 run:
   path: capi-ci/ci/scripts/enable_feature_flags.sh
+
+params:
+  CF_ADMIN_PASSWORD:
+
