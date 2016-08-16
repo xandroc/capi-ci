@@ -429,6 +429,7 @@ properties:
     apps_domain: (( app_domains ))
     admin_user: (( secrets.acceptance_tests.admin_user ))
     admin_password: (( secrets.acceptance_tests.admin_password ))
+    backend: dea
     include_sso: true
     include_security_groups: true
     include_services: true
