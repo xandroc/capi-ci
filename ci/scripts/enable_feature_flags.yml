@@ -1,0 +1,12 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: cloudfoundry/capi
+    tag: runtime-ci
+params:
+  CF_ADMIN_PASSWORD:
+run:
+  path: capi-ci/ci/scripts/enable_feature_flags.sh
