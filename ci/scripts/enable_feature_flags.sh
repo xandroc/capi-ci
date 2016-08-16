@@ -3,7 +3,7 @@ set -e -x
 
 source ~/.bashrc
 
-cf api api.arya.cf-app.com
+cf api api.arya.cf-app.com  --skip-ssl-validation
 cf auth admin ${CF_ADMIN_PASSWORD}
 cf enable-feature-flag diego_docker
 cf enable-feature-flag task_creation
