@@ -13,10 +13,10 @@ inputs:
   - name: capi-ci
 
 outputs:
-  - name: generated-manifest
+  - name: generated-manifest-with-diego
 
 run:
-  path: capi-ci/ci/scripts/create_cf_deployment_migration_manifest.sh
+  path: capi-ci/ci/scripts/create_cf_deployment_migration_manifest_with_diego.sh
 
 params:
   INFRASTRUCTURE:
