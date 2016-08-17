@@ -13,9 +13,9 @@ popd
 
 cd cf-release
 
-./scripts/generate_deployment_manifest ${INFRASTRUCTURE} ../capi-ci/${ENVIRONMENT}/stubs/cf/*.yml ../capi-ci-private/${ENVIRONMENT}/stubs/cf/*.yml > ../generated-manifest/cf-deployment-with-dea.yml
+./scripts/generate_deployment_manifest ${INFRASTRUCTURE} ../capi-ci/${ENVIRONMENT}/stubs/cf/*.yml ../capi-ci-private/${ENVIRONMENT}/stubs/cf/*.yml > ../generated-manifest-with-dea/cf-deployment-with-dea.yml
 
 echo "===GENERATED MANIFEST==="
-cat ../generated-manifest/cf-deployment-with-dea.yml
+cat ../generated-manifest-with-dea/cf-deployment-with-dea.yml
 
 

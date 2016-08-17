@@ -13,7 +13,7 @@ inputs:
   - name: capi-ci
 
 outputs:
-  - name: generated-manifest
+  - name: generated-manifest-with-dea
 
 run:
   path: capi-ci/ci/scripts/create_cf_deployment_migration_manifest_with_dea.sh
