@@ -6,7 +6,9 @@ source ~/.bashrc
 
 pushd cf-release/src/capi-release/src/cloud_controller_ng
   git checkout migrate
-  git pull
+  git fetch --all
+  git reset --hard origin/migrate
+  git pull origin migrate
 popd
 
 cd cf-release
