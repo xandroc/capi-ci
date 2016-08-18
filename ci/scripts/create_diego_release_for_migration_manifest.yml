@@ -12,7 +12,7 @@ inputs:
   - name: capi-ci-private
   - name: diego-release
   - name: diego-ci
-  - name: generated-manifest
+  - name: generated-manifest-with-diego
 
 outputs:
   - name: generated-diego-manifest
