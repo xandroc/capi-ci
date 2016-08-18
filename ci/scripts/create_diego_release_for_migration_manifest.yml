@@ -26,4 +26,4 @@ params:
   ENVIRONMENT_NAME: ~
 
 run:
-  path: capi-ci/ci/scripts/create_diego_release_manifest
+  path: capi-ci/ci/scripts/create_diego_release_for_migration_manifest
