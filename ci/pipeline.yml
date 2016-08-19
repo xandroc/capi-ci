@@ -817,6 +817,13 @@ jobs:
         BOSH_DIRECTOR: https://bosh.xena.cf-app.com:25555
         BOSH_USER: {{xena_bosh_user}}
         BOSH_PASSWORD: {{xena_bosh_password}}
+    - task: cleanup-arya
+      privileged: true
+      file: capi-ci/ci/scripts/run_bosh_cleanup.yml
+      params: &bosh-target-arya
+        BOSH_DIRECTOR: https://bosh.arya.cf-app.com:25555
+        BOSH_USER: {{arya_bosh_user}}
+        BOSH_PASSWORD: {{arya_bosh_password}}
       on_failure:
         put: slack-alert
         params:
