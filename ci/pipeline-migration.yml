@@ -382,7 +382,8 @@ jobs:
       API_DOMAIN: api.buffy.capi.cf-app.com
       APP_DOMAIN: buffy-apps.capi.cf-app.com
       CLOUD_CONTROLLER_BRANCH: migrate
-      DATABASE: {{buffy_cc_db_database}}
+      DB_NAME: {{buffy_cc_db_database}}
+      DB: postgres
       DB_HOST: 10.244.0.30
       DB_USERNAME: {{buffy_cc_db_username}}
       DB_PASSWORD: {{buffy_cc_db_password}}

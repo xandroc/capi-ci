@@ -25,4 +25,5 @@ params:
   ENVIRONMENT:
   DB_USERNAME:
   DB_PASSWORD:
-  DATABASE:
+  DB_NAME:
+  DB:

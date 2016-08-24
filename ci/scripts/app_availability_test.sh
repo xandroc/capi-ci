@@ -42,9 +42,6 @@ function migrate_and_kill() {
       ${TUNNEL_HOST} \
       -Nf
 
-    set +x
-    export DB_CONNECTION_STRING="postgres://${DB_USERNAME}:${DB_PASSWORD}@localhost:5432/${DATABASE}"
-    set -x
     bundle exec rake db:migrate
 
     if [ $? -ne 0 ]; then
@@ -96,8 +93,15 @@ function setup_env() {
   popd
 }
 
+function setup_db() {
+  set +x
+  export DB_CONNECTION_STRING="${DB}://${DB_USERNAME}:${DB_PASSWORD}@localhost:5432/${DB_NAME}"
+  set -x
+}
+
 function main() {
   setup_env "${CLOUD_CONTROLLER_BRANCH}"
+  setup_db
 
   target_cf "${API_DOMAIN}"
   prepare_cf
