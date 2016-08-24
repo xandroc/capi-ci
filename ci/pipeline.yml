@@ -499,6 +499,7 @@ jobs:
       resource: version
       params:
         pre: rc
+    - get: cloud_controller_ng
   - put: version
     params:
       file: version/version
