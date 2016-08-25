@@ -12,6 +12,8 @@ inputs:
 - name: cf-release
 - name: diego-release
 - name: deployments
+- name: capi-ci-private
+- name: cf-mysql-release
 
 outputs:
 - name: generated-manifests
@@ -22,3 +24,5 @@ run:
 params:
   ENVIRONMENT_STUB:
   STUBS_PATH:
+  MYSQL_PROPERTY_OVERRIDES_PATH:
+  MYSQL_INSTANCE_COUNT_OVERRIDES_PATH:

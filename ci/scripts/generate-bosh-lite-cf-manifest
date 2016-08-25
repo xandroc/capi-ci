@@ -26,6 +26,19 @@ function generate_diego_manifest() {
   popd > /dev/null
 }
 
+function generate_mysql_manifest() {
+  declare cf_manifest=$1 property_overrides=$2 instance_count_overrides=$3 generated_manifest=$4
+
+  pushd cf-mysql-release >/dev/null
+    ./scripts/generate-deployment-manifest \
+      -c "${cf_manifest}" \
+      -p "${property_overrides}" \
+      -i ./manifest-generation/bosh-lite-stubs/iaas-settings.yml \
+      -n "${instance_count_overrides}" \
+      > "${generated_manifest}"
+  popd > /dev/null
+}
+
 function main() {
   generate_cf_manifest bosh-lite "${STUBS_PATH}" "${ENVIRONMENT_STUB}" "generated-manifests/cf-deployment.yml"
   cat "generated-manifests/cf-deployment.yml"
@@ -34,6 +47,13 @@ function main() {
     "generated-manifests/cf-deployment.yml" \
     "generated-manifests/diego-deployment.yml"
   cat "generated-manifests/diego-deployment.yml"
+
+  generate_mysql_manifest \
+    "generated-manifests/cf-deployment.yml" \
+    "${MYSQL_PROPERTY_OVERRIDES_PATH}" \
+    "${MYSQL_INSTANCE_COUNT_OVERRIDES_PATH}" \
+    "generated-manifests/mysql-deployment.yml"
+  cat "generated-manifests/mysql-deployment.yml"
 }
 
 main
