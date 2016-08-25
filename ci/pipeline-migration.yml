@@ -101,7 +101,7 @@ resources:
   type: git
   source:
     branch: master
-    uri: https://github.com/cloudfoundry/capi-ci.git
+    uri: https://github.com/cloudfoundry/cf-mysql-release.git
 
 - name: bosh-lite-mysql-deployment
   type: bosh-deployment
