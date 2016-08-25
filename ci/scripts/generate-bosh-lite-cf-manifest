@@ -35,7 +35,7 @@ function generate_mysql_manifest() {
       -p "${property_overrides}" \
       -i ./manifest-generation/bosh-lite-stubs/iaas-settings.yml \
       -n "${instance_count_overrides}" \
-      > "${generated_manifest}"
+      > "../${generated_manifest}"
   popd > /dev/null
 }
 
