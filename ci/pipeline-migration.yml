@@ -355,7 +355,7 @@ jobs:
       ENVIRONMENT_STUB: capi-ci/buffy/stubs/cf/cf-stub.yml
       STUBS_PATH: deployments/stub.yml
       MYSQL_PROPERTY_OVERRIDES_PATH: capi-ci-private/buffy/stubs/mysql/property-overrides.yml
-      MYSQL_INSTANCE_COUNT_OVERRIDES_PATH: instance-count-overrides.yml
+      MYSQL_INSTANCE_COUNT_OVERRIDES_PATH: capi-ci-private/buffy/stubs/mysql/instance-count-overrides.yml
   - aggregate:
     - put: bosh-lite-stemcell-upload
       params:
