@@ -97,20 +97,6 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/bosh-lite.git
 
-- name: cf-mysql-release
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/cf-mysql-release.git
-
-- name: bosh-lite-mysql-deployment
-  type: bosh-deployment
-  source:
-    username: admin
-    password: admin
-    deployment: cf-warden-mysql
-    ignore_ssl: true
-
 - name: bosh-lite-cf-deployment
   type: bosh-deployment
   source:
@@ -200,11 +186,6 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry/cflinuxfs2-rootfs-release
-
-- name: cf-mysql-tarball
-  type: bosh-io-release
-  source:
-    repository: cloudfoundry/cf-mysql-release
 
 - name: cloud_controller_ng-migrate
   type: git
@@ -296,14 +277,12 @@ jobs:
     - get: capi-ci-private
     - get: capi-release-tarball
     - get: cf-acceptance-tests
-    - get: cf-mysql-release
     - get: cf-release
       resource: cf-release-develop
       params:
         submodules: none
     - get: cf-release-tarball
     - get: cflinuxfs2-rootfs-tarball
-    - get: cf-mysql-tarball
     - get: cloud_controller_ng
       resource: cloud_controller_ng-migrate
       trigger: true
@@ -354,8 +333,6 @@ jobs:
     params:
       ENVIRONMENT_STUB: capi-ci/buffy/stubs/cf/cf-stub.yml
       STUBS_PATH: deployments/stub.yml
-      MYSQL_PROPERTY_OVERRIDES_PATH: capi-ci-private/buffy/stubs/mysql/property-overrides.yml
-      MYSQL_INSTANCE_COUNT_OVERRIDES_PATH: capi-ci-private/buffy/stubs/mysql/instance-count-overrides.yml
   - aggregate:
     - put: bosh-lite-stemcell-upload
       params:
@@ -378,15 +355,6 @@ jobs:
           - garden-linux-release-tarball/*.tgz
           - etcd-release-tarball/*.tgz
           - cflinuxfs2-rootfs-tarball/*.tgz
-          - cf-mysql-tarball/*.tgz
-  - put: bosh-lite-mysql-deployment
-    params:
-      target_file: deployments/target
-      manifest: generated-manifests/mysql-deployment.yml
-      stemcells:
-        - bosh-lite-stemcell/*.tgz
-      releases:
-        - cf-mysql-tarball/*.tgz
   - put: bosh-lite-cf-deployment
     params:
       target_file: deployments/target
@@ -408,7 +376,7 @@ jobs:
         - garden-linux-release-tarball/*.tgz
         - etcd-release-tarball/*.tgz
         - cflinuxfs2-rootfs-tarball/*.tgz
-  - task: postgres-app-availability-test
+  - task: app-availability-test
     file: capi-ci/ci/scripts/app_availability_test.yml
     params:
       API_DOMAIN: api.buffy.capi.cf-app.com
@@ -419,29 +387,6 @@ jobs:
       DB_HOST: 10.244.0.30
       DB_USERNAME: {{buffy_cc_db_username}}
       DB_PASSWORD: {{buffy_cc_db_password}}
-      DB_PORT: 5432
-      ENVIRONMENT: buffy
-      TUNNEL_HOST: bosh.buffy.capi.cf-app.com
-    on_failure:
-      task: deprovision-bosh-lite
-      file: capi-ci/ci/scripts/deprovision_bosh_lite.yml
-      params:
-        BOSH_LITE_NAME: buffy-bosh-lite
-        AWS_ACCESS_KEY_ID: {{buffy_access_key}}
-        AWS_SECRET_ACCESS_KEY: {{buffy_secret_key}}
-        AWS_DEFAULT_REGION: {{buffy_aws_default_region}}
-  - task: mysql-app-availability-test
-    file: capi-ci/ci/scripts/app_availability_test.yml
-    params:
-      API_DOMAIN: api.buffy.capi.cf-app.com
-      APP_DOMAIN: buffy-apps.capi.cf-app.com
-      CLOUD_CONTROLLER_BRANCH: migrate
-      DB_NAME: {{buffy_cc_db_database}}
-      DB: mysql2
-      DB_HOST: 10.244.7.3
-      DB_USERNAME: {{buffy_cc_db_username}}
-      DB_PASSWORD: {{buffy_cc_db_password}}
-      DB_PORT: 3306
       ENVIRONMENT: buffy
       TUNNEL_HOST: bosh.buffy.capi.cf-app.com
     ensure:
