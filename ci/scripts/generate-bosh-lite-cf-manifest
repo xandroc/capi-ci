@@ -31,10 +31,10 @@ function generate_mysql_manifest() {
 
   pushd cf-mysql-release >/dev/null
     ./scripts/generate-deployment-manifest \
-      -c "${cf_manifest}" \
-      -p "${property_overrides}" \
+      -c "../${cf_manifest}" \
+      -p "../${property_overrides}" \
       -i ./manifest-generation/bosh-lite-stubs/iaas-settings.yml \
-      -n "${instance_count_overrides}" \
+      -n "../${instance_count_overrides}" \
       > "../${generated_manifest}"
   popd > /dev/null
 }

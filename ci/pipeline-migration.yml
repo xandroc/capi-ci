@@ -406,7 +406,7 @@ jobs:
         - garden-linux-release-tarball/*.tgz
         - etcd-release-tarball/*.tgz
         - cflinuxfs2-rootfs-tarball/*.tgz
-  - task: app-availability-test
+  - task: postgres-app-availability-test
     file: capi-ci/ci/scripts/app_availability_test.yml
     params:
       API_DOMAIN: api.buffy.capi.cf-app.com
@@ -417,6 +417,21 @@ jobs:
       DB_HOST: 10.244.0.30
       DB_USERNAME: {{buffy_cc_db_username}}
       DB_PASSWORD: {{buffy_cc_db_password}}
+      DB_PORT: 5432
+      ENVIRONMENT: buffy
+      TUNNEL_HOST: bosh.buffy.capi.cf-app.com
+  - task: mysql-app-availability-test
+    file: capi-ci/ci/scripts/app_availability_test.yml
+    params:
+      API_DOMAIN: api.buffy.capi.cf-app.com
+      APP_DOMAIN: buffy-apps.capi.cf-app.com
+      CLOUD_CONTROLLER_BRANCH: migrate
+      DB_NAME: {{buffy_cc_db_database}}
+      DB: mysql2
+      DB_HOST: 10.244.7.3
+      DB_USERNAME: {{buffy_cc_db_username}}
+      DB_PASSWORD: {{buffy_cc_db_password}}
+      DB_PORT: 3306
       ENVIRONMENT: buffy
       TUNNEL_HOST: bosh.buffy.capi.cf-app.com
     ensure:

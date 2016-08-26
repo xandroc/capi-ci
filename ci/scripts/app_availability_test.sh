@@ -95,7 +95,7 @@ function setup_env() {
 
 function setup_db() {
   set +x
-  export DB_CONNECTION_STRING="${DB}://${DB_USERNAME}:${DB_PASSWORD}@localhost:5432/${DB_NAME}"
+  export DB_CONNECTION_STRING="${DB}://${DB_USERNAME}:${DB_PASSWORD}@localhost:${DB_PORT}/${DB_NAME}"
   set -x
 }
 
