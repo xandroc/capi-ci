@@ -440,6 +440,9 @@ jobs:
   - aggregate:
     - get: capi-ci
     - get: capi-release
+    - get: cloud_controller_ng-master-migrations
+      passed: [migration-backwards-compatibility-test]
+      trigger: true
     - get: cloud_controller_ng
       passed: [cc-unit-tests]
       trigger: true
