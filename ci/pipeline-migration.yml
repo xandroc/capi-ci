@@ -451,6 +451,7 @@ jobs:
     - get: capi-release
     - get: cloud_controller_ng
       resource: cloud_controller_ng-migrate
+      trigger: true
     - get: version
       params:
         pre: migrate
