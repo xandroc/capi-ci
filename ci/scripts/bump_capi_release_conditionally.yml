@@ -9,7 +9,6 @@ image_resource:
 
 inputs:
   - name: cloud_controller_ng
-  - name: cloud_controller_ng-master-migrations
   - name: capi-release
   - name: capi-ci
   - name: diego-release
