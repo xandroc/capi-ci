@@ -49,20 +49,17 @@ resources:
 - name: weekly-sunday
   type: time
   source:
-    start: 23:00 -0700
-    stop: 23:30 -0700
+    location: America/Los_Angeles
+    start: 23:00
+    stop: 23:30
     days: [Sunday]
 
 - name: daily
   type: time
   source:
-    start: 23:00 -0700
-    stop: 23:30 -0700
-
-- name: bump-hourly
-  type: time
-  source:
-    interval: 1h
+    location: America/Los_Angeles
+    start: 23:00
+    stop: 23:30
 
 - name: deliver-capi-stories
   type: tracker
