@@ -1,8 +1,8 @@
 #!/bin/bash
 
-set -eux -o pipefail
-
 source ~/.bashrc
+
+set -eux -o pipefail
 
 bosh target ${BOSH_DIRECTOR}
 bosh login ${BOSH_USER} ${BOSH_PASSWORD}
