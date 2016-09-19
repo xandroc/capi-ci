@@ -2,7 +2,8 @@
 
 set -eux -o pipefail
 
-bosh target bosh.${ENV}.cf-app.com
+bosh target ${BOSH_DIRECTOR}
+bosh login ${BOSH_USER} ${BOSH_PASSWORD}
 bosh download manifest cf-${ENV} generated-manifest/cf.yml
 
 pushd cf-mysql-release

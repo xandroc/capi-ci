@@ -555,6 +555,9 @@ jobs:
       - name: generated-manifest
       params:
         ENV: xena
+        BOSH_DIRECTOR: https://bosh.xena.cf-app.com:25555
+        BOSH_USER: {{xena_bosh_user}}
+        BOSH_PASSWORD: {{xena_bosh_password}}
       run:
         path: capi-ci/ci/scripts/create_cf_mysql_deployment_manifest
 
