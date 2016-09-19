@@ -1,0 +1,16 @@
+#!/bin/bash
+
+set -eux -o pipefail
+
+bosh target bosh.${ENV}.cf-app.com
+bosh download manifest cf-${ENV} generated-manifest/cf.yml
+
+pushd cf-mysql-release
+  ./scripts/generate-deployment-manifest \
+    -c ../generated-manifest/cf.yml \
+    -i "../capi-ci/${ENV}/stubs/mysql/iaas_settings.yml" \
+    -p "../capi-ci-private/${ENV}/stubs/mysql/property-overrides.yml" \
+    -n "./manifest-generation/examples/standalone/instance-count-overrides.yml" \
+    > deployment.yml
+  cp deployment.yml ../generated-manifest/deployment.yml
+popd

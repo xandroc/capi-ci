@@ -19,6 +19,7 @@ groups:
 - name: xena-deployments
   jobs:
   - deploy-xena-datadog-firehose-nozzle
+  - deploy-cf-mysql
 - name: bosh
   jobs:
   - wait-for-sunday
@@ -196,6 +197,12 @@ resources:
     drafts: true
     access_token: {{github_access_token}}
 
+- name: cf-mysql-release
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/cf-mysql-release.git
+
 - name: cf-release-master
   type: git
   source:
@@ -291,6 +298,11 @@ resources:
     regexp: diego-(.*).tgz
     access_key_id: {{diego_s3_access_key}}
     secret_access_key: {{diego_s3_secret_key}}
+
+- name: cf-mysql-release-tarball
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/cf-mysql-release
 
 - name: etcd-release-tarball
   type: bosh-io-release
@@ -520,6 +532,31 @@ jobs:
       params:
         text: '[create-capi-release] OH NO! Failed to upload tarball'
         icon_emoji: {{slack_failure_emoji}}
+
+- name: deploy-cf-mysql
+  serial: true
+  plan:
+  - aggregate:
+    - get: cf-mysql-release
+    - get: cf-mysql-release-tarball
+    - get: capi-ci
+    - get: capi-ci-private
+  - task: make-manifest
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: cloudfoundry/cf-mysql-ci
+      inputs:
+      - name: cf-mysql-release
+      - name: capi-ci
+      outputs:
+      - name: generated-manifest
+      params:
+        ENV: xena
+      run:
+        path: capi-ci/ci/scripts/create_cf_mysql_deployment_manifest
 
 - name: deploy-and-test-xena
   serial: true
