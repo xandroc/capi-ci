@@ -9,7 +9,7 @@ bosh download manifest cf-${ENV} generated-manifest/cf.yml
 pushd cf-mysql-release
   ./scripts/generate-deployment-manifest \
     -c ../generated-manifest/cf.yml \
-    -i "../capi-ci/${ENV}/stubs/mysql/iaas_settings.yml" \
+    -i "../capi-ci/${ENV}/stubs/mysql/iaas-settings.yml" \
     -p "../capi-ci-private/${ENV}/stubs/mysql/property-overrides.yml" \
     -n "./manifest-generation/examples/standalone/instance-count-overrides.yml" \
     > deployment.yml
