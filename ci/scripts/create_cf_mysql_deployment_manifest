@@ -2,6 +2,8 @@
 
 set -eux -o pipefail
 
+source ~/.bashrc
+
 bosh target ${BOSH_DIRECTOR}
 bosh login ${BOSH_USER} ${BOSH_PASSWORD}
 bosh download manifest cf-${ENV} generated-manifest/cf.yml

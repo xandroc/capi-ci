@@ -375,7 +375,7 @@ resources:
     target: https://bosh.xena.cf-app.com:25555
     username: {{xena_bosh_user}}
     password: {{xena_bosh_password}}
-    deployment: cf-mysql-xena
+    deployment: cf-xena-mysql
     ignore_ssl: true
 
 - name: xena-stemcell-upload
@@ -557,7 +557,8 @@ jobs:
       image_resource:
         type: docker-image
         source:
-          repository: cloudfoundry/cf-mysql-ci
+          repository: cloudfoundry/capi
+          tag: runtime-ci
       inputs:
       - name: cf-mysql-release
       - name: capi-ci
