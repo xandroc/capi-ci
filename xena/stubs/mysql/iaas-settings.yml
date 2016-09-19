@@ -1,13 +1,13 @@
 properties:
   template_only:
     aws:
-      availability_zone: REPLACE_WITH_AZ_1 # e.g. us-east-1a
-      availability_zone2: REPLACE_WITH_AZ_2
-      availability_zone3: REPLACE_WITH_AZ_3
+      availability_zone: us-east-1b	 # e.g. us-east-1a
+      availability_zone2: us-east-1c
+      availability_zone3: us-east-1d
       subnet_ids:
-        mysql1: REPLACE_WITH_YOUR_SUBNET_ID_1
-        mysql2: REPLACE_WITH_YOUR_SUBNET_ID_2
-        mysql3: REPLACE_WITH_YOUR_SUBNET_ID_3
+        mysql1: subnet-136f9b3e
+        mysql2: subnet-67a4032e
+        mysql3: subnet-581bf103
 
 iaas_settings:
   <<: (( merge || nil ))
@@ -16,13 +16,13 @@ iaas_settings:
   - name: mysql1
     type: manual
     subnets:
-    - range: 10.10.32.0/24
+    - range: 10.10.60.0/24
       reserved:
-        - 10.10.32.2 - 10.10.32.9
-        - 10.10.32.130 - 10.10.32.254
+        - 10.10.60.2 - 10.10.60.9
+        - 10.10.60.130 - 10.10.60.254
       static:
-        - 10.10.32.10 - 10.10.32.14
-      gateway: 10.10.32.1
+        - 10.10.60.10 - 10.10.60.14
+      gateway: 10.10.60.1
       dns:
         - 10.10.0.2 # amazon has only 1 DNS server for the whole VPC at x.x.0.2
       cloud_properties:
@@ -30,13 +30,13 @@ iaas_settings:
   - name: mysql2
     type: manual
     subnets:
-    - range: 10.10.33.0/24
+    - range: 10.10.61.0/24
       reserved:
-        - 10.10.33.2 - 10.10.33.9
-        - 10.10.33.130 - 10.10.33.254
+        - 10.10.61.2 - 10.10.61.9
+        - 10.10.61.130 - 10.10.61.254
       static:
-        - 10.10.33.10 - 10.10.33.14
-      gateway: 10.10.33.1
+        - 10.10.61.10 - 10.10.61.14
+      gateway: 10.10.61.1
       dns:
         - 10.10.0.2 # amazon has only 1 DNS server for the whole VPC at x.x.0.2
       cloud_properties:
@@ -44,13 +44,13 @@ iaas_settings:
   - name: mysql3
     type: manual
     subnets:
-    - range: 10.10.34.0/24
+    - range: 10.10.62.0/24
       reserved:
-        - 10.10.34.2 - 10.10.34.9
-        - 10.10.34.130 - 10.10.34.254
+        - 10.10.62.2 - 10.10.62.9
+        - 10.10.62.130 - 10.10.62.254
       static:
-        - 10.10.34.10 - 10.10.34.14
-      gateway: 10.10.34.1
+        - 10.10.62.10 - 10.10.62.14
+      gateway: 10.10.62.1
       dns:
         - 10.10.0.2 # amazon has only 1 DNS server for the whole VPC at x.x.0.2
       cloud_properties:

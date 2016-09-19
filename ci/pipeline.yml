@@ -369,6 +369,15 @@ resources:
     deployment: cf-xena
     ignore_ssl: true
 
+- name: xena-mysql-deployment
+  type: bosh-deployment
+  source:
+    target: https://bosh.xena.cf-app.com:25555
+    username: {{xena_bosh_user}}
+    password: {{xena_bosh_password}}
+    deployment: cf-mysql-xena
+    ignore_ssl: true
+
 - name: xena-stemcell-upload
   type: bosh-stemcell
   source:
@@ -541,6 +550,7 @@ jobs:
     - get: cf-mysql-release-tarball
     - get: capi-ci
     - get: capi-ci-private
+    - get: aws-stemcell
   - task: make-manifest
     config:
       platform: linux
@@ -561,6 +571,17 @@ jobs:
         BOSH_PASSWORD: {{xena_bosh_password}}
       run:
         path: capi-ci/ci/scripts/create_cf_mysql_deployment_manifest
+  - put: xena-mysql-deployment
+    params:
+      manifest: generated-manifest/deployment.yml
+      stemcells: [aws-stemcell/*.tgz]
+      releases:
+        - cf-mysql-release-tarball/*.tgz
+    on_failure:
+      put: slack-alert
+      params:
+        text: '[deploy-and-test-xena] OH NO! Failed deploying cf-mysql-release to xena'
+        icon_emoji: {{slack_failure_emoji}}
 
 - name: deploy-and-test-xena
   serial: true
