@@ -551,6 +551,7 @@ jobs:
       inputs:
       - name: cf-mysql-release
       - name: capi-ci
+      - name: capi-ci-private
       outputs:
       - name: generated-manifest
       params:
