@@ -10,6 +10,8 @@ groups:
   - ship-it
   - push-github-release
   - bump-capi-release
+  - publish-docs
+  - bump-cc-api
 - name: dependencies-docs
   jobs:
   - check-cc-dependencies
@@ -170,6 +172,16 @@ resources:
     bucket: capi-release-versions
     key: current-capi-release-version
     region_name: us-east-1
+
+- name: cc-api-version
+  type: semver
+  source:
+    driver: git
+    uri: git@github.com:cloudfoundry/cloud_controller_ng.git
+    branch: master
+    file: config/version
+    git_user: 'CAPI CI <cf-capi-eng+ci@pivotal.io>'
+    private_key: {{private_key}}
 
 - name: cc-uploader
   type: git
@@ -935,6 +947,41 @@ jobs:
       put: slack-alert
       params:
         text: '[rc-docs] OH NO! Failed to update documentation https://capi.ci.cf-app.com/?groups=migrations-dependencies-docs'
+        icon_emoji: {{slack_failure_emoji}}
+
+- name: bump-cc-api
+  serial: true
+  plan:
+  - aggregate:
+    # we are using version as an input to gate on ship-it using a cheap to get resource
+    # it is not actually a necessary input for this job
+    - get: version
+      passed: [ship-it]
+      trigger: true
+    - get: cc-api-version
+  - put: cc-api-version
+    params:
+      pre: alpha
+
+- name: publish-docs
+  serial: true
+  plan:
+  - aggregate:
+    - get: capi-ci
+    - get: capi-release
+      trigger: true
+      passed: [ship-it]
+      params:
+        submodules:
+          - src/cloud_controller_ng
+  - task: push-docs
+    file: capi-ci/ci/scripts/push_docs.yml
+    params:
+      GITHUB_PUSH_KEY: {{private_key}}
+    on_failure:
+      put: slack-alert
+      params:
+        text: '[publish-docs] OH NO! Failed to update documentation https://capi.ci.cf-app.com/?groups=migrations-dependencies-docs'
         icon_emoji: {{slack_failure_emoji}}
 
 - name: update-checkman
