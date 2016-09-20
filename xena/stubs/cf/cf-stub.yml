@@ -229,7 +229,7 @@ properties:
 
   ccdb:
     db_scheme: mysql
-    address: mysql.service.cf.interal
+    address: mysql.service.cf.internal
     roles:
     - tag: admin
       name: ccadmin
