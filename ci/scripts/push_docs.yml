@@ -1,0 +1,18 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: cloudfoundry/capi
+    tag: rc-docs
+
+inputs:
+  - name: capi-release
+  - name: capi-ci
+
+run:
+  path: capi-ci/ci/scripts/push_docs
+
+params:
+  GITHUB_PUSH_KEY:
