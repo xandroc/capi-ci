@@ -9,7 +9,7 @@ pushd capi-checkman
 
   pipelines=$(curl $atc_url/api/v1/pipelines -s | jq .[].name --raw-output)
   for pipeline in $pipelines; do
-    curl -s "https://capi.ci.cf-app.com/api/v1/teams/main/pipelines/$pipeline/jobs" | jq .[].name --raw-output | awk -v pipeline="$pipeline" -v atc_url="$atc_url" '{print $1 ": concourse.check " atc_url " " pipeline " " $1}' >> pipeline
+    curl -s "https://capi.ci.cf-app.com/api/v1/teams/main/pipelines/$pipeline/jobs" | jq .[].name --raw-output | awk -v pipeline="$pipeline" -v atc_url="$atc_url" '{print $1 ": concourse.check " atc_url " main " pipeline " " $1}' >> pipeline
   done
 
   set +e
