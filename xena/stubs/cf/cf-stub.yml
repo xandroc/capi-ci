@@ -228,8 +228,8 @@ properties:
         cf2: (( merge )) # subnet ID for cf2
 
   ccdb:
-    db_scheme: mysql
-    address: mysql.service.cf.internal
+    db_scheme: postgres
+    address: 10.0.32.30
     roles:
     - tag: admin
       name: ccadmin
@@ -237,7 +237,7 @@ properties:
     databases:
     - tag: cc
       name: ccdb
-    port: 3306
+    port: 5524
 
   uaadb:
     db_scheme: postgresql
