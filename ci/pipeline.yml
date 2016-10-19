@@ -94,33 +94,6 @@ resources:
   source:
     repository: cloudfoundry-incubator/bosh-aws-cpi-release
 
-- name: bosh-lite
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/bosh-lite.git
-
-- name: bosh-lite-cf-deployment
-  type: bosh-deployment
-  source:
-    username: admin
-    password: admin
-    deployment: cf-warden
-    ignore_ssl: true
-
-- name: bosh-lite-diego-deployment
-  type: bosh-deployment
-  source:
-    username: admin
-    password: admin
-    deployment: cf-warden-diego
-    ignore_ssl: true
-
-- name: bosh-lite-stemcell
-  type: bosh-io-stemcell
-  source:
-    name: bosh-warden-boshlite-ubuntu-trusty-go_agent
-
 - name: capi-checkman
   type: git
   source:
@@ -250,20 +223,6 @@ resources:
     private_key: {{private_key}}
     uri: git@github.com:cloudfoundry/cloud_controller_ng.git
 
-- name: cloud_controller_ng-migrate
-  type: git
-  source:
-    branch: migrate
-    private_key: {{private_key}}
-    uri: git@github.com:cloudfoundry/cloud_controller_ng.git
-
-- name: cloud_controller_ng-migrate-migrations
-  type: git
-  source:
-    branch: migrate
-    uri: https://github.com/cloudfoundry/cloud_controller_ng.git
-    paths: ['db']
-
 - name: cloud_controller_ng-master-migrations
   type: git
   source:
@@ -337,11 +296,6 @@ resources:
   source:
     url: {{slack_failure_hook_url}}
 
-- name: slack-notice
-  type: slack-notification
-  source:
-    url: {{slack_capi_hook_url}}
-
 - name: stager
   type: git
   source:
@@ -404,15 +358,6 @@ resources:
     target: https://bosh.xena.cf-app.com:25555
     username: {{xena_bosh_user}}
     password: {{xena_bosh_password}}
-    ignore_ssl: true
-
-- name: xena-diego-cats-deployment
-  type: bosh-deployment
-  source:
-    target: https://bosh.xena.cf-app.com:25555
-    username: {{xena_bosh_user}}
-    password: {{xena_bosh_password}}
-    deployment: cf-xena-diego-cats
     ignore_ssl: true
 
 - name: xena-diego-deployment
