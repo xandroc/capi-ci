@@ -471,6 +471,7 @@ jobs:
   plan:
   - aggregate:
     - get: capi-release
+      passed: [bump-capi-release]
       trigger: true
     - get: capi-ci
     - get: version
