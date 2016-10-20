@@ -630,6 +630,10 @@ jobs:
       params:
         text: '[deploy-and-test-xena] OH NO! Failed deploying diego to xena'
         icon_emoji: {{slack_failure_emoji}}
+  - task: enable-feature-flags
+    params:
+      CF_API_TARGET: https://api.xena.cf-app.com
+      CF_ADMIN_PASSWORD: {{xena_cf_admin_password}}
   - task: acceptance-tests
     privileged: true
     file: capi-ci/ci/scripts/run_bosh_command.yml
