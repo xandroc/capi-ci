@@ -631,6 +631,7 @@ jobs:
         text: '[deploy-and-test-xena] OH NO! Failed deploying diego to xena'
         icon_emoji: {{slack_failure_emoji}}
   - task: enable-feature-flags
+    file: capi-ci/ci/scripts/enable_feature_flags.yml
     params:
       CF_API_TARGET: https://api.xena.cf-app.com
       CF_ADMIN_PASSWORD: {{xena_cf_admin_password}}
