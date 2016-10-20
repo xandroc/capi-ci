@@ -1,18 +1,10 @@
 groups:
-- name: great-migration
-  jobs:
-  - cc-unit-tests-with-migrations
-  - app-availability-during-migration
-  - deploy-and-test-arya
-- name: environment-setup
+- name: main
   jobs:
   - configure-buffy-networking
+  - deploy-and-teardown-bosh-lite
 
 resource_types:
-- name: slack-notification
-  type: docker-image
-  source:
-    repository: cfcommunity/slack-notification-resource
 - name: bosh-stemcell
   type: docker-image
   source:
@@ -23,69 +15,6 @@ resource_types:
     repository: cloudfoundry/bosh-release-resource
 
 resources:
-
-- name: version
-  type: semver
-  source:
-    access_key_id: {{wasabi_semver_access_key}}
-    secret_access_key: {{wasabi_semver_secret_key}}
-    initial_version: 0.0.1
-    bucket: capi-release-versions
-    key: migrate-capi-release-version
-    region_name: us-east-1
-
-- name: arya-acceptance-tests-with-diego-logs
-  type: s3
-  source:
-    private: true
-    bucket: arya-acceptance-tests-with-diego-logs
-    regexp: acceptance_tests.(0)..*.tgz
-    access_key_id: {{arya_aws_access_key}}
-    secret_access_key: {{arya_aws_secret_key}}
-
-- name: arya-acceptance-tests-with-dea-logs
-  type: s3
-  source:
-    private: true
-    bucket: arya-acceptance-tests-with-dea-logs
-    regexp: acceptance_tests.(0)..*.tgz
-    access_key_id: {{arya_aws_access_key}}
-    secret_access_key: {{arya_aws_secret_key}}
-
-- name: arya-deployment
-  type: bosh-deployment
-  source:
-    target: https://bosh.arya.cf-app.com:25555
-    username: {{arya_bosh_user}}
-    password: {{arya_bosh_password}}
-    deployment: cf-arya
-    ignore_ssl: true
-
-- name: arya-diego-deployment
-  type: bosh-deployment
-  source:
-    target: https://bosh.arya.cf-app.com:25555
-    username: {{arya_bosh_user}}
-    password: {{arya_bosh_password}}
-    deployment: cf-arya-diego
-    ignore_ssl: true
-
-- name: arya-release-upload
-  type: bosh-release
-  source:
-    target: https://bosh.arya.cf-app.com:25555
-    username: {{arya_bosh_user}}
-    password: {{arya_bosh_password}}
-    ignore_ssl: true
-
-- name: arya-stemcell-upload
-  type: bosh-stemcell
-  source:
-    target: https://bosh.arya.cf-app.com:25555
-    username: {{arya_bosh_user}}
-    password: {{arya_bosh_password}}
-    ignore_ssl: true
-
 - name: aws-stemcell
   type: bosh-io-stemcell
   source:
@@ -187,20 +116,6 @@ resources:
   source:
     repository: cloudfoundry/cflinuxfs2-rootfs-release
 
-- name: cloud_controller_ng-migrate
-  type: git
-  source:
-    branch: migrate
-    private_key: {{private_key}}
-    uri: git@github.com:cloudfoundry/cloud_controller_ng.git
-
-- name: cloud_controller_ng-migrate-migrations
-  type: git
-  source:
-    branch: migrate
-    uri: https://github.com/cloudfoundry/cloud_controller_ng.git
-    paths: ['db']
-
 - name: diego-ci
   type: git
   source:
@@ -230,45 +145,8 @@ resources:
   source:
     repository: cloudfoundry-incubator/garden-linux-release
 
-- name: slack-alert
-  type: slack-notification
-  source:
-    url: {{slack_failure_hook_url}}
-
-- name: slack-notice
-  type: slack-notification
-  source:
-    url: {{slack_capi_hook_url}}
-
 jobs:
-- name: cc-unit-tests-with-migrations
-  plan:
-  - aggregate:
-    - get: cloud_controller_ng
-      resource: cloud_controller_ng-migrate
-      trigger: true
-    - get: capi-ci
-  - aggregate:
-    - task: run-cc-unit-tests-mysql
-      file: capi-ci/ci/scripts/run_cc_unit_tests.yml
-      params:
-        DB: mysql
-      on_failure:
-        put: slack-alert
-        params:
-          text: '[cc-unit-tests-with-migrations] OH NO! Failed when running with mysql'
-          icon_emoji: {{slack_failure_emoji}}
-    - task: run-cc-unit-tests-postgres
-      file: capi-ci/ci/scripts/run_cc_unit_tests.yml
-      params:
-        DB: postgres
-      on_failure:
-        put: slack-alert
-        params:
-          text: '[cc-unit-tests-with-migrations] OH NO! Failed when running with postgres'
-          icon_emoji: {{slack_failure_emoji}}
-
-- name: app-availability-during-migration
+- name: deploy-and-teardown-bosh-lite
   plan:
   - aggregate:
     - get: bosh-lite
@@ -376,27 +254,6 @@ jobs:
         - garden-linux-release-tarball/*.tgz
         - etcd-release-tarball/*.tgz
         - cflinuxfs2-rootfs-tarball/*.tgz
-  - task: app-availability-test
-    file: capi-ci/ci/scripts/app_availability_test.yml
-    params:
-      API_DOMAIN: api.buffy.capi.cf-app.com
-      APP_DOMAIN: buffy-apps.capi.cf-app.com
-      CLOUD_CONTROLLER_BRANCH: migrate
-      DB_NAME: {{buffy_cc_db_database}}
-      DB: postgres
-      DB_HOST: 10.244.0.30
-      DB_USERNAME: {{buffy_cc_db_username}}
-      DB_PASSWORD: {{buffy_cc_db_password}}
-      ENVIRONMENT: buffy
-      TUNNEL_HOST: bosh.buffy.capi.cf-app.com
-    ensure:
-      task: deprovision-bosh-lite
-      file: capi-ci/ci/scripts/deprovision_bosh_lite.yml
-      params:
-        BOSH_LITE_NAME: buffy-bosh-lite
-        AWS_ACCESS_KEY_ID: {{buffy_access_key}}
-        AWS_SECRET_ACCESS_KEY: {{buffy_secret_key}}
-        AWS_DEFAULT_REGION: {{buffy_aws_default_region}}
   - task: terminate-cloudformation
     file: capi-ci/ci/scripts/teardown_cloudformation_stack.yml
     params:
@@ -442,143 +299,3 @@ jobs:
       ZONE_ACCESS_KEY_ID: {{buffy_access_key}}
       ZONE_SECRET_ACCESS_KEY: {{buffy_secret_key}}
       ZONE: "buffy-apps.capi.cf-app.com"
-
-- name: deploy-and-test-arya
-  serial: true
-  plan:
-  - aggregate:
-    - get: cf-release-tarball
-    - get: capi-release
-    - get: cloud_controller_ng
-      resource: cloud_controller_ng-migrate
-      trigger: true
-    - get: version
-      params:
-        pre: migrate
-    - get: capi-ci
-    - get: capi-ci-private
-    - get: aws-stemcell
-    - get: cf-release
-      resource: cf-release-develop
-    - get: diego-ci
-    - get: diego-release
-      params:
-        submodules: none
-    - get: garden-linux-release-tarball
-    - get: etcd-release-tarball
-    - get: diego-release-tarball
-    - get: cflinuxfs2-rootfs-tarball
-  - put: version
-    params:
-      file: version/version
-  - task: cf-manifest-with-dea
-    privileged: true
-    file: capi-ci/ci/scripts/create_cf_deployment_migration_manifest_with_dea.yml
-    params:
-      INFRASTRUCTURE: aws
-      ENVIRONMENT: arya
-  - task: cf-manifest-with-diego
-    privileged: true
-    file: capi-ci/ci/scripts/create_cf_deployment_migration_manifest_with_diego.yml
-    params:
-      INFRASTRUCTURE: aws
-      ENVIRONMENT: arya
-  - task: manifest-with-0-postgres
-    privileged: true
-    file: capi-ci/ci/scripts/create_cf_deployment_migration_manifest_with_0_postgres.yml
-    params:
-      INFRASTRUCTURE: aws
-      ENVIRONMENT: arya
-  - task: generate-diego-deployment-manifests
-    file: capi-ci/ci/scripts/create_diego_release_for_migration_manifest.yml
-    params:
-      BOSH_TARGET: bosh.arya.cf-app.com
-      BOSH_USER: {{arya_bosh_user}}
-      BOSH_PASSWORD: {{arya_bosh_password}}
-      DEPLOYMENTS_DIR: capi-ci-private
-      ENVIRONMENT_NAME: arya
-  - task: create-release-tarball
-    file: capi-ci/ci/scripts/create_capi_release.yml
-    params:
-      CC_BRANCH: migrate
-  - aggregate:
-    - put: arya-stemcell-upload
-      params:
-        stemcells:
-          - aws-stemcell/*.tgz
-    - put: upload-cf-release-tarball
-      resource: arya-release-upload
-      params:
-        releases:
-          - cf-release-tarball/*.tgz
-    - put: upload-release-tarballs
-      resource: arya-release-upload
-      params:
-        releases:
-          - created-capi-release/capi-*.tgz
-          - diego-release-tarball/*.tgz
-          - garden-linux-release-tarball/*.tgz
-          - etcd-release-tarball/*.tgz
-          - cflinuxfs2-rootfs-tarball/*.tgz
-  - put: arya-deployment
-    params:
-      manifest: generated-manifest-with-0-postgres/deployment_with_0_postgres.yml
-      stemcells: [aws-stemcell/*.tgz]
-      releases:
-        - cf-release-tarball/*.tgz
-        - created-capi-release/capi-*.tgz
-  - put: arya-deployment
-    params:
-      manifest: generated-manifest-with-dea/cf-deployment-with-dea.yml
-      stemcells: [aws-stemcell/*.tgz]
-      releases:
-        - cf-release-tarball/*.tgz
-        - created-capi-release/capi-*.tgz
-  - put: arya-diego-deployment
-    params:
-      manifest: generated-diego-manifest/diego-deployment.yml
-      releases:
-        - diego-release-tarball/*.tgz
-        - garden-linux-release-tarball/*.tgz
-        - etcd-release-tarball/*.tgz
-        - cflinuxfs2-rootfs-tarball/*.tgz
-      stemcells: [aws-stemcell/*.tgz]
-  - task: enable-feature-flags
-    file: capi-ci/ci/scripts/enable_feature_flags.yml
-    params:
-      CF_ADMIN_PASSWORD: {{arya_cf_admin_password}}
-  - task: dea-acceptance-tests
-    privileged: true
-    file: capi-ci/ci/scripts/run_bosh_command.yml
-    input_mapping: {manifest: generated-manifest-with-dea}
-    params:
-      BOSH_DIRECTOR: bosh.arya.cf-app.com
-      BOSH_USER: {{arya_bosh_user}}
-      BOSH_PASSWORD: {{arya_bosh_password}}
-      DEPLOYMENT_YML: manifest/cf-deployment-with-dea.yml
-      COMMAND: 'run errand acceptance_tests --keep-alive --download-logs --logs-dir bosh-logs'
-    ensure:
-      put: arya-acceptance-tests-with-dea-logs
-      params:
-        file: bosh-logs/acceptance_tests*.tgz
-  - put: arya-deployment
-    params:
-      manifest: generated-manifest-with-diego/cf-deployment-with-diego.yml
-      stemcells: [aws-stemcell/*.tgz]
-      releases:
-        - cf-release-tarball/*.tgz
-        - created-capi-release/capi-*.tgz
-  - task: diego-acceptance-tests
-    privileged: true
-    file: capi-ci/ci/scripts/run_bosh_command.yml
-    input_mapping: {manifest: generated-manifest-with-diego}
-    params:
-      BOSH_DIRECTOR: bosh.arya.cf-app.com
-      BOSH_USER: {{arya_bosh_user}}
-      BOSH_PASSWORD: {{arya_bosh_password}}
-      DEPLOYMENT_YML: manifest/cf-deployment-with-diego.yml
-      COMMAND: 'run errand acceptance_tests --keep-alive --download-logs --logs-dir bosh-logs'
-    ensure:
-      put: arya-acceptance-tests-with-diego-logs
-      params:
-        file: bosh-logs/acceptance_tests*.tgz
