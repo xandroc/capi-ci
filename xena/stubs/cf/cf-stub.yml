@@ -276,7 +276,7 @@ properties:
   uaa:
     ssl:
       port: 8443
-    sslCertificate: (( secrets.uaa.sslCertficate ))
+    sslCertificate: (( secrets.uaa.sslCertificate ))
     sslPrivateKey: (( secrets.uaa.sslPrivateKey ))
     ca_cert: (( secrets.uaa.ca_cert ))
     jwt:
