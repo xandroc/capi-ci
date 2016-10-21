@@ -408,7 +408,7 @@ properties:
 
   acceptance_tests:
     api: (( "api." domain ))
-    apps_domain: (( app_domains[0] ))
+    apps_domain: (( app_domains.[0] ))
     admin_user: (( secrets.acceptance_tests.admin_user ))
     admin_password: (( secrets.acceptance_tests.admin_password ))
     backend: diego

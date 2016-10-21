@@ -444,7 +444,7 @@ properties:
 
   acceptance_tests:
     api: (( "api." domain ))
-    apps_domain: (( app_domains ))
+    apps_domain: (( app_domains.[0] ))
     admin_user: admin
     admin_password: (( secrets.ccdb_admin_password ))
     nodes: 4
