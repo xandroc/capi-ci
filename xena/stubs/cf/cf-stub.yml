@@ -271,6 +271,11 @@ properties:
       tag: admin
 
   uaa:
+    ssl:
+      port: 8443
+    sslCertificate: (( secrets.uaa.sslCertficate ))
+    sslPrivateKey: (( secrets.uaa.sslPrivateKey ))
+    ca_cert: (( secrets.uaa.ca_cert ))
     jwt:
       signing_key: (( secrets.uaa.jwt.signing_key ))
       verification_key: (( secrets.uaa.jwt.verification_key ))
