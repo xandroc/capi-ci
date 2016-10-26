@@ -80,6 +80,7 @@ jobs:
   instances: 0
 - name: api_z1
   instances: 1
+  persistent_disk: 1024
   templates:
     - name: consul_agent
     - name: go-buildpack
@@ -98,12 +99,16 @@ jobs:
     - name: route_registrar
     - name: java-buildpack
 - name: api_z2
+  persistent_disk: 1024
   instances: 0
 - name: clock_global
+  persistent_disk: 1024
   instances: 0
 - name: api_worker_z1
+  persistent_disk: 1024
   instances: 0
 - name: api_worker_z2
+  persistent_disk: 1024
   instances: 0
 - name: hm9000_z2
   instances: 0
