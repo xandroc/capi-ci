@@ -143,8 +143,9 @@ secrets:
     sslPrivateKey: (( merge ))
     ca_cert: (( merge ))
     jwt:
-      signing_key: (( merge ))
-      verification_key: (( merge ))
+      policy:
+        active_key_id: (( merge ))
+        keys: (( merge ))
     cc:
       client_secret: (( merge ))
     admin:
@@ -299,8 +300,9 @@ properties:
     sslPrivateKey: (( secrets.uaa.sslPrivateKey ))
     ca_cert: (( secrets.uaa.ca_cert ))
     jwt:
-      signing_key: (( secrets.uaa.jwt.signing_key ))
-      verification_key: (( secrets.uaa.jwt.verification_key ))
+      policy:
+        active_key_id: (( secrets.uaa.jwt.policy.active_key_id ))
+        keys: (( secrets.uaa.jwt.policy.keys ))
     cc:
       client_secret: (( secrets.uaa.cc.client_secret ))
     admin:
