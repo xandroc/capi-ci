@@ -136,12 +136,9 @@ secrets:
   app_ssh:
     host_key_fingerprint: (( merge )) # the fingerprint of your app host key
   uaa:
-    sslCertificate: (( merge ))
-    sslPrivateKey: (( merge ))
     jwt:
-      policy:
-        active_key_id: (( merge )) # Id of key to sign jwt tokens with (from list below)
-        keys: (( merge )) # All possible signing keys
+      signing_key: (( merge ))  # a private key. This is most useful if entered using YAML multi-line string syntax.
+      verification_key: (( merge )) # the corresponding public key. This is most useful if entered using YAML multi-line string syntax.
     cc:
       client_secret: (( merge )) # UAA 'cc' client secret
     admin:
@@ -300,12 +297,9 @@ properties:
       tag: admin
 
   uaa:
-    sslCertificate: (( secrets.uaa.sslCertificate ))
-    sslPrivateKey: (( secrets.uaa.sslPrivateKey ))
     jwt:
-      policy:
-        active_key_id: (( secrets.uaa.jwt.policy.active_key_id ))
-        keys: (( secrets.uaa.jwt.policy.keys ))
+      signing_key: (( secrets.uaa.jwt.signing_key ))
+      verification_key: (( secrets.uaa.jwt.verification_key ))
     cc:
       client_secret: (( secrets.uaa.cc.client_secret ))
     admin:
