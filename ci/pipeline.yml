@@ -280,10 +280,10 @@ resources:
   source:
     repository: cloudfoundry-incubator/etcd-release
 
-- name: garden-linux-release-tarball
+- name: garden-runc-release-tarball
   type: bosh-io-release
   source:
-    repository: cloudfoundry-incubator/garden-linux-release
+    repository: cloudfoundry/garden-runc-release
 
 - name: nsync
   type: git
@@ -566,7 +566,7 @@ jobs:
     - get: diego-release
       params:
         submodules: none
-    - get: garden-linux-release-tarball
+    - get: garden-runc-release-tarball
     - get: etcd-release-tarball
     - get: diego-release-tarball
       trigger: true
@@ -601,7 +601,7 @@ jobs:
         releases:
           - capi-release-tarball/*.tgz
           - diego-release-tarball/*.tgz
-          - garden-linux-release-tarball/*.tgz
+          - garden-runc-release-tarball/*.tgz
           - etcd-release-tarball/*.tgz
           - cflinuxfs2-rootfs-tarball/*.tgz
   - put: xena-deployment
@@ -621,7 +621,7 @@ jobs:
       manifest: generated-diego-manifest/diego-deployment.yml
       releases:
         - diego-release-tarball/*.tgz
-        - garden-linux-release-tarball/*.tgz
+        - garden-runc-release-tarball/*.tgz
         - etcd-release-tarball/*.tgz
         - cflinuxfs2-rootfs-tarball/*.tgz
       stemcells: [aws-stemcell/*.tgz]
