@@ -9,7 +9,5 @@ cd cloud_controller_ng
 bundle install
 
 bundle exec rake rubocop
-DB=mysql bundle exec rake parallel:create
-DB=postgres bundle exec rake parallel:create
-bundle exec rake spec:all
+bundle exec rake spec:serial
 
