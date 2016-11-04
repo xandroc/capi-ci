@@ -158,6 +158,11 @@ secrets:
   nats:
     password: (( merge )) # your desired NATS password
   cc:
+    diego:
+      bbs:
+        ca_cert: (( merge ))
+        client_cert: (( merge ))
+        client_key: (( merge ))
     bulk_api_password: (( merge )) # Password used to access the bulk_api, health_manager uses it to connect to the cc, announced over NATS
     staging_upload_user: (( merge )) # User name used to access internal endpoints of Cloud Controller to upload files when staging
     staging_upload_password: (( merge )) # User's password used to access internal endpoints of Cloud Controller to upload files when staging
@@ -349,6 +354,12 @@ properties:
     prof_port: 6060
 
   cc: &cc
+    diego:
+      temporary_local_staging: true
+      bbs:
+        ca_cert: (( secrets.cc.diego.bbs.ca_cert ))
+        client_cert: (( secrets.cc.diego.bbs.client_cert ))
+        client_key: (( secrets.cc.diego.bbs.client_key ))
     allow_app_ssh_access: true
     bulk_api_password: (( secrets.cc.bulk_api_password ))
     staging_upload_user: (( secrets.cc.staging_upload_user ))
