@@ -914,7 +914,7 @@ jobs:
     - get: cc-api-version
   - put: cc-api-version
     params:
-      pre: alpha
+      bump: minor
 
 - name: publish-docs
   serial: true
