@@ -508,6 +508,8 @@ jobs:
   serial: true
   plan:
   - aggregate:
+    - get: weekly-sunday
+      trigger: true
     - get: cf-mysql-release
     - get: cf-mysql-release-tarball
     - get: capi-ci
