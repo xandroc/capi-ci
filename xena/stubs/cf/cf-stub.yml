@@ -118,6 +118,15 @@ secrets:
   uaadb_admin_password: (( merge )) # required user-defined password
   app_ssh:
     host_key_fingerprint: (( merge )) # the fingerprint of your app host key
+  loggregator:
+    tls:
+      ca_cert: (( merge ))
+      doppler:
+        cert: (( merge ))
+        key: (( merge ))
+      trafficcontroller:
+        cert: (( merge ))
+        key: (( merge ))
   uaa:
     sslCertificate: (( merge ))
     sslPrivateKey: (( merge ))
@@ -409,6 +418,15 @@ properties:
       user: router
       password: (( secrets.router.status.password ))
 
+  loggregator:
+    tls:
+      ca_cert: (( secrets.loggregator.tls.ca_cert ))
+      doppler:
+        cert: (( secrets.loggregator.tls.doppler.cert ))
+        key: (( secrets.loggregator.tls.doppler.key ))
+      trafficcontroller:
+        cert: (( secrets.loggregator.tls.trafficcontroller.cert ))
+        key: (( secrets.loggregator.tls.trafficcontroller.key ))
   loggregator_endpoint:
     shared_secret: (( secrets.logging.shared_secret )) # same as metron_endpoint
 
