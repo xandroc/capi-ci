@@ -108,10 +108,7 @@ jobs:
 - name: consul_z2
   instances: 2
 - name: postgres_z1
-  instances: 1
-  networks:
-    - name: cf1
-      static_ips: 10.0.32.30
+  instances: 0
 
 secrets:
   ccdb_admin_password: (( merge )) # required user-defined password
@@ -276,25 +273,6 @@ properties:
     - tag: uaa
       name: uaadb
     port: 3306
-
-  databases:
-    address: 10.244.0.30
-    databases:
-    - citext: true
-      name: ccdb
-      tag: cc
-    - citext: true
-      name: uaadb
-      tag: uaa
-    db_scheme: postgres
-    port: 5524
-    roles:
-    - name: ccadmin
-      password: (( secrets.ccdb_admin_password ))
-      tag: admin
-    - name: uaaadmin
-      password: (( secrets.uaadb_admin_password ))
-      tag: admin
 
   uaa:
     ssl:
