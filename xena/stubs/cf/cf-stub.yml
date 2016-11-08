@@ -266,8 +266,8 @@ properties:
     port: 3306
 
   uaadb:
-    db_scheme: postgresql
-    address: 10.0.32.30
+    db_scheme: mysql
+    address: mysql.service.cf.internal
     roles:
     - tag: admin
       name: uaaadmin
@@ -275,7 +275,7 @@ properties:
     databases:
     - tag: uaa
       name: uaadb
-    port: 5524
+    port: 3306
 
   databases:
     address: 10.244.0.30
