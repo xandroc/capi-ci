@@ -12,6 +12,7 @@ groups:
   - bump-capi-release
   - publish-docs
   - bump-cc-api
+  - deploy-and-test-buffy
 - name: dependencies-docs
   jobs:
   - check-cc-dependencies
@@ -80,6 +81,47 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry/bosh
+
+- name: bosh-lite
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/bosh-lite.git
+
+- name: bosh-lite-cf-deployment
+  type: bosh-deployment
+  source:
+    username: admin
+    password: admin
+    deployment: cf-warden
+    ignore_ssl: true
+
+- name: bosh-lite-diego-deployment
+  type: bosh-deployment
+  source:
+    username: admin
+    password: admin
+    deployment: cf-warden-diego
+    ignore_ssl: true
+
+- name: bosh-lite-stemcell
+  type: bosh-io-stemcell
+  source:
+    name: bosh-warden-boshlite-ubuntu-trusty-go_agent
+
+- name: bosh-lite-stemcell-upload
+  type: bosh-stemcell
+  source:
+    username: admin
+    password: admin
+    ignore_ssl: true
+
+- name: bosh-lite-release-upload
+  type: bosh-release
+  source:
+    username: admin
+    password: admin
+    ignore_ssl: true
 
 - name: capi-final-releases
   type: s3
@@ -307,6 +349,15 @@ resources:
   source:
     branch: master
     uri: https://github.com/cloudfoundry-incubator/tps.git
+
+- name: buffy-acceptance-tests-logs
+  type: s3
+  source:
+    private: true
+    bucket: buffy-acceptance-tests-logs
+    regexp: acceptance_tests.(0)..*.tgz
+    access_key_id: {{buffy_access_key}}
+    secret_access_key: {{buffy_secret_key}}
 
 - name: xena-acceptance-tests-logs
   type: s3
@@ -657,6 +708,134 @@ jobs:
   - put: capi-release-ci-passed
     params:
       repository: capi-release
+
+- name: deploy-and-test-buffy
+  serial: true
+  plan:
+  - aggregate:
+    - get: bosh-lite
+    - get: bosh-lite-stemcell
+    - get: capi-ci
+    - get: capi-ci-private
+    - get: capi-release-tarball
+      passed: [create-capi-release]
+      trigger: true
+    - get: cf-release
+      resource: cf-release-develop
+      params:
+        submodules: none
+    - get: cf-release-tarball
+    - get: cflinuxfs2-rootfs-tarball
+    - get: diego-release
+      params:
+        submodules: none
+    - get: diego-release-tarball
+      trigger: true
+    - get: etcd-release-tarball
+    - get: garden-runc-release-tarball
+  - task: ensure-bosh-lite-terminated
+    file: capi-ci/ci/scripts/deprovision_bosh_lite.yml
+    params:
+      BOSH_LITE_NAME: buffy-bosh-lite
+      AWS_ACCESS_KEY_ID: {{buffy_access_key}}
+      AWS_SECRET_ACCESS_KEY: {{buffy_secret_key}}
+      AWS_DEFAULT_REGION: {{buffy_aws_default_region}}
+  - task: ensure-cloudformation-terminated
+    file: capi-ci/ci/scripts/teardown_cloudformation_stack.yml
+    params:
+      AWS_DEFAULT_REGION: {{buffy_aws_default_region}}
+      AWS_ACCESS_KEY_ID: {{buffy_access_key}}
+      AWS_SECRET_ACCESS_KEY: {{buffy_secret_key}}
+      STACK_NAME: buffy-stack
+  - task: create-cloudformation
+    file: capi-ci/ci/scripts/create_cloudformation_stack.yml
+    params:
+      AWS_DEFAULT_REGION: {{buffy_aws_default_region}}
+      AWS_ACCESS_KEY_ID: {{buffy_access_key}}
+      AWS_SECRET_ACCESS_KEY: {{buffy_secret_key}}
+      STACK_NAME: buffy-stack
+      CLOUDFORMATION_PATH: capi-ci/buffy/cloudformation.json
+  - task: provision-bosh-lite
+    file: capi-ci/ci/scripts/provision_bosh_lite.yml
+    params:
+      BOSH_LITE_INSTANCE_TYPE: c3.4xlarge
+      BOSH_LITE_NAME: buffy-bosh-lite
+      AWS_ACCESS_KEY_ID: {{buffy_access_key}}
+      AWS_SECRET_ACCESS_KEY: {{buffy_secret_key}}
+      AWS_DEFAULT_REGION: {{buffy_aws_default_region}}
+      AWS_SECURITY_GROUP_TAG: {{buffy_security_group_tag}}
+      AWS_SUBNET_NAME: {{buffy_subnet_name}}
+      BOSH_LITE_KEYPAIR: {{buffy_keypair_name}}
+      SSH_KEY: {{buffy_private_key}}
+      APP_DOMAIN: buffy-apps.capi.cf-app.com
+      SYSTEM_DOMAIN: buffy.capi.cf-app.com
+  - task: generate-bosh-lite-cf-manifest
+    file: capi-ci/ci/scripts/generate-bosh-lite-cf-manifest.yml
+    params:
+      ENVIRONMENT_STUB: capi-ci/buffy/stubs/cf/cf-stub.yml
+      STUBS_PATH: deployments/stub.yml
+  - aggregate:
+    - put: bosh-lite-stemcell-upload
+      params:
+        target_file: deployments/target
+        stemcells:
+          - bosh-lite-stemcell/*.tgz
+    - put: upload-cf-release-tarball
+      resource: bosh-lite-release-upload
+      params:
+        target_file: deployments/target
+        releases:
+          - cf-release-tarball/*.tgz
+    - put: upload-release-tarballs
+      resource: bosh-lite-release-upload
+      params:
+        target_file: deployments/target
+        releases:
+          - capi-release-tarball/*.tgz
+          - diego-release-tarball/*.tgz
+          - garden-runc-release-tarball/*.tgz
+          - etcd-release-tarball/*.tgz
+          - cflinuxfs2-rootfs-tarball/*.tgz
+  - put: bosh-lite-cf-deployment
+    params:
+      target_file: deployments/target
+      manifest: generated-manifests/cf-deployment.yml
+      stemcells:
+        - bosh-lite-stemcell/*.tgz
+      releases:
+        - cf-release-tarball/*.tgz
+        - capi-release-tarball/*.tgz
+  - put: bosh-lite-diego-deployment
+    params:
+      target_file: deployments/target
+      manifest: generated-manifests/diego-deployment.yml
+      stemcells:
+        - bosh-lite-stemcell/*.tgz
+      releases:
+        - capi-release-tarball/*.tgz
+        - diego-release-tarball/*.tgz
+        - garden-runc-release-tarball/*.tgz
+        - etcd-release-tarball/*.tgz
+        - cflinuxfs2-rootfs-tarball/*.tgz
+  - task: acceptance-tests
+    privileged: true
+    file: capi-ci/ci/scripts/run_bosh_command.yml
+    input_mapping: {manifest: generated-manifests}
+    params:
+      BOSH_DIRECTOR: https://bosh.buffy.capi.cf-app.com:25555
+      BOSH_USER: admin
+      BOSH_PASSWORD: admin
+      DEPLOYMENT_YML: manifest/cf-deployment.yml
+      COMMAND: 'run errand acceptance_tests --keep-alive --download-logs --logs-dir bosh-logs'
+    ensure:
+      put: buffy-acceptance-tests-logs
+      params:
+        file: bosh-logs/acceptance_tests*.tgz
+    on_failure:
+      put: slack-alert
+      params:
+        text: '[deploy-and-test-buffy] OH NO! Failed on acceptance-tests'
+        icon_emoji: {{slack_failure_emoji}}
 
 - name: ship-it
   serial_groups: [version]
