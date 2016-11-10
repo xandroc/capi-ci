@@ -727,6 +727,9 @@ jobs:
     - get: capi-release-tarball
       passed: [create-capi-release]
       trigger: true
+    - get: capi-release
+      resource: capi-release-develop
+      passed: [create-capi-release]
     - get: cf-release
       resource: cf-release-develop
       params:
@@ -840,7 +843,7 @@ jobs:
       resource: capi-release-ci-passed
       passed: [bump-ci-passed]
     - get: capi-release-tarball
-      passed: [deploy-and-test-xena]
+      passed: [bump-ci-passed]
     - get: version
       params: {bump: final}
   - put: version
@@ -1222,8 +1225,10 @@ jobs:
   plan:
   - get: capi-release
     resource: capi-release-develop
-    passed: [deploy-and-test-xena]
+    passed: [deploy-and-test-xena, deploy-and-test-buffy]
     trigger: true
+  - get: capi-release-tarball
+    passed: [deploy-and-test-xena, deploy-and-test-buffy]
   - put: capi-release-ci-passed
     params:
       repository: capi-release
