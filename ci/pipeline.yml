@@ -723,7 +723,6 @@ jobs:
     - get: bosh-lite
     - get: bosh-lite-stemcell
     - get: capi-ci
-      resource: capi-release-develop
     - get: capi-ci-private
     - get: capi-release-tarball
       passed: [create-capi-release]
