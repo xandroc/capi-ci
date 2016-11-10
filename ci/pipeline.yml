@@ -1223,6 +1223,7 @@ jobs:
   - get: capi-release
     resource: capi-release-develop
     passed: [deploy-and-test-xena]
+    trigger: true
   - put: capi-release-ci-passed
     params:
       repository: capi-release
