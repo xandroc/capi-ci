@@ -13,6 +13,8 @@ groups:
   - publish-docs
   - bump-cc-api
   - deploy-and-test-buffy
+  - bump-ci-passed
+  - merge-capi-release-master
 - name: dependencies-docs
   jobs:
   - check-cc-dependencies
@@ -29,9 +31,6 @@ groups:
   - clean-all-the-boshes
   - freshen-wasabi
   - freshen-xena
-- name: crash-override
-  jobs:
-  - MANUALLY-bump-cf-release
 
 resource_types:
 - name: bosh-release
@@ -156,7 +155,7 @@ resources:
     private_key: {{private_key}}
     uri: git@github.com:cloudfoundry/capi-ci-private.git
 
-- name: capi-release
+- name: capi-release-master
   type: git
   source:
     branch: master
@@ -167,6 +166,13 @@ resources:
   type: git
   source:
     branch: ci-passed
+    private_key: {{private_key}}
+    uri: git@github.com:cloudfoundry/capi-release.git
+
+- name: capi-release-develop
+  type: git
+  source:
+    branch: develop
     private_key: {{private_key}}
     uri: git@github.com:cloudfoundry/capi-release.git
 
@@ -466,6 +472,7 @@ jobs:
   - aggregate:
     - get: capi-ci
     - get: capi-release
+      resource: capi-release-develop
       trigger: true
     - get: cloud_controller_ng-master-migrations
       passed: [migration-backwards-compatibility-test]
@@ -492,7 +499,7 @@ jobs:
       trigger: true
   - task: bump-capi-release
     file: capi-ci/ci/scripts/bump_capi_release_conditionally.yml
-  - put: capi-release
+  - put: capi-release-develop
     params:
       repository: bumped/capi-release
       rebase: true
@@ -501,6 +508,7 @@ jobs:
   plan:
   - aggregate:
     - get: capi-release
+      resource: capi-release-develop
     - get: cc-uploader
       trigger: true
     - get: nsync
@@ -523,6 +531,7 @@ jobs:
   plan:
   - aggregate:
     - get: capi-release
+      resource: capi-release-develop
       passed: [bump-capi-release]
       trigger: true
     - get: capi-ci
@@ -609,6 +618,7 @@ jobs:
       passed: [create-capi-release]
       trigger: true
     - get: capi-release
+      resource: capi-release-develop
       passed: [create-capi-release]
     - get: capi-ci
     - get: capi-ci-private
@@ -705,9 +715,6 @@ jobs:
       params:
         text: '[deploy-and-test-xena] OH NO! Failed on acceptance-tests'
         icon_emoji: {{slack_failure_emoji}}
-  - put: capi-release-ci-passed
-    params:
-      repository: capi-release
 
 - name: deploy-and-test-buffy
   serial: true
@@ -716,6 +723,7 @@ jobs:
     - get: bosh-lite
     - get: bosh-lite-stemcell
     - get: capi-ci
+      resource: capi-release-develop
     - get: capi-ci-private
     - get: capi-release-tarball
       passed: [create-capi-release]
@@ -844,7 +852,8 @@ jobs:
     - get: capi-ci
     - get: capi-ci-private
     - get: capi-release
-      passed: [deploy-and-test-xena]
+      resource: capi-release-ci-passed
+      passed: [bump-ci-passed]
     - get: capi-release-tarball
       passed: [deploy-and-test-xena]
     - get: version
@@ -857,6 +866,7 @@ jobs:
     params:
       file: finalized-release/capi-*.tgz
   - put: capi-release
+    resource: capi-release-master
     params:
       repository: finalized-release/capi-release
       tag: version/version
@@ -879,6 +889,7 @@ jobs:
   - aggregate:
     - get: capi-ci
     - get: capi-release
+      resource: capi-release-master
       passed: [ship-it]
     - get: capi-final-releases
       passed: [ship-it]
@@ -899,6 +910,7 @@ jobs:
   - aggregate:
     - get: capi-ci
     - get: capi-release
+      resource: capi-release-master
       trigger: true
       passed: [ship-it]
     - get: cf-release
@@ -908,25 +920,6 @@ jobs:
         - src/capi-release
   - task: check-can-i-bump
     file: capi-ci/ci/scripts/check_can_i_bump.yml
-  - task: bump-cf-release
-    file: capi-ci/ci/scripts/bump_cf_release.yml
-  - put: cf-release-develop
-    params:
-      repository: bumped/cf-release
-      rebase: true
-
-- name: MANUALLY-bump-cf-release
-  serial: true
-  plan:
-  - aggregate:
-    - get: capi-ci
-    - get: capi-release
-      passed: [deploy-and-test-xena]
-    - get: cf-release
-      resource: cf-release-develop
-      params:
-        submodules:
-        - src/capi-release
   - task: bump-cf-release
     file: capi-ci/ci/scripts/bump_cf_release.yml
   - put: cf-release-develop
@@ -1103,6 +1096,7 @@ jobs:
   - aggregate:
     - get: capi-ci
     - get: capi-release
+      resource: capi-release-master
       trigger: true
       passed: [ship-it]
       params:
@@ -1223,4 +1217,27 @@ jobs:
         repos:
         - capi-release/src/cloud_controller_ng
 
+- name: merge-capi-release-master
+  serial: true
+  plan:
+  - aggregate:
+    - get: capi-release-master
+      passed: [ship-it]
+      trigger: true
+    - get: capi-release
+      resource: capi-release-develop
+  - task: merge-master-into-develop
+    file: capi-ci/ci/scripts/merge_master_into_develop.yml
+  - put: capi-release-develop
+    params:
+      repository: merged/capi-release
 
+- name: bump-ci-passed
+  serial: true
+  plan:
+  - get: capi-release
+    resource: capi-release-develop
+    passed: [deploy-and-test-xena]
+  - put: capi-release-ci-passed
+    params:
+      repository: capi-release

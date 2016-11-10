@@ -1,0 +1,14 @@
+platform: linux
+
+image: docker:///cloudfoundry/diego-pipeline
+
+inputs:
+  - name: capi-release
+  - name: capi-release-master
+  - name: capi-ci
+
+outputs:
+  - name: merged
+
+run:
+  path: capi-ci/ci/scripts/merge_master_into_develop.sh
