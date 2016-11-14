@@ -813,6 +813,11 @@ jobs:
         - garden-runc-release-tarball/*.tgz
         - etcd-release-tarball/*.tgz
         - cflinuxfs2-rootfs-tarball/*.tgz
+  - task: enable-feature-flags
+    file: capi-ci/ci/scripts/enable_feature_flags.yml
+    params:
+      CF_API_TARGET: https://api.buffy.capi.cf-app.com
+      CF_ADMIN_PASSWORD: admin
   - task: acceptance-tests
     privileged: true
     file: capi-ci/ci/scripts/run_bosh_command.yml
