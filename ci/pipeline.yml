@@ -817,15 +817,15 @@ jobs:
     file: capi-ci/ci/scripts/enable_feature_flags.yml
     params:
       CF_API_TARGET: https://api.buffy.capi.cf-app.com
-      CF_ADMIN_PASSWORD: admin
+      CF_ADMIN_PASSWORD: {{buffy_cf_admin_password}}
   - task: acceptance-tests
     privileged: true
     file: capi-ci/ci/scripts/run_bosh_command.yml
     input_mapping: {manifest: generated-manifests}
     params:
       BOSH_DIRECTOR: https://bosh.buffy.capi.cf-app.com:25555
-      BOSH_USER: admin
-      BOSH_PASSWORD: admin
+      BOSH_USER: {{buffy_bosh_admin_user}}
+      BOSH_PASSWORD: {{buffy_bosh_admin_password}}
       DEPLOYMENT_YML: manifest/cf-deployment.yml
       COMMAND: 'run errand acceptance_tests --keep-alive --download-logs --logs-dir bosh-logs'
     ensure:
