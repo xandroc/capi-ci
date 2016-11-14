@@ -97,6 +97,7 @@ function provision_bosh_lite() {
     sleep "${sleep_time}"
 
     bosh -t "${BOSH_LITE_IP}" login admin admin
+    bosh -t "${BOSH_LITE_IP}" create user "${BOSH_USER}" "${BOSH_PASSWORD}"
   popd
 }
 
