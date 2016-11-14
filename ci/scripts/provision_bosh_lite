@@ -16,7 +16,7 @@ function setup_env() {
   BOSH_LITE_SUBNET_ID=$(aws ec2 describe-subnets --filters "Name=tag:Name,Values=${AWS_SUBNET_NAME}" | jq -r .Subnets[0].SubnetId)
 
   export BOSH_LITE_SECURITY_GROUP
-  BOSH_LITE_SECURITY_GROUP=$(aws ec2 describe-security-groups --filters Name=tag-value,Values=${AWS_SECURITY_GROUP_TAG} | jq -r '.SecurityGroups[0].GroupId')
+  BOSH_LITE_SECURITY_GROUP=$(aws ec2 describe-security-groups --filters "Name=tag-value,Values=${AWS_SECURITY_GROUP_TAG}" | jq -r '.SecurityGroups[0].GroupId')
 
   export BOSH_LITE_ELASTIC_IP
   BOSH_LITE_ELASTIC_IP=$(aws ec2 describe-addresses --filters 'Name=domain,Values=vpc' | jq -r 'select(.Addresses[].InstanceId == null).Addresses[].PublicIp' | head -1)
@@ -61,7 +61,7 @@ JSON
 function bosh_lite_director_uuid() {
   declare domain=$1
 
-  curl -sk https://bosh.${domain}:25555/info | jq -r '.uuid'
+  curl -sk "https://bosh.${domain}:25555/info" | jq -r '.uuid'
 }
 
 function bosh_lite_ip() {
@@ -74,7 +74,7 @@ function bosh_lite_provisioned() {
   declare bosh_target=$1 status
   set +ex
   echo -n "Checking for presence of bosh-lite VM at ${bosh_target}... "
-  curl -sk https://bosh.${bosh_target}:25555/info 2>/dev/null
+  curl -sk "https://bosh.${bosh_target}:25555/info" 2>/dev/null
   status=$?
   if [ $status -eq 0 ]; then
     echo "Already exists"
@@ -145,8 +145,8 @@ function main() {
 
   if bosh_lite_provisioned "${SYSTEM_DOMAIN}"; then
     director_uuid="$(bosh_lite_director_uuid "${SYSTEM_DOMAIN}")"
-    bosh_ip="$(bosh_lite_ip "${SYSTEM_DOMAIN}")"
-    write_deployment_files ${director_uuid} ${bosh_ip}
+    bosh_ip="$(bosh_lite_ip ${SYSTEM_DOMAIN})"
+    write_deployment_files "${director_uuid}" "${bosh_ip}"
   else
     setup_env
 
