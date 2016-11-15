@@ -111,9 +111,12 @@ function write_deployment_files() {
 director_uuid: ${director_uuid}
 properties:
   system_domain: ${SYSTEM_DOMAIN}
-  apps_domain: ${APP_DOMAIN}
+  app_domains:
+    - ${APP_DOMAIN}
   acceptance_tests:
     backend: diego
+    api: "api.${SYSTEM_DOMAIN}"
+    apps_domain: ${APP_DOMAIN}
     include_sso: true
     include_security_groups: true
     include_services: true
