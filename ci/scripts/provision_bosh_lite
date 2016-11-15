@@ -107,6 +107,7 @@ function write_deployment_files() {
 director_uuid: ${director_uuid}
 properties:
   system_domain: ${SYSTEM_DOMAIN}
+  system_domain_organization: pivotal
   app_domains:
     - ${APP_DOMAIN}
   acceptance_tests:
