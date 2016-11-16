@@ -1232,10 +1232,12 @@ jobs:
   plan:
   - get: capi-release
     resource: capi-release-develop
-    passed: [deploy-and-test-xena, deploy-and-test-buffy]
+    passed:
+      - deploy-and-test-xena
     trigger: true
   - get: capi-release-tarball
-    passed: [deploy-and-test-xena, deploy-and-test-buffy]
+    passed:
+      - deploy-and-test-xena
   - put: capi-release-ci-passed
     params:
       repository: capi-release
