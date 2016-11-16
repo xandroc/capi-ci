@@ -125,7 +125,7 @@ properties:
     include_diego_docker: true
     include_route_services: false
     include_tasks: true
-    nodes: 3
+    nodes: 2
     skip_diego_unsupported_tests: true
     skip_ssl_validation: true
   cc:
