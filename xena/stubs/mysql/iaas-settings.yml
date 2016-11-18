@@ -5,9 +5,9 @@ properties:
       availability_zone2: us-east-1c
       availability_zone3: us-east-1d
       subnet_ids:
-        mysql1: subnet-136f9b3e
-        mysql2: subnet-67a4032e
-        mysql3: subnet-581bf103
+        mysql1: subnet-7de55650
+        mysql2: subnet-9ef093d7
+        mysql3: subnet-6d61d536
 
 iaas_settings:
   <<: (( merge || nil ))
@@ -16,13 +16,11 @@ iaas_settings:
   - name: mysql1
     type: manual
     subnets:
-    - range: 10.0.60.0/24
-      reserved:
-        - 10.0.60.2 - 10.0.60.9
-        - 10.0.60.130 - 10.0.60.254
+    - range: 10.0.29.0/24
+      reserved: []
       static:
-        - 10.0.60.10 - 10.0.60.14
-      gateway: 10.0.60.1
+        - 10.0.29.30 - 10.0.29.254
+      gateway: 10.0.29.1
       dns:
         - 10.0.0.2 # amazon has only 1 DNS server for the whole VPC at x.x.0.2
       cloud_properties:
@@ -30,13 +28,11 @@ iaas_settings:
   - name: mysql2
     type: manual
     subnets:
-    - range: 10.0.61.0/24
-      reserved:
-        - 10.0.61.2 - 10.0.61.9
-        - 10.0.61.130 - 10.0.61.254
+    - range: 10.0.45.0/24
+      reserved: []
       static:
-        - 10.0.61.10 - 10.0.61.14
-      gateway: 10.0.61.1
+        - 10.0.45.30 - 10.0.45.254
+      gateway: 10.0.45.1
       dns:
         - 10.0.0.2 # amazon has only 1 DNS server for the whole VPC at x.x.0.2
       cloud_properties:
@@ -45,11 +41,9 @@ iaas_settings:
     type: manual
     subnets:
     - range: 10.0.62.0/24
-      reserved:
-        - 10.0.62.2 - 10.0.62.9
-        - 10.0.62.130 - 10.0.62.254
+      reserved: []
       static:
-        - 10.0.62.10 - 10.0.62.14
+        - 10.0.62.30 - 10.0.62.254
       gateway: 10.0.62.1
       dns:
         - 10.0.0.2 # amazon has only 1 DNS server for the whole VPC at x.x.0.2
