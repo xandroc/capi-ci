@@ -3,11 +3,11 @@
 source ~/.bashrc
 
 set -eux -o pipefail
-mv generated-manifest/deployment.yml generated-manifest/cf.yml
+mv cf-manifest/deployment.yml cf-manifest/cf.yml
 
 pushd cf-mysql-release
   ./scripts/generate-deployment-manifest \
-    -c ../generated-manifest/cf.yml \
+    -c ../cf-manifest/cf.yml \
     -i "../capi-ci/${ENV}/stubs/mysql/iaas-settings.yml" \
     -p "../capi-ci-private/${ENV}/stubs/mysql/property-overrides.yml" \
     -n "./manifest-generation/examples/standalone/instance-count-overrides.yml" \
