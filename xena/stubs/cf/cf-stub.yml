@@ -30,7 +30,7 @@ networks: # Bosh creates these subnets based in warden_networks.rb in cf-release
   - name: cf2
     type: manual
     subnets:
-      - range: 10.0.46.0/20
+      - range: 10.0.46.0/24
         name: default_unused
         reserved: []
         static:
