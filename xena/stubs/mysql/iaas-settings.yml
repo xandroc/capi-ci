@@ -25,6 +25,8 @@ iaas_settings:
         - 10.0.0.2 # amazon has only 1 DNS server for the whole VPC at x.x.0.2
       cloud_properties:
         subnet: (( properties.template_only.aws.subnet_ids.mysql1 ))
+        security_groups:
+        - sg-b4e267c9
   - name: mysql2
     type: manual
     subnets:
@@ -37,6 +39,8 @@ iaas_settings:
         - 10.0.0.2 # amazon has only 1 DNS server for the whole VPC at x.x.0.2
       cloud_properties:
         subnet: (( properties.template_only.aws.subnet_ids.mysql2 ))
+        security_groups:
+        - sg-b4e267c9
   - name: mysql3
     type: manual
     subnets:
@@ -49,6 +53,8 @@ iaas_settings:
         - 10.0.0.2 # amazon has only 1 DNS server for the whole VPC at x.x.0.2
       cloud_properties:
         subnet: (( properties.template_only.aws.subnet_ids.mysql3 ))
+        security_groups:
+        - sg-b4e267c9
 
   stemcell: &stemcell
     name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
