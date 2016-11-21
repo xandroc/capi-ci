@@ -220,8 +220,10 @@ env_specific:
     cf2:
       security_groups: (( merge )) # an array of security group ids
     router_z1:
+      security_groups: (( merge )) # an array of security group ids
       elbs: (( merge )) # an array of ELB ids. ELBs must be created manually.
     router_z2:
+      security_groups: (( merge )) # an array of security group ids
       elbs: (( merge )) # an array of ELB ids. ELBs must be created manually.
 
 
