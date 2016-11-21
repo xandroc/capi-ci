@@ -53,11 +53,13 @@ resource_pools:
   - name: router_z1
     cloud_properties:
       instance_type: t2.medium
+      security_groups: (( env_specific.aws.router_z1.security_groups ))
       elbs:
         (( env_specific.aws.router_z1.elbs ))
   - name: router_z2
     cloud_properties:
       instance_type: t2.medium
+      security_groups: (( env_specific.aws.router_z2.security_groups ))
       elbs:
         (( env_specific.aws.router_z2.elbs ))
 
