@@ -5,7 +5,7 @@ set -ex
 atc_url=https://capi.ci.cf-app.com
 
 pushd capi-checkman
-  rm pipeline
+  rm -f pipeline
 
   pipelines=$(curl $atc_url/api/v1/pipelines -s | jq .[].name --raw-output)
   for pipeline in $pipelines; do
