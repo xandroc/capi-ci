@@ -13,6 +13,7 @@ pushd capi-checkman
   done
 
   set +e
+  git add -A -N
   git status
   git diff-index --quiet HEAD --
   exit_code=$?
