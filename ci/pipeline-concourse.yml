@@ -19,16 +19,16 @@ resources:
 - name: concourse
   type: github-release
   source:
-    access_token: {{access_token}}
+    access_token: {{github_access_token}}
     repository: concourse
     user: concourse
 
 - name: concourse-deployment
   type: bosh-deployment
   source:
-    target: 52.0.73.109:25555
-    username: {{wasabi_bosh_user}}
-    password: {{wasabi_bosh_password}}
+    target: 34.192.151.213:25555
+    username: {{ci_bosh_user}}
+    password: {{ci_bosh_password}}
     deployment: concourse
     ignore_ssl: true
 
