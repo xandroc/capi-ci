@@ -96,8 +96,7 @@ function provision_bosh_lite() {
     echo "sleeping ${sleep_time} seconds to allow bosh-director to come online"
     sleep "${sleep_time}"
 
-    bosh -t "${BOSH_LITE_IP}" login admin admin
-    bosh -t "${BOSH_LITE_IP}" create user ${BOSH_USER} ${BOSH_PASSWORD}
+    bosh -t "${BOSH_LITE_IP}" -u admin -p admin create user ${BOSH_USER} ${BOSH_PASSWORD}
     bosh -t "${BOSH_LITE_IP}" login ${BOSH_USER} ${BOSH_PASSWORD}
   popd
 }
