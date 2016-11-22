@@ -470,8 +470,8 @@ properties:
   acceptance_tests:
     api: (( "api." domain ))
     apps_domain: (( app_domains.[0] ))
-    admin_user: admin
-    admin_password: (( secrets.ccdb_admin_password ))
+    admin_user: (( secrets.acceptance_tests.admin_user ))
+    admin_password: (( secrets.acceptance_tests.admin_password ))
     nodes: 4
     include_sso: true
     include_tasks: true
@@ -481,8 +481,8 @@ properties:
   smoke_tests:
     api:  (( "api." domain ))
     apps_domain: (( app_domains ))
-    user: admin
-    password: (( secrets.ccdb_admin_password ))
+    user: (( secrets.smoke_tests.admin_user ))
+    password: (( secrets.smoke_tests.admin_password ))
     org: runtime-smoke-tests
     space: runtime-smoke-tests
     use_existing_space: false
