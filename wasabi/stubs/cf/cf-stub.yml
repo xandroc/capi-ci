@@ -225,9 +225,11 @@ env_specific:
     cf2:
       security_groups: (( merge ))
     router_z1:
-      elbs: (( merge )) # an array of ELB ids
+      security_groups: (( merge )) # an array of security group ids
+      elbs: (( merge )) # an array of ELB ids. ELBs must be created manually.
     router_z2:
-      elbs: (( merge )) # an array of ELB ids
+      security_groups: (( merge )) # an array of security group ids
+      elbs: (( merge )) # an array of ELB ids. ELBs must be created manually.
 
 properties:
   domain: wasabi.cf-app.com
