@@ -479,6 +479,7 @@ properties:
     include_tasks: true
     include_services: true
     skip_ssl_validation: true
+    skip_regex: dotnet-core
 
   smoke_tests:
     api:  (( "api." domain ))
