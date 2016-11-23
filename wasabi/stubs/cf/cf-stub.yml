@@ -209,6 +209,8 @@ secrets:
     server_key: (( merge )) # PEM-encoded server key
     agent_cert: (( merge )) # PEM-encoded agent certificate
     agent_key: (( merge )) # PEM-encoded agent key
+  smoke_tests: (( merge ))
+  acceptance_tests: (( merge ))
 
 env_specific:
   smtp:
