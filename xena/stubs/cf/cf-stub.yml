@@ -124,7 +124,7 @@ secrets:
     saml:
       serviceProviderCertificate: (( merge ))
       serviceProviderKey: (( merge ))
-      serviceProviderPassword: (( merge ))
+      serviceProviderKeyPassword: (( merge ))
   uaa:
     sslCertificate: (( merge ))
     sslPrivateKey: (( merge ))
@@ -281,7 +281,7 @@ properties:
     saml:
       serviceProviderCertificate: (( secrets.login.saml.serviceProviderCertificate ))
       serviceProviderKey: (( secrets.login.saml.serviceProviderKey ))
-      serviceProviderPassword: (( secrets.login.saml.serviceProviderPassword ))
+      serviceProviderKeyPassword: (( secrets.login.saml.serviceProviderKeyPassword ))
 
   uaa:
     ssl:
