@@ -272,6 +272,12 @@ properties:
       name: uaadb
     port: 3306
 
+  login:
+    saml:
+      serviceProviderCertificate: (( secrets.login.saml.serviceProviderCertificate ))
+      serviceProviderKey: (( secrets.login.saml.serviceProviderKey ))
+      serviceProviderPassword: (( secrets.login.saml.serviceProviderPassword ))
+
   uaa:
     ssl:
       port: 8443
