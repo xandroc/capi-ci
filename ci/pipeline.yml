@@ -127,8 +127,8 @@ resources:
   source:
     bucket: capi-final-releases
     regexp: capi-(.*).tgz
-    access_key_id: {{wasabi_s3_access_key}}
-    secret_access_key: {{wasabi_s3_secret_key}}
+    access_key_id: {{wasabi_ci_artifacts_s3_access_key}}
+    secret_access_key: {{wasabi_ci_artifacts_s3_secret_key}}
 
 - name: bosh-aws-cpi
   type: bosh-io-release
@@ -179,16 +179,16 @@ resources:
 - name: capi-release-tarball
   type: s3
   source:
-    bucket: cf-capi-releases
+    bucket: capi-releases
     regexp: capi-(.*)-.*-.*.tgz
-    access_key_id: {{wasabi_s3_access_key}}
-    secret_access_key: {{wasabi_s3_secret_key}}
+    access_key_id: {{wasabi_ci_artifacts_s3_access_key}}
+    secret_access_key: {{wasabi_ci_artifacts_s3_secret_key}}
 
 - name: version
   type: semver
   source:
-    access_key_id: {{wasabi_semver_access_key}}
-    secret_access_key: {{wasabi_semver_secret_key}}
+    access_key_id: {{wasabi_ci_artifacts_s3_access_key}}
+    secret_access_key: {{wasabi_ci_artifacts_s3_secret_key}}
     initial_version: 0.0.0
     bucket: capi-release-versions
     key: current-capi-release-version
@@ -247,13 +247,13 @@ resources:
   source:
     bucket: cf-runtime-releases
     regexp: cf-(\d+)-.*.tgz
-    access_key_id: {{wasabi_s3_access_key}}
-    secret_access_key: {{wasabi_s3_secret_key}}
+    access_key_id: {{cf_runtime_releases_s3_access_key}}
+    secret_access_key: {{cf_runtime_releases_s3_secret_key}}
 
 - name: cf-wasabi-deployment
   type: bosh-deployment
   source:
-    target: 52.0.73.109:25555
+    target: bosh.wasabi.cf-app.com:25555
     username: {{wasabi_bosh_user}}
     password: {{wasabi_bosh_password}}
     deployment: cf-wasabi
@@ -371,8 +371,8 @@ resources:
     private: true
     bucket: xena-acceptance-tests-logs
     regexp: acceptance_tests.(0)..*.tgz
-    access_key_id: {{xena_s3_access_key}}
-    secret_access_key: {{xena_s3_secret_key}}
+    access_key_id: {{wasabi_ci_artifacts_s3_access_key}}
+    secret_access_key: {{wasabi_ci_artifacts_s3_secret_key}}
 
 - name: xena-datadog-firehose-nozzle-deployment
   type: bosh-deployment
@@ -971,8 +971,8 @@ jobs:
     params:
       CONNECTION_STRING: {{cc_db_connection_string}}
       ENVIRONMENT: wasabi
-      DB_HOST: 10.0.32.30
-      TUNNEL_HOST: 52.0.73.109
+      DB_HOST: 10.0.30.30
+      TUNNEL_HOST: bosh.wasabi.cf-app.com
   - task: acceptance-tests
     privileged: true
     file: capi-ci/ci/scripts/run_bosh_command.yml
