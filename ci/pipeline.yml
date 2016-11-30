@@ -311,12 +311,9 @@ resources:
     uri: https://github.com/cloudfoundry/diego-release.git
 
 - name: diego-release-tarball
-  type: s3
+  type: bosh-io-release
   source:
-    bucket: diego-final-releases
-    regexp: diego-(.*).tgz
-    access_key_id: {{diego_s3_access_key}}
-    secret_access_key: {{diego_s3_secret_key}}
+    repository: cloudfoundry/diego-release
 
 - name: cf-mysql-release-tarball
   type: bosh-io-release
