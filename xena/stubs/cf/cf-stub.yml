@@ -352,6 +352,7 @@ properties:
   cc: &cc
     diego:
       temporary_local_staging: true
+      temporary_local_tasks: true
       bbs:
         ca_cert: (( secrets.cc.diego.bbs.ca_cert ))
         client_cert: (( secrets.cc.diego.bbs.client_cert ))
