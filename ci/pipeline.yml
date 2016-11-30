@@ -567,11 +567,19 @@ jobs:
   - aggregate:
     - get: weekly-sunday
       trigger: true
+    - get: cf-release
+      resource: cf-release-develop
     - get: cf-mysql-release
     - get: cf-mysql-release-tarball
     - get: capi-ci
     - get: capi-ci-private
     - get: aws-stemcell
+  - task: generate-cf-manifest
+    privileged: true
+    file: capi-ci/ci/scripts/create_cf_deployment_manifest.yml
+    params:
+      INFRASTRUCTURE: aws
+      ENVIRONMENT: xena
   - task: make-manifest
     config:
       platform: linux
@@ -581,6 +589,8 @@ jobs:
           repository: cloudfoundry/capi
           tag: runtime-ci
       inputs:
+      - name: generated-manifest
+        path: cf-manifest
       - name: cf-mysql-release
       - name: capi-ci
       - name: capi-ci-private
