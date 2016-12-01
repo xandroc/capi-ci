@@ -30,15 +30,18 @@ pushd "env-repo/${BBL_DIR}"
   bbl up --aws-region us-east-1
 
   # The two commands below amount to "create or update"
+  certfile=certs/load-balancer/*.crt
+  key=certs/load-balancer/*.key
+
   bbl \
     create-lbs \
     --type=cf \
-    --cert=certs/load-balancer/*.crt \
-    --key=certs/load-balancer/*.key \
+    --cert="$certfile" \
+    --key="$key" \
     --skip-if-exists
 
   bbl \
     update-lbs \
-    --cert=certs/load-balancer/*.crt \
-    --key=certs/load-balancer/*.key \
+    --cert="$certfile" \
+    --key="$key" \
 popd
