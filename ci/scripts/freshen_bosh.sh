@@ -25,23 +25,23 @@ pushd "env-repo/${BBL_DIR}"
   set +x
   echo "source .envrc"
   source .envrc
+
+  cat certs/load-balancer/*.crt > /tmp/bbl-cert
+  cat certs/load-balancer/*.key > /tmp/bbl-key
   set -x
 
   bbl up --aws-region us-east-1
 
   # The two commands below amount to "create or update"
-  certfile=certs/load-balancer/*.crt
-  key=certs/load-balancer/*.key
-
   bbl \
     create-lbs \
     --type=cf \
-    --cert="$certfile" \
-    --key="$key" \
+    --cert=/tmp/bbl-cert \
+    --key=/tmp/bbl-key \
     --skip-if-exists
 
   bbl \
     update-lbs \
-    --cert="$certfile" \
-    --key="$key" \
+    --cert=/tmp/bbl-cert \
+    --key=/tmp/bbl-key \
 popd
