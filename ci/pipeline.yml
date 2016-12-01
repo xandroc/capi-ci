@@ -1005,6 +1005,13 @@ jobs:
     - get: daily
       trigger: true
   - aggregate:
+    - task: cleanup-ci
+      privileged: true
+      file: capi-ci/ci/scripts/run_bosh_cleanup.yml
+      params: &bosh-target-ci
+        BOSH_DIRECTOR: https://bosh.capi.ci.cf-app.com:25555
+        BOSH_USER: {{ci_bosh_user}}
+        BOSH_PASSWORD: {{ci_bosh_password}}
     - task: cleanup-wasabi
       privileged: true
       file: capi-ci/ci/scripts/run_bosh_cleanup.yml
