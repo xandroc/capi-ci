@@ -5,21 +5,17 @@ image_resource:
   type: docker-image
   source:
     repository: cloudfoundry/capi
-    tag: bosh-init
+    tag: bbl
 
 inputs:
   - name: capi-ci
-  - name: capi-ci-private
-  - name: bosh
-  - name: bosh-aws-cpi
-  - name: aws-stemcell
+  - name: env-repo
 
 outputs:
-  - name: freshened-config
+  - name: updated-env-repo
 
 run:
-  path: capi-ci/ci/scripts/freshen_bosh.rb
+  path: capi-ci/ci/scripts/freshen_bosh.sh
 
 params:
-  BOSH_INIT_CONFIG_DIR:
-  BOSH_ENVIRONMENT_NAME:
+  BBL_DIR:
