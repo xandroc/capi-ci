@@ -4,7 +4,7 @@ groups:
   - rc-docs-docker
   - ruby-units-docker
   - go-units-docker
-  - bosh-init-docker
+  - bbl-docker
   - bosh-lite-docker
   - spiff-docker
   - runtime-ci
@@ -81,18 +81,18 @@ resources:
     password: {{dockerhub_pass}}
     email: {{dockerhub_email}}
 
-- name: capi-dockerfiles-bosh-init
+- name: capi-dockerfiles-bbl
   type: git
   source:
     branch: master
     uri: https://github.com/cloudfoundry/capi-dockerfiles.git
-    paths: [bosh-init/Dockerfile]
+    paths: [bbl/Dockerfile]
 
-- name: docker-image-bosh-init
+- name: docker-image-bbl
   type: docker-image
   source:
     repository: cloudfoundry/capi
-    tag: bosh-init
+    tag: bbl
     username: {{dockerhub_user}}
     password: {{dockerhub_pass}}
     email: {{dockerhub_email}}
@@ -160,16 +160,16 @@ jobs:
   - put: docker-image-go-units
     params:
       build: capi-dockerfiles-go-units/capi-go-units
-- name: bosh-init-docker
+- name: bbl-docker
   serial: true
   plan:
   - aggregate:
     - get: weekly
       trigger: true
-    - get: capi-dockerfiles-bosh-init
-  - put: docker-image-bosh-init
+    - get: capi-dockerfiles-bbl
+  - put: docker-image-bbl
     params:
-      build: capi-dockerfiles-bosh-init/bosh-init
+      build: capi-dockerfiles-bbl/bbl
 - name: runtime-ci
   serial: true
   plan:
