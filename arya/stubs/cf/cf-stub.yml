@@ -3,25 +3,22 @@ meta:
   environment: cf-arya
 
   capi_release:
-      name: capi
+      name: cf-release
 
 releases:
 - name: cf
   version: latest
-- name: capi
-  version: latest
 
-networks: # Bosh creates these subnets based in warden_networks.rb in cf-release/templates
+networks:
   - name: cf1
     type: manual
     subnets:
-      - range: 10.0.32.0/20
+      - range: 10.0.17.0/24
         name: default_unused
-        reserved:
-          - 10.0.32.2 - 10.0.32.9
+        reserved: []
         static:
-          - 10.0.32.10 - 10.0.32.255
-        gateway: 10.0.32.1
+          - 10.0.17.150 - 10.0.17.254
+        gateway: 10.0.17.1
         dns:
           - 10.0.0.2 # amazon has only 1 DNS server for the whole VPC at x.x.0.2
         cloud_properties:
@@ -31,13 +28,12 @@ networks: # Bosh creates these subnets based in warden_networks.rb in cf-release
   - name: cf2
     type: manual
     subnets:
-      - range: 10.0.80.0/20
+      - range: 10.0.33.0/24
         name: default_unused
-        reserved:
-          - 10.0.80.2 - 10.0.80.9
+        reserved: []
         static:
-          - 10.0.80.10 - 10.0.80.255
-        gateway: 10.0.80.1
+          - 10.0.33.150 - 10.0.33.254
+        gateway: 10.0.33.1
         dns:
           - 10.0.0.2 # amazon has only 1 DNS server for the whole VPC at x.x.0.2
         cloud_properties:
@@ -55,13 +51,13 @@ resource_pools:
   - name: router_z1
     cloud_properties:
       instance_type: t2.medium
-      elbs:
-        (( env_specific.aws.router_z1.elbs ))
+      security_groups: (( env_specific.aws.router_z1.security_groups ))
+      elbs: (( env_specific.aws.router_z1.elbs ))
   - name: router_z2
     cloud_properties:
       instance_type: t2.medium
-      elbs:
-        (( env_specific.aws.router_z2.elbs ))
+      security_groups: (( env_specific.aws.router_z2.security_groups ))
+      elbs: (( env_specific.aws.router_z2.elbs ))
 
 jobs:
 - name: api_z1
@@ -125,7 +121,7 @@ jobs:
   instances: 1
   networks:
     - name: cf1
-      static_ips: 10.0.32.30
+      static_ips: 10.0.17.150
 - name: router_z1
   instances: 1
 - name: router_z2
@@ -149,6 +145,11 @@ secrets:
         key: (( merge ))
   app_ssh:
     host_key_fingerprint: (( merge )) # the fingerprint of your app host key
+  login:
+    saml:
+      serviceProviderCertificate: (( merge ))
+      serviceProviderKey: (( merge ))
+      serviceProviderKeyPassword: (( merge ))
   uaa:
     sslCertificate: (( merge ))
     sslPrivateKey: (( merge ))
@@ -244,8 +245,10 @@ env_specific:
     cf2:
       security_groups: (( merge )) # an array of security group ids
     router_z1:
+      security_groups: (( merge )) # an array of security group ids
       elbs: (( merge )) # an array of ELB ids. ELBs must be created manually.
     router_z2:
+      security_groups: (( merge )) # an array of security group ids
       elbs: (( merge )) # an array of ELB ids. ELBs must be created manually.
 
 
@@ -272,7 +275,7 @@ properties:
 
   ccdb:
     db_scheme: postgres
-    address: 10.0.32.30
+    address: 10.0.17.150
     roles:
     - tag: admin
       name: ccadmin
@@ -284,7 +287,7 @@ properties:
 
   uaadb:
     db_scheme: postgresql
-    address: 10.0.32.30
+    address: 10.0.17.150
     roles:
     - tag: admin
       name: uaaadmin
@@ -295,7 +298,6 @@ properties:
     port: 5524
 
   databases:
-    address: 10.244.0.30
     databases:
     - citext: true
       name: ccdb
@@ -312,6 +314,12 @@ properties:
     - name: uaaadmin
       password: (( secrets.uaadb_admin_password ))
       tag: admin
+
+  login:
+    saml:
+      serviceProviderCertificate: (( secrets.login.saml.serviceProviderCertificate ))
+      serviceProviderKey: (( secrets.login.saml.serviceProviderKey ))
+      serviceProviderKeyPassword: (( secrets.login.saml.serviceProviderKeyPassword ))
 
   uaa:
     sslCertificate: (( secrets.uaa.sslCertificate ))
