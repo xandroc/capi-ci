@@ -1155,7 +1155,7 @@ jobs:
         icon_emoji: {{slack_failure_emoji}}
   - put: capi-ci-private
     params:
-      repository: updated-env-repo/capi-ci-private
+      repository: updated-env-repo
       rebase: true
 
 - name: freshen-arya
