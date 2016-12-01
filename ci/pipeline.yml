@@ -90,16 +90,16 @@ resources:
 - name: bosh-lite-cf-deployment
   type: bosh-deployment
   source:
-    username: admin
-    password: admin
+    username: {{buffy_bosh_admin_user}}
+    password: {{buffy_bosh_admin_password}}
     deployment: cf-warden
     ignore_ssl: true
 
 - name: bosh-lite-diego-deployment
   type: bosh-deployment
   source:
-    username: admin
-    password: admin
+    username: {{buffy_bosh_admin_user}}
+    password: {{buffy_bosh_admin_password}}
     deployment: cf-warden-diego
     ignore_ssl: true
 
@@ -111,15 +111,15 @@ resources:
 - name: bosh-lite-stemcell-upload
   type: bosh-stemcell
   source:
-    username: admin
-    password: admin
+    username: {{buffy_bosh_admin_user}}
+    password: {{buffy_bosh_admin_password}}
     ignore_ssl: true
 
 - name: bosh-lite-release-upload
   type: bosh-release
   source:
-    username: admin
-    password: admin
+    username: {{buffy_bosh_admin_user}}
+    password: {{buffy_bosh_admin_password}}
     ignore_ssl: true
 
 - name: capi-final-releases
