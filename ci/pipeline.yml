@@ -27,10 +27,10 @@ groups:
   - deploy-cf-mysql
 - name: bosh
   jobs:
-  - wait-for-sunday
   - clean-all-the-boshes
   - freshen-wasabi
   - freshen-xena
+  - freshen-arya
 
 resource_types:
 - name: bosh-release
@@ -75,11 +75,6 @@ resources:
   type: bosh-io-stemcell
   source:
     name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
-
-- name: bosh
-  type: bosh-io-release
-  source:
-    repository: cloudfoundry/bosh
 
 - name: bosh-lite
   type: git
@@ -129,11 +124,6 @@ resources:
     regexp: capi-(.*).tgz
     access_key_id: {{wasabi_ci_artifacts_s3_access_key}}
     secret_access_key: {{wasabi_ci_artifacts_s3_secret_key}}
-
-- name: bosh-aws-cpi
-  type: bosh-io-release
-  source:
-    repository: cloudfoundry-incubator/bosh-aws-cpi-release
 
 - name: capi-checkman
   type: git
@@ -1144,36 +1134,20 @@ jobs:
         repository: updated-capi-checkman
         rebase: true
 
-- name: wait-for-sunday
-  plan:
-  - aggregate:
-    - get: weekly-sunday
-      trigger: true
-    - get: bosh
-    - get: bosh-aws-cpi
-    - get: aws-stemcell
-
 - name: freshen-wasabi
   serial: true
   serial_groups: [deploy-wasabi-migrations]
   plan:
   - aggregate:
     - get: capi-ci
-    - get: capi-ci-private
-    - get: bosh
-      passed: [wait-for-sunday]
-      trigger: true
-    - get: bosh-aws-cpi
-      passed: [wait-for-sunday]
-      trigger: true
-    - get: aws-stemcell
-      passed: [wait-for-sunday]
+    - get: env-repo
+      resource: capi-ci-private
+    - get: weekly-sunday
       trigger: true
   - task: freshen-wasabi
     file: capi-ci/ci/scripts/freshen_bosh.yml
     params:
-      BOSH_INIT_CONFIG_DIR: capi-ci-private/wasabi/deployments/bosh
-      BOSH_ENVIRONMENT_NAME: wasabi
+      BBL_DIR: wasabi
     on_failure:
       put: slack-alert
       params:
@@ -1181,7 +1155,30 @@ jobs:
         icon_emoji: {{slack_failure_emoji}}
   - put: capi-ci-private
     params:
-      repository: freshened-config/capi-ci-private
+      repository: updated-env-repo/capi-ci-private
+      rebase: true
+
+- name: freshen-arya
+  serial: true
+  plan:
+  - aggregate:
+    - get: capi-ci
+    - get: env-repo
+      resource: capi-ci-private
+    - get: weekly-sunday
+      trigger: true
+  - task: freshen-arya
+    file: capi-ci/ci/scripts/freshen_bosh.yml
+    params:
+      BBL_DIR: arya
+    on_failure:
+      put: slack-alert
+      params:
+        text: '[freshen-arya] OH NO! Failed to freshen arya https://capi.ci.cf-app.com/?groups=bosh'
+        icon_emoji: {{slack_failure_emoji}}
+  - put: capi-ci-private
+    params:
+      repository: updated-env-repo
       rebase: true
 
 - name: freshen-xena
@@ -1190,21 +1187,14 @@ jobs:
   plan:
   - aggregate:
     - get: capi-ci
-    - get: capi-ci-private
-    - get: bosh
-      passed: [wait-for-sunday]
-      trigger: true
-    - get: bosh-aws-cpi
-      passed: [wait-for-sunday]
-      trigger: true
-    - get: aws-stemcell
-      passed: [wait-for-sunday]
+    - get: env-repo
+      resource: capi-ci-private
+    - get: weekly-sunday
       trigger: true
   - task: freshen-xena
     file: capi-ci/ci/scripts/freshen_bosh.yml
     params:
-      BOSH_INIT_CONFIG_DIR: capi-ci-private/xena/deployments/bosh
-      BOSH_ENVIRONMENT_NAME: xena
+      BBL_DIR: xena
     on_failure:
       put: slack-alert
       params:
@@ -1212,7 +1202,7 @@ jobs:
         icon_emoji: {{slack_failure_emoji}}
   - put: capi-ci-private
     params:
-      repository: freshened-config/capi-ci-private
+      repository: updated-env-repo
       rebase: true
 
 - name: deliver-stories
