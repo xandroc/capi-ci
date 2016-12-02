@@ -479,7 +479,7 @@ properties:
     include_tasks: true
     include_services: true
     skip_ssl_validation: true
-    skip_regex: dotnet-core
+    skip_regex: (dotnet-core|transparently proxies both reserved characters and unsafe characters)
 
   smoke_tests:
     api:  (( "api." domain ))
