@@ -147,6 +147,11 @@ secrets:
     client_cert: (( merge )) # PEM-encoded client certificate
     client_key: (( merge )) # PEM-encoded client key
   uaadb_admin_password: (( merge ))
+  login:
+    saml:
+      serviceProviderCertificate: (( merge ))
+      serviceProviderKey: (( merge ))
+      serviceProviderKeyPassword: (( merge ))
   uaa:
     sslCertificate: (( merge ))
     sslPrivateKey: (( merge ))
@@ -305,6 +310,10 @@ properties:
       port: (( env_specific.smtp.port ))
       user: (( env_specific.smtp.user ))
       password: (( env_specific.smtp.password ))
+    saml:
+      serviceProviderCertificate: (( secrets.login.saml.serviceProviderCertificate ))
+      serviceProviderKey: (( secrets.login.saml.serviceProviderKey ))
+      serviceProviderKeyPassword: (( secrets.login.saml.serviceProviderKeyPassword ))
   uaa:
     ssl:
       port: 8443
