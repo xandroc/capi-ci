@@ -31,8 +31,6 @@ function main() {
     commit_docs
   popd
   move_cc_to_output_location
-
-  cat cloud_controller_ng_bumped_docs/docs/v2/info/get_info.html
 }
 
 main
