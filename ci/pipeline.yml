@@ -12,6 +12,7 @@ groups:
   - bump-capi-release
   - publish-docs
   - bump-cc-api
+  - bump-cc-v2-api
   - deploy-and-test-buffy
   - bump-ci-passed
   - merge-capi-release-master
@@ -191,6 +192,16 @@ resources:
     uri: git@github.com:cloudfoundry/cloud_controller_ng.git
     branch: master
     file: config/version
+    git_user: 'CAPI CI <cf-capi-eng+ci@pivotal.io>'
+    private_key: {{private_key}}
+
+- name: cc-api-v2-version
+  type: semver
+  source:
+    driver: git
+    uri: git@github.com:cloudfoundry/cloud_controller_ng.git
+    branch: master
+    file: config/version_v2
     git_user: 'CAPI CI <cf-capi-eng+ci@pivotal.io>'
     private_key: {{private_key}}
 
@@ -1086,6 +1097,20 @@ jobs:
       trigger: true
     - get: cc-api-version
   - put: cc-api-version
+    params:
+      bump: minor
+
+- name: bump-cc-v2-api
+  serial: true
+  plan:
+  - aggregate:
+    # we are using version as an input to gate on ship-it using a cheap to get resource
+    # it is not actually a necessary input for this job
+    - get: version
+      passed: [ship-it]
+      trigger: true
+    - get: cc-api-v2-version
+  - put: cc-api-v2-version
     params:
       bump: minor
 
