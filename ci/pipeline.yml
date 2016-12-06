@@ -1121,7 +1121,7 @@ jobs:
   - aggregate:
     - get: capi-ci
     - get: capi-release
-      resource: capi-release-develop
+      resource: capi-release-master
       trigger: true
       passed: [ship-it]
       params:
