@@ -1256,6 +1256,8 @@ jobs:
   serial: true
   serial_groups: [deploy-buffy-cf]
   plan:
+  - get: capi-ci
+  - get: bosh-lite
   - get: daily
     trigger: true
   - task: ensure-bosh-lite-terminated
