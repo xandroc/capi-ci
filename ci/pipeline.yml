@@ -13,6 +13,7 @@ groups:
   - publish-docs
   - bump-cc-api
   - bump-cc-v2-api
+  - bump-v2-docs
   - deploy-and-test-buffy
   - bump-ci-passed
   - merge-capi-release-master
@@ -1113,6 +1114,25 @@ jobs:
   - put: cc-api-v2-version
     params:
       bump: minor
+
+- name: bump-v2-docs
+  serial: true
+  plan:
+  - aggregate:
+    - get: capi-ci
+    - get: capi-release
+      resource: capi-release-develop
+      trigger: true
+      passed: [ship-it]
+      params:
+        submodules:
+          - src/cloud_controller_ng
+  - task: bump-v2-docs
+    file: capi-ci/ci/scripts/bump_v2_docs_api_version.yml
+  - put: cloud_controller_ng
+    params:
+      repository: cloud_controller_ng_bumped_docs
+      rebase: true
 
 - name: publish-docs
   serial: true
