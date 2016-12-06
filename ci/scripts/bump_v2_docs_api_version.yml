@@ -9,6 +9,8 @@ image_resource:
 
 inputs:
   - name: capi-release
+  - name: capi-ci
+
 
 outputs:
   - name: cloud_controller_ng_bumped_docs
