@@ -1240,6 +1240,10 @@ jobs:
       params:
         repos:
         - capi-release/src/cloud_controller_ng
+        - capi-release/src/code.cloudfoundry.org/tps
+        - capi-release/src/code.cloudfoundry.org/nsync
+        - capi-release/src/code.cloudfoundry.org/stager
+        - capi-release
 
 - name: merge-capi-release-master
   serial: true
