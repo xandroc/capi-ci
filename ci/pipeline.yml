@@ -1122,13 +1122,10 @@ jobs:
   plan:
   - aggregate:
     - get: capi-ci
-    - get: capi-release
-      resource: capi-release-master
+    - get: cc-api-v2-version
+      passed: [bump-cc-v2-api]
       trigger: true
-      passed: [ship-it]
-      params:
-        submodules:
-          - src/cloud_controller_ng
+    - get: cloud_controller_ng
   - task: bump-v2-docs
     file: capi-ci/ci/scripts/bump_v2_docs_api_version.yml
   - put: cloud_controller_ng
