@@ -20,11 +20,11 @@ function commit_docs() {
 }
 
 function move_cc_to_output_location() {
-  mv capi-release/src/cloud_controller_ng cloud_controller_ng_bumped_docs
+  mv cloud_controller_ng cloud_controller_ng_bumped_docs
 }
 
 function main() {
-  pushd capi-release/src/cloud_controller_ng
+  pushd cloud_controller_ng
     setup_git_user
     get_v2_version_from_cc
     bump_v2_docs

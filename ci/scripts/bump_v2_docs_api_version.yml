@@ -8,7 +8,7 @@ image_resource:
     tag: rc-docs
 
 inputs:
-  - name: capi-release
+  - name: cloud_controller_ng
   - name: capi-ci
 
 
