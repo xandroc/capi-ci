@@ -1256,10 +1256,31 @@ jobs:
   serial: true
   serial_groups: [deploy-buffy-cf]
   plan:
-  - get: capi-ci
-  - get: bosh-lite
-  - get: daily
-    trigger: true
+  - aggregate:
+    - get: daily
+      trigger: true
+    - get: bosh-lite
+    - get: bosh-lite-stemcell
+    - get: capi-ci
+    - get: capi-ci-private
+    - get: capi-release-tarball
+      passed: [create-capi-release]
+    - get: capi-release
+      resource: capi-release-develop
+      passed: [create-capi-release]
+    - get: cf-release
+      resource: cf-release-develop
+      params:
+        submodules: none
+    - get: cf-release-tarball
+    - get: cflinuxfs2-rootfs-tarball
+    - get: diego-release
+      params:
+        submodules: none
+    - get: diego-release-tarball
+      trigger: true
+    - get: etcd-release-tarball
+    - get: garden-runc-release-tarball
   - task: ensure-bosh-lite-terminated
     file: capi-ci/ci/scripts/deprovision_bosh_lite.yml
     params:
@@ -1303,6 +1324,59 @@ jobs:
       params:
         text: '[freshen-buffy] OH NO! Failed to freshen buffy https://capi.ci.cf-app.com/?groups=bosh'
         icon_emoji: {{slack_failure_emoji}}
+  - task: generate-bosh-lite-cf-manifest
+    file: capi-ci/ci/scripts/generate-bosh-lite-cf-manifest.yml
+    params:
+      ENVIRONMENT_STUB: capi-ci/buffy/stubs/cf/cf-stub.yml
+      STUBS_PATH: deployments/stub.yml
+  - aggregate:
+    - put: bosh-lite-stemcell-upload
+      params:
+        target_file: deployments/target
+        stemcells:
+          - bosh-lite-stemcell/*.tgz
+    - put: upload-cf-release-tarball
+      resource: bosh-lite-release-upload
+      params:
+        target_file: deployments/target
+        releases:
+          - cf-release-tarball/*.tgz
+    - put: upload-release-tarballs
+      resource: bosh-lite-release-upload
+      params:
+        target_file: deployments/target
+        releases:
+          - capi-release-tarball/*.tgz
+          - diego-release-tarball/*.tgz
+          - garden-runc-release-tarball/*.tgz
+          - etcd-release-tarball/*.tgz
+          - cflinuxfs2-rootfs-tarball/*.tgz
+  - put: bosh-lite-cf-deployment
+    params:
+      target_file: deployments/target
+      manifest: generated-manifests/cf-deployment.yml
+      stemcells:
+        - bosh-lite-stemcell/*.tgz
+      releases:
+        - cf-release-tarball/*.tgz
+        - capi-release-tarball/*.tgz
+  - put: bosh-lite-diego-deployment
+    params:
+      target_file: deployments/target
+      manifest: generated-manifests/diego-deployment.yml
+      stemcells:
+        - bosh-lite-stemcell/*.tgz
+      releases:
+        - capi-release-tarball/*.tgz
+        - diego-release-tarball/*.tgz
+        - garden-runc-release-tarball/*.tgz
+        - etcd-release-tarball/*.tgz
+        - cflinuxfs2-rootfs-tarball/*.tgz
+  - task: enable-feature-flags
+    file: capi-ci/ci/scripts/enable_feature_flags.yml
+    params:
+      CF_API_TARGET: https://api.buffy.capi.cf-app.com
+      CF_ADMIN_PASSWORD: {{buffy_cf_admin_password}}
 
 - name: deliver-stories
   serial: true
