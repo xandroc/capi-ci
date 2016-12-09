@@ -638,13 +638,13 @@ jobs:
     - get: diego-release-tarball
       trigger: true
     - get: cflinuxfs2-rootfs-tarball
-  - task: manifest
+  - task: cf-manifest
     privileged: true
     file: capi-ci/ci/scripts/create_cf_deployment_manifest.yml
     params:
       INFRASTRUCTURE: aws
       ENVIRONMENT: xena
-  - task: generate-deployment-manifests
+  - task: diego-manifest
     file: capi-ci/ci/scripts/create_diego_release_manifest.yml
     params:
       BOSH_TARGET: bosh.xena.cf-app.com
