@@ -3,37 +3,31 @@
 set -exu
 
 function generate_cf_manifest() {
-  declare infrastructure=$1 stub=$2 environment_stub=$3 generated_manifest=$4
+  declare stub=$1 environment_stub=$2 generated_manifest=$3
 
   cf-release/scripts/generate_deployment_manifest \
-    "${infrastructure}" \
+    bosh-lite  \
     "${stub}" \
     "${environment_stub}" > "${generated_manifest}"
 }
 
 function generate_diego_manifest() {
-  declare cf_manifest=$1 generated_manifest=$2
+  declare manifest_dir=$1
+
+  CF_MANIFESTS_DIR="$1"
+  DIEGO_MANIFESTS_DIR="$1"
 
   pushd diego-release >/dev/null
-    ./scripts/generate-deployment-manifest \
-                              -c "../${cf_manifest}" \
-                              -i manifest-generation/bosh-lite-stubs/iaas-settings.yml \
-                              -p manifest-generation/bosh-lite-stubs/property-overrides.yml \
-                              -n manifest-generation/bosh-lite-stubs/instance-count-overrides.yml \
-                              -v manifest-generation/bosh-lite-stubs/release-versions.yml \
-                              -b \
-                              > "../${generated_manifest}"
+    ./scripts/generate-bosh-lite-manifests
   popd > /dev/null
 }
 
 function main() {
-  generate_cf_manifest bosh-lite "${STUBS_PATH}" "${ENVIRONMENT_STUB}" "generated-manifests/cf-deployment.yml"
-  cat "generated-manifests/cf-deployment.yml"
+  generate_cf_manifest "${STUBS_PATH}" "${ENVIRONMENT_STUB}" "generated-manifests/cf.yml"
+  cat "generated-manifests/cf.yml"
 
-  generate_diego_manifest \
-    "generated-manifests/cf-deployment.yml" \
-    "generated-manifests/diego-deployment.yml"
-  cat "generated-manifests/diego-deployment.yml"
+  generate_diego_manifest "${PWD}/generated-manifests"
+  cat "generated-manifests/diego.yml"
 }
 
 main
