@@ -21,7 +21,9 @@ function generate_diego_manifest() {
                               -p manifest-generation/bosh-lite-stubs/property-overrides.yml \
                               -n manifest-generation/bosh-lite-stubs/instance-count-overrides.yml \
                               -v manifest-generation/bosh-lite-stubs/release-versions.yml \
+                              -s manifest-generation/bosh-lite-stubs/postgres/diego-sql.yml \
                               -b \
+                              -x \
                               > "../${generated_manifest}"
   popd > /dev/null
 }
