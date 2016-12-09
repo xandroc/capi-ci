@@ -449,6 +449,7 @@ properties:
     nodes: 9
     skip_diego_unsupported_tests: true
     skip_ssl_validation: true
+    skip_regex: dotnet-core
 
   smoke_tests:
     api:  (( "api." domain ))
