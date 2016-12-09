@@ -14,7 +14,3 @@ jobs:
     release: capi
   - name: cloud_controller_clock
     release: capi
-- name: blobstore_z1
-  templates:
-  - name: blobstore
-    release: capi
