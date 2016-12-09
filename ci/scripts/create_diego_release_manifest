@@ -19,10 +19,10 @@ pushd diego-release
     -i ${stubs_path}/diego/iaas-settings.yml \
     -p ${stubs_path}/diego/property-overrides.yml \
     -n ${stubs_path}/diego/instance-count-overrides.yml \
-    -k ${stubs_path}/diego/persistent-disk-overrides.yml \
     -v ${stubs_path}/diego/release-versions.yml \
+    -s ${stubs_path}/diego/diego-sql.yml \
     -b \
-    -g \
+    -x \
     > ../generated-diego-manifest/diego-deployment.yml
 
     cat ../generated-diego-manifest/diego-deployment.yml
