@@ -323,11 +323,6 @@ resources:
   source:
     repository: cloudfoundry/cf-mysql-release
 
-- name: etcd-release-tarball
-  type: bosh-io-release
-  source:
-    repository: cloudfoundry-incubator/etcd-release
-
 - name: garden-runc-release-tarball
   type: bosh-io-release
   source:
@@ -640,7 +635,6 @@ jobs:
       params:
         submodules: none
     - get: garden-runc-release-tarball
-    - get: etcd-release-tarball
     - get: diego-release-tarball
       trigger: true
     - get: cflinuxfs2-rootfs-tarball
@@ -675,7 +669,6 @@ jobs:
           - capi-release-tarball/*.tgz
           - diego-release-tarball/*.tgz
           - garden-runc-release-tarball/*.tgz
-          - etcd-release-tarball/*.tgz
           - cflinuxfs2-rootfs-tarball/*.tgz
   - put: xena-deployment
     params:
@@ -695,7 +688,6 @@ jobs:
       releases:
         - diego-release-tarball/*.tgz
         - garden-runc-release-tarball/*.tgz
-        - etcd-release-tarball/*.tgz
         - cflinuxfs2-rootfs-tarball/*.tgz
       stemcells: [aws-stemcell/*.tgz]
     on_failure:
@@ -752,7 +744,6 @@ jobs:
         submodules: none
     - get: diego-release-tarball
       trigger: true
-    - get: etcd-release-tarball
     - get: garden-runc-release-tarball
   - task: create-cloudformation
     file: capi-ci/ci/scripts/create_cloudformation_stack.yml
@@ -803,7 +794,6 @@ jobs:
           - capi-release-tarball/*.tgz
           - diego-release-tarball/*.tgz
           - garden-runc-release-tarball/*.tgz
-          - etcd-release-tarball/*.tgz
           - cflinuxfs2-rootfs-tarball/*.tgz
   - put: bosh-lite-cf-deployment
     params:
@@ -824,7 +814,6 @@ jobs:
         - capi-release-tarball/*.tgz
         - diego-release-tarball/*.tgz
         - garden-runc-release-tarball/*.tgz
-        - etcd-release-tarball/*.tgz
         - cflinuxfs2-rootfs-tarball/*.tgz
   - task: enable-feature-flags
     file: capi-ci/ci/scripts/enable_feature_flags.yml
@@ -1276,7 +1265,6 @@ jobs:
         submodules: none
     - get: diego-release-tarball
       trigger: true
-    - get: etcd-release-tarball
     - get: garden-runc-release-tarball
   - task: ensure-bosh-lite-terminated
     file: capi-ci/ci/scripts/deprovision_bosh_lite.yml
@@ -1346,7 +1334,6 @@ jobs:
           - capi-release-tarball/*.tgz
           - diego-release-tarball/*.tgz
           - garden-runc-release-tarball/*.tgz
-          - etcd-release-tarball/*.tgz
           - cflinuxfs2-rootfs-tarball/*.tgz
   - put: bosh-lite-cf-deployment
     params:
@@ -1367,7 +1354,6 @@ jobs:
         - capi-release-tarball/*.tgz
         - diego-release-tarball/*.tgz
         - garden-runc-release-tarball/*.tgz
-        - etcd-release-tarball/*.tgz
         - cflinuxfs2-rootfs-tarball/*.tgz
   - task: enable-feature-flags
     file: capi-ci/ci/scripts/enable_feature_flags.yml
