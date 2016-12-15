@@ -179,7 +179,7 @@ jobs:
     - get: capi-dockerfiles-runtime-ci
   - put: docker-image-runtime-ci
     params:
-      build: capi-dockerfiles-runtime-ci/runtime-ci
+      build: capi-dockerfiles-runtime-ci/capi-runtime-ci
 - name: bosh-lite-docker
   serial: true
   plan:
