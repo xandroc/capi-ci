@@ -1380,6 +1380,7 @@ jobs:
   serial: true
   plan:
   - aggregate:
+    - get: capi-ci
     - get: capi-release-master
       passed: [ship-it]
       trigger: true
