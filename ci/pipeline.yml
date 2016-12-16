@@ -5,18 +5,20 @@ groups:
   - bridge-unit-tests
   - create-capi-release
   - deploy-and-test-xena
-  - bump-cf-release
   - migration-backwards-compatibility-test
-  - ship-it
-  - push-github-release
   - bump-capi-release
-  - publish-docs
-  - bump-cc-v3-api
-  - bump-cc-v2-api
-  - bump-v2-docs
   - deploy-and-test-buffy
   - bump-ci-passed
+- name: ship-it
+  jobs:
+  - ship-it
+  - bump-cc-v2-api
+  - bump-cc-v3-api
+  - push-github-release
   - merge-capi-release-master
+  - publish-docs
+  - bump-v2-docs
+  - bump-cf-release
 - name: dependencies-docs
   jobs:
   - check-cc-dependencies
