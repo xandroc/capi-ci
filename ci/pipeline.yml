@@ -1112,14 +1112,13 @@ jobs:
   - aggregate:
     - get: capi-ci
     - get: cc-api-v2-version
-      passed: [bump-cc-v2-api]
       trigger: true
     - get: cloud_controller_ng
   - task: bump-v2-docs
     file: capi-ci/ci/scripts/bump_v2_docs_api_version.yml
   - put: cloud_controller_ng
     params:
-      repository: cloud_controller_ng_bumped_docs
+      repository: cloud_controller_ng_bumped_docs/cloud_controller_ng
       rebase: true
 
 - name: publish-docs
