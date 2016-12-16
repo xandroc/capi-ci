@@ -20,7 +20,7 @@ function commit_docs() {
 }
 
 function move_cc_to_output_location() {
-  mv cloud_controller_ng cloud_controller_ng_bumped_docs
+  cp -a cloud_controller_ng cloud_controller_ng_bumped_docs
 }
 
 function main() {
