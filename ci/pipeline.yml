@@ -1115,6 +1115,7 @@ jobs:
     - get: capi-ci
     - get: cc-api-v2-version
       trigger: true
+      passed: [bump-cc-v2-api]
     - get: cloud_controller_ng
   - task: bump-v2-docs
     file: capi-ci/ci/scripts/bump_v2_docs_api_version.yml

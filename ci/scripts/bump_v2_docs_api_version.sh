@@ -10,8 +10,8 @@ function bump_v2_docs() {
   sed -i -e 's/^\(.*api_version.*"\).*\(",\)$/\1'"$VERSION"'\2/' docs/v2/info/get_info.html
 }
 
-function get_v2_version_from_cc() {
-  VERSION=$(cat config/version_v2)
+function get_updated_version() {
+  VERSION=$(cat version)
 }
 
 function commit_docs() {
@@ -24,9 +24,11 @@ function move_cc_to_output_location() {
 }
 
 function main() {
+  pushd cc-api-v2-version
+    get_updated_version
+  popd
   pushd cloud_controller_ng
     setup_git_user
-    get_v2_version_from_cc
     bump_v2_docs
     commit_docs
   popd

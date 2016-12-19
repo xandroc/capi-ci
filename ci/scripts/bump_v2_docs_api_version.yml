@@ -10,6 +10,7 @@ image_resource:
 inputs:
   - name: cloud_controller_ng
   - name: capi-ci
+  - name: cc-api-v2-version
 
 
 outputs:
