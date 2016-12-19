@@ -117,6 +117,9 @@ secrets:
       trafficcontroller:
         cert: (( merge ))
         key: (( merge ))
+      metron:
+        cert: (( merge ))
+        key: (( merge ))
   login:
     saml:
       serviceProviderCertificate: (( merge ))
@@ -412,6 +415,9 @@ properties:
       trafficcontroller:
         cert: (( secrets.loggregator.tls.trafficcontroller.cert ))
         key: (( secrets.loggregator.tls.trafficcontroller.key ))
+      metron:
+        cert: (( secrets.loggregator.tls.metron.cert ))
+        key: (( secrets.loggregator.tls.metron.key ))
   loggregator_endpoint:
     shared_secret: (( secrets.logging.shared_secret )) # same as metron_endpoint
 

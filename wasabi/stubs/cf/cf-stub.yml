@@ -131,6 +131,9 @@ secrets:
       doppler:
         cert: (( merge ))
         key: (( merge ))
+      metron:
+        cert: (( merge ))
+        key: (( merge ))
       trafficcontroller:
         cert: (( merge ))
         key: (( merge ))
@@ -461,6 +464,9 @@ properties:
       doppler:
         cert: (( secrets.loggregator.tls.doppler.cert ))
         key: (( secrets.loggregator.tls.doppler.key ))
+      metron:
+        cert: (( secrets.loggregator.tls.metron.cert ))
+        key: (( secrets.loggregator.tls.metron.key ))
       trafficcontroller:
         cert: (( secrets.loggregator.tls.trafficcontroller.cert ))
         key: (( secrets.loggregator.tls.trafficcontroller.key ))
