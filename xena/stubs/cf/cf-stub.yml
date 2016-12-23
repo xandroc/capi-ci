@@ -114,6 +114,9 @@ secrets:
       doppler:
         cert: (( merge ))
         key: (( merge ))
+      metron:
+        cert: (( merge ))
+        key: (( merge ))
       trafficcontroller:
         cert: (( merge ))
         key: (( merge ))
