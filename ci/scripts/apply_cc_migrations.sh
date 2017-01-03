@@ -4,6 +4,8 @@ set -e -x
 
 source ~/.bashrc
 
+chruby
+
 export DB_CONNECTION_STRING="${CONNECTION_STRING}"
 KEY_FILE="${PWD}/capi-ci-private/${ENVIRONMENT}/keypair/bosh.pem"
 
