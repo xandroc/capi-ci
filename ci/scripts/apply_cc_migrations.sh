@@ -13,7 +13,7 @@ ssh-add ${KEY_FILE}
 
 cd cloud_controller_ng
 
-chruby
+chruby $(cat .ruby_version)
 
 
 bundle install --without development test
