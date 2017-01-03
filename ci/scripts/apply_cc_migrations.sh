@@ -4,8 +4,6 @@ set -e -x
 
 source ~/.bashrc
 
-chruby
-
 export DB_CONNECTION_STRING="${CONNECTION_STRING}"
 KEY_FILE="${PWD}/capi-ci-private/${ENVIRONMENT}/keypair/bosh.pem"
 
@@ -14,6 +12,10 @@ eval `ssh-agent -s`
 ssh-add ${KEY_FILE}
 
 cd cloud_controller_ng
+
+chruby
+
+
 bundle install --without development test
 
 # This command creates a tunnel from the concourse job through the bosh director to the VM the CCDB
