@@ -12,7 +12,6 @@ eval `ssh-agent -s`
 ssh-add ${KEY_FILE}
 
 cd cloud_controller_ng
-chruby $(cat .ruby-version)
 bundle install --without development test
 
 # This command creates a tunnel from the concourse job through the bosh director to the VM the CCDB
