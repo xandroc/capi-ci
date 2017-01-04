@@ -22,6 +22,7 @@ pushd diego-release
     -v ${stubs_path}/diego/release-versions.yml \
     -s ${stubs_path}/diego/diego-sql.yml \
     -b \
+    -B \
     -x \
     > ../generated-diego-manifest/diego-deployment.yml
 
