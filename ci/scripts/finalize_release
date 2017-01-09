@@ -20,7 +20,7 @@ function copy_private_yml() {
 
 function create_release() {
   pushd capi-release
-    /opt/rubies/ruby-2.2.4/bin/bosh -n finalize release "${DEV_RELEASE_TARBALL}" --name capi --version "${FINAL_RELEASE_VERSION}"
+    bosh -n finalize release "${DEV_RELEASE_TARBALL}" --name capi --version "${FINAL_RELEASE_VERSION}"
     mv "${RELEASE_TGZ}" "../finalized-release/capi-${FINAL_RELEASE_VERSION}.tgz"
 
     git add -A
