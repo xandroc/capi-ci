@@ -2,6 +2,8 @@
 
 set -exu
 
+source ~/.bashrc
+
 FINAL_RELEASE_VERSION=$(cat version/version)
 DEV_RELEASE_TARBALL=$(ls ${PWD}/capi-release-tarball/*.tgz)
 
