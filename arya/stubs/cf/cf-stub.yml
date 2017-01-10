@@ -156,6 +156,7 @@ secrets:
   uaa:
     sslCertificate: (( merge ))
     sslPrivateKey: (( merge ))
+    ca_cert: (( merge ))
     jwt:
       signing_key: (( merge ))  # a private key. This is most useful if entered using YAML multi-line string syntax.
       verification_key: (( merge )) # the corresponding public key. This is most useful if entered using YAML multi-line string syntax.
@@ -328,6 +329,7 @@ properties:
   uaa:
     sslCertificate: (( secrets.uaa.sslCertificate ))
     sslPrivateKey: (( secrets.uaa.sslPrivateKey ))
+    ca_cert: (( secrets.uaa.ca_cert ))
     jwt:
       signing_key: (( secrets.uaa.jwt.signing_key ))
       verification_key: (( secrets.uaa.jwt.verification_key ))
