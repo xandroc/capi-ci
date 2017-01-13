@@ -106,6 +106,7 @@ jobs:
 secrets:
   ccdb_admin_password: (( merge )) # required user-defined password
   uaadb_admin_password: (( merge )) # required user-defined password
+  bbsdb_admin_password: (( merge )) # required user-defined password
   app_ssh:
     host_key_fingerprint: (( merge )) # the fingerprint of your app host key
   loggregator:
@@ -253,8 +254,9 @@ properties:
         cf2: (( merge )) # subnet ID for cf2
 
   ccdb:
-    db_scheme: mysql
-    address: mysql.service.cf.internal
+    db_scheme: (( properties.databases.db_scheme ))
+    address: (( properties.databases.address ))
+    port: (( properties.databases.port ))
     roles:
     - tag: admin
       name: ccadmin
@@ -262,11 +264,11 @@ properties:
     databases:
     - tag: cc
       name: ccdb
-    port: 3306
 
   uaadb:
-    db_scheme: mysql
-    address: mysql.service.cf.internal
+    db_scheme: (( properties.databases.db_scheme ))
+    address: (( properties.databases.address ))
+    port: (( properties.databases.port ))
     roles:
     - tag: admin
       name: uaaadmin
@@ -274,7 +276,15 @@ properties:
     databases:
     - tag: uaa
       name: uaadb
+
+  databases:
+    db_scheme: mysql
+    address: mysql.service.cf.internal
     port: 3306
+    roles:
+    - name: diego
+      tag: admin
+      password: (( secrets.bbsdb_admin_password ))
 
   login:
     saml:
