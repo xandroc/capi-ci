@@ -1266,7 +1266,6 @@ jobs:
       params:
         submodules: none
     - get: diego-release-tarball
-      trigger: true
     - get: garden-runc-release-tarball
   - task: ensure-bosh-lite-terminated
     file: capi-ci/ci/scripts/deprovision_bosh_lite.yml
