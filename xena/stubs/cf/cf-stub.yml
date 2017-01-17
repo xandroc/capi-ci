@@ -363,6 +363,7 @@ properties:
       temporary_local_staging: true
       temporary_local_apps: true
       temporary_local_tasks: true
+      temporary_local_tps: true
     mutual_tls:
       ca_cert: (( secrets.cc.mutual_tls.ca_cert ))
       public_cert: (( secrets.cc.mutual_tls.public_cert ))
