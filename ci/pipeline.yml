@@ -1276,125 +1276,26 @@ jobs:
 
 - name: freshen-buffy
   serial: true
-  serial_groups: [deploy-buffy-cf]
   plan:
   - aggregate:
-    - get: daily
-      trigger: true
-    - get: bosh-lite
-    - get: bosh-lite-stemcell
     - get: capi-ci
-    - get: capi-ci-private
-    - get: capi-release-tarball
-      passed: [create-capi-release]
-    - get: capi-release
-      resource: capi-release-develop
-      passed: [create-capi-release]
-    - get: cf-release
-      resource: cf-release-develop
-      params:
-        submodules: none
-    - get: cf-release-tarball
-    - get: cflinuxfs2-rootfs-tarball
-    - get: diego-release
-      params:
-        submodules: none
-    - get: diego-release-tarball
-    - get: garden-runc-release-tarball
-  - task: ensure-bosh-lite-terminated
-    file: capi-ci/ci/scripts/deprovision_bosh_lite.yml
+    - get: env-repo
+      resource: capi-ci-private
+    - get: weekly-sunday
+      trigger: true
+  - task: freshen-buffy
+    file: capi-ci/ci/scripts/freshen_bosh.yml
     params:
-      AWS_DEFAULT_REGION: {{buffy_aws_default_region}}
-      AWS_ACCESS_KEY_ID: {{buffy_access_key}}
-      AWS_SECRET_ACCESS_KEY: {{buffy_secret_key}}
-      BOSH_LITE_NAME: buffy-bosh-lite
-  - task: ensure-cloudformation-terminated
-    file: capi-ci/ci/scripts/teardown_cloudformation_stack.yml
-    params:
-      AWS_ACCESS_KEY_ID: {{buffy_access_key}}
-      AWS_DEFAULT_REGION: {{buffy_aws_default_region}}
-      AWS_SECRET_ACCESS_KEY: {{buffy_secret_key}}
-      STACK_NAME: buffy-stack
-  - task: create-cloudformation
-    file: capi-ci/ci/scripts/create_cloudformation_stack.yml
-    params:
-      AWS_DEFAULT_REGION: {{buffy_aws_default_region}}
-      AWS_ACCESS_KEY_ID: {{buffy_access_key}}
-      AWS_SECRET_ACCESS_KEY: {{buffy_secret_key}}
-      STACK_NAME: buffy-stack
-      CLOUDFORMATION_PATH: capi-ci/buffy/cloudformation.json
-  - task: provision-bosh-lite
-    file: capi-ci/ci/scripts/provision_bosh_lite.yml
-    params:
-      BOSH_LITE_INSTANCE_TYPE: c3.4xlarge
-      BOSH_LITE_NAME: buffy-bosh-lite
-      BOSH_LITE_KEYPAIR: {{buffy_keypair_name}}
-      BOSH_USER: {{buffy_bosh_admin_user}}
-      BOSH_PASSWORD: {{buffy_bosh_admin_password}}
-      AWS_ACCESS_KEY_ID: {{buffy_access_key}}
-      AWS_SECRET_ACCESS_KEY: {{buffy_secret_key}}
-      AWS_DEFAULT_REGION: {{buffy_aws_default_region}}
-      AWS_SECURITY_GROUP_TAG: {{buffy_security_group_tag}}
-      AWS_SUBNET_NAME: {{buffy_subnet_name}}
-      SSH_KEY: {{buffy_private_key}}
-      APP_DOMAIN: buffy-apps.capi.cf-app.com
-      SYSTEM_DOMAIN: buffy.capi.cf-app.com
+      BBL_DIR: buffy
     on_failure:
       put: slack-alert
       params:
-        text: '[freshen-buffy] OH NO! Failed to freshen buffy https://capi.ci.cf-app.com/?groups=bosh'
+        text: '[freshen-buffy] OH NO! Failed to freshen arya https://capi.ci.cf-app.com/?groups=bosh'
         icon_emoji: {{slack_failure_emoji}}
-  - task: generate-bosh-lite-cf-manifest
-    file: capi-ci/ci/scripts/generate-bosh-lite-cf-manifest.yml
+  - put: capi-ci-private
     params:
-      ENVIRONMENT_STUB: capi-ci/buffy/stubs/cf/cf-stub.yml
-      STUBS_PATH: deployments/stub.yml
-  - aggregate:
-    - put: bosh-lite-stemcell-upload
-      params:
-        target_file: deployments/target
-        stemcells:
-          - bosh-lite-stemcell/*.tgz
-    - put: upload-cf-release-tarball
-      resource: bosh-lite-release-upload
-      params:
-        target_file: deployments/target
-        releases:
-          - cf-release-tarball/*.tgz
-    - put: upload-release-tarballs
-      resource: bosh-lite-release-upload
-      params:
-        target_file: deployments/target
-        releases:
-          - capi-release-tarball/*.tgz
-          - diego-release-tarball/*.tgz
-          - garden-runc-release-tarball/*.tgz
-          - cflinuxfs2-rootfs-tarball/*.tgz
-  - put: bosh-lite-cf-deployment
-    params:
-      target_file: deployments/target
-      manifest: generated-manifests/cf-deployment.yml
-      stemcells:
-        - bosh-lite-stemcell/*.tgz
-      releases:
-        - cf-release-tarball/*.tgz
-        - capi-release-tarball/*.tgz
-  - put: bosh-lite-diego-deployment
-    params:
-      target_file: deployments/target
-      manifest: generated-manifests/diego-deployment.yml
-      stemcells:
-        - bosh-lite-stemcell/*.tgz
-      releases:
-        - capi-release-tarball/*.tgz
-        - diego-release-tarball/*.tgz
-        - garden-runc-release-tarball/*.tgz
-        - cflinuxfs2-rootfs-tarball/*.tgz
-  - task: enable-feature-flags
-    file: capi-ci/ci/scripts/enable_feature_flags.yml
-    params:
-      CF_API_TARGET: https://api.buffy.capi.cf-app.com
-      CF_ADMIN_PASSWORD: {{buffy_cf_admin_password}}
+      repository: updated-env-repo
+      rebase: true
 
 - name: deliver-stories
   serial: true
@@ -1441,19 +1342,3 @@ jobs:
   - put: capi-release-ci-passed
     params:
       repository: capi-release
-
-- name: deprovision-buffy
-  serial: true
-  serial_groups: [deploy-buffy-cf]
-  plan:
-  - aggregate:
-    - get: capi-ci
-    - get: capi-ci-private
-  - task: ensure-bosh-lite-terminated
-    file: capi-ci/ci/scripts/deprovision_bosh_lite.yml
-    params:
-      BOSH_LITE_NAME: buffy-bosh-lite
-      AWS_ACCESS_KEY_ID: {{buffy_access_key}}
-      AWS_SECRET_ACCESS_KEY: {{buffy_secret_key}}
-      AWS_DEFAULT_REGION: {{buffy_aws_default_region}}
-
