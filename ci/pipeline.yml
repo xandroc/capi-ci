@@ -36,7 +36,6 @@ groups:
   - freshen-xena
   - freshen-arya
   - freshen-buffy
-  - deprovision-buffy
 
 resource_types:
 - name: bosh-release

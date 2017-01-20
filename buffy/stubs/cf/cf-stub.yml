@@ -205,18 +205,10 @@ secrets:
     db_encryption_key: (( merge )) # key for encrypting sensitive values in the CC database
     resource_pool:
       resource_directory_key: (( merge )) # S3 key for the bucket holding CC resources (used when uploading app resources)
-      cdn:
-        uri: (( merge ))
-        key_pair_id: (( merge ))
-        private_key: (( merge ))
     packages:
       app_package_directory_key: (( merge )) # S3 key for the bucket holding CC packages
     droplets:
       droplet_directory_key: (( merge )) # S3 key for the bucket holding CC droplets
-      cdn:
-        uri: (( merge ))
-        key_pair_id: (( merge ))
-        private_key: (( merge ))
     buildpacks:
       buildpack_directory_key: (( merge )) # S3 key for the bucket holding buildpacks
     newrelic:
@@ -417,18 +409,10 @@ properties:
     default_app_memory: 256
     resource_pool:
       resource_directory_key: (( secrets.cc.resource_pool.resource_directory_key ))
-      cdn:
-        uri: (( secrets.cc.resource_pool.cdn.uri ))
-        key_pair_id: (( secrets.cc.resource_pool.cdn.key_pair_id ))
-        private_key: (( secrets.cc.resource_pool.cdn.private_key ))
     packages:
       app_package_directory_key: (( secrets.cc.packages.app_package_directory_key ))
     droplets:
       droplet_directory_key: (( secrets.cc.droplets.droplet_directory_key ))
-      cdn:
-        uri: (( secrets.cc.droplets.cdn.uri ))
-        key_pair_id: (( secrets.cc.droplets.cdn.key_pair_id ))
-        private_key: (( secrets.cc.droplets.cdn.private_key ))
     buildpacks:
       buildpack_directory_key: (( secrets.cc.buildpacks.buildpack_directory_key ))
     newrelic:
