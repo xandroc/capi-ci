@@ -136,6 +136,8 @@ secrets:
   hm9000: (( merge )) # contains mutual ssl certs for hm9000 to dea communication
   ccdb_admin_password: (( merge )) # required user-defined password
   uaadb_admin_password: (( merge )) # required user-defined password
+  bbsdb_admin_password: (( merge )) # required user-defined password
+
   loggregator:
     tls:
       ca_cert: (( merge ))
@@ -312,6 +314,9 @@ properties:
     - name: uaaadmin
       password: (( secrets.uaadb_admin_password ))
       tag: admin
+    - name: diego
+      tag: admin
+      password: (( secrets.bbsdb_admin_password ))
 
   login:
     saml:
