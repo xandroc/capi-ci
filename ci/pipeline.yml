@@ -569,6 +569,7 @@ jobs:
 
 - name: deploy-cf-mysql
   serial: true
+  serial_groups: [deploy-xena-cf-mysql]
   plan:
   - aggregate:
     - get: weekly-sunday
@@ -1251,7 +1252,7 @@ jobs:
 
 - name: freshen-xena
   serial: true
-  serial_groups: [deploy-xena-cf, deploy-xena-diego, deploy-xena-datadog]
+  serial_groups: [deploy-xena-cf, deploy-xena-diego, deploy-xena-datadog, deploy-xena-cf-mysql]
   plan:
   - aggregate:
     - get: capi-ci
