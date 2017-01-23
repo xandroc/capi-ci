@@ -99,7 +99,7 @@ jobs:
   resource_pool: small_z2
 
 - name: nats_z1
-  instances: 0
+  instances: 1
 - name: nats_z2
   instances: 0
 - name: runner_z1
@@ -421,7 +421,7 @@ properties:
     security_event_logging:
       enabled: true
     users_can_select_backend: false
-    default_to_diego_backend: false
+    default_to_diego_backend: true
     mutual_tls: (( secrets.cc.mutual_tls ))
 
   router:
