@@ -41,6 +41,7 @@ resources:
 jobs:
 - name: deploy-concourse
   serial: true
+  interruptible: true
   plan:
   - aggregate:
     - get: concourse
