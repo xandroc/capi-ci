@@ -24,6 +24,7 @@ params:
   DATADOG_API_KEY: ~
   DEPLOYMENTS_DIR: ~
   ENVIRONMENT_NAME: ~
+  INCLUDE_BRIDGE: ~
 
 run:
   path: capi-ci/ci/scripts/create_diego_release_manifest

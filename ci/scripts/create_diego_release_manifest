@@ -13,6 +13,8 @@ cf_deployment_name="cf-${ENVIRONMENT_NAME}"
 bosh -n target ${BOSH_TARGET}
 bosh -n login ${BOSH_USER} ${BOSH_PASSWORD}
 
+[[ $INCLUDE_BRIDGE = "true" ]] && SKIP_BRIDGE_FLAG="" || SKIP_BRIDGE_FLAG="-B"
+
 pushd diego-release
   ./scripts/generate-deployment-manifest \
     -c ../generated-manifest/deployment.yml \
@@ -22,7 +24,7 @@ pushd diego-release
     -v ${stubs_path}/diego/release-versions.yml \
     -s ${stubs_path}/diego/diego-sql.yml \
     -b \
-    -B \
+    $SKIP_BRIDGE_FLAG \
     -x \
     > ../generated-diego-manifest/diego-deployment.yml
 
