@@ -81,47 +81,6 @@ resources:
   source:
     name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
 
-- name: bosh-lite
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/bosh-lite.git
-
-- name: bosh-lite-cf-deployment
-  type: bosh-deployment
-  source:
-    username: {{buffy_bosh_admin_user}}
-    password: {{buffy_bosh_admin_password}}
-    deployment: cf-warden
-    ignore_ssl: true
-
-- name: bosh-lite-diego-deployment
-  type: bosh-deployment
-  source:
-    username: {{buffy_bosh_admin_user}}
-    password: {{buffy_bosh_admin_password}}
-    deployment: cf-warden-diego
-    ignore_ssl: true
-
-- name: bosh-lite-stemcell
-  type: bosh-io-stemcell
-  source:
-    name: bosh-warden-boshlite-ubuntu-trusty-go_agent
-
-- name: bosh-lite-stemcell-upload
-  type: bosh-stemcell
-  source:
-    username: {{buffy_bosh_admin_user}}
-    password: {{buffy_bosh_admin_password}}
-    ignore_ssl: true
-
-- name: bosh-lite-release-upload
-  type: bosh-release
-  source:
-    username: {{buffy_bosh_admin_user}}
-    password: {{buffy_bosh_admin_password}}
-    ignore_ssl: true
-
 - name: capi-final-releases
   type: s3
   source:
@@ -365,8 +324,42 @@ resources:
     private: true
     bucket: buffy-acceptance-tests-logs
     regexp: acceptance_tests.(0)..*.tgz
-    access_key_id: {{buffy_access_key}}
-    secret_access_key: {{buffy_secret_key}}
+    access_key_id: {{wasabi_ci_artifacts_s3_access_key}}
+    secret_access_key: {{wasabi_ci_artifacts_s3_secret_key}}
+
+- name: buffy-deployment
+  type: bosh-deployment
+  source:
+    target: https://bosh.buffy.cf-app.com:25555
+    username: {{buffy_bosh_user}}
+    password: {{buffy_bosh_password}}
+    deployment: cf-buffy
+    ignore_ssl: true
+
+- name: buffy-diego-deployment
+  type: bosh-deployment
+  source:
+    target: https://bosh.buffy.cf-app.com:25555
+    username: {{buffy_bosh_user}}
+    password: {{buffy_bosh_password}}
+    deployment: cf-buffy-diego
+    ignore_ssl: true
+
+- name: buffy-stemcell-upload
+  type: bosh-stemcell
+  source:
+    target: https://bosh.buffy.cf-app.com:25555
+    username: {{buffy_bosh_user}}
+    password: {{buffy_bosh_password}}
+    ignore_ssl: true
+
+- name: buffy-release-upload
+  type: bosh-release
+  source:
+    target: https://bosh.buffy.cf-app.com:25555
+    username: {{buffy_bosh_user}}
+    password: {{buffy_bosh_password}}
+    ignore_ssl: true
 
 - name: xena-acceptance-tests-logs
   type: s3
@@ -662,6 +655,7 @@ jobs:
       BOSH_PASSWORD: {{xena_bosh_password}}
       DEPLOYMENTS_DIR: capi-ci-private
       ENVIRONMENT_NAME: xena
+      INCLUDE_BRIDGE: false
   - aggregate:
     - put: xena-stemcell-upload
       params:
@@ -759,117 +753,128 @@ jobs:
   serial_groups: [deploy-buffy-cf]
   plan:
   - aggregate:
-    - get: bosh-lite
-    - get: bosh-lite-stemcell
-    - get: capi-ci
-    - get: capi-ci-private
+    - get: cf-release-tarball
     - get: capi-release-tarball
       passed: [create-capi-release]
       trigger: true
     - get: capi-release
       resource: capi-release-develop
       passed: [create-capi-release]
+    - get: capi-ci
+    - get: capi-ci-private
+    - get: aws-stemcell
     - get: cf-release
       resource: cf-release-develop
-      params:
-        submodules: none
-    - get: cf-release-tarball
-    - get: cflinuxfs2-rootfs-tarball
+    - get: diego-ci
     - get: diego-release
       params:
         submodules: none
+    - get: garden-runc-release-tarball
     - get: diego-release-tarball
       trigger: true
-    - get: garden-runc-release-tarball
-  - task: create-cloudformation
-    file: capi-ci/ci/scripts/create_cloudformation_stack.yml
+    - get: cflinuxfs2-rootfs-tarball
+    - get: sync-integration-tests
+  - task: cf-manifest
+    privileged: true
+    file: capi-ci/ci/scripts/create_cf_deployment_manifest.yml
     params:
-      AWS_DEFAULT_REGION: {{buffy_aws_default_region}}
-      AWS_ACCESS_KEY_ID: {{buffy_access_key}}
-      AWS_SECRET_ACCESS_KEY: {{buffy_secret_key}}
-      STACK_NAME: buffy-stack
-      CLOUDFORMATION_PATH: capi-ci/buffy/cloudformation.json
-  - task: provision-bosh-lite
-    file: capi-ci/ci/scripts/provision_bosh_lite.yml
+      INFRASTRUCTURE: aws
+      ENVIRONMENT: buffy
+  - task: diego-manifest
+    file: capi-ci/ci/scripts/create_diego_release_manifest.yml
     params:
-      BOSH_LITE_INSTANCE_TYPE: c3.4xlarge
-      BOSH_LITE_NAME: buffy-bosh-lite
-      BOSH_LITE_KEYPAIR: {{buffy_keypair_name}}
-      BOSH_USER: {{buffy_bosh_admin_user}}
-      BOSH_PASSWORD: {{buffy_bosh_admin_password}}
-      AWS_ACCESS_KEY_ID: {{buffy_access_key}}
-      AWS_SECRET_ACCESS_KEY: {{buffy_secret_key}}
-      AWS_DEFAULT_REGION: {{buffy_aws_default_region}}
-      AWS_SECURITY_GROUP_TAG: {{buffy_security_group_tag}}
-      AWS_SUBNET_NAME: {{buffy_subnet_name}}
-      SSH_KEY: {{buffy_private_key}}
-      APP_DOMAIN: buffy-apps.capi.cf-app.com
-      SYSTEM_DOMAIN: buffy.capi.cf-app.com
-  - task: generate-bosh-lite-cf-manifest
-    file: capi-ci/ci/scripts/generate-bosh-lite-cf-manifest.yml
-    params:
-      ENVIRONMENT_STUB: capi-ci/buffy/stubs/cf/cf-stub.yml
-      STUBS_PATH: deployments/stub.yml
+      BOSH_TARGET: bosh.buffy.cf-app.com
+      BOSH_USER: {{buffy_bosh_user}}
+      BOSH_PASSWORD: {{buffy_bosh_password}}
+      DEPLOYMENTS_DIR: capi-ci-private
+      ENVIRONMENT_NAME: buffy
+      INCLUDE_BRIDGE: true
   - aggregate:
-    - put: bosh-lite-stemcell-upload
+    - put: buffy-stemcell-upload
       params:
-        target_file: deployments/target
         stemcells:
-          - bosh-lite-stemcell/*.tgz
+          - aws-stemcell/*.tgz
     - put: upload-cf-release-tarball
-      resource: bosh-lite-release-upload
+      resource: buffy-release-upload
       params:
-        target_file: deployments/target
         releases:
           - cf-release-tarball/*.tgz
     - put: upload-release-tarballs
-      resource: bosh-lite-release-upload
+      resource: buffy-release-upload
       params:
-        target_file: deployments/target
         releases:
           - capi-release-tarball/*.tgz
           - diego-release-tarball/*.tgz
           - garden-runc-release-tarball/*.tgz
           - cflinuxfs2-rootfs-tarball/*.tgz
-  - put: bosh-lite-cf-deployment
+  - put: buffy-deployment
     params:
-      target_file: deployments/target
-      manifest: generated-manifests/cf-deployment.yml
-      stemcells:
-        - bosh-lite-stemcell/*.tgz
+      manifest: generated-manifest/deployment.yml
+      stemcells: [aws-stemcell/*.tgz]
       releases:
         - cf-release-tarball/*.tgz
         - capi-release-tarball/*.tgz
-  - put: bosh-lite-diego-deployment
+    on_failure:
+      put: slack-alert
+      params:
+        text: '[deploy-and-test-buffy] OH NO! Failed deploying cf-release to buffy'
+        icon_emoji: {{slack_failure_emoji}}
+  - put: buffy-diego-deployment
     params:
-      target_file: deployments/target
-      manifest: generated-manifests/diego-deployment.yml
-      stemcells:
-        - bosh-lite-stemcell/*.tgz
+      manifest: generated-diego-manifest/diego-deployment.yml
       releases:
-        - capi-release-tarball/*.tgz
         - diego-release-tarball/*.tgz
         - garden-runc-release-tarball/*.tgz
         - cflinuxfs2-rootfs-tarball/*.tgz
+      stemcells: [aws-stemcell/*.tgz]
+    on_failure:
+      put: slack-alert
+      params:
+        text: '[deploy-and-test-buffy] OH NO! Failed deploying diego to buffy'
+        icon_emoji: {{slack_failure_emoji}}
   - task: enable-feature-flags
     file: capi-ci/ci/scripts/enable_feature_flags.yml
     params:
-      CF_API_TARGET: https://api.buffy.capi.cf-app.com
+      CF_API_TARGET: https://api.buffy.cf-app.com
       CF_ADMIN_PASSWORD: {{buffy_cf_admin_password}}
-  - task: acceptance-tests
-    privileged: true
-    file: capi-ci/ci/scripts/run_bosh_command.yml
-    input_mapping: {manifest: generated-manifests}
-    params:
-      BOSH_DIRECTOR: https://bosh.buffy.capi.cf-app.com:25555
-      BOSH_USER: {{buffy_bosh_admin_user}}
-      BOSH_PASSWORD: {{buffy_bosh_admin_password}}
-      DEPLOYMENT_YML: manifest/cf-deployment.yml
-      COMMAND: 'run errand acceptance_tests --keep-alive --download-logs --logs-dir bosh-logs'
-    ensure:
-      put: buffy-acceptance-tests-logs
+  - aggregate:
+    - task: acceptance-tests
+      privileged: true
+      file: capi-ci/ci/scripts/run_bosh_command.yml
+      input_mapping: {manifest: generated-manifest}
       params:
-        file: bosh-logs/acceptance_tests*.tgz
+        <<: *bosh-target-buffy
+        DEPLOYMENT_YML: manifest/deployment.yml
+        COMMAND: 'run errand acceptance_tests --keep-alive --download-logs --logs-dir bosh-logs'
+      ensure:
+        put: buffy-acceptance-tests-logs
+        params:
+          file: bosh-logs/acceptance_tests*.tgz
+    - do:
+      - task: map-buffy
+        config:
+          platform: linux
+          image_resource:
+            type: docker-image
+            source:
+              repository: busybox
+          inputs:
+          - name: capi-ci-private
+          outputs:
+          - name: buffy-env
+          run:
+            path: cp
+            args: [-a, capi-ci-private/buffy/., buffy-env/]
+      - task: sync-integration-tests
+        file: sync-integration-tests/concourse/task.yml
+        input_mapping: {environment: buffy-env}
+        params:
+          BOSH_DEPLOYMENT: cf-buffy
+          BOSH_INSTANCE: api_z1/0
+          CF_API_TARGET: https://api.buffy.cf-app.com
+          CF_ADMIN_PASSWORD: {{buffy_cf_admin_password}}
+          CF_SKIP_SSL_VALIDATION: true
+          CF_APPS_DOMAIN: buffy-app.cf-app.com
     on_failure:
       put: slack-alert
       params:
@@ -1055,6 +1060,13 @@ jobs:
         BOSH_DIRECTOR: https://bosh.xena.cf-app.com:25555
         BOSH_USER: {{xena_bosh_user}}
         BOSH_PASSWORD: {{xena_bosh_password}}
+    - task: cleanup-buffy
+      privileged: true
+      file: capi-ci/ci/scripts/run_bosh_cleanup.yml
+      params: &bosh-target-buffy
+        BOSH_DIRECTOR: https://bosh.buffy.cf-app.com:25555
+        BOSH_USER: {{buffy_bosh_user}}
+        BOSH_PASSWORD: {{buffy_bosh_password}}
     - task: cleanup-arya
       privileged: true
       file: capi-ci/ci/scripts/run_bosh_cleanup.yml
