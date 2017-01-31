@@ -1339,7 +1339,6 @@ jobs:
   - put: capi-release-develop
     params:
       repository: merged/capi-release
-      rebase: true
 
 - name: bump-ci-passed
   serial: true
