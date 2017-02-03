@@ -1347,10 +1347,12 @@ jobs:
     resource: capi-release-develop
     passed:
       - deploy-and-test-xena
+      - deploy-and-test-buffy
     trigger: true
   - get: capi-release-tarball
     passed:
       - deploy-and-test-xena
+      - deploy-and-test-buffy
   - put: capi-release-ci-passed
     params:
       repository: capi-release
