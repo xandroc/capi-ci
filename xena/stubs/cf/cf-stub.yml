@@ -432,6 +432,9 @@ properties:
       metron:
         cert: (( secrets.loggregator.tls.metron.cert ))
         key: (( secrets.loggregator.tls.metron.key ))
+      syslogdrainbinder:
+        cert: (( secrets.loggregator.tls.syslogdrainbinder.cert ))
+        key: (( secrets.loggregator.tls.syslogdrainbinder.key ))
   loggregator_endpoint:
     shared_secret: (( secrets.logging.shared_secret )) # same as metron_endpoint
 
