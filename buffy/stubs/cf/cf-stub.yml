@@ -150,6 +150,9 @@ secrets:
       trafficcontroller:
         cert: (( merge ))
         key: (( merge ))
+      syslogdrainbinder:
+        cert: (( merge ))
+        key: (( merge ))
   app_ssh:
     host_key_fingerprint: (( merge )) # the fingerprint of your app host key
   login:
