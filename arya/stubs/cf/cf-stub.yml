@@ -463,6 +463,10 @@ properties:
       trafficcontroller:
         cert: (( secrets.loggregator.tls.trafficcontroller.cert ))
         key: (( secrets.loggregator.tls.trafficcontroller.key ))
+      syslogdrainbinder:
+        cert: (( secrets.loggregator.tls.syslogdrainbinder.cert ))
+        key: (( secrets.loggregator.tls.syslogdrainbinder.key ))
+
   loggregator_endpoint:
     shared_secret: (( secrets.logging.shared_secret )) # same as metron_endpoint
 
