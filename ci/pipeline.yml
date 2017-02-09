@@ -4,10 +4,10 @@ groups:
   - cc-unit-tests
   - bridge-unit-tests
   - create-capi-release
-  - deploy-and-test-xena
+  - deploy-and-test-mysql-s3-bbs
   - migration-backwards-compatibility-test
   - bump-capi-release
-  - deploy-and-test-buffy
+  - deploy-and-test-postgres-webdave-bridge
   - bump-ci-passed
 - name: ship-it
   jobs:
@@ -612,10 +612,10 @@ jobs:
     on_failure:
       put: slack-alert
       params:
-        text: '[deploy-and-test-xena] OH NO! Failed deploying cf-mysql-release to xena'
+        text: '[deploy-and-test-mysql-s3-bbs] OH NO! Failed deploying cf-mysql-release to xena'
         icon_emoji: {{slack_failure_emoji}}
 
-- name: deploy-and-test-xena
+- name: deploy-and-test-mysql-s3-bbs
   serial: true
   serial_groups: [deploy-xena-cf]
   plan:
@@ -684,7 +684,7 @@ jobs:
     on_failure:
       put: slack-alert
       params:
-        text: '[deploy-and-test-xena] OH NO! Failed deploying cf-release to xena'
+        text: '[deploy-and-test-mysql-s3-bbs] OH NO! Failed deploying cf-release to xena'
         icon_emoji: {{slack_failure_emoji}}
   - put: xena-diego-deployment
     params:
@@ -697,7 +697,7 @@ jobs:
     on_failure:
       put: slack-alert
       params:
-        text: '[deploy-and-test-xena] OH NO! Failed deploying diego to xena'
+        text: '[deploy-and-test-mysql-s3-bbs] OH NO! Failed deploying diego to xena'
         icon_emoji: {{slack_failure_emoji}}
   - task: enable-feature-flags
     file: capi-ci/ci/scripts/enable_feature_flags.yml
@@ -745,10 +745,10 @@ jobs:
     on_failure:
       put: slack-alert
       params:
-        text: '[deploy-and-test-xena] OH NO! Failed on acceptance-tests'
+        text: '[deploy-and-test-mysql-s3-bbs] OH NO! Failed on acceptance-tests'
         icon_emoji: {{slack_failure_emoji}}
 
-- name: deploy-and-test-buffy
+- name: deploy-and-test-postgres-webdave-bridge
   serial: true
   serial_groups: [deploy-buffy-cf]
   plan:
@@ -817,7 +817,7 @@ jobs:
     on_failure:
       put: slack-alert
       params:
-        text: '[deploy-and-test-buffy] OH NO! Failed deploying cf-release to buffy'
+        text: '[deploy-and-test-postgres-webdave-bridge] OH NO! Failed deploying cf-release to buffy'
         icon_emoji: {{slack_failure_emoji}}
   - put: buffy-diego-deployment
     params:
@@ -830,7 +830,7 @@ jobs:
     on_failure:
       put: slack-alert
       params:
-        text: '[deploy-and-test-buffy] OH NO! Failed deploying diego to buffy'
+        text: '[deploy-and-test-postgres-webdave-bridge] OH NO! Failed deploying diego to buffy'
         icon_emoji: {{slack_failure_emoji}}
   - task: enable-feature-flags
     file: capi-ci/ci/scripts/enable_feature_flags.yml
@@ -878,7 +878,7 @@ jobs:
     on_failure:
       put: slack-alert
       params:
-        text: '[deploy-and-test-buffy] OH NO! Failed on acceptance-tests'
+        text: '[deploy-and-test-postgres-webdave-bridge] OH NO! Failed on acceptance-tests'
         icon_emoji: {{slack_failure_emoji}}
 
 - name: ship-it
@@ -1346,13 +1346,13 @@ jobs:
   - get: capi-release
     resource: capi-release-develop
     passed:
-      - deploy-and-test-xena
-      - deploy-and-test-buffy
+      - deploy-and-test-mysql-s3-bbs
+      - deploy-and-test-postgres-webdave-bridge
     trigger: true
   - get: capi-release-tarball
     passed:
-      - deploy-and-test-xena
-      - deploy-and-test-buffy
+      - deploy-and-test-mysql-s3-bbs
+      - deploy-and-test-postgres-webdave-bridge
   - put: capi-release-ci-passed
     params:
       repository: capi-release
