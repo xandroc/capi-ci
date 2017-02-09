@@ -78,6 +78,10 @@ jobs:
   instances: 0
 - name: clock_z2
   instances: 0
+
+- name: blobstore_z1
+  instances: 1
+
 - name: uaa_z1
   instances: 1
   resource_pool: small_z1
@@ -137,7 +141,7 @@ secrets:
   ccdb_admin_password: (( merge )) # required user-defined password
   uaadb_admin_password: (( merge )) # required user-defined password
   bbsdb_admin_password: (( merge )) # required user-defined password
-
+  blobstore: (( merge ))
   loggregator:
     tls:
       ca_cert: (( merge ))
@@ -265,6 +269,17 @@ properties:
   - buffy-app.cf-app.com
   app_ssh:
     host_key_fingerprint: (( secrets.app_ssh.host_key_fingerprint ))
+
+  blobstore:
+    admin_users:
+    - password: (( secrets.blobstore.admin_password ))
+    - username: admin
+    secure_link:
+      secret: (( secrets.blobstore.secure_link.secret ))
+    tls:
+      cert: (( secrets.blobstore.tls.cert ))
+      private_key: (( secrets.blobstore.tls.private_key ))
+      ca_cert: (( secrets.blobstore.tls.ca_cert ))
 
   template_only:
     aws:
@@ -416,13 +431,24 @@ properties:
         non_basic_services_allowed: true
     default_app_memory: 256
     resource_pool:
+      blobstore_type: webdav
       resource_directory_key: (( secrets.cc.resource_pool.resource_directory_key ))
+      webdav_config: &webdav_config
+        username: admin
+        password: (( secrets.blobstore.admin_password ))
+        ca_cert: (( secrets.blobstore.tls.ca_cert ))
     packages:
+      blobstore_type: webdav
       app_package_directory_key: (( secrets.cc.packages.app_package_directory_key ))
+      webdav_config: *webdav_config
     droplets:
+      blobstore_type: webdav
       droplet_directory_key: (( secrets.cc.droplets.droplet_directory_key ))
+      webdav_config: *webdav_config
     buildpacks:
+      blobstore_type: webdav
       buildpack_directory_key: (( secrets.cc.buildpacks.buildpack_directory_key ))
+      webdav_config: *webdav_config
     newrelic:
       license_key: (( secrets.cc.newrelic.license_key ))
       monitor_mode: true
