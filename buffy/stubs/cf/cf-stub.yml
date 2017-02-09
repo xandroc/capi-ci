@@ -273,7 +273,7 @@ properties:
   blobstore:
     admin_users:
     - password: (( secrets.blobstore.admin_password ))
-    - username: admin
+      username: admin
     secure_link:
       secret: (( secrets.blobstore.secure_link.secret ))
     tls:
