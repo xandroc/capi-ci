@@ -612,7 +612,7 @@ jobs:
     on_failure:
       put: slack-alert
       params:
-        text: '[deploy-and-test-mysql-s3-bbs] OH NO! Failed deploying cf-mysql-release to xena'
+        text: '[deploy-cf-mysql] OH NO! Failed deploying cf-mysql-release to xena'
         icon_emoji: {{slack_failure_emoji}}
 
 - name: deploy-and-test-mysql-s3-bbs
