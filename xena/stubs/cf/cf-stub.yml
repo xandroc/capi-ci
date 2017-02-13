@@ -436,6 +436,9 @@ properties:
       syslogdrainbinder:
         cert: (( secrets.loggregator.tls.syslogdrainbinder.cert ))
         key: (( secrets.loggregator.tls.syslogdrainbinder.key ))
+      statsd_injector:
+        cert: (( secrets.loggregator.tls.statsd_injector.cert ))
+        key: (( secrets.loggregator.tls.statsd_injector.key ))
   loggregator_endpoint:
     shared_secret: (( secrets.logging.shared_secret )) # same as metron_endpoint
 
