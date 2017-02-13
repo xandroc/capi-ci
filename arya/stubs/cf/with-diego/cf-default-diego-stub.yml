@@ -6,6 +6,7 @@ properties:
       temporary_local_staging: true
       temporary_local_tasks: true
       temporary_local_apps: true
+      temporary_local_sync: true
   acceptance_tests:
     backend: diego
     skip_diego_unsupported_tests: true
