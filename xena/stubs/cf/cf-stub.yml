@@ -124,6 +124,9 @@ secrets:
       syslogdrainbinder:
         cert: (( merge ))
         key: (( merge ))
+      statsd_injector:
+        cert: (( merge ))
+        key: (( merge ))
   login:
     saml:
       serviceProviderCertificate: (( merge ))
