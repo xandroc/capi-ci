@@ -8,6 +8,7 @@ groups:
   - migration-backwards-compatibility-test
   - bump-capi-release
   - deploy-and-test-postgres-webdave-bridge
+  - deploy-and-test-mulan
   - bump-ci-passed
 - name: ship-it
   jobs:
@@ -661,6 +662,83 @@ jobs:
       params:
         text: '[deploy-cf-mysql] OH NO! Failed deploying cf-mysql-release to xena'
         icon_emoji: {{slack_failure_emoji}}
+
+- name: deploy-and-test-mulan
+  serial: true
+  serial_groups: [deploy-mulan]
+  plan:
+  - aggregate:
+    - get: cf-deployment-concourse-tasks
+    - get: cats-concourse-task
+    - get: cf-deployment
+      resource: cf-deployment-master
+    - get: capi-release
+      resource: capi-release-develop
+      passed: [create-capi-release]
+    - get: mulan-vars-store
+    - get: mulan-bbl-state
+    - get: mulan-integration-configs
+    - get: cf-acceptance-tests
+    - get: capi-ci
+    - get: capi-release-tarball
+      passed: [create-capi-release]
+  - task: upload-capi-release-tarball
+    file: capi-ci/ci/scripts/upload-release.yml
+    input_mapping:
+      bbl-state: mulan-bbl-state
+      release-tarball: capi-release-tarball
+    params:
+      BBL_STATE_DIR: "mulan"
+  - task: mulan-stemcell-upload
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    input_mapping:
+      bbl-state: mulan-bbl-state
+    params:
+      BBL_STATE_DIR: "mulan"
+  - task: deploy-cf-with-uploaded-capi-release
+    file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
+    input_mapping:
+      bbl-state: mulan-bbl-state
+      ops-files: capi-ci
+      vars-store: mulan-vars-store
+    params:
+      BBL_STATE_DIR: "mulan"
+      SYSTEM_DOMAIN: mulan.cf-app.com
+      VARS_STORE_PATH: "mulan/deployment-vars.yml"
+      OPS_FILES: "cf-deployment-operations/gcp.yml cf-deployment-operations/use-latest-capi.yml"
+      REGENERATE_VARS_STORE: false
+    ensure:
+      put: mulan-vars-store
+      params:
+        repository: updated-vars-store
+        rebase: true
+  - task: updated-integration-configs
+    file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
+    input_mapping:
+      vars-store: mulan-vars-store
+      integration-configs: mulan-integration-configs
+    params:
+      CATS_INTEGRATION_CONFIG_FILE: "mulan/cats_integration_config.json"
+      VARS_STORE_PATH: "mulan/deployment-vars.yml"
+    ensure:
+      put: mulan-integration-configs
+      params:
+        repository: updated-integration-configs
+        rebase: true
+  - task: enable-feature-flags
+    file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
+    input_mapping:
+      vars-store: mulan-vars-store
+    params:
+      SYSTEM_DOMAIN: "mulan.cf-app.com"
+      VARS_STORE_FILE: "mulan/deployment-vars.yml"
+  - task: acceptance-tests
+    file: cats-concourse-task/task.yml
+    input_mapping:
+      integration-config: mulan-integration-configs
+    params:
+      NODES: 8
+      CONFIG_FILE_PATH: "mulan/cats_integration_config.json"
 
 - name: deploy-and-test-mysql-s3-bbs
   serial: true
