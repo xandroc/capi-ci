@@ -36,6 +36,7 @@ groups:
   - freshen-xena
   - freshen-arya
   - freshen-buffy
+  - freshen-mulan
 
 resource_types:
 - name: bosh-release
@@ -103,6 +104,28 @@ resources:
     uri: https://github.com/cloudfoundry/capi-ci.git
 
 - name: capi-ci-private
+  type: git
+  source:
+    branch: master
+    private_key: {{private_key}}
+    uri: git@github.com:cloudfoundry/capi-ci-private.git
+
+- name: mulan-bbl-state
+  type: git
+  source:
+    branch: master
+    private_key: {{private_key}}
+    uri: git@github.com:cloudfoundry/capi-ci-private.git
+    paths: ["mulan/bbl-state.json"]
+
+- name: mulan-vars-store
+  type: git
+  source:
+    branch: master
+    private_key: {{private_key}}
+    uri: git@github.com:cloudfoundry/capi-ci-private.git
+
+- name: mulan-integration-configs
   type: git
   source:
     branch: master
@@ -421,6 +444,30 @@ resources:
     password: {{xena_bosh_password}}
     deployment: cf-xena-diego
     ignore_ssl: true
+
+- name: cf-deployment-master
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/cf-deployment.git
+
+- name: cf-deployment-concourse-tasks
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/cf-deployment-concourse-tasks.git
+
+- name: cats-concourse-task
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/cats-concourse-task.git
+
+- name: cf-acceptance-tests
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/cf-acceptance-tests.git
 
 jobs:
 
@@ -1285,6 +1332,34 @@ jobs:
     params:
       repository: updated-env-repo
       rebase: true
+
+- name: freshen-mulan
+  serial: true
+  serial_groups: [deploy-mulan]
+  plan:
+    - aggregate:
+      - get: cf-deployment-concourse-tasks
+      - get: mulan-bbl-state
+    - task: freshen-mulan
+      file: cf-deployment-concourse-tasks/bbl-up/task.yml
+      input_mapping:
+        bbl-state: mulan-bbl-state
+      params:
+        BBL_STATE_DIR: "mulan"
+        BBL_IAAS: "gcp"
+        BBL_LB_CERT: {{mulan_bbl_lb_cert}}
+        BBL_LB_KEY: {{mulan_bbl_lb_key}}
+        LB_DOMAIN: "mulan.cf-app.com"
+        BBL_ENV_NAME: "mulan"
+        BBL_GCP_SERVICE_ACCOUNT_KEY: "google_account_creds.json"
+        BBL_GCP_PROJECT_ID: {{mulan_gcp_project_id}}
+        BBL_GCP_ZONE: {{mulan_gcp_zone}}
+        BBL_GCP_REGION: {{mulan_gcp_region}}
+      ensure:
+        put: mulan-bbl-state
+        params:
+          repository: updated-bbl-state
+          rebase: true
 
 - name: freshen-buffy
   serial: true
