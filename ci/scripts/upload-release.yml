@@ -11,7 +11,7 @@ inputs:
   # Input mapping to directory containing .tgz files
 
 run:
-  path: capi-ci/ci/scripts/upload-release
+  path: capi-ci/ci/scripts/upload-release.sh
 
 params:
   BBL_STATE_DIR:
