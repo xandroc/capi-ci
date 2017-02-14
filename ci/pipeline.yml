@@ -1418,6 +1418,9 @@ jobs:
     - aggregate:
       - get: cf-deployment-concourse-tasks
       - get: mulan-bbl-state
+      - get: capi-ci
+      - get: weekly-sunday
+        trigger: true
     - task: freshen-mulan
       file: cf-deployment-concourse-tasks/bbl-up/task.yml
       input_mapping:
@@ -1438,6 +1441,12 @@ jobs:
         params:
           repository: updated-bbl-state
           rebase: true
+    - task: run-bosh-cleanup
+      file: capi-ci/ci/bbl-tasks/run-bosh-cleanup.yml
+      input_mapping:
+        bbl-state: mulan-bbl-state
+      params:
+        BBL_STATE_DIR: "mulan"
 
 - name: freshen-buffy
   serial: true
