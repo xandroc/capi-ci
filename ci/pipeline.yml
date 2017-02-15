@@ -684,6 +684,7 @@ jobs:
     - get: capi-ci
     - get: capi-release-tarball
       passed: [create-capi-release]
+      trigger: true
   - task: upload-capi-release-tarball
     file: capi-ci/ci/scripts/upload-release.yml
     input_mapping:
