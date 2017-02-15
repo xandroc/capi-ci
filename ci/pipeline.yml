@@ -111,6 +111,13 @@ resources:
     private_key: {{private_key}}
     uri: git@github.com:cloudfoundry/capi-ci-private.git
 
+- name: arya-bbl-state
+  type: git
+  source:
+    branch: master
+    private_key: {{private_key}}
+    uri: git@github.com:cloudfoundry/capi-ci-private.git
+
 - name: mulan-bbl-state
   type: git
   source:
@@ -1371,25 +1378,38 @@ jobs:
 - name: freshen-arya
   serial: true
   plan:
-  - aggregate:
-    - get: capi-ci
-    - get: env-repo
-      resource: capi-ci-private
-    - get: weekly-sunday
-      trigger: true
-  - task: freshen-arya
-    file: capi-ci/ci/scripts/freshen_bosh.yml
-    params:
-      BBL_DIR: arya
-    on_failure:
-      put: slack-alert
+    - aggregate:
+      - get: cf-deployment-concourse-tasks
+      - get: arya-bbl-state
+      - get: capi-ci
+      - get: weekly-sunday
+        trigger: true
+    - task: freshen-arya
+      file: cf-deployment-concourse-tasks/bbl-up/task.yml
+      input_mapping:
+        bbl-state: arya-bbl-state
       params:
-        text: '[freshen-arya] OH NO! Failed to freshen arya https://capi.ci.cf-app.com/?groups=bosh'
-        icon_emoji: {{slack_failure_emoji}}
-  - put: capi-ci-private
-    params:
-      repository: updated-env-repo
-      rebase: true
+        BBL_STATE_DIR: "arya"
+        BBL_IAAS: "gcp"
+        BBL_LB_CERT: {{arya_bbl_lb_cert}}
+        BBL_LB_KEY: {{arya_bbl_lb_key}}
+        LB_DOMAIN: "arya.cf-app.com"
+        BBL_ENV_NAME: "arya"
+        BBL_GCP_SERVICE_ACCOUNT_KEY: "google_account_creds.json"
+        BBL_GCP_PROJECT_ID: {{arya_gcp_project_id}}
+        BBL_GCP_ZONE: {{arya_gcp_zone}}
+        BBL_GCP_REGION: {{arya_gcp_region}}
+      ensure:
+        put: arya-bbl-state
+        params:
+          repository: updated-bbl-state
+          rebase: true
+    - task: run-bosh-cleanup
+      file: capi-ci/ci/bbl-tasks/run-bosh-cleanup.yml
+      input_mapping:
+        bbl-state: arya-bbl-state
+      params:
+        BBL_STATE_DIR: "arya"
 
 - name: freshen-xena
   serial: true
