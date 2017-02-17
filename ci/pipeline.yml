@@ -716,7 +716,7 @@ jobs:
       BBL_STATE_DIR: "mulan"
       SYSTEM_DOMAIN: mulan.cf-app.com
       VARS_STORE_FILE: "mulan/deployment-vars.yml"
-      OPS_FILES: "cf-deployment-operations/gcp.yml cf-deployment-operations/use-latest-capi.yml cf-deployment-operations/postgres.yml"
+      OPS_FILES: "cf-deployment-operations/gcp.yml cf-deployment-operations/use-latest-capi.yml cf-deployment-operations/postgres.yml cf-deployment-operations/minimal-instance-deployment.yml"
       REGENERATE_VARS_STORE: false
     ensure:
       put: mulan-vars-store
