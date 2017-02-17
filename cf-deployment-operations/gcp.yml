@@ -6,11 +6,11 @@
 - type: replace
   path: /instance_groups/name=nats/vm_extensions
   value:
-  - 5GB_ephemeral_disk
+  - 10GB_ephemeral_disk
 - type: replace
   path: /instance_groups/name=etcd/vm_extensions
   value:
-  - 5GB_ephemeral_disk
+  - 10GB_ephemeral_disk
 - type: replace
   path: /instance_groups/name=mysql/vm_extensions
   value:
@@ -48,16 +48,16 @@
 - type: replace
   path: /instance_groups/name=cc_clock/vm_extensions
   value:
-  - 5GB_ephemeral_disk
+  - 10GB_ephemeral_disk
 - type: replace
   path: /instance_groups/name=cc_bridge/vm_extensions
   value:
-  - 5GB_ephemeral_disk
+  - 10GB_ephemeral_disk
 - type: replace
   path: /instance_groups/name=doppler/vm_extensions
   value:
-  - 5GB_ephemeral_disk
+  - 10GB_ephemeral_disk
 - type: replace
   path: /instance_groups/name=log-api/vm_extensions
   value:
-  - 5GB_ephemeral_disk
+  - 10GB_ephemeral_disk
