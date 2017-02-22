@@ -140,6 +140,9 @@ secrets:
       syslogdrainbinder:
         cert: (( merge ))
         key: (( merge ))
+      statsd_injector:
+        cert: (( merge ))
+        key: (( merge ))
   app_ssh:
     host_key_fingerprint: (( merge ))
   aws:
@@ -202,6 +205,10 @@ secrets:
   nats:
     password: (( merge ))
   cc:
+    mutual_tls:
+      ca_cert: (( merge ))
+      public_cert: (( merge ))
+      private_key: (( merge ))
     bulk_api_password: (( merge ))
     staging_upload_user: (( merge ))
     staging_upload_password: (( merge ))
@@ -403,6 +410,10 @@ properties:
     prof_port: 6060
 
   cc: &cc
+    mutual_tls:
+      ca_cert: (( secrets.cc.mutual_tls.ca_cert ))
+      public_cert: (( secrets.cc.mutual_tls.public_cert ))
+      private_key: (( secrets.cc.mutual_tls.private_key ))
     allow_app_ssh_access: true
     bulk_api_password: (( secrets.cc.bulk_api_password ))
     staging_upload_user: (( secrets.cc.staging_upload_user ))
@@ -476,6 +487,9 @@ properties:
       syslogdrainbinder:
         cert: (( secrets.loggregator.tls.syslogdrainbinder.cert ))
         key: (( secrets.loggregator.tls.syslogdrainbinder.key ))
+      statsd_injector:
+        cert: (( secrets.loggregator.tls.statsd_injector.cert ))
+        key: (( secrets.loggregator.tls.statsd_injector.key ))
 
   loggregator_endpoint:
     shared_secret: (( secrets.loggregator_endpoint.shared_secret ))
