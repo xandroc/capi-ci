@@ -455,12 +455,6 @@ resources:
     deployment: cf-xena-diego
     ignore_ssl: true
 
-- name: cf-deployment-master
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/cf-deployment.git
-
 - name: cf-deployment-support-postgres
   type: git
   source:
