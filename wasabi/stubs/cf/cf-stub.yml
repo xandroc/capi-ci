@@ -90,13 +90,21 @@ jobs:
     - name: php-buildpack
     - name: python-buildpack
     - name: staticfile-buildpack
-    - name: cloud_controller_ng
-    - name: cloud_controller_clock
-    - name: cloud_controller_worker
+    - consumes:
+        nats: nil
+      name: cloud_controller_ng
+    - consumes:
+        nats: nil
+      name: cloud_controller_clock
+    - consumes:
+        nats: nil
+      name: cloud_controller_worker
     - name: metron_agent
     - name: statsd-injector
     - name: nfs_mounter
-    - name: route_registrar
+    - consumes:
+        nats: nil
+      name: route_registrar
     - name: java-buildpack
 - name: api_z2
   persistent_disk: 1024
