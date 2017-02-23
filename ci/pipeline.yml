@@ -1430,10 +1430,11 @@ jobs:
       params:
         text: '[freshen-xena] OH NO! Failed to freshen xena https://capi.ci.cf-app.com/?groups=bosh'
         icon_emoji: {{slack_failure_emoji}}
-  - put: capi-ci-private
-    params:
-      repository: updated-env-repo
-      rebase: true
+    ensure:
+      put: capi-ci-private
+      params:
+        repository: updated-env-repo
+        rebase: true
 
 - name: freshen-mulan
   serial: true
