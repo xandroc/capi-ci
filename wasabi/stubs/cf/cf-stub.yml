@@ -520,7 +520,6 @@ properties:
     admin_password: (( secrets.acceptance_tests.admin_password ))
     nodes: 4
     include_sso: true
-    include_tasks: true
     include_services: true
     skip_ssl_validation: true
     skip_regex: (dotnet-core|transparently\sproxies\sboth\sreserved\scharacters\sand\sunsafe\scharacters)
