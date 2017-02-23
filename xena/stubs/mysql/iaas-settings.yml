@@ -5,29 +5,15 @@ properties:
       availability_zone2: us-east-1c
       availability_zone3: us-east-1d
       subnet_ids:
-        mysql1: subnet-7de55650
-        mysql2: subnet-9ef093d7
-        mysql3: subnet-6d61d536
+        mysql1: subnet-a657758b
+        mysql2: subnet-fdfcefb4
+        mysql3: subnet-e3356cb8
 
 iaas_settings:
   <<: (( merge || nil ))
 
   subnet_configs:
   - name: mysql1
-    type: manual
-    subnets:
-    - range: 10.0.29.0/24
-      reserved: []
-      static:
-        - 10.0.29.30 - 10.0.29.254
-      gateway: 10.0.29.1
-      dns:
-        - 10.0.0.2 # amazon has only 1 DNS server for the whole VPC at x.x.0.2
-      cloud_properties:
-        subnet: (( properties.template_only.aws.subnet_ids.mysql1 ))
-        security_groups:
-        - sg-b4e267c9
-  - name: mysql2
     type: manual
     subnets:
     - range: 10.0.45.0/24
@@ -38,23 +24,37 @@ iaas_settings:
       dns:
         - 10.0.0.2 # amazon has only 1 DNS server for the whole VPC at x.x.0.2
       cloud_properties:
+        subnet: (( properties.template_only.aws.subnet_ids.mysql1 ))
+        security_groups:
+        - sg-30ceca4c # internal security group
+  - name: mysql2
+    type: manual
+    subnets:
+    - range: 10.0.61.0/24
+      reserved: []
+      static:
+        - 10.0.61.30 - 10.0.61.254
+      gateway: 10.0.61.1
+      dns:
+        - 10.0.0.2 # amazon has only 1 DNS server for the whole VPC at x.x.0.2
+      cloud_properties:
         subnet: (( properties.template_only.aws.subnet_ids.mysql2 ))
         security_groups:
-        - sg-b4e267c9
+        - sg-30ceca4c # internal security group
   - name: mysql3
     type: manual
     subnets:
-    - range: 10.0.62.0/24
+    - range: 10.0.77.0/24
       reserved: []
       static:
-        - 10.0.62.30 - 10.0.62.254
-      gateway: 10.0.62.1
+        - 10.0.77.30 - 10.0.77.254
+      gateway: 10.0.77.1
       dns:
         - 10.0.0.2 # amazon has only 1 DNS server for the whole VPC at x.x.0.2
       cloud_properties:
         subnet: (( properties.template_only.aws.subnet_ids.mysql3 ))
         security_groups:
-        - sg-b4e267c9
+        - sg-30ceca4c # internal security group
 
   stemcell: &stemcell
     name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
