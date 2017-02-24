@@ -522,7 +522,7 @@ properties:
     include_sso: true
     include_services: true
     skip_ssl_validation: true
-    skip_regex: (dotnet-core|transparently proxies both reserved characters and unsafe characters)
+    skip_regex: dotnet-core
 
   smoke_tests:
     api:  (( "api." domain ))
