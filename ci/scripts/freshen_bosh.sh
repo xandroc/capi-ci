@@ -30,7 +30,7 @@ pushd "env-repo/${BBL_DIR}"
   cat certs/load-balancer/*.key > /tmp/bbl-key
   set -x
 
-  bbl up --aws-region us-east-1 --iaas aws
+  bbl up --aws-region us-east-1 --iaas aws --aws-bosh-az us-east-1b
 
   # The two commands below amount to "create or update"
   bbl \
