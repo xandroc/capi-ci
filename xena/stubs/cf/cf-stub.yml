@@ -69,9 +69,13 @@ jobs:
   persistent_disk: 1024
 - name: api_worker_z2
   persistent_disk: 1024
-- name: clock_global
+- name: clock_z1
   instances: 1
   resource_pool: small_z1
+  persistent_disk: 1024
+- name: clock_z2
+  instances: 1
+  resource_pool: small_z2
   persistent_disk: 1024
 - name: uaa_z1
   instances: 1
