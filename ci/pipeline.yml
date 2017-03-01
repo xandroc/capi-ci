@@ -463,10 +463,9 @@ resources:
     deployment: cf-xena-diego
     ignore_ssl: true
 
-- name: cf-deployment-support-postgres
+- name: cf-deployment
   type: git
   source:
-    branch: support_postgres
     uri: https://github.com/cloudfoundry/cf-deployment.git
 
 - name: cf-deployment-concourse-tasks
@@ -689,7 +688,7 @@ jobs:
     - get: cf-deployment-concourse-tasks
     - get: cats-concourse-task
     - get: cf-deployment
-      resource: cf-deployment-support-postgres
+      resource: cf-deployment
     - get: capi-release
       resource: capi-release-develop
       passed: [create-capi-release]
