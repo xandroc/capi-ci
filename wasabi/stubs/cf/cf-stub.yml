@@ -100,7 +100,7 @@ jobs:
         nats: nil
       name: cloud_controller_worker
     - name: metron_agent
-    - name: statsd-injector
+    - name: statsd_injector
     - name: nfs_mounter
     - consumes:
         nats: nil
