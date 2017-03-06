@@ -1399,7 +1399,6 @@ jobs:
       - get: arya-bbl-state
       - get: capi-ci
       - get: weekly-sunday
-        trigger: true
     - task: freshen-arya
       file: cf-deployment-concourse-tasks/bbl-up/task.yml
       input_mapping:
@@ -1461,7 +1460,6 @@ jobs:
       - get: mulan-bbl-state
       - get: capi-ci
       - get: weekly-sunday
-        trigger: true
     - task: freshen-mulan
       file: cf-deployment-concourse-tasks/bbl-up/task.yml
       input_mapping:
