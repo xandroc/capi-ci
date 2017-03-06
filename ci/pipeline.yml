@@ -40,6 +40,10 @@ groups:
   - freshen-mulan
 
 resource_types:
+- name: tracker-resource-fixed
+  type: docker-image
+  source:
+    repository: concourse/tracker-resource
 - name: bosh-release
   type: docker-image
   source:
@@ -72,7 +76,7 @@ resources:
     stop: 23:30
 
 - name: deliver-capi-stories
-  type: tracker
+  type: tracker-resource-fixed
   source:
     token: {{deliver_capi_tracker_token}}
     project_id: '966314'
