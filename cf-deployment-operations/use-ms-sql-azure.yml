@@ -1,0 +1,22 @@
+# --- Use MS SQL as CCDB ---
+- type: replace
+  path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/ccdb
+  value: &ccdb
+    db_scheme: tinytds
+    db_type: mssql
+    azure: true
+    address: ((mssql_address))
+    roles:
+    - tag: admin
+      name: ((mssql_admin_user))
+      password: ((mssql_admin_password))
+    databases:
+    - tag: cc
+      name: ((mssql_database_name))
+    port: 1433
+- type: replace
+  path: /instance_groups/name=api/jobs/name=cloud_controller_worker/properties/ccdb
+  value: *ccdb
+- type: replace
+  path: /instance_groups/name=cc-clock/jobs/name=cloud_controller_clock/properties/ccdb
+  value: *ccdb

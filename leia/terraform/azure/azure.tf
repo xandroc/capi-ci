@@ -51,14 +51,18 @@ resource "azurerm_sql_firewall_rule" "test" {
     end_ip_address = "${var.trusted_ip}"
 }
 
-output "db_fqdn" {
+output "mssql_address" {
     value = "${azurerm_sql_database.test.name}.database.windows.net"
 }
-output "db_user" {
+output "mssql_admin_user" {
     sensitive = true
     value = "${var.admin_user}"
 }
-output "db_password" {
+output "mssql_admin_password" {
     sensitive = true
     value = "${var.admin_password}"
+}
+output "mssql_database_name" {
+    sensitive = true
+    value = "${var.name}"
 }
