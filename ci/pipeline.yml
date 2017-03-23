@@ -56,6 +56,10 @@ resource_types:
   type: docker-image
   source:
     repository: cfcommunity/slack-notification-resource
+- name: terraform
+  type: docker-image
+  source:
+    repository: ljfranklin/terraform-resource
 
 resources:
 
@@ -483,6 +487,16 @@ resources:
   source:
     branch: master
     uri: https://github.com/cloudfoundry/cf-acceptance-tests.git
+
+- name: azure-terraform
+  type: terraform
+  source:
+    storage:
+      bucket: capi-ripley-deployments
+      bucket_path: azure
+      access_key_id: {{gcp_storage_access_key}}
+      secret_access_key: {{gcp_storage_secret_key}}
+      endpoint: storage.googleapis.com
 
 jobs:
 
@@ -1545,3 +1559,21 @@ jobs:
   - put: capi-release-ci-passed
     params:
       repository: capi-release
+
+- name: deploy-to-ripley
+  serial: true
+  plan:
+  - get: capi-ci
+  - put: azure-terraform
+    params:
+      env_name: leia
+      terraform_source: capi-ci/leia/terraform/
+      vars:
+        subscription_id: {{azure_subscription_id}}
+        client_id: {{azure_client_id}}
+        client_secret: {{azure_client_secret}}
+        tenant_id: {{azure_tenant_id}}
+        resource_group: {{azure_resource_group}}
+        db_name: {{azure_db_name}}
+        db_admin_user: {{azure_db_admin_user}}
+        db_admin_password: {{azure_db_admin_password}}

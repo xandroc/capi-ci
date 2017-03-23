@@ -3,10 +3,9 @@ variable "client_id" {}
 variable "client_secret" {}
 variable "tenant_id" {}
 variable "resource_group" {}
-variable "name" {}
-variable "admin_user" {}
-variable "admin_password" {}
-variable "trusted_ip" {}
+variable "db_name" {}
+variable "db_admin_user" {}
+variable "db_admin_password" {}
 
 provider "azurerm" {
   subscription_id = "${var.subscription_id}"
@@ -20,12 +19,12 @@ resource "azurerm_resource_group" "test" {
    location = "West US"
 }
 resource "azurerm_sql_server" "test" {
-    name = "${var.name}"
+    name = "${var.db_name}"
     resource_group_name = "${azurerm_resource_group.test.name}"
     location = "West US"
     version = "12.0"
-    administrator_login = "${var.admin_user}"
-    administrator_login_password = "${var.admin_password}"
+    administrator_login = "${var.db_admin_user}"
+    administrator_login_password = "${var.db_admin_password}"
 
     tags {
         environment = "CAPI-CI"
@@ -33,7 +32,7 @@ resource "azurerm_sql_server" "test" {
 }
 
 resource "azurerm_sql_database" "test" {
-    name = "${var.name}"
+    name = "${var.db_name}"
     resource_group_name = "${azurerm_resource_group.test.name}"
     location = "West US"
     server_name = "${azurerm_sql_server.test.name}"
@@ -44,25 +43,26 @@ resource "azurerm_sql_database" "test" {
 }
 
 resource "azurerm_sql_firewall_rule" "test" {
-    name = "${var.name}"
+    name = "${var.db_name}"
     resource_group_name = "${azurerm_resource_group.test.name}"
     server_name = "${azurerm_sql_server.test.name}"
-    start_ip_address = "${var.trusted_ip}"
-    end_ip_address = "${var.trusted_ip}"
+    start_ip_address = "0.0.0.0"
+    end_ip_address = "255.255.255.255"
 }
 
-output "mssql_address" {
+output "db_name" {
+    value = "${var.db_name}"
+}
+
+output "db_address" {
+    sensitive = true
     value = "${azurerm_sql_database.test.name}.database.windows.net"
 }
-output "mssql_admin_user" {
+output "db_admin_user" {
     sensitive = true
-    value = "${var.admin_user}"
+    value = "${var.db_admin_user}"
 }
-output "mssql_admin_password" {
+output "db_admin_password" {
     sensitive = true
-    value = "${var.admin_password}"
-}
-output "mssql_database_name" {
-    sensitive = true
-    value = "${var.name}"
+    value = "${var.db_admin_password}"
 }
