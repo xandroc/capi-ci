@@ -62,7 +62,7 @@ resource_types:
   type: docker-image
   source:
     repository: ljfranklin/terraform-resource
-- name: bosh-deployment
+- name: bosh2-deployment
   type: docker-image
   source:
     repository: cloudfoundry/bosh-deployment-resource
@@ -535,14 +535,8 @@ resources:
       endpoint: storage.googleapis.com
 
 - name: ripley-deployment
-  type: bosh-deployment
+  type: bosh2-deployment
   source:
-    deployment: cf
-    # TODO: change to `put.params.source_file` to pull creds from bbl
-    target: {{ripley_bosh_url}}
-    client: {{ripley_bosh_client}}
-    client_secret: {{ripley_bosh_client_secret}}
-    ca_cert: {{ripley_bosh_ca_cert}}
     vars_store:
       provider: gcs
       config:
@@ -1653,6 +1647,7 @@ jobs:
   plan:
   - aggregate:
     - get: capi-ci
+    - get: capi-ci-private
     - get: gcp-stemcell
     - get: cf-deployment
     - get: capi-release
@@ -1684,8 +1679,13 @@ jobs:
         db_name: {{azure_db_name}}
         db_admin_user: {{azure_db_admin_user}}
         db_admin_password: {{azure_db_admin_password}}
+  - task: extract-bbl-vars
+    file: capi-ci/ci/scripts/extract_bbl_vars.yml
+    params:
+      ENV_NAME: ripley
   - put: ripley-deployment
     params:
+      source_file: bbl-vars/bbl-vars.json
       manifest: cf-deployment/cf-deployment.yml
       stemcells:
       - gcp-stemcell/stemcell.tgz

@@ -1,0 +1,19 @@
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/cf-deployment-concourse-tasks
+
+inputs:
+  - name: capi-ci
+  - name: capi-ci-private
+
+outputs:
+  - name: bbl-vars
+
+run:
+  path: capi-ci/ci/scripts/extract_bbl_vars.yml
+
+params:
+  ENV_NAME: ""
