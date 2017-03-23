@@ -818,7 +818,7 @@ jobs:
     input_mapping:
       integration-config: mulan-integration-configs
     params:
-      NODES: 12
+      NODES: 6
       CONFIG_FILE_PATH: "mulan/cats_integration_config.json"
 
 - name: deploy-and-test-mysql-s3-bbs
