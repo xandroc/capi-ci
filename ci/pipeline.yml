@@ -66,6 +66,10 @@ resource_types:
   type: docker-image
   source:
     repository: cloudfoundry/bosh-deployment-resource
+- name: gcs
+  type: docker-image
+  source:
+    repository: frodenas/gcs-resource
 
 resources:
 
@@ -161,6 +165,14 @@ resources:
     uri: git@github.com:cloudfoundry/capi-ci-private.git
     paths: ["mulan/cats_integration_config.json"]
 
+- name: ripley-integration-configs
+  type: git
+  source:
+    branch: master
+    private_key: {{private_key}}
+    uri: git@github.com:cloudfoundry/capi-ci-private.git
+    paths: ["ripley/cats_integration_config.json"]
+
 - name: ripley-bbl-state
   type: git
   source:
@@ -168,6 +180,13 @@ resources:
     private_key: {{private_key}}
     uri: git@github.com:cloudfoundry/capi-ci-private.git
     paths: ["ripley/bbl-state.json"]
+
+- name: ripley-deployment-vars
+  type: gcs
+  source:
+    bucket: {{ripley_bosh_vars_bucket}}
+    json_key: {{ripley_gcp_json_key}}
+    versioned_file: &vars_store_path bosh/vars-store.yml
 
 - name: capi-release-master
   type: git
@@ -541,7 +560,7 @@ resources:
       provider: gcs
       config:
         bucket: {{ripley_bosh_vars_bucket}}
-        file_name: bosh/vars-store.yml
+        file_name: *vars_store_path
         json_key: {{ripley_gcp_json_key}}
 
 jobs:
@@ -1658,6 +1677,7 @@ jobs:
         pre: rc
     - get: cloud_controller_ng
       resource: cloud_controller_ng_sql_server
+    - get: ripley-deployment-vars
   - put: version
     resource: version-sql-server
     params:
@@ -1701,3 +1721,30 @@ jobs:
       - capi-ci/cf-deployment-operations/use-ms-sql-azure.yml
       - capi-ci/cf-deployment-operations/skip-cert-verify.yml
       - capi-ci/cf-deployment-operations/use-latest-capi.yml
+  - task: updated-integration-configs
+    file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
+    input_mapping:
+      vars-store: ripley-deployment-vars
+      integration-configs: ripley-integration-configs
+    params:
+      CATS_INTEGRATION_CONFIG_FILE: "ripley/cats_integration_config.json"
+      VARS_STORE_FILE: "ripley-deployment-vars/vars-store.yml"
+    ensure:
+      put: ripley-integration-configs
+      params:
+        repository: updated-integration-configs
+        rebase: true
+  - task: enable-feature-flags
+    file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
+    input_mapping:
+      vars-store: ripley-deployment-vars
+    params:
+      SYSTEM_DOMAIN: "ripley.cf-app.com"
+      VARS_STORE_FILE: "ripley-deployment-vars/vars-store.yml"
+  - task: acceptance-tests
+    file: cats-concourse-task/task.yml
+    input_mapping:
+      integration-config: ripley-integration-configs
+    params:
+      NODES: 6
+      CONFIG_FILE_PATH: "ripley/cats_integration_config.json"
