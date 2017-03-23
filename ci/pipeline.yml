@@ -9,6 +9,7 @@ groups:
   - bump-capi-release
   - deploy-and-test-postgres-webdave-bridge
   - deploy-and-test-mulan
+  - deploy-and-test-ripley
   - bump-ci-passed
 - name: ship-it
   jobs:
@@ -38,6 +39,7 @@ groups:
   - freshen-arya
   - freshen-buffy
   - freshen-mulan
+  - freshen-ripley
 
 resource_types:
 - name: tracker-resource-fixed
@@ -60,6 +62,10 @@ resource_types:
   type: docker-image
   source:
     repository: ljfranklin/terraform-resource
+- name: bosh-deployment
+  type: docker-image
+  source:
+    repository: cloudfoundry/bosh-deployment-resource
 
 resources:
 
@@ -90,6 +96,11 @@ resources:
   type: bosh-io-stemcell
   source:
     name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
+
+- name: gcp-stemcell
+  type: bosh-io-stemcell
+  source:
+    name: bosh-google-kvm-ubuntu-trusty-go_agent
 
 - name: capi-final-releases
   type: s3
@@ -150,6 +161,14 @@ resources:
     uri: git@github.com:cloudfoundry/capi-ci-private.git
     paths: ["mulan/cats_integration_config.json"]
 
+- name: ripley-bbl-state
+  type: git
+  source:
+    branch: master
+    private_key: {{private_key}}
+    uri: git@github.com:cloudfoundry/capi-ci-private.git
+    paths: ["ripley/bbl-state.json"]
+
 - name: capi-release-master
   type: git
   source:
@@ -187,6 +206,16 @@ resources:
     initial_version: 0.0.0
     bucket: capi-release-versions
     key: current-capi-release-version
+    region_name: us-east-1
+
+- name: version-sql-server
+  type: semver
+  source:
+    access_key_id: {{wasabi_ci_artifacts_s3_access_key}}
+    secret_access_key: {{wasabi_ci_artifacts_s3_secret_key}}
+    initial_version: 1.25.0
+    bucket: capi-release-versions
+    key: temporary-capi-release-sql-server-version
     region_name: us-east-1
 
 - name: cc-api-v3-version
@@ -273,6 +302,13 @@ resources:
   type: git
   source:
     branch: master
+    private_key: {{private_key}}
+    uri: git@github.com:cloudfoundry/cloud_controller_ng.git
+
+- name: cloud_controller_ng_sql_server
+  type: git
+  source:
+    branch: pivotal-sqlserversupport
     private_key: {{private_key}}
     uri: git@github.com:cloudfoundry/cloud_controller_ng.git
 
@@ -497,6 +533,22 @@ resources:
       access_key_id: {{gcp_storage_access_key}}
       secret_access_key: {{gcp_storage_secret_key}}
       endpoint: storage.googleapis.com
+
+- name: ripley-deployment
+  type: bosh-deployment
+  source:
+    deployment: cf
+    # TODO: change to `put.params.source_file` to pull creds from bbl
+    target: {{ripley_bosh_url}}
+    client: {{ripley_bosh_client}}
+    client_secret: {{ripley_bosh_client_secret}}
+    ca_cert: {{ripley_bosh_ca_cert}}
+    vars_store:
+      provider: gcs
+      config:
+        bucket: {{ripley_bosh_vars_bucket}}
+        file_name: bosh/vars-store.yml
+        json_key: {{ripley_gcp_json_key}}
 
 jobs:
 
@@ -1489,6 +1541,42 @@ jobs:
       params:
         BBL_STATE_DIR: "mulan"
 
+- name: freshen-ripley
+  serial: true
+  serial_groups: [deploy-ripley]
+  plan:
+    - aggregate:
+      - get: cf-deployment-concourse-tasks
+      - get: ripley-bbl-state
+      - get: capi-ci
+      - get: weekly-sunday
+    - task: freshen-ripley
+      file: cf-deployment-concourse-tasks/bbl-up/task.yml
+      input_mapping:
+        bbl-state: ripley-bbl-state
+      params:
+        BBL_STATE_DIR: "ripley"
+        BBL_IAAS: "gcp"
+        BBL_LB_CERT: {{ripley_bbl_lb_cert}}
+        BBL_LB_KEY: {{ripley_bbl_lb_key}}
+        LB_DOMAIN: "ripley.cf-app.com"
+        BBL_ENV_NAME: "ripley"
+        BBL_GCP_SERVICE_ACCOUNT_KEY: "google_account_creds.json"
+        BBL_GCP_PROJECT_ID: {{ripley_gcp_project_id}}
+        BBL_GCP_ZONE: {{ripley_gcp_zone}}
+        BBL_GCP_REGION: {{ripley_gcp_region}}
+      ensure:
+        put: ripley-bbl-state
+        params:
+          repository: updated-bbl-state
+          rebase: true
+    - task: run-bosh-cleanup
+      file: capi-ci/ci/bbl-tasks/run-bosh-cleanup.yml
+      input_mapping:
+        bbl-state: ripley-bbl-state
+      params:
+        BBL_STATE_DIR: "ripley"
+
 - name: freshen-buffy
   serial: true
   plan:
@@ -1560,10 +1648,29 @@ jobs:
     params:
       repository: capi-release
 
-- name: deploy-to-ripley
+- name: deploy-and-test-ripley
   serial: true
   plan:
-  - get: capi-ci
+  - aggregate:
+    - get: capi-ci
+    - get: gcp-stemcell
+    - get: cf-deployment
+    - get: capi-release
+      resource: capi-release-develop
+    - get: version
+      resource: version-sql-server
+      params:
+        pre: rc
+    - get: cloud_controller_ng
+      resource: cloud_controller_ng_sql_server
+  - put: version
+    resource: version-sql-server
+    params:
+      file: version/version
+  - task: create-release-tarball
+    file: capi-ci/ci/scripts/create_capi_release.yml
+    params:
+      CC_BRANCH: pivotal-sqlserversupport
   - put: azure-terraform
     params:
       env_name: leia
@@ -1577,3 +1684,20 @@ jobs:
         db_name: {{azure_db_name}}
         db_admin_user: {{azure_db_admin_user}}
         db_admin_password: {{azure_db_admin_password}}
+  - put: ripley-deployment
+    params:
+      manifest: cf-deployment/cf-deployment.yml
+      stemcells:
+      - gcp-stemcell/stemcell.tgz
+      releases:
+      - created-capi-release/*.tgz
+      vars:
+        system_domain: ripley.cf-app.com
+      vars_files:
+      - azure-terraform/metadata
+      ops_files:
+      - capi-ci/cf-deployment-operations/use-postgres.yml
+      - capi-ci/cf-deployment-operations/minimal-instance-deployment.yml
+      - capi-ci/cf-deployment-operations/use-ms-sql-azure.yml
+      - capi-ci/cf-deployment-operations/skip-cert-verify.yml
+      - capi-ci/cf-deployment-operations/use-latest-capi.yml
