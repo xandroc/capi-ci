@@ -13,7 +13,7 @@ outputs:
   - name: bbl-vars
 
 run:
-  path: capi-ci/ci/scripts/extract_bbl_vars.yml
+  path: capi-ci/ci/scripts/extract_bbl_vars.sh
 
 params:
   ENV_NAME: ""
