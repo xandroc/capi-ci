@@ -5,14 +5,14 @@
     db_scheme: tinytds
     db_type: mssql
     azure: true
-    address: ((mssql_address))
+    address: ((db_address))
     roles:
     - tag: admin
-      name: ((mssql_admin_user))
-      password: ((mssql_admin_password))
+      name: ((db_admin_user))
+      password: ((db_admin_password))
     databases:
     - tag: cc
-      name: ((mssql_database_name))
+      name: ((db_name))
     port: 1433
 - type: replace
   path: /instance_groups/name=api/jobs/name=cloud_controller_worker/properties/ccdb
