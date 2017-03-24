@@ -1685,6 +1685,7 @@ jobs:
     - get: cloud_controller_ng
       resource: cloud_controller_ng_sql_server
     - get: ripley-deployment-vars
+    - get: cf-deployment-concourse-tasks
   - put: version
     resource: version-sql-server
     params:
