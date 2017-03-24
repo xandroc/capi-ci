@@ -1,13 +1,22 @@
 #!/usr/bin/env bash
 set -e -x
 
-service mysql restart
-service postgresql restart
+: ${DB:?}
 
-cd cloud_controller_ng
+pushd cloud_controller_ng > /dev/null
+  service mysql restart
+  service postgresql restart
+  if [ "${DB}" = "mssql" ]; then
+    service docker restart
+    ./scripts/run-ms-sql-background.sh
+  fi
 
-bundle install
+  bundle install
 
-bundle exec rake rubocop
-bundle exec rake spec:serial
+  bundle exec rake rubocop
+  bundle exec rake spec:serial
 
+  if [ "${DB}" = "mssql" ]; then
+    ./scripts/stop-ms-sql-background.sh
+  fi
+popd > /dev/null
