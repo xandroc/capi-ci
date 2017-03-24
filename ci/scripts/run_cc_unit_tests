@@ -7,9 +7,10 @@ pushd cloud_controller_ng > /dev/null
   service mysql restart
   service postgresql restart
   if [ "${DB}" = "mssql" ]; then
-    trap '{ service docker stop }' EXIT
     service docker start
+    trap 'service docker stop' EXIT
     sleep 5
+
     ./scripts/run-ms-sql-background.sh
   fi
 
