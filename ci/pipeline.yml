@@ -2,6 +2,7 @@ groups:
 - name: capi-release
   jobs:
   - cc-unit-tests
+  - mssql-unit-tests
   - bridge-unit-tests
   - create-capi-release
   - deploy-and-test-mysql-s3-bbs
