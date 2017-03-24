@@ -2,7 +2,6 @@ groups:
 - name: capi-release
   jobs:
   - cc-unit-tests
-  - mssql-unit-tests
   - bridge-unit-tests
   - create-capi-release
   - deploy-and-test-mysql-s3-bbs
@@ -10,7 +9,6 @@ groups:
   - bump-capi-release
   - deploy-and-test-postgres-webdave-bridge
   - deploy-and-test-mulan
-  - deploy-and-test-ripley
   - bump-ci-passed
 - name: ship-it
   jobs:
@@ -40,7 +38,11 @@ groups:
   - freshen-arya
   - freshen-buffy
   - freshen-mulan
+- name: mssql
+  jobs:
   - freshen-ripley
+  - mssql-unit-tests
+  - deploy-and-test-ripley
 
 resource_types:
 - name: tracker-resource-fixed
