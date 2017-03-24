@@ -1724,6 +1724,7 @@ jobs:
       - created-capi-release/*.tgz
       vars:
         system_domain: ripley.cf-app.com
+        uaa_scim_users_admin_password: {{ripley_cf_admin_password}}
       vars_files:
       - azure-terraform/metadata
       ops_files:
