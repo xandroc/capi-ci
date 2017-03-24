@@ -7,7 +7,9 @@ pushd cloud_controller_ng > /dev/null
   service mysql restart
   service postgresql restart
   if [ "${DB}" = "mssql" ]; then
+    trap '{ service docker stop }' EXIT
     service docker start
+    sleep 5
     ./scripts/run-ms-sql-background.sh
   fi
 
@@ -15,8 +17,4 @@ pushd cloud_controller_ng > /dev/null
 
   bundle exec rake rubocop
   bundle exec rake spec:serial
-
-  if [ "${DB}" = "mssql" ]; then
-    ./scripts/stop-ms-sql-background.sh
-  fi
 popd > /dev/null
