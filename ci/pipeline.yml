@@ -1687,6 +1687,7 @@ jobs:
     - get: ripley-deployment-vars
     - get: ripley-integration-configs
     - get: cf-deployment-concourse-tasks
+    - get: cats-concourse-task
   - put: version
     resource: version-sql-server
     params:
