@@ -11,7 +11,7 @@ pushd cloud_controller_ng > /dev/null
     trap 'service docker stop' EXIT
     sleep 5
 
-    ./scripts/run-ms-sql-background.sh
+    LOG_FILE="/tmp/mssql.log" ./scripts/run-ms-sql-background.sh
   fi
 
   bundle install
