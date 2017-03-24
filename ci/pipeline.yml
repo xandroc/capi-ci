@@ -1668,10 +1668,27 @@ jobs:
     params:
       repository: capi-release
 
+- name: mssql-unit-tests
+  plan:
+  - aggregate:
+    - get: cloud_controller_ng
+      resource: cloud_controller_ng_sql_server
+      trigger: true
+    - get: capi-ci
+  - task: run-cc-unit-tests-mssql
+    file: capi-ci/ci/scripts/run_cc_unit_tests.yml
+    params:
+      DB: mssql
+
 - name: deploy-and-test-ripley
   serial: true
   plan:
   - aggregate:
+    - get: cloud_controller_ng
+      resource: cloud_controller_ng_sql_server
+      trigger: true
+      passed:
+      - mssql-unit-tests
     - get: capi-ci
     - get: capi-ci-private
     - get: gcp-stemcell
@@ -1682,8 +1699,6 @@ jobs:
       resource: version-sql-server
       params:
         pre: rc
-    - get: cloud_controller_ng
-      resource: cloud_controller_ng_sql_server
     - get: ripley-deployment-vars
     - get: ripley-integration-configs
     - get: cf-deployment-concourse-tasks
