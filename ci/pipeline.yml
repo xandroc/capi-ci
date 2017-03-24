@@ -1677,6 +1677,7 @@ jobs:
       trigger: true
     - get: capi-ci
   - task: run-cc-unit-tests-mssql
+    privileged: true # required to run mssql in nested docker container
     file: capi-ci/ci/scripts/run_cc_unit_tests.yml
     params:
       DB: mssql
