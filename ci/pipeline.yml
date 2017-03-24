@@ -1737,7 +1737,7 @@ jobs:
       integration-configs: ripley-integration-configs
     params:
       CATS_INTEGRATION_CONFIG_FILE: "ripley/cats_integration_config.json"
-      VARS_STORE_FILE: "ripley-deployment-vars/vars-store.yml"
+      VARS_STORE_FILE: "vars-store.yml"
     ensure:
       put: ripley-integration-configs
       params:
@@ -1749,7 +1749,7 @@ jobs:
       vars-store: ripley-deployment-vars
     params:
       SYSTEM_DOMAIN: "ripley.cf-app.com"
-      VARS_STORE_FILE: "ripley-deployment-vars/vars-store.yml"
+      VARS_STORE_FILE: "vars-store.yml"
   - task: acceptance-tests
     file: cats-concourse-task/task.yml
     input_mapping:
