@@ -15,7 +15,7 @@
       name: ((db_name))
     port: 1433
 - type: replace
-  path: /instance_groups/name=api/jobs/name=cloud_controller_worker/properties/ccdb
+  path: /instance_groups/name=cc-worker/jobs/name=cloud_controller_worker/properties/ccdb
   value: *ccdb
 - type: replace
   path: /instance_groups/name=cc-clock/jobs/name=cloud_controller_clock/properties/ccdb
