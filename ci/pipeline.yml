@@ -559,13 +559,6 @@ resources:
 - name: ripley-deployment
   type: bosh2-deployment
   source:
-    # TODO: remove the bosh director properties once this issue is fixed:
-    #       https://github.com/cloudfoundry/bosh-deployment-resource/issues/5
-    deployment: cf
-    target: {{ripley_bosh_target}}
-    client: {{ripley_bosh_client}}
-    client_secret: {{ripley_bosh_client_secret}}
-    ca_cert: {{ripley_bosh_ca_cert}}
     vars_store:
       provider: gcs
       config:
