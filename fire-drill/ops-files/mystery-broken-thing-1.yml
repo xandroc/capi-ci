@@ -1,3 +1,4 @@
+---
 #################################################
 # __        ___    ____  _   _ ___ _   _  ____  #
 # \ \      / / \  |  _ \| \ | |_ _| \ | |/ ___| #
@@ -9,4 +10,23 @@
 # Don't read until you've debugged the issue!   #
 #################################################
 
-# TODO: write some replace rules to generate a bad cert somewhere in CF
+# "accidentally" swap out CC TLS certs for a loggregator certs
+- type: replace
+  path: /instance_groups/name=cc-bridge/jobs/name=cc_uploader/properties/capi/cc_uploader/cc/client_cert
+  value: "((loggregator_tls_syslogdrainbinder.certificate))"
+- type: replace
+  path: /instance_groups/name=cc-bridge/jobs/name=cc_uploader/properties/capi/cc_uploader/cc/client_key
+  value: "((loggregator_tls_syslogdrainbinder.private_key))"
+
+- type: replace
+  path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/cc/diego?/temporary_cc_uploader_mtls?
+  value: true
+
+# TODO: replace this with capi-release 1.25.0 when it is released
+- type: replace
+  path: /releases/name=capi
+  value:
+    name: capi
+    version: 1.24.0+dev.1
+    url: https://storage.googleapis.com/capi-team-fire-drills/capi-1.24.0%2Bdev.1.tgz
+    sha1: 8a261445ba62da49d2bad9de6d0cafa36242951d
