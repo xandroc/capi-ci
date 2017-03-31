@@ -10,13 +10,17 @@
 # Don't read until you've debugged the issue!   #
 #################################################
 
-# "accidentally" swap out CC TLS certs for a loggregator certs
+- type: replace
+  path: /name
+  value: mystery-broken-thing-1
+
+# "accidentally" swap out CC TLS certs for loggregator certs
 - type: replace
   path: /instance_groups/name=cc-bridge/jobs/name=cc_uploader/properties/capi/cc_uploader/cc/client_cert
-  value: "((loggregator_tls_syslogdrainbinder.certificate))"
+  value: "((loggregator_tls_statsdinjector.certificate))"
 - type: replace
   path: /instance_groups/name=cc-bridge/jobs/name=cc_uploader/properties/capi/cc_uploader/cc/client_key
-  value: "((loggregator_tls_syslogdrainbinder.private_key))"
+  value: "((loggregator_tls_statsdinjector.private_key))"
 
 - type: replace
   path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/cc/diego?/temporary_cc_uploader_mtls?

@@ -25,7 +25,7 @@ echo -e "${green}Deploying mystery-broken-thing-1...${nc}"
 set +e
   # TODO: randomly select a mystery ops file
   # TODO: change the deployment name in the manifest to mystery-broken-thing-1
-  bosh2 -n -e vbox -d cf deploy "${cf_deployment_dir}/cf-deployment.yml" \
+  bosh2 -n -e vbox -d mystery-broken-thing-1 deploy "${cf_deployment_dir}/cf-deployment.yml" \
     -o "${cf_deployment_dir}/operations/bosh-lite.yml" \
     -v system_domain=bosh-lite.com \
     -v uaa_scim_users_admin_password=admin \
@@ -35,3 +35,6 @@ set -e
 
 # TODO: print a prompt specific to the given ops file
 echo -e "${green}The deploy is finished. Please check that the deployment is broken in the way you expected it to be broken :)${nc}"
+
+echo -e "\n\n${green}##### Prompt #####${nc}\n"
+cat "${ci_dir}/fire-drill/prompts/mystery-broken-thing-1.txt"
