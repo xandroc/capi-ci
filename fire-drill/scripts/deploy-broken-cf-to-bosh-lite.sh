@@ -36,5 +36,14 @@ set -e
 # TODO: print a prompt specific to the given ops file
 echo -e "${green}The deploy is finished. Please check that the deployment is broken in the way you expected it to be broken :)${nc}"
 
-echo -e "\n\n${green}##### Prompt #####${nc}\n"
+echo -e "\n\n${green}##### Goal #####${nc}\n"
+
+echo "The goal of this exercise is to debug a misbehaving CF installation and give a recommendation to an imaginary Operator on how to fix it."
+echo "In doing so, hopefully we can grow our understanding of the system we've built and gain empathy for our Operators."
+
+echo -e "\n\n${green}##### Checking your Answer #####${nc}\n"
+echo "Once you think you have the solution, try to verify your solution using debugging tools before peeking at the answer."
+echo "Check your answer when finished: \`cat "${ci_dir}/fire-drill/ops-files/mystery-broken-thing-1.yml"\`"
+
+echo -e "\n\n${green}##### Prompt for Broken Thing 1 #####${nc}\n"
 cat "${ci_dir}/fire-drill/prompts/mystery-broken-thing-1.txt"

@@ -10,6 +10,30 @@
 # Don't read until you've debugged the issue!   #
 #################################################
 
+# ################## Answer #####################
+#
+# The Operator accidentally swapped out the CC Uploader
+# TLS cert for the statsdinjector cert. This caused
+# all droplet uploads to fail as the communication
+# between CC Uploader and CC was busted.
+#
+# Clues:
+#
+# While the error is Staging Failed, we see a bunch of
+# successful staging logs when pushing the app like
+# "Downloading buildpack..." and "Staging complete".
+# This indicates that Diego recieved our staging request
+# and was able to process it. This hints that the
+# problem is between either Diego and CC Uploader or
+# CC Uploader to CC.
+#
+# To check your answer, you could have run:
+# `openssl verify -verbose -CAfile cc-ca.pem cc-uploader.crt`
+# This will tell you that CC Uploader TLS cert was not
+# signed for the CC CA.
+#
+# ###############################################
+
 - type: replace
   path: /name
   value: mystery-broken-thing-1
