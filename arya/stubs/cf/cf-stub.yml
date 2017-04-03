@@ -68,19 +68,14 @@ resource_pools:
 
 jobs:
 - name: api_z1
-  persistent_disk: 1024
   instances: 1
 - name: api_z2
-  persistent_disk: 1024
   instances: 0
 - name: api_worker_z1
-  persistent_disk: 1024
   instances: 1
 - name: api_worker_z2
-  persistent_disk: 1024
   instances: 0
 - name: clock_global
-  persistent_disk: 1024
   instances: 1
   resource_pool: small_z1
 - name: uaa_z1
