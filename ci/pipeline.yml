@@ -128,7 +128,7 @@ resources:
   type: git
   source:
     branch: master
-    uri: https://github.com/cloudfoundry/capi-ci.git
+    uri: git@github.com:cloudfoundry/capi-ci.git
 
 - name: capi-ci-private
   type: git
@@ -264,7 +264,7 @@ resources:
   type: git
   source:
     branch: master
-    uri: https://github.com/cloudfoundry-incubator/cc-uploader.git
+    uri: git@github.com:cloudfoundry/cc-uploader.git
 
 - name: cf-release-develop
   type: git
@@ -290,13 +290,13 @@ resources:
   type: git
   source:
     branch: master
-    uri: https://github.com/cloudfoundry/cf-mysql-release.git
+    uri: git@github.com:cloudfoundry/cf-mysql-release.git
 
 - name: cf-release-master
   type: git
   source:
     branch: master
-    uri: https://github.com/cloudfoundry/cf-release.git
+    uri: git@github.com:cloudfoundry/cf-release.git
 
 - name: cf-release-tarball
   type: s3
@@ -338,7 +338,7 @@ resources:
   type: git
   source:
     branch: master
-    uri: https://github.com/cloudfoundry/cloud_controller_ng.git
+    uri: git@github.com:cloudfoundry/cloud_controller_ng.git
     paths: ['db']
 
 - name: concourse-config
@@ -355,7 +355,7 @@ resources:
   type: git
   source:
     branch: master
-    uri: https://github.com/cloudfoundry-incubator/datadog-firehose-nozzle-release.git
+    uri: git@github.com:cloudfoundry-incubator/datadog-firehose-nozzle-release.git
 
 - name: datadog-firehose-nozzle-release-final
   type: bosh-io-release
@@ -365,13 +365,13 @@ resources:
 - name: diego-ci
   type: git
   source:
-    uri: https://github.com/cloudfoundry-incubator/diego-ci
+    uri: git@github.com:cloudfoundry-incubator/diego-ci
 
 - name: diego-release
   type: git
   source:
     branch: master
-    uri: https://github.com/cloudfoundry/diego-release.git
+    uri: git@github.com:cloudfoundry/diego-release.git
 
 - name: diego-release-tarball
   type: bosh-io-release
@@ -392,7 +392,7 @@ resources:
   type: git
   source:
     branch: master
-    uri: https://github.com/cloudfoundry-incubator/nsync.git
+    uri: git@github.com:cloudfoundry/nsync.git
 
 - name: slack-alert
   type: slack-notification
@@ -403,19 +403,19 @@ resources:
   type: git
   source:
     branch: master
-    uri: https://github.com/cloudfoundry-incubator/stager.git
+    uri: git@github.com:cloudfoundry/stager.git
 
 - name: sync-integration-tests
   type: git
   source:
     branch: master
-    uri: https://github.com/cloudfoundry/sync-integration-tests.git
+    uri: git@github.com:cloudfoundry/sync-integration-tests.git
 
 - name: tps
   type: git
   source:
     branch: master
-    uri: https://github.com/cloudfoundry-incubator/tps.git
+    uri: git@github.com:cloudfoundry/tps.git
 
 - name: buffy-acceptance-tests-logs
   type: s3
@@ -524,27 +524,27 @@ resources:
 - name: cf-deployment
   type: git
   source:
-    uri: https://github.com/cloudfoundry/cf-deployment.git
+    uri: git@github.com:cloudfoundry/cf-deployment.git
     branch: release-candidate
 
 - name: cf-deployment-concourse-tasks
   type: git
   source:
     branch: master
-    uri: https://github.com/cloudfoundry/cf-deployment-concourse-tasks.git
+    uri: git@github.com:cloudfoundry/cf-deployment-concourse-tasks.git
     tag_filter: "v1.*"
 
 - name: cats-concourse-task
   type: git
   source:
     branch: master
-    uri: https://github.com/cloudfoundry/cats-concourse-task.git
+    uri: git@github.com:cloudfoundry/cats-concourse-task.git
 
 - name: cf-acceptance-tests
   type: git
   source:
     branch: master
-    uri: https://github.com/cloudfoundry/cf-acceptance-tests.git
+    uri: git@github.com:cloudfoundry/cf-acceptance-tests.git
 
 - name: azure-terraform
   type: terraform
