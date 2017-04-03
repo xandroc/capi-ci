@@ -128,6 +128,7 @@ resources:
   type: git
   source:
     branch: master
+    private_key: {{private_key}}
     uri: git@github.com:cloudfoundry/capi-ci.git
 
 - name: capi-ci-private
@@ -264,6 +265,7 @@ resources:
   type: git
   source:
     branch: master
+    private_key: {{private_key}}
     uri: git@github.com:cloudfoundry/cc-uploader.git
 
 - name: cf-release-develop
@@ -290,12 +292,14 @@ resources:
   type: git
   source:
     branch: master
+    private_key: {{private_key}}
     uri: git@github.com:cloudfoundry/cf-mysql-release.git
 
 - name: cf-release-master
   type: git
   source:
     branch: master
+    private_key: {{private_key}}
     uri: git@github.com:cloudfoundry/cf-release.git
 
 - name: cf-release-tarball
@@ -338,6 +342,7 @@ resources:
   type: git
   source:
     branch: master
+    private_key: {{private_key}}
     uri: git@github.com:cloudfoundry/cloud_controller_ng.git
     paths: ['db']
 
@@ -355,6 +360,7 @@ resources:
   type: git
   source:
     branch: master
+    private_key: {{private_key}}
     uri: git@github.com:cloudfoundry-incubator/datadog-firehose-nozzle-release.git
 
 - name: datadog-firehose-nozzle-release-final
@@ -365,12 +371,14 @@ resources:
 - name: diego-ci
   type: git
   source:
+    private_key: {{private_key}}
     uri: git@github.com:cloudfoundry-incubator/diego-ci
 
 - name: diego-release
   type: git
   source:
     branch: master
+    private_key: {{private_key}}
     uri: git@github.com:cloudfoundry/diego-release.git
 
 - name: diego-release-tarball
@@ -392,6 +400,7 @@ resources:
   type: git
   source:
     branch: master
+    private_key: {{private_key}}
     uri: git@github.com:cloudfoundry/nsync.git
 
 - name: slack-alert
@@ -403,18 +412,21 @@ resources:
   type: git
   source:
     branch: master
+    private_key: {{private_key}}
     uri: git@github.com:cloudfoundry/stager.git
 
 - name: sync-integration-tests
   type: git
   source:
     branch: master
+    private_key: {{private_key}}
     uri: git@github.com:cloudfoundry/sync-integration-tests.git
 
 - name: tps
   type: git
   source:
     branch: master
+    private_key: {{private_key}}
     uri: git@github.com:cloudfoundry/tps.git
 
 - name: buffy-acceptance-tests-logs
@@ -525,12 +537,14 @@ resources:
   type: git
   source:
     uri: git@github.com:cloudfoundry/cf-deployment.git
+    private_key: {{private_key}}
     branch: release-candidate
 
 - name: cf-deployment-concourse-tasks
   type: git
   source:
     branch: master
+    private_key: {{private_key}}
     uri: git@github.com:cloudfoundry/cf-deployment-concourse-tasks.git
     tag_filter: "v1.*"
 
@@ -538,12 +552,14 @@ resources:
   type: git
   source:
     branch: master
+    private_key: {{private_key}}
     uri: git@github.com:cloudfoundry/cats-concourse-task.git
 
 - name: cf-acceptance-tests
   type: git
   source:
     branch: master
+    private_key: {{private_key}}
     uri: git@github.com:cloudfoundry/cf-acceptance-tests.git
 
 - name: azure-terraform
