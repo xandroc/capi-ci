@@ -461,7 +461,7 @@ properties:
     admin_user: (( secrets.acceptance_tests.admin_user ))
     admin_password: (( secrets.acceptance_tests.admin_password ))
     backend: diego
-    include_isolation_segments: true
+    include_isolation_segments: false
     isolation_segment_name: secure_segment
     include_sso: true
     include_security_groups: true
