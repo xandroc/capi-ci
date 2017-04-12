@@ -366,7 +366,6 @@ properties:
       temporary_local_sync: true
       temporary_local_tps: true
       temporary_cc_uploader_mtls: true
-      cc_uploader_url: https://cc-uploader.service.cf.internal:9091
       temporary_droplet_download_mtls: true
     mutual_tls:
       ca_cert: (( secrets.cc.mutual_tls.ca_cert ))
