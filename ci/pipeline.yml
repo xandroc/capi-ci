@@ -818,7 +818,7 @@ jobs:
       BBL_STATE_DIR: "mulan"
       SYSTEM_DOMAIN: mulan.cf-app.com
       VARS_STORE_FILE: "mulan/deployment-vars.yml"
-      OPS_FILES: "cf-deployment-operations/skip-cert-verify.yml cf-deployment-operations/use-latest-capi.yml cf-deployment-operations/use-postgres.yml cf-deployment-operations/minimal-instance-deployment.yml cf-deployment-operations/workarounds/use-4-azs-for-router.yml"
+      OPS_FILES: "cf-deployment-operations/skip-cert-verify.yml cf-deployment-operations/use-latest-capi.yml cf-deployment-operations/use-postgres.yml cf-deployment-operations/scale-to-one-az.yml cf-deployment-operations/use-compiled-releases.yml"
       REGENERATE_VARS_STORE: false
     ensure:
       put: mulan-vars-store
@@ -1755,8 +1755,9 @@ jobs:
       vars_files:
       - azure-terraform/metadata
       ops_files:
-      - capi-ci/cf-deployment-operations/use-postgres.yml
-      - capi-ci/cf-deployment-operations/minimal-instance-deployment.yml
+      - cf-deployment/operations/use-compiled-releases.yml
+      - cf-deployment/operations/scale-to-one-az.yml
+      - cf-deployment/operations/use-postgres.yml
       - capi-ci/cf-deployment-operations/use-ms-sql-azure.yml
       - capi-ci/cf-deployment-operations/skip-cert-verify.yml
       - capi-ci/cf-deployment-operations/use-latest-capi.yml
