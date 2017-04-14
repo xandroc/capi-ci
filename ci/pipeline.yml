@@ -1192,8 +1192,6 @@ jobs:
       params:
         submodules:
         - src/capi-release
-  - task: check-can-i-bump
-    file: capi-ci/ci/scripts/check_can_i_bump.yml
   - task: bump-cf-release
     file: capi-ci/ci/scripts/bump_cf_release.yml
   - put: cf-release-develop
