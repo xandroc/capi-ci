@@ -50,11 +50,10 @@
   path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/cc/diego?/temporary_cc_uploader_mtls?
   value: true
 
-# TODO: replace this with capi-release 1.25.0 when it is released
 - type: replace
   path: /releases/name=capi
   value:
     name: capi
-    version: 1.24.0+dev.1
-    url: https://storage.googleapis.com/capi-team-fire-drills/capi-1.24.0%2Bdev.1.tgz
-    sha1: 8a261445ba62da49d2bad9de6d0cafa36242951d
+    version: 1.25.0
+    url: https://bosh.io/d/github.com/cloudfoundry/capi-release?v=1.25.0
+    sha1: a24dbe15633169585ad55e6ec3185ebebde191cc
