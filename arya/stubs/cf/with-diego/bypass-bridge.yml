@@ -1,0 +1,11 @@
+---
+properties:
+  cc:
+    diego:
+      temporary_local_staging: true
+      temporary_local_tasks: true
+      temporary_local_apps: true
+      temporary_local_sync: true
+      temporary_local_tps: true
+      temporary_cc_uploader_mtls: true
+      temporary_droplet_download_mtls: true
