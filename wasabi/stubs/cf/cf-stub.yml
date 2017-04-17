@@ -107,7 +107,9 @@ jobs:
     - name: java-buildpack
 - name: api_z2
   instances: 0
-- name: clock_global
+- name: clock_z1
+  instances: 0
+- name: clock_z2
   instances: 0
 - name: api_worker_z1
   instances: 0
