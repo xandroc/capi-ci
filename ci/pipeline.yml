@@ -1668,12 +1668,12 @@ jobs:
     resource: capi-release-develop
     passed:
       - deploy-and-test-mysql-s3-bbs
-      - deploy-and-test-postgres-webdave-bridge
+      - deploy-and-test-mulan
     trigger: true
   - get: capi-release-tarball
     passed:
       - deploy-and-test-mysql-s3-bbs
-      - deploy-and-test-postgres-webdave-bridge
+      - deploy-and-test-mulan
   - put: capi-release-ci-passed
     params:
       repository: capi-release
