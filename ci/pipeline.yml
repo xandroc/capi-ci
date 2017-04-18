@@ -818,7 +818,7 @@ jobs:
       BBL_STATE_DIR: "mulan"
       SYSTEM_DOMAIN: mulan.cf-app.com
       VARS_STORE_FILE: "mulan/deployment-vars.yml"
-      OPS_FILES: "cf-deployment-operations/skip-cert-verify.yml cf-deployment-operations/use-latest-capi.yml cf-deployment-operations/use-postgres.yml cf-deployment-operations/scale-to-one-az.yml"
+      OPS_FILES: "cf-deployment-operations/add-persistent-isolation-segment-diego-cell.yml cf-deployment-operations/skip-cert-verify.yml cf-deployment-operations/use-latest-capi.yml cf-deployment-operations/use-postgres.yml cf-deployment-operations/scale-to-one-az.yml"
       REGENERATE_VARS_STORE: false
     ensure:
       put: mulan-vars-store
