@@ -117,6 +117,8 @@ jobs:
   instances: 0
 - name: hm9000_z2
   instances: 0
+- name: doppler_z1
+  instances: 2
 - name: doppler_z2
   instances: 0
 - name: loggregator_trafficcontroller_z2
