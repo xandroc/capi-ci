@@ -1218,6 +1218,7 @@ jobs:
         tarball: true
     - get: cf-release
       resource: cf-release-master
+      trigger: true
     - get: capi-ci
     - get: capi-ci-private
     - get: aws-stemcell
