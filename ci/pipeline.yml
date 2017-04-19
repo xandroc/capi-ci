@@ -1312,18 +1312,11 @@ jobs:
         BOSH_DIRECTOR: https://bosh.buffy.cf-app.com:25555
         BOSH_USER: {{buffy_bosh_user}}
         BOSH_PASSWORD: {{buffy_bosh_password}}
-    - task: cleanup-arya
-      privileged: true
-      file: capi-ci/ci/scripts/run_bosh_cleanup.yml
-      params: &bosh-target-arya
-        BOSH_DIRECTOR: https://bosh.arya.cf-app.com:25555
-        BOSH_USER: {{arya_bosh_user}}
-        BOSH_PASSWORD: {{arya_bosh_password}}
-      on_failure:
-        put: slack-alert
-        params:
-          text: '[clean-all-the-boshes] OH NO! Failed to clean old boshes https://capi.ci.cf-app.com/?groups=bosh'
-          icon_emoji: {{slack_failure_emoji}}
+    on_failure:
+      put: slack-alert
+      params:
+        text: '[clean-all-the-boshes] OH NO! Failed to clean old boshes https://capi.ci.cf-app.com/?groups=bosh'
+        icon_emoji: {{slack_failure_emoji}}
 
 - name: deploy-xena-datadog-firehose-nozzle
   serial_groups: [deploy-xena-datadog]
