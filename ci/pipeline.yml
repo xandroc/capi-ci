@@ -145,30 +145,6 @@ resources:
     private_key: {{private_key}}
     uri: git@github.com:cloudfoundry/capi-ci-private.git
 
-- name: mulan-bbl-state
-  type: git
-  source:
-    branch: master
-    private_key: {{private_key}}
-    uri: git@github.com:cloudfoundry/capi-ci-private.git
-    paths: ["mulan/bbl-state.json"]
-
-- name: mulan-vars-store
-  type: git
-  source:
-    branch: master
-    private_key: {{private_key}}
-    uri: git@github.com:cloudfoundry/capi-ci-private.git
-    paths: ["mulan/deployment-vars.yml"]
-
-- name: mulan-integration-configs
-  type: git
-  source:
-    branch: master
-    private_key: {{private_key}}
-    uri: git@github.com:cloudfoundry/capi-ci-private.git
-    paths: ["mulan/cats_integration_config.json"]
-
 - name: ripley-integration-configs
   type: git
   source:
@@ -190,7 +166,7 @@ resources:
   source:
     bucket: {{ripley_bosh_vars_bucket}}
     json_key: {{ripley_gcp_json_key}}
-    versioned_file: &vars_store_path bosh/vars-store.yml
+    versioned_file: &ripley_vars_store_path bosh/vars-store.yml
 
 - name: capi-release-master
   type: git
@@ -587,8 +563,42 @@ resources:
       provider: gcs
       config:
         bucket: {{ripley_bosh_vars_bucket}}
-        file_name: *vars_store_path
+        file_name: *ripley_vars_store_path
         json_key: {{ripley_gcp_json_key}}
+
+# Mulan resources
+- name: mulan-bbl-state
+  type: git
+  source:
+    branch: master
+    private_key: {{private_key}}
+    uri: git@github.com:cloudfoundry/capi-ci-private.git
+    paths: ["mulan/bbl-state.json"]
+
+- name: mulan-integration-configs
+  type: git
+  source:
+    branch: master
+    private_key: {{private_key}}
+    uri: git@github.com:cloudfoundry/capi-ci-private.git
+    paths: ["mulan/cats_integration_config.json"]
+
+- name: mulan-deployment-vars
+  type: gcs
+  source:
+    bucket: {{mulan_bosh_vars_bucket}}
+    json_key: {{mulan_gcp_json_key}}
+    versioned_file: &mulan_vars_store_path "bosh/vars-store.yml"
+
+- name: mulan-deployment
+  type: bosh2-deployment
+  source:
+    vars_store:
+      provider: gcs
+      config:
+        bucket: {{mulan_bosh_vars_bucket}}
+        file_name: *mulan_vars_store_path
+        json_key: {{mulan_gcp_json_key}}
 
 jobs:
 
@@ -796,11 +806,12 @@ jobs:
     - get: capi-release
       resource: capi-release-develop
       passed: [create-capi-release]
-    - get: mulan-vars-store
+    - get: mulan-deployment-vars
     - get: mulan-bbl-state
     - get: mulan-integration-configs
     - get: cf-acceptance-tests
     - get: capi-ci
+    - get: capi-ci-private
     - get: capi-release-tarball
       passed: [create-capi-release]
       trigger: true
@@ -817,31 +828,30 @@ jobs:
       bbl-state: mulan-bbl-state
     params:
       BBL_STATE_DIR: "mulan"
-  - task: deploy-cf-with-uploaded-capi-release
-    file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
-    input_mapping:
-      bbl-state: mulan-bbl-state
-      ops-files: capi-ci
-      vars-store: mulan-vars-store
+  - task: extract-bbl-vars
+    file: capi-ci/ci/scripts/extract_bbl_vars.yml
     params:
-      BBL_STATE_DIR: "mulan"
-      SYSTEM_DOMAIN: mulan.cf-app.com
-      VARS_STORE_FILE: "mulan/deployment-vars.yml"
-      OPS_FILES: "cf-deployment-operations/add-persistent-isolation-segment-diego-cell.yml cf-deployment-operations/skip-cert-verify.yml cf-deployment-operations/use-latest-capi.yml cf-deployment-operations/use-postgres.yml cf-deployment-operations/scale-to-one-az.yml"
-      REGENERATE_VARS_STORE: false
-    ensure:
-      put: mulan-vars-store
-      params:
-        repository: updated-vars-store
-        rebase: true
+      ENV_NAME: mulan
+  - put: mulan-deployment
+    params:
+      source_file: bbl-vars/bbl-vars.json
+      manifest: cf-deployment/cf-deployment.yml
+      vars:
+        system_domain: "mulan.cf-app.com"
+      ops_files:
+      - cf-deployment/operations/test/add-persistent-isolation-segment-diego-cell.yml
+      - capi-ci/cf-deployment-operations/skip-cert-verify.yml
+      - capi-ci/cf-deployment-operations/use-latest-capi.yml
+      - cf-deployment/operations/use-postgres.yml
+      - cf-deployment/operations/scale-to-one-az.yml
   - task: updated-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
     input_mapping:
-      vars-store: mulan-vars-store
+      vars-store: mulan-deployment-vars
       integration-configs: mulan-integration-configs
     params:
       CATS_INTEGRATION_CONFIG_FILE: "mulan/cats_integration_config.json"
-      VARS_STORE_FILE: "mulan/deployment-vars.yml"
+      VARS_STORE_FILE: "vars-store.yml"
     ensure:
       put: mulan-integration-configs
       params:
@@ -850,10 +860,10 @@ jobs:
   - task: enable-feature-flags
     file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
     input_mapping:
-      vars-store: mulan-vars-store
+      vars-store: mulan-deployment-vars
     params:
       SYSTEM_DOMAIN: "mulan.cf-app.com"
-      VARS_STORE_FILE: "mulan/deployment-vars.yml"
+      VARS_STORE_FILE: "vars-store.yml"
   - task: acceptance-tests
     file: cats-concourse-task/task.yml
     input_mapping:
