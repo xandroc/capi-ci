@@ -844,6 +844,8 @@ jobs:
       - capi-ci/cf-deployment-operations/use-latest-capi.yml
       - cf-deployment/operations/use-postgres.yml
       - cf-deployment/operations/scale-to-one-az.yml
+      - cf-deployment/operations/experimental/locket.yml
+      - cf-deployment/operations/experimental/locket-postgres.yml
   - task: updated-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
     input_mapping:
