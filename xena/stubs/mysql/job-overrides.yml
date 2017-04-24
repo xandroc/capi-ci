@@ -2,10 +2,14 @@ job_overrides:
   colocated_jobs:
     proxy_z1:
       additional_templates:
-        - {release: cf, name: consul_agent}
+        - name: consul_agent
+          release: cf
+          consumes: {consul: nil}
     proxy_z2:
       additional_templates:
-        - {release: cf, name: consul_agent}
+        - name: consul_agent
+          release: cf
+          consumes: {consul: nil}
   additional_releases:
   - name: cf
     version: (( release_versions.cf.version || "latest" ))
