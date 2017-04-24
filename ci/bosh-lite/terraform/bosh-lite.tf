@@ -71,7 +71,7 @@ output "external_ip" {
 }
 
 output "system_domain" {
-  value = "${google_dns_record_set.default.name}"
+  value = "${var.env_name}.${var.system_domain_suffix}"
 }
 
 output "network" {
