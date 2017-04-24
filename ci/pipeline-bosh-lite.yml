@@ -1,0 +1,36 @@
+resource_types:
+- name: terraform
+  type: docker-image
+  source:
+    repository: ljfranklin/terraform-resource
+
+resources:
+  - name: terraform
+    type: terraform
+    source:
+      storage:
+        bucket: {{bosh_lite_storage_bucket}}
+        bucket_path: bosh-lite/
+        access_key_id: {{bosh_lite_storage_access_key}}
+        secret_access_key: {{bosh_lite_storage_secret_key}}
+        endpoint: storage.googleapis.com
+  - name: capi-ci
+    type: git
+    source:
+      branch: master
+      uri: https://github.com/cloudfoundry/capi-ci.git
+
+jobs:
+  - name: create-bosh-lite
+    plan:
+      - get: capi-ci
+      - put: terraform
+        params:
+          generate_random_name: true
+          delete_on_failure: true
+          terraform_source: capi-ci/ci/bosh-lite/terraform/
+          vars:
+            project_id: {{bosh_lite_project_id}}
+            system_domain_suffix: {{bosh_lite_system_domain_suffix}}
+            dns_zone_name: {{bosh_lite_dns_zone_name}}
+            json_key: {{bosh_lite_gcp_json_key}}
