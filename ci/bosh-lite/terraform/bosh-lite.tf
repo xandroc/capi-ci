@@ -18,7 +18,7 @@ variable "internal_cidr" {
 # RESOURCES
 
 provider "google" {
-  credentials = "${file(var.json_key)}"
+  credentials = "${var.json_key}"
   project = "${var.project_id}"
   region = "${var.region}"
 }
