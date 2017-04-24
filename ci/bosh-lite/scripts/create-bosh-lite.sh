@@ -28,7 +28,7 @@ pushd "${state_dir}" > /dev/null
     > ./director.yml
 
     echo -e "\nDeploying new Bosh-Lite..."
-    env_name="$( bosh interpolate --path /env_name "${terraform_dir}/metadata" )"
+    env_name="$( cat "${terraform_dir}/name" )"
     bosh create-env \
        --state ./"${env_name}-state.json" \
        --vars-store ./"${env_name}-creds.yml" \
