@@ -8,7 +8,7 @@ script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 workspace_dir="$( cd "${script_dir}/../../../../" && pwd )"
 source_dir="${workspace_dir}/source-directory"
 
-: ${FILES_NAMES:?}
+: ${FILE_NAMES:?}
 : ${AWS_ACCESS_KEY_ID:?}
 : ${AWS_SECRET_ACCESS_KEY:?}
 : ${AWS_ENDPOINT:?}
