@@ -16,13 +16,13 @@ terraform_name_file="${terraform_dir}/name"
 output_dir="${workspace_dir}/bosh-lite-env-info"
 
 cat > "${output_dir}/metadata" <<EOD
-export BOSH_CA_CERT=$(bosh interpolate --path /default_ca/ca ${creds_file})
-export BOSH_CLIENT=admin
-export BOSH_CLIENT_SECRET=$(bosh interpolate --path /admin_password ${creds_file})
-export BOSH_ENVIRONMENT=$(bosh interpolate --path /external_ip ${terraform_metadata_file})
-export BOSH_GW_USER=jumpbox
-export BOSH_GW_HOST=$(bosh interpolate --path /external_ip ${terraform_metadata_file})
-export BOSH_GW_PRIVATE_KEY_CONTENTS=$(bosh interpolate --path /jumpbox_ssh/private_key ${creds_file})
+export BOSH_CA_CERT="$(bosh interpolate --path /default_ca/ca ${creds_file})"
+export BOSH_CLIENT="admin"
+export BOSH_CLIENT_SECRET="$(bosh interpolate --path /admin_password ${creds_file})"
+export BOSH_ENVIRONMENT="$(bosh interpolate --path /external_ip ${terraform_metadata_file})"
+export BOSH_GW_USER="jumpbox"
+export BOSH_GW_HOST="$(bosh interpolate --path /external_ip ${terraform_metadata_file})"
+export BOSH_GW_PRIVATE_KEY_CONTENTS="$(bosh interpolate --path /jumpbox_ssh/private_key ${creds_file})"
 EOD
 
 cp "${terraform_name_file}" "${output_dir}/name"
