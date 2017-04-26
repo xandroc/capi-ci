@@ -82,15 +82,6 @@ jobs:
         - put: broken-pool
           params:
             acquire: true
-      - put: terraform
-        params:
-          env_name_file: broken-pool/name
-          terraform_source: capi-ci/ci/bosh-lite/terraform/
-          vars:
-            project_id: {{bosh_lite_project_id}}
-            system_domain_suffix: {{bosh_lite_system_domain_suffix}}
-            dns_zone_name: {{bosh_lite_dns_zone_name}}
-            json_key: {{bosh_lite_gcp_json_key}}
       - task: download-from-gcs
         file: capi-ci/ci/bosh-lite/scripts/download-from-gcs.yml
         input_mapping:
@@ -103,8 +94,6 @@ jobs:
           GCP_PATH: director-state
       - task: delete-bosh-lite
         file: capi-ci/ci/bosh-lite/scripts/delete-bosh-lite.yml
-        params:
-          GCP_JSON_KEY: {{bosh_lite_gcp_json_key}}
       - put: terraform
         params:
           action: destroy

@@ -10,11 +10,7 @@ image_resource:
 inputs:
   - name: capi-ci
   - name: bosh-deployment
-  - name: terraform
   - name: director-state
 
 run:
   path: capi-ci/ci/bosh-lite/scripts/delete-bosh-lite.sh
-
-params:
-  GCP_JSON_KEY:      ""
