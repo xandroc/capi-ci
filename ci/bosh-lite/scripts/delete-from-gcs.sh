@@ -17,7 +17,7 @@ environment="$( cat "${workspace_dir}/environment/name" )"
 gcloud auth activate-service-account --key-file=<( echo "${GCP_JSON_KEY}" )
 
 remote_path="gs://${GCP_BUCKET}/"
-if [ -n "${S3_PATH}" ]; then
+if [ -n "${GCP_PATH}" ]; then
   remote_path="${remote_path}${GCP_PATH}/"
 fi
 remote_path="${remote_path}${environment}"
