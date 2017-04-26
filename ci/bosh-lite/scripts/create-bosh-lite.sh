@@ -33,6 +33,7 @@ pushd "${state_dir}" > /dev/null
        --state ./"${env_name}-state.json" \
        --vars-store ./"${env_name}-creds.yml" \
       ./director.yml
+    rm ./director.yml
 
     director_ip=$(bosh interpolate --path /external_ip "${terraform_dir}/metadata")
     echo -e "\nUploading stemcell..."

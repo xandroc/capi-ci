@@ -27,8 +27,8 @@ pushd "${state_dir}" > /dev/null
 
     echo -e "\nDestroying the Bosh-Lite..."
     bosh delete-env \
-       --state ./*-state.json \
-       --vars-store ./*-creds.yml \
+       --state ./state.json \
+       --vars-store ./creds.yml \
       ./director.yml
 
     echo "Done"
