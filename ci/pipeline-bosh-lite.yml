@@ -109,7 +109,7 @@ jobs:
       - task: delete-from-gcs
         file: capi-ci/ci/bosh-lite/scripts/delete-from-gcs.yml
         input_mapping:
-          environment: terraform
+          environment: broken-pool
         params:
           GCP_JSON_KEY: {{bosh_lite_gcp_json_key}}
           GCP_BUCKET: {{bosh_lite_storage_bucket}}
