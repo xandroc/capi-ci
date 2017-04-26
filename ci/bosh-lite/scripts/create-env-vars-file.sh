@@ -8,7 +8,7 @@ workspace_dir="$( cd "${script_dir}/../../../../" && pwd )"
 director_state="${workspace_dir}/director-state"
 terraform_dir="${workspace_dir}/terraform"
 
-creds_file="${director_state}/*-creds.yml"
+creds_file="${director_state}/creds.yml"
 terraform_metadata_file="${terraform_dir}/metadata"
 terraform_name_file="${terraform_dir}/name"
 
