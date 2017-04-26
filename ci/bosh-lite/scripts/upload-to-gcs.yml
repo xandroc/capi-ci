@@ -10,15 +10,12 @@ image_resource:
 inputs:
   - name: capi-ci
   - name: source-directory
+  - name: environment
 
 run:
-  path: capi-ci/ci/bosh-lite/scripts/upload-to-s3.sh
+  path: capi-ci/ci/bosh-lite/scripts/upload-to-gcs.sh
 
 params:
-  FILE_NAMES:
-  AWS_ACCESS_KEY_ID:
-  AWS_SECRET_ACCESS_KEY:
-  AWS_ENDPOINT:
-  S3_BUCKET:
-  S3_PATH:
-  AWS_DEFAULT_REGION:
+  GCP_JSON_KEY:
+  GCP_BUCKET:
+  GCP_PATH:
