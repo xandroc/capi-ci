@@ -85,7 +85,7 @@ jobs:
       - task: download-from-gcs
         file: capi-ci/ci/bosh-lite/scripts/download-from-gcs.yml
         input_mapping:
-          environment: terraform
+          environment: broken-pool
         output_mapping:
           destination-directory: director-state
         params:
