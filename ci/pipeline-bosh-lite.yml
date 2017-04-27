@@ -3,6 +3,10 @@ resource_types:
   type: docker-image
   source:
     repository: ljfranklin/terraform-resource
+- name: bosh-deployment
+  type: docker-image
+  source:
+    repository: cloudfoundry/bosh-deployment-resource
 
 resources:
   - name: terraform
@@ -38,6 +42,19 @@ resources:
       uri: git@github.com:cloudfoundry/capi-env-pool.git
       pool: broken-bosh-lites
       private_key: {{bosh_lite_pool_deploy_key}}
+  - name: cf-deployment
+    type: git
+    source:
+      branch: release-candidate
+      uri: https://github.com/cloudfoundry/cf-deployment.git
+  - name: cf-deploy
+    type: bosh-deployment
+    source:
+      vars_store:
+        provider: gcs
+        config:
+          bucket: {{bosh_lite_storage_bucket}}
+          json_key: {{bosh_lite_gcp_json_key}}
 
 jobs:
   - name: create-bosh-lite
@@ -45,6 +62,7 @@ jobs:
       - aggregate:
         - get: capi-ci
         - get: bosh-deployment
+        - get: cf-deployment
       - put: terraform
         params:
           generate_random_name: true
@@ -70,6 +88,17 @@ jobs:
           GCP_PATH: director-state
       - task: create-env-vars-file
         file: capi-ci/ci/bosh-lite/scripts/create-env-vars-file.yml
+      - task: write-bosh-target-file
+        file: capi-ci/ci/bosh-lite/scripts/write-bosh-target-file.yml
+      - put: cf-deploy
+        params:
+          source_file: bosh-target/target.yml
+          manifest: cf-deployment/cf-deployment.yml
+          vars_file: bosh-target/vars.yml
+          ops_files:
+          - capi-ci/cf-deployment-operations/skip-cert-verify.yml
+          - capi-ci/cf-deployment-operations/use-latest-stemcell.yml
+          - cf-deployment/operations/bosh-lite.yml
       - put: pool
         params:
           add: bosh-lite-env-info/
