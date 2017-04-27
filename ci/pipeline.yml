@@ -1235,6 +1235,8 @@ jobs:
     - get: capi-ci
     - get: capi-ci-private
     - get: aws-stemcell
+      version:
+        version: "3363.15" # new stemcell versions break dea support
     - get: cloud_controller_ng
       resource: cloud_controller_ng-master-migrations
       trigger: true
