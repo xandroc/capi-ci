@@ -61,6 +61,10 @@ resource_pools:
         (( env_specific.aws.router_z2.elbs ))
 
 jobs:
+- name: api_z1
+  instances: 2
+- name: api_z2
+  instances: 2
 - name: clock_z1
   instances: 1
   resource_pool: small_z1
