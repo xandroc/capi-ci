@@ -28,14 +28,14 @@ resources:
     type: pool
     source:
       branch: master
-      uri: git@github.com:cloudfoundry/capi-ci-private.git
+      uri: git@github.com:cloudfoundry/capi-env-pool.git
       pool: bosh-lites
       private_key: {{bosh_lite_pool_deploy_key}}
   - name: broken-pool
     type: pool
     source:
       branch: master
-      uri: git@github.com:cloudfoundry/capi-ci-private.git
+      uri: git@github.com:cloudfoundry/capi-env-pool.git
       pool: broken-bosh-lites
       private_key: {{bosh_lite_pool_deploy_key}}
 
