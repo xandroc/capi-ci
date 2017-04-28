@@ -79,6 +79,8 @@ jobs:
             params:
               GCP_JSON_KEY: {{bosh_lite_gcp_json_key}}
           - do:
+              - task: create-env-vars-file
+                file: capi-ci/ci/bosh-lite/scripts/create-env-vars-file.yml
               - task: write-bosh-target-file
                 file: capi-ci/ci/bosh-lite/scripts/write-bosh-target-file.yml
               - put: cf-deploy
@@ -99,8 +101,6 @@ jobs:
                   GCP_JSON_KEY: {{bosh_lite_gcp_json_key}}
                   GCP_BUCKET: {{bosh_lite_storage_bucket}}
                   GCP_PATH: director-state
-              - task: create-env-vars-file
-                file: capi-ci/ci/bosh-lite/scripts/create-env-vars-file.yml
               - put: pool
                 params:
                   add: bosh-lite-env-info/
