@@ -27,9 +27,9 @@ output_file="${output_dir}/target.yml"
 cat <<- EOF > "${output_file}"
 ---
 deployment: "cf"
-target: "${BOSH_ENVIRONMENT}",
-client: "${BOSH_CLIENT}",
-client_secret: "${BOSH_CLIENT_SECRET}",
+target: "${BOSH_ENVIRONMENT}"
+client: "${BOSH_CLIENT}"
+client_secret: "${BOSH_CLIENT_SECRET}"
 ca_cert: |
 $(indent_contents_of <( echo "${BOSH_CA_CERT}" ))
 vars_store:
