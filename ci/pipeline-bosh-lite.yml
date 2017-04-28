@@ -73,35 +73,53 @@ jobs:
             system_domain_suffix: {{bosh_lite_system_domain_suffix}}
             dns_zone_name: {{bosh_lite_dns_zone_name}}
             json_key: {{bosh_lite_gcp_json_key}}
-      - task: create-bosh-lite
-        file: capi-ci/ci/bosh-lite/scripts/create-bosh-lite.yml
-        params:
-          GCP_JSON_KEY: {{bosh_lite_gcp_json_key}}
-      - task: upload-to-gcs
-        file: capi-ci/ci/bosh-lite/scripts/upload-to-gcs.yml
-        input_mapping:
-          environment: terraform
-          source-directory: director-state
-        params:
-          GCP_JSON_KEY: {{bosh_lite_gcp_json_key}}
-          GCP_BUCKET: {{bosh_lite_storage_bucket}}
-          GCP_PATH: director-state
-      - task: create-env-vars-file
-        file: capi-ci/ci/bosh-lite/scripts/create-env-vars-file.yml
-      - task: write-bosh-target-file
-        file: capi-ci/ci/bosh-lite/scripts/write-bosh-target-file.yml
-      - put: cf-deploy
-        params:
-          source_file: bosh-target/target.yml
-          manifest: cf-deployment/cf-deployment.yml
-          vars_file: bosh-target/vars.yml
-          ops_files:
-          - capi-ci/cf-deployment-operations/skip-cert-verify.yml
-          - capi-ci/cf-deployment-operations/use-latest-stemcell.yml
-          - cf-deployment/operations/bosh-lite.yml
-      - put: pool
-        params:
-          add: bosh-lite-env-info/
+      - do:
+          - task: create-bosh-lite
+            file: capi-ci/ci/bosh-lite/scripts/create-bosh-lite.yml
+            params:
+              GCP_JSON_KEY: {{bosh_lite_gcp_json_key}}
+          - do:
+              - task: write-bosh-target-file
+                file: capi-ci/ci/bosh-lite/scripts/write-bosh-target-file.yml
+              - put: cf-deploy
+                params:
+                  source_file: bosh-target/target.yml
+                  manifest: cf-deployment/cf-deployment.yml
+                  vars_file: bosh-target/vars.yml
+                  ops_files:
+                  - capi-ci/cf-deployment-operations/skip-cert-verify.yml
+                  - capi-ci/cf-deployment-operations/use-latest-stemcell.yml
+                  - cf-deployment/operations/bosh-lite.yml
+              - task: upload-to-gcs
+                file: capi-ci/ci/bosh-lite/scripts/upload-to-gcs.yml
+                input_mapping:
+                  environment: terraform
+                  source-directory: director-state
+                params:
+                  GCP_JSON_KEY: {{bosh_lite_gcp_json_key}}
+                  GCP_BUCKET: {{bosh_lite_storage_bucket}}
+                  GCP_PATH: director-state
+              - task: create-env-vars-file
+                file: capi-ci/ci/bosh-lite/scripts/create-env-vars-file.yml
+              - put: pool
+                params:
+                  add: bosh-lite-env-info/
+            on_failure:
+              task: delete-bosh-lite
+              file: capi-ci/ci/bosh-lite/scripts/delete-bosh-lite.yml
+        on_failure:
+          put: terraform
+          params:
+            action: destroy
+            env_name_file: terraform/name
+            terraform_source: capi-ci/ci/bosh-lite/terraform/
+            vars:
+              project_id: {{bosh_lite_project_id}}
+              system_domain_suffix: {{bosh_lite_system_domain_suffix}}
+              dns_zone_name: {{bosh_lite_dns_zone_name}}
+              json_key: {{bosh_lite_gcp_json_key}}
+          get_params:
+            action: destroy
 
   - name: delete-bosh-lite
     plan:
