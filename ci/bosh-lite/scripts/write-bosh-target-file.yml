@@ -9,7 +9,7 @@ image_resource:
 
 inputs:
   - name: capi-ci
-  - name: director-state
+  - name: bosh-lite-env-info
 
 outputs:
   - name: bosh-target
