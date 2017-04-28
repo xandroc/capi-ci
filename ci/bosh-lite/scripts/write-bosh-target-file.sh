@@ -13,8 +13,7 @@ indent_contents_of() {
 # INPUTS
 script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 workspace_dir="$( cd "${script_dir}/../../../../" && pwd )"
-# env_info="${workspace_dir}/bosh-lite-env-info"
-env_info="/tmp/fake-env-info"
+env_info="${workspace_dir}/bosh-lite-env-info"
 
 # OUTPUTS
 
