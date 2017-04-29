@@ -89,7 +89,8 @@ jobs:
                 params:
                   source_file: bosh-target/target.yml
                   manifest: cf-deployment/cf-deployment.yml
-                  vars_file: bosh-target/vars.yml
+                  vars_files:
+                  - bosh-target/vars.yml
                   ops_files:
                   - capi-ci/cf-deployment-operations/skip-cert-verify.yml
                   - capi-ci/cf-deployment-operations/use-latest-stemcell.yml
