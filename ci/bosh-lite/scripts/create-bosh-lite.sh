@@ -33,13 +33,4 @@ pushd "${state_dir}" > /dev/null
        --state ./state.json \
        --vars-store ./creds.yml \
       ./director.yml
-
-    director_ip=$(bosh interpolate --path /external_ip "${terraform_dir}/metadata")
-    echo -e "\nUploading stemcell..."
-    bosh -e "${director_ip}" \
-      --client admin \
-      --client-secret="$( bosh interpolate --path /admin_password ./creds.yml )" \
-      --ca-cert="$( bosh interpolate --path /default_ca/ca ./creds.yml )" \
-      upload-stemcell \
-      https://bosh.io/d/stemcells/bosh-warden-boshlite-ubuntu-trusty-go_agent
 popd > /dev/null

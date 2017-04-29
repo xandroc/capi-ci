@@ -81,6 +81,8 @@ jobs:
           - do:
               - task: create-env-vars-file
                 file: capi-ci/ci/bosh-lite/scripts/create-env-vars-file.yml
+              - task: upload-cf-assets
+                file: capi-ci/ci/bosh-lite/scripts/upload-cf-assets.yml
               - task: write-bosh-target-file
                 file: capi-ci/ci/bosh-lite/scripts/write-bosh-target-file.yml
               - put: cf-deploy
