@@ -838,6 +838,9 @@ jobs:
       manifest: cf-deployment/cf-deployment.yml
       vars:
         system_domain: "mulan.cf-app.com"
+        prometheus_password: {{prometheus_password}}
+      vars_files:
+      - bbl-vars/bbl-vars.json # used by prometheus bosh exporter
       ops_files:
       - cf-deployment/operations/test/add-persistent-isolation-segment-diego-cell.yml
       - capi-ci/cf-deployment-operations/skip-cert-verify.yml
@@ -847,6 +850,7 @@ jobs:
       - cf-deployment/operations/use-postgres.yml
       - cf-deployment/operations/experimental/locket.yml
       - cf-deployment/operations/experimental/locket-postgres.yml
+      - capi-ci/cf-deployment-operations/add-prometheus.yml
   - task: updated-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
     input_mapping:
