@@ -94,6 +94,7 @@
               api_url: https://api.((system_domain))
               client_id: prometheus
               client_secret: ((prometheus_uaa_client_secret))
+              deployment_name: cf
             metrics:
               environment: cf
 
