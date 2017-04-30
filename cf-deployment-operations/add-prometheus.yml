@@ -44,7 +44,7 @@
               - job_name: prometheus
                 static_configs:
                   - targets:
-                    - localhost:9090
+                    - localhost:9191
               - job_name: bosh
                 scrape_interval: 1m
                 scrape_timeout: 1m
@@ -78,7 +78,7 @@
               client_id: firehose
               client_secret: ((firehose_client_secret))
             doppler:
-              url: https://doppler.((system_domain)):443
+              url: wss://doppler.((system_domain)):443
             metrics:
               environment: cf
 
