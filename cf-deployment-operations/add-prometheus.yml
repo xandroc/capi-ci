@@ -20,7 +20,7 @@
 # Optional properties:
 #
 # - prometheus_password: admin password for prometheus and grafana
-# - firehose_client_secret: secret for UAA firehose client
+# - prometheus_client_secret: secret for UAA firehose + admin_read_only client
 
 - type: replace
   path: /instance_groups/-
@@ -55,6 +55,10 @@
                 static_configs:
                   - targets:
                     - localhost:9186
+              - job_name: cf
+                static_configs:
+                  - targets:
+                    - localhost:9193
 
       - name: bosh_exporter
         release: prometheus
@@ -75,10 +79,21 @@
             skip_ssl_verify: true
             uaa:
               url: https://uaa.((system_domain))
-              client_id: firehose
-              client_secret: ((firehose_client_secret))
+              client_id: prometheus
+              client_secret: ((prometheus_uaa_client_secret))
             doppler:
               url: wss://doppler.((system_domain)):443
+            metrics:
+              environment: cf
+      - name: cf_exporter
+        release: prometheus
+        properties:
+          cf_exporter:
+            skip_ssl_verify: true
+            cf:
+              api_url: https://api.((system_domain))
+              client_id: prometheus
+              client_secret: ((prometheus_uaa_client_secret))
             metrics:
               environment: cf
 
@@ -131,14 +146,14 @@
               - grafana.((system_domain))
 
 - type: replace
-  path: /instance_groups/name=uaa/jobs/name=uaa/properties/uaa/clients/firehose?
+  path: /instance_groups/name=uaa/jobs/name=uaa/properties/uaa/clients/prometheus?
   value:
     access-token-validity: 1209600
     authorized-grant-types: authorization_code,client_credentials,refresh_token
     override: true
     scope: openid,oauth.approvals,doppler.firehose
-    authorities: oauth.login,doppler.firehose
-    secret: ((firehose_client_secret))
+    authorities: oauth.login,doppler.firehose,cloud_controller.admin_read_only
+    secret: ((prometheus_uaa_client_secret))
 
 - type: replace
   path: /variables/-
@@ -149,7 +164,7 @@
 - type: replace
   path: /variables/-
   value:
-    name: firehose_client_secret
+    name: prometheus_uaa_client_secret
     type: password
 
 - type: replace
