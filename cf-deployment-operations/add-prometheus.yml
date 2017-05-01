@@ -56,8 +56,8 @@
                   - targets:
                     - localhost:9186
               - job_name: cf
-                scrape_interval: 1m
-                scrape_timeout: 1m
+                scrape_interval: 2m
+                scrape_timeout: 2m
                 static_configs:
                   - targets:
                     - localhost:9193
