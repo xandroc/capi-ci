@@ -1011,7 +1011,7 @@ jobs:
         input_mapping: {environment: xena-env}
         params:
           BOSH_DEPLOYMENT: cf-xena
-          BOSH_INSTANCE: api_z1/0
+          BOSH_API_INSTANCE: api_z1/0
           CF_API_TARGET: https://api.xena.cf-app.com
           CF_ADMIN_PASSWORD: {{xena_cf_admin_password}}
           CF_SKIP_SSL_VALIDATION: true
@@ -1144,7 +1144,7 @@ jobs:
         input_mapping: {environment: buffy-env}
         params:
           BOSH_DEPLOYMENT: cf-buffy
-          BOSH_INSTANCE: api_z1/0
+          BOSH_API_INSTANCE: api_z1/0
           CF_API_TARGET: https://api.buffy.cf-app.com
           CF_ADMIN_PASSWORD: {{buffy_cf_admin_password}}
           CF_SKIP_SSL_VALIDATION: true
