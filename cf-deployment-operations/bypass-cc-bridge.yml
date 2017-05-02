@@ -1,0 +1,32 @@
+---
+# cloud_controller_ng
+- type: replace
+  cc_diego: &cc_diego
+    temporary_local_staging: true
+    temporary_local_apps: true
+    temporary_local_tasks: true
+    temporary_local_sync: true
+    temporary_local_tps: true
+    temporary_cc_uploader_mtls: true
+    temporary_droplet_download_mtls: true
+  path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/cc?/diego?
+  value: *cc_diego
+
+# cc-worker
+- type: replace
+  path: /instance_groups/name=cc-worker/jobs/name=cloud_controller_worker/properties/cc?/diego?
+  value: *cc_diego
+
+# cc-clock
+- type: replace
+  path: /instance_groups/name=cc-clock/jobs/name=cloud_controller_clock/properties/cc?/diego?
+  value: *cc_diego
+
+# cc-bridge
+- type: remove
+  path: /instance_groups/name=cc-bridge/jobs/name=stager
+- type: remove
+  path: /instance_groups/name=cc-bridge/jobs/name=nsync
+- type: replace
+  path: /instance_groups/name=cc-bridge/jobs/name=tps/properties/capi/tps/listener_enabled?
+  value: false
