@@ -522,6 +522,7 @@ properties:
     include_services: true
     skip_ssl_validation: true
     skip_regex: dotnet-core
+    default_timeout: 60
 
   smoke_tests:
     api:  (( "api." domain ))
