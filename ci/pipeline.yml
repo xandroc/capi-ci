@@ -38,6 +38,7 @@ groups:
   - freshen-arya
   - freshen-buffy
   - freshen-mulan
+  - freshen-elsa
 - name: mssql
   jobs:
   - freshen-ripley
@@ -599,6 +600,15 @@ resources:
         bucket: {{mulan_bosh_vars_bucket}}
         file_name: *mulan_vars_store_path
         json_key: {{mulan_gcp_json_key}}
+
+# Elsa resources
+- name: elsa-bbl-state
+  type: git
+  source:
+    branch: master
+    private_key: {{private_key}}
+    uri: git@github.com:cloudfoundry/capi-ci-private.git
+    paths: ["elsa/bbl-state.json"]
 
 jobs:
 
@@ -1594,6 +1604,44 @@ jobs:
         bbl-state: mulan-bbl-state
       params:
         BBL_STATE_DIR: "mulan"
+
+- name: freshen-elsa
+  serial: true
+  serial_groups: [deploy-elsa]
+  plan:
+    - aggregate:
+      - get: cf-deployment-concourse-tasks
+        resource: cf-deployment-concourse-tasks-v2
+      - get: elsa-bbl-state
+      - get: capi-ci
+      - get: weekly-sunday
+        trigger: true
+    - task: freshen-elsa
+      file: cf-deployment-concourse-tasks/bbl-up/task.yml
+      input_mapping:
+        bbl-state: elsa-bbl-state
+      params:
+        BBL_STATE_DIR: "elsa"
+        BBL_IAAS: "gcp"
+        BBL_LB_CERT: {{elsa_bbl_lb_cert}}
+        BBL_LB_KEY: {{elsa_bbl_lb_key}}
+        LB_DOMAIN: "elsa.cf-app.com"
+        BBL_ENV_NAME: "elsa"
+        BBL_GCP_SERVICE_ACCOUNT_KEY: "google_account_creds.json"
+        BBL_GCP_PROJECT_ID: {{elsa_gcp_project_id}}
+        BBL_GCP_ZONE: {{elsa_gcp_zone}}
+        BBL_GCP_REGION: {{elsa_gcp_region}}
+      ensure:
+        put: elsa-bbl-state
+        params:
+          repository: updated-bbl-state
+          rebase: true
+    - task: run-bosh-cleanup
+      file: capi-ci/ci/bbl-tasks/run-bosh-cleanup.yml
+      input_mapping:
+        bbl-state: elsa-bbl-state
+      params:
+        BBL_STATE_DIR: "elsa"
 
 - name: freshen-ripley
   serial: true
