@@ -1010,7 +1010,7 @@ jobs:
         file: sync-integration-tests/concourse/task.yml
         input_mapping: {environment: xena-env}
         params:
-          BOSH_DEPLOYMENT: cf-xena
+          BOSH_DEPLOYMENT_NAME: cf-xena
           BOSH_API_INSTANCE: api_z1/0
           CF_API_TARGET: https://api.xena.cf-app.com
           CF_ADMIN_PASSWORD: {{xena_cf_admin_password}}
@@ -1143,7 +1143,7 @@ jobs:
         file: sync-integration-tests/concourse/task.yml
         input_mapping: {environment: buffy-env}
         params:
-          BOSH_DEPLOYMENT: cf-buffy
+          BOSH_DEPLOYMENT_NAME: cf-buffy
           BOSH_API_INSTANCE: api_z1/0
           CF_API_TARGET: https://api.buffy.cf-app.com
           CF_ADMIN_PASSWORD: {{buffy_cf_admin_password}}
