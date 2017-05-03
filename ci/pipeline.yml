@@ -960,6 +960,12 @@ jobs:
       manifest: cf-deployment/cf-deployment.yml
       vars:
         system_domain: "elsa.cf-app.com"
+        cc_s3_access_key: {{elsa_cc_s3_access_key}}
+        cc_s3_secret_key: {{elsa_cc_s3_secret_key}}
+        cc_s3_buildpack_bucket_name: "elsa-cf-app-com-cc-buildpacks"
+        cc_s3_droplet_bucket_name: "elsa-cf-app-com-cc-droplets"
+        cc_s3_package_bucket_name: "elsa-cf-app-com-cc-packages"
+        cc_s3_resource_pool_bucket_name: "elsa-cf-app-com-cc-resources"
       ops_files:
       - cf-deployment/operations/test/add-persistent-isolation-segment-diego-cell.yml
       - capi-ci/cf-deployment-operations/skip-cert-verify.yml
