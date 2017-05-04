@@ -932,6 +932,7 @@ jobs:
     - get: elsa-bbl-state
     - get: elsa-integration-configs
     - get: cf-acceptance-tests
+    - get: sync-integration-tests
     - get: capi-ci
     - get: capi-ci-private
     - get: capi-release-tarball
@@ -960,6 +961,7 @@ jobs:
       manifest: cf-deployment/cf-deployment.yml
       vars:
         system_domain: "elsa.cf-app.com"
+        uaa_scim_users_admin_password: {{elsa_cf_admin_password}}
         cc_s3_access_key: {{elsa_cc_s3_access_key}}
         cc_s3_secret_key: {{elsa_cc_s3_secret_key}}
         cc_s3_buildpack_bucket_name: "elsa-cf-app-com-cc-buildpacks"
@@ -995,13 +997,25 @@ jobs:
     params:
       SYSTEM_DOMAIN: "elsa.cf-app.com"
       VARS_STORE_FILE: "vars-store.yml"
-  - task: acceptance-tests
-    file: cats-concourse-task/task.yml
-    input_mapping:
-      integration-config: elsa-integration-configs
-    params:
-      NODES: 6
-      CONFIG_FILE_PATH: "elsa/cats_integration_config.json"
+  - aggregate:
+    - task: acceptance-tests
+      file: cats-concourse-task/task.yml
+      input_mapping:
+        integration-config: elsa-integration-configs
+      params:
+        NODES: 6
+        CONFIG_FILE_PATH: "elsa/cats_integration_config.json"
+    - task: sync-integration-tests
+      file: sync-integration-tests/concourse/task.yml
+      input_mapping: {environment: capi-ci-private}
+      params:
+        BOSH_DEPLOYMENT_NAME: cf-elsa
+        BOSH_API_INSTANCE: api_z1/0
+        CF_API_TARGET: https://api.elsa.cf-app.com
+        CF_ADMIN_PASSWORD: {{elsa_cf_admin_password}}
+        CF_SKIP_SSL_VALIDATION: true
+        CF_APPS_DOMAIN: elsa-app.cf-app.com
+        BBL_STATE_DIR: elsa
 
 - name: deploy-and-test-mysql-s3-bbs
   serial: true
@@ -1105,31 +1119,17 @@ jobs:
         put: xena-acceptance-tests-logs
         params:
           file: bosh-logs/acceptance_tests*.tgz
-    - do:
-      - task: map-xena
-        config:
-          platform: linux
-          image_resource:
-            type: docker-image
-            source:
-              repository: busybox
-          inputs:
-          - name: capi-ci-private
-          outputs:
-          - name: xena-env
-          run:
-            path: cp
-            args: [-a, capi-ci-private/xena/., xena-env/]
-      - task: sync-integration-tests
-        file: sync-integration-tests/concourse/task.yml
-        input_mapping: {environment: xena-env}
-        params:
-          BOSH_DEPLOYMENT_NAME: cf-xena
-          BOSH_API_INSTANCE: api_z1/0
-          CF_API_TARGET: https://api.xena.cf-app.com
-          CF_ADMIN_PASSWORD: {{xena_cf_admin_password}}
-          CF_SKIP_SSL_VALIDATION: true
-          CF_APPS_DOMAIN: xena-app.cf-app.com
+    - task: sync-integration-tests
+      file: sync-integration-tests/concourse/task.yml
+      input_mapping: {environment: capi-ci-private}
+      params:
+        BOSH_DEPLOYMENT_NAME: cf-xena
+        BOSH_API_INSTANCE: api_z1/0
+        CF_API_TARGET: https://api.xena.cf-app.com
+        CF_ADMIN_PASSWORD: {{xena_cf_admin_password}}
+        CF_SKIP_SSL_VALIDATION: true
+        CF_APPS_DOMAIN: xena-app.cf-app.com
+        BBL_STATE_DIR: xena
     on_failure:
       put: slack-alert
       params:
@@ -1238,31 +1238,17 @@ jobs:
         put: buffy-acceptance-tests-logs
         params:
           file: bosh-logs/acceptance_tests*.tgz
-    - do:
-      - task: map-buffy
-        config:
-          platform: linux
-          image_resource:
-            type: docker-image
-            source:
-              repository: busybox
-          inputs:
-          - name: capi-ci-private
-          outputs:
-          - name: buffy-env
-          run:
-            path: cp
-            args: [-a, capi-ci-private/buffy/., buffy-env/]
-      - task: sync-integration-tests
-        file: sync-integration-tests/concourse/task.yml
-        input_mapping: {environment: buffy-env}
-        params:
-          BOSH_DEPLOYMENT_NAME: cf-buffy
-          BOSH_API_INSTANCE: api_z1/0
-          CF_API_TARGET: https://api.buffy.cf-app.com
-          CF_ADMIN_PASSWORD: {{buffy_cf_admin_password}}
-          CF_SKIP_SSL_VALIDATION: true
-          CF_APPS_DOMAIN: buffy-app.cf-app.com
+    - task: sync-integration-tests
+      file: sync-integration-tests/concourse/task.yml
+      input_mapping: {environment: capi-ci-private}
+      params:
+        BOSH_DEPLOYMENT_NAME: cf-buffy
+        BOSH_API_INSTANCE: api_z1/0
+        CF_API_TARGET: https://api.buffy.cf-app.com
+        CF_ADMIN_PASSWORD: {{buffy_cf_admin_password}}
+        CF_SKIP_SSL_VALIDATION: true
+        CF_APPS_DOMAIN: buffy-app.cf-app.com
+        BBL_STATE_DIR: buffy
     on_failure:
       put: slack-alert
       params:
