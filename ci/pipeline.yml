@@ -91,7 +91,7 @@ resources:
     stop: 23:30
 
 - name: deliver-capi-stories
-  type: tracker-resource
+  type: tracker
   source:
     token: {{deliver_capi_tracker_token}}
     project_id: '966314'
