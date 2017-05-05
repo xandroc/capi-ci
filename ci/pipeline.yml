@@ -1028,6 +1028,7 @@ jobs:
         CF_APPS_DOMAIN: elsa-app.cf-app.com
         BBL_STATE_DIR: elsa
         VARS_STORE_PATH: "vars-store.yml"
+        USE_CF_DEPLOYMENT_VARS: "true"
 
 - name: deploy-and-test-mysql-s3-bbs
   serial: true

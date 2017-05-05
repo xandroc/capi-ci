@@ -277,9 +277,11 @@ output "cc_s3_buildpack_bucket_name" {
 }
 output "cc_s3_access_key" {
   value = "${var.aws_access_key}"
+  sensitive = true
 }
 output "cc_s3_secret_key" {
   value = "${var.aws_secret_key}"
+  sensitive = true
 }
 output "cc_s3_droplet_bucket_name" {
   value = "${aws_s3_bucket.droplets.id}"
@@ -289,9 +291,11 @@ output "cc_cdn_droplet_uri" {
 }
 output "cc_cdn_droplet_private_key" {
   value = "${var.cdn_private_key}"
+  sensitive = true
 }
 output "cc_cdn_droplet_key_pair_id" {
   value = "${var.cdn_key_pair_id}"
+  sensitive = true
 }
 output "cc_s3_package_bucket_name" {
   value = "${aws_s3_bucket.packages.id}"
@@ -304,7 +308,9 @@ output "cc_cdn_resource_pool_uri" {
 }
 output "cc_cdn_resource_pool_private_key" {
   value = "${var.cdn_private_key}"
+  sensitive = true
 }
 output "cc_cdn_resource_pool_key_pair_id" {
   value = "${var.cdn_key_pair_id}"
+  sensitive = true
 }
