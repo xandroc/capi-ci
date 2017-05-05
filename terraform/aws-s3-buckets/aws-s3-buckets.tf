@@ -287,7 +287,7 @@ output "cc_s3_droplet_bucket_name" {
   value = "${aws_s3_bucket.droplets.id}"
 }
 output "cc_cdn_droplet_uri" {
-  value = "${aws_cloudfront_distribution.droplets_distribution.domain_name}"
+  value = "https://${aws_cloudfront_distribution.droplets_distribution.domain_name}"
 }
 output "cc_cdn_droplet_private_key" {
   value = "${var.cdn_private_key}"
@@ -304,7 +304,7 @@ output "cc_s3_resource_pool_bucket_name" {
   value = "${aws_s3_bucket.resource_pool.id}"
 }
 output "cc_cdn_resource_pool_uri" {
-  value = "${aws_cloudfront_distribution.resource_pool_distribution.domain_name}"
+  value = "https://${aws_cloudfront_distribution.resource_pool_distribution.domain_name}"
 }
 output "cc_cdn_resource_pool_private_key" {
   value = "${var.cdn_private_key}"

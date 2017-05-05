@@ -985,7 +985,7 @@ jobs:
       - cf-deployment/operations/scale-to-one-az.yml
       - capi-ci/cf-deployment-operations/scale-cells-to-two.yml
       - capi-ci/cf-deployment-operations/bypass-cc-bridge.yml
-      - capi-ci/cf-deployment-operations/use-s3-storage.yml
+      - capi-ci/cf-deployment-operations/use-s3-and-cdn-storage.yml
       - capi-ci/cf-deployment-operations/use-clustered-mysql.yml
   - task: updated-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
@@ -1021,11 +1021,11 @@ jobs:
         environment: capi-ci-private
         vars-store: elsa-deployment-vars
       params:
-        BOSH_DEPLOYMENT_NAME: cf-elsa
-        BOSH_API_INSTANCE: api_z1/0
+        BOSH_DEPLOYMENT_NAME: cf
+        BOSH_API_INSTANCE: api/0
         CF_API_TARGET: https://api.elsa.cf-app.com
         CF_SKIP_SSL_VALIDATION: true
-        CF_APPS_DOMAIN: elsa-app.cf-app.com
+        CF_APPS_DOMAIN: elsa.cf-app.com
         BBL_STATE_DIR: elsa
         VARS_STORE_PATH: "vars-store.yml"
         USE_CF_DEPLOYMENT_VARS: "true"
