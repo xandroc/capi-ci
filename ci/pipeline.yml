@@ -1894,7 +1894,7 @@ jobs:
   - put: azure-terraform
     params:
       env_name: leia
-      terraform_source: capi-ci/leia/terraform/
+      terraform_source: capi-ci/terraform/azure-ms-sql/
       vars:
         subscription_id: {{azure_subscription_id}}
         client_id: {{azure_client_id}}
