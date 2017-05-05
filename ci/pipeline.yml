@@ -632,6 +632,16 @@ resources:
         file_name: *elsa_vars_store_path
         json_key: {{elsa_gcp_json_key}}
 
+- name: elsa-aws-storage-terraform
+  type: terraform
+  source:
+    storage:
+      bucket: {{elsa_bosh_vars_bucket}}
+      bucket_path: aws-storage
+      access_key_id: {{gcp_storage_access_key}}
+      secret_access_key: {{gcp_storage_secret_key}}
+      endpoint: storage.googleapis.com
+
 jobs:
 
 - name: check-cc-dependencies
@@ -951,19 +961,23 @@ jobs:
     file: capi-ci/ci/scripts/extract_bbl_vars.yml
     params:
       ENV_NAME: elsa
+  - put: elsa-aws-storage-terraform
+    params:
+      env_name: elsa
+      terraform_source: capi-ci/terraform/aws-s3-buckets/
+      vars:
+        aws_access_key: {{xena_aws_access_key}}
+        aws_secret_key: {{xena_aws_secret_key}}
+        cdn_key_pair_id: {{xena_cdn_key_pair_id}}
+        cdn_private_key: {{xena_cdn_private_key}}
   - put: elsa-deployment
     params:
       source_file: bbl-vars/bbl-vars.json
       manifest: cf-deployment/cf-deployment.yml
       vars:
         system_domain: "elsa.cf-app.com"
-        uaa_scim_users_admin_password: {{elsa_cf_admin_password}}
-        cc_s3_access_key: {{elsa_cc_s3_access_key}}
-        cc_s3_secret_key: {{elsa_cc_s3_secret_key}}
-        cc_s3_buildpack_bucket_name: "elsa-cf-app-com-cc-buildpacks"
-        cc_s3_droplet_bucket_name: "elsa-cf-app-com-cc-droplets"
-        cc_s3_package_bucket_name: "elsa-cf-app-com-cc-packages"
-        cc_s3_resource_pool_bucket_name: "elsa-cf-app-com-cc-resources"
+      vars_files:
+        - elsa-aws-storage-terraform/metadata
       ops_files:
       - cf-deployment/operations/test/add-persistent-isolation-segment-diego-cell.yml
       - capi-ci/cf-deployment-operations/skip-cert-verify.yml
@@ -1002,16 +1016,18 @@ jobs:
         NODES: 6
         CONFIG_FILE_PATH: "elsa/cats_integration_config.json"
     - task: sync-integration-tests
-      file: sync-integration-tests/concourse/task.yml
-      input_mapping: {environment: capi-ci-private}
+      file: sync-integration-tests/concourse/task_with_vars_store.yml
+      input_mapping:
+        environment: capi-ci-private
+        vars-store: elsa-deployment-vars
       params:
         BOSH_DEPLOYMENT_NAME: cf-elsa
         BOSH_API_INSTANCE: api_z1/0
         CF_API_TARGET: https://api.elsa.cf-app.com
-        CF_ADMIN_PASSWORD: {{elsa_cf_admin_password}}
         CF_SKIP_SSL_VALIDATION: true
         CF_APPS_DOMAIN: elsa-app.cf-app.com
         BBL_STATE_DIR: elsa
+        VARS_STORE_PATH: "vars-store.yml"
 
 - name: deploy-and-test-mysql-s3-bbs
   serial: true
