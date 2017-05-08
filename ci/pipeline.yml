@@ -4,10 +4,8 @@ groups:
   - cc-unit-tests
   - bridge-unit-tests
   - create-capi-release
-  - deploy-and-test-mysql-s3-bbs
   - migration-backwards-compatibility-test
   - bump-capi-release
-  - deploy-and-test-postgres-webdave-bridge
   - deploy-and-test-mulan
   - deploy-and-test-elsa
   - bump-ci-passed
@@ -45,6 +43,10 @@ groups:
   - freshen-ripley
   - mssql-unit-tests
   - deploy-and-test-ripley
+- name: aws-graveyard
+  jobs:
+  - deploy-and-test-mysql-s3-bbs
+  - deploy-and-test-postgres-webdave-bridge
 
 resource_types:
 - name: bosh-release
