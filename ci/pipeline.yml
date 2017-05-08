@@ -994,6 +994,8 @@ jobs:
       manifest: cf-deployment/cf-deployment.yml
       vars:
         system_domain: "elsa.cf-app.com"
+        datadog_api_key: {{elsa_datadog_api_key}}
+        datadog_metric_prefix: "datadog.nozzle.elsa."
       vars_files:
         - elsa-aws-storage-terraform/metadata
       ops_files:
@@ -1003,6 +1005,7 @@ jobs:
       - capi-ci/cf-deployment-operations/bypass-cc-bridge.yml
       - capi-ci/cf-deployment-operations/use-s3-and-cdn-storage.yml
       - capi-ci/cf-deployment-operations/use-clustered-mysql.yml
+      - capi-ci/cf-deployment-operations/add-datadog-firehose-nozzle-gcp.yml
   - task: updated-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
     input_mapping:
