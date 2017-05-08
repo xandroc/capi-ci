@@ -984,7 +984,6 @@ jobs:
       - capi-ci/cf-deployment-operations/use-latest-capi.yml
       - capi-ci/cf-deployment-operations/bypass-cc-bridge.yml
       - capi-ci/cf-deployment-operations/use-s3-and-cdn-storage.yml
-      - capi-ci/cf-deployment-operations/scale-nats-to-one
       - capi-ci/cf-deployment-operations/use-clustered-mysql.yml
   - task: updated-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
