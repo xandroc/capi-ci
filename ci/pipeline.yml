@@ -995,7 +995,7 @@ jobs:
       vars:
         system_domain: "elsa.cf-app.com"
         datadog_api_key: {{elsa_datadog_api_key}}
-        datadog_metric_prefix: "datadog.nozzle.elsa."
+        datadog_metric_prefix: "elsa.datadog."
       vars_files:
         - elsa-aws-storage-terraform/metadata
       ops_files:
