@@ -30,7 +30,7 @@
       release: datadog-firehose-nozzle
       properties:
         loggregator:
-          traffic_controller_url: "wss://doppler.((system_domain)):8081"
+          traffic_controller_url: "wss://doppler.((system_domain)):443"
         datadog:
           api_key: "((datadog_api_key))"
           flush_duration_seconds: 15
