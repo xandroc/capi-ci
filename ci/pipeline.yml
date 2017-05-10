@@ -574,7 +574,6 @@ resources:
     branch: master
     private_key: {{private_key}}
     uri: git@github.com:cloudfoundry/capi-ci-private.git
-    paths: ["mulan/bbl-state.json"]
 
 - name: mulan-integration-configs
   type: git
@@ -582,7 +581,6 @@ resources:
     branch: master
     private_key: {{private_key}}
     uri: git@github.com:cloudfoundry/capi-ci-private.git
-    paths: ["mulan/cats_integration_config.json"]
 
 - name: mulan-deployment-vars
   type: gcs
@@ -608,7 +606,6 @@ resources:
     branch: master
     private_key: {{private_key}}
     uri: git@github.com:cloudfoundry/capi-ci-private.git
-    paths: ["elsa/bbl-state.json"]
 
 - name: elsa-integration-configs
   type: git
@@ -616,7 +613,6 @@ resources:
     branch: master
     private_key: {{private_key}}
     uri: git@github.com:cloudfoundry/capi-ci-private.git
-    paths: ["elsa/cats_integration_config.json"]
 
 - name: elsa-deployment-vars
   type: gcs
@@ -652,7 +648,6 @@ resources:
     branch: master
     private_key: {{private_key}}
     uri: git@github.com:cloudfoundry/capi-ci-private.git
-    paths: ["kiki/bbl-state.json"]
 
 - name: kiki-integration-configs
   type: git
@@ -660,7 +655,6 @@ resources:
     branch: master
     private_key: {{private_key}}
     uri: git@github.com:cloudfoundry/capi-ci-private.git
-    paths: ["kiki/cats_integration_config.json"]
 
 - name: kiki-deployment-vars
   type: gcs
