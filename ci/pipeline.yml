@@ -40,7 +40,7 @@ groups:
   - freshen-mulan
   - freshen-elsa
   - freshen-kiki
-  - freshen-🐳
+  - freshen-🐋
 - name: mssql
   jobs:
   - freshen-ripley
@@ -1950,7 +1950,7 @@ jobs:
       params:
         BBL_STATE_DIR: "kiki"
 
-- name: freshen-🐳
+- name: freshen-🐋
   serial: true
   plan:
     - aggregate:
