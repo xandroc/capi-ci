@@ -654,6 +654,31 @@ resources:
     uri: git@github.com:cloudfoundry/capi-ci-private.git
     paths: ["kiki/bbl-state.json"]
 
+- name: kiki-integration-configs
+  type: git
+  source:
+    branch: master
+    private_key: {{private_key}}
+    uri: git@github.com:cloudfoundry/capi-ci-private.git
+    paths: ["kiki/cats_integration_config.json"]
+
+- name: kiki-deployment-vars
+  type: gcs
+  source:
+    bucket: {{kiki_bosh_vars_bucket}}
+    json_key: {{kiki_gcp_json_key}}
+    versioned_file: &kiki_vars_store_path "bosh/vars-store.yml"
+
+- name: kiki-deployment
+  type: bosh2-deployment
+  source:
+    vars_store:
+      provider: gcs
+      config:
+        bucket: {{kiki_bosh_vars_bucket}}
+        file_name: *kiki_vars_store_path
+        json_key: {{kiki_gcp_json_key}}
+
 jobs:
 
 - name: check-cc-dependencies
@@ -1056,6 +1081,101 @@ jobs:
         CF_SKIP_SSL_VALIDATION: true
         CF_APPS_DOMAIN: elsa.cf-app.com
         BBL_STATE_DIR: elsa
+        VARS_STORE_PATH: "vars-store.yml"
+        USE_CF_DEPLOYMENT_VARS: "true"
+
+- name: deploy-and-test-kiki
+  serial: true
+  serial_groups: [deploy-kiki]
+  plan:
+  - aggregate:
+    - get: cf-deployment-concourse-tasks
+      resource: cf-deployment-concourse-tasks-v2
+    - get: cats-concourse-task
+    - get: cf-deployment
+      resource: cf-deployment
+    - get: capi-release
+      resource: capi-release-develop
+      passed: [create-capi-release]
+    - get: kiki-deployment-vars
+    - get: kiki-bbl-state
+    - get: kiki-integration-configs
+    - get: cf-acceptance-tests
+    - get: sync-integration-tests
+    - get: capi-ci
+    - get: capi-ci-private
+    - get: capi-release-tarball
+      passed: [create-capi-release]
+      trigger: true
+  - task: upload-capi-release-tarball
+    file: capi-ci/ci/scripts/upload-release.yml
+    input_mapping:
+      bbl-state: kiki-bbl-state
+      release-tarball: capi-release-tarball
+    params:
+      BBL_STATE_DIR: "kiki"
+  - task: kiki-stemcell-upload
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    input_mapping:
+      bbl-state: kiki-bbl-state
+    params:
+      BBL_STATE_DIR: "kiki"
+  - task: extract-bbl-vars
+    file: capi-ci/ci/scripts/extract_bbl_vars.yml
+    params:
+      ENV_NAME: kiki
+  - put: kiki-deployment
+    params:
+      source_file: bbl-vars/bbl-vars.json
+      manifest: cf-deployment/cf-deployment.yml
+      vars:
+        system_domain: "kiki.cf-app.com"
+      ops_files:
+      - cf-deployment/operations/test/add-persistent-isolation-segment-diego-cell.yml
+      - capi-ci/cf-deployment-operations/skip-cert-verify.yml
+      - cf-deployment/operations/scale-to-one-az.yml
+      - capi-ci/cf-deployment-operations/scale-cells-to-two.yml
+      - cf-deployment/operations/use-postgres.yml
+  - task: updated-integration-configs
+    file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
+    input_mapping:
+      vars-store: kiki-deployment-vars
+      integration-configs: kiki-integration-configs
+    params:
+      CATS_INTEGRATION_CONFIG_FILE: "kiki/cats_integration_config.json"
+      VARS_STORE_FILE: "vars-store.yml"
+    ensure:
+      put: kiki-integration-configs
+      params:
+        repository: updated-integration-configs
+        rebase: true
+  - task: enable-feature-flags
+    file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
+    input_mapping:
+      vars-store: kiki-deployment-vars
+    params:
+      SYSTEM_DOMAIN: "kiki.cf-app.com"
+      VARS_STORE_FILE: "vars-store.yml"
+  - aggregate:
+    - task: acceptance-tests
+      file: cats-concourse-task/task.yml
+      input_mapping:
+        integration-config: kiki-integration-configs
+      params:
+        NODES: 6
+        CONFIG_FILE_PATH: "kiki/cats_integration_config.json"
+    - task: sync-integration-tests
+      file: sync-integration-tests/concourse/task_with_vars_store.yml
+      input_mapping:
+        environment: capi-ci-private
+        vars-store: kiki-deployment-vars
+      params:
+        BOSH_DEPLOYMENT_NAME: cf
+        BOSH_API_INSTANCE: api/0
+        CF_API_TARGET: https://api.kiki.cf-app.com
+        CF_SKIP_SSL_VALIDATION: true
+        CF_APPS_DOMAIN: kiki.cf-app.com
+        BBL_STATE_DIR: kiki
         VARS_STORE_PATH: "vars-store.yml"
         USE_CF_DEPLOYMENT_VARS: "true"
 
