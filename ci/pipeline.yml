@@ -534,6 +534,12 @@ resources:
     uri: git@github.com:cloudfoundry/cf-deployment-concourse-tasks.git
     tag_filter: "v2.*"
 
+- name: cf-deployment-concourse-tasks-lfranklin
+  type: git
+  source:
+    branch: "lb-certs-as-paths"
+    uri: https://github.com/ljfranklin/cf-deployment-concourse-tasks.git
+
 - name: cats-concourse-task
   type: git
   source:
@@ -1769,7 +1775,7 @@ jobs:
   plan:
     - aggregate:
       - get: cf-deployment-concourse-tasks
-        resource: cf-deployment-concourse-tasks-v2
+        resource: cf-deployment-concourse-tasks-lfranklin
       - get: arya-bbl-state
       - get: capi-ci
       - get: weekly-sunday
@@ -1780,11 +1786,11 @@ jobs:
       params:
         BBL_STATE_DIR: "arya"
         BBL_IAAS: "gcp"
-        BBL_LB_CERT: {{arya_bbl_lb_cert}}
-        BBL_LB_KEY: {{arya_bbl_lb_key}}
+        BBL_LB_CERT: "certs/load-balancer/server.crt"
+        BBL_LB_KEY: "certs/load-balancer/server.key"
         LB_DOMAIN: "arya.cf-app.com"
         BBL_ENV_NAME: "arya"
-        BBL_GCP_SERVICE_ACCOUNT_KEY: "google_account_creds.json"
+        BBL_GCP_SERVICE_ACCOUNT_KEY: {{arya_gcp_json_key}}
         BBL_GCP_PROJECT_ID: {{arya_gcp_project_id}}
         BBL_GCP_ZONE: {{arya_gcp_zone}}
         BBL_GCP_REGION: {{arya_gcp_region}}
@@ -1831,7 +1837,7 @@ jobs:
   plan:
     - aggregate:
       - get: cf-deployment-concourse-tasks
-        resource: cf-deployment-concourse-tasks-v2
+        resource: cf-deployment-concourse-tasks-lfranklin
       - get: mulan-bbl-state
       - get: capi-ci
       - get: weekly-sunday
@@ -1842,11 +1848,11 @@ jobs:
       params:
         BBL_STATE_DIR: "mulan"
         BBL_IAAS: "gcp"
-        BBL_LB_CERT: {{mulan_bbl_lb_cert}}
-        BBL_LB_KEY: {{mulan_bbl_lb_key}}
+        BBL_LB_CERT: "certs/load-balancer/server.crt"
+        BBL_LB_KEY: "certs/load-balancer/server.key"
         LB_DOMAIN: "mulan.cf-app.com"
         BBL_ENV_NAME: "mulan"
-        BBL_GCP_SERVICE_ACCOUNT_KEY: "google_account_creds.json"
+        BBL_GCP_SERVICE_ACCOUNT_KEY: {{mulan_gcp_json_key}}
         BBL_GCP_PROJECT_ID: {{mulan_gcp_project_id}}
         BBL_GCP_ZONE: {{mulan_gcp_zone}}
         BBL_GCP_REGION: {{mulan_gcp_region}}
@@ -1868,7 +1874,7 @@ jobs:
   plan:
     - aggregate:
       - get: cf-deployment-concourse-tasks
-        resource: cf-deployment-concourse-tasks-v2
+        resource: cf-deployment-concourse-tasks-lfranklin
       - get: elsa-bbl-state
       - get: capi-ci
       - get: weekly-sunday
@@ -1880,11 +1886,11 @@ jobs:
       params:
         BBL_STATE_DIR: "elsa"
         BBL_IAAS: "gcp"
-        BBL_LB_CERT: {{elsa_bbl_lb_cert}}
-        BBL_LB_KEY: {{elsa_bbl_lb_key}}
+        BBL_LB_CERT: "certs/load-balancer/server.crt"
+        BBL_LB_KEY: "certs/load-balancer/server.key"
         LB_DOMAIN: "elsa.cf-app.com"
         BBL_ENV_NAME: "elsa"
-        BBL_GCP_SERVICE_ACCOUNT_KEY: "google_account_creds.json"
+        BBL_GCP_SERVICE_ACCOUNT_KEY: {{elsa_gcp_json_key}}
         BBL_GCP_PROJECT_ID: {{elsa_gcp_project_id}}
         BBL_GCP_ZONE: {{elsa_gcp_zone}}
         BBL_GCP_REGION: {{elsa_gcp_region}}
@@ -1906,7 +1912,7 @@ jobs:
   plan:
     - aggregate:
       - get: cf-deployment-concourse-tasks
-        resource: cf-deployment-concourse-tasks-v2
+        resource: cf-deployment-concourse-tasks-lfranklin
       - get: kiki-bbl-state
       - get: capi-ci
       - get: weekly-sunday
@@ -1918,11 +1924,11 @@ jobs:
       params:
         BBL_STATE_DIR: "kiki"
         BBL_IAAS: "gcp"
-        BBL_LB_CERT: {{kiki_bbl_lb_cert}}
-        BBL_LB_KEY: {{kiki_bbl_lb_key}}
+        BBL_LB_CERT: "certs/load-balancer/server.crt"
+        BBL_LB_KEY: "certs/load-balancer/server.key"
         LB_DOMAIN: "kiki.cf-app.com"
         BBL_ENV_NAME: "kiki"
-        BBL_GCP_SERVICE_ACCOUNT_KEY: "google_account_creds.json"
+        BBL_GCP_SERVICE_ACCOUNT_KEY: {{kiki_gcp_json_key}}
         BBL_GCP_PROJECT_ID: {{kiki_gcp_project_id}}
         BBL_GCP_ZONE: {{kiki_gcp_zone}}
         BBL_GCP_REGION: {{kiki_gcp_region}}
@@ -1944,6 +1950,7 @@ jobs:
   plan:
     - aggregate:
       - get: cf-deployment-concourse-tasks
+        resource: cf-deployment-concourse-tasks-lfranklin
       - get: ripley-bbl-state
       - get: capi-ci
       - get: weekly-sunday
@@ -1954,11 +1961,11 @@ jobs:
       params:
         BBL_STATE_DIR: "ripley"
         BBL_IAAS: "gcp"
-        BBL_LB_CERT: {{ripley_bbl_lb_cert}}
-        BBL_LB_KEY: {{ripley_bbl_lb_key}}
+        BBL_LB_CERT: "certs/load-balancer/server.crt"
+        BBL_LB_KEY: "certs/load-balancer/server.key"
         LB_DOMAIN: "ripley.cf-app.com"
         BBL_ENV_NAME: "ripley"
-        BBL_GCP_SERVICE_ACCOUNT_KEY: "google_account_creds.json"
+        BBL_GCP_SERVICE_ACCOUNT_KEY: {{ripley_gcp_json_key}}
         BBL_GCP_PROJECT_ID: {{ripley_gcp_project_id}}
         BBL_GCP_ZONE: {{ripley_gcp_zone}}
         BBL_GCP_REGION: {{ripley_gcp_region}}
