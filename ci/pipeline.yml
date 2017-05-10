@@ -38,6 +38,7 @@ groups:
   - freshen-buffy
   - freshen-mulan
   - freshen-elsa
+  - freshen-kiki
 - name: mssql
   jobs:
   - freshen-ripley
@@ -643,6 +644,15 @@ resources:
       access_key_id: {{gcp_storage_access_key}}
       secret_access_key: {{gcp_storage_secret_key}}
       endpoint: storage.googleapis.com
+
+# Kiki resources
+- name: kiki-bbl-state
+  type: git
+  source:
+    branch: master
+    private_key: {{private_key}}
+    uri: git@github.com:cloudfoundry/capi-ci-private.git
+    paths: ["kiki/bbl-state.json"]
 
 jobs:
 
@@ -1774,6 +1784,44 @@ jobs:
         bbl-state: elsa-bbl-state
       params:
         BBL_STATE_DIR: "elsa"
+
+- name: freshen-kiki
+  serial: true
+  serial_groups: [deploy-kiki]
+  plan:
+    - aggregate:
+      - get: cf-deployment-concourse-tasks
+        resource: cf-deployment-concourse-tasks-v2
+      - get: kiki-bbl-state
+      - get: capi-ci
+      - get: weekly-sunday
+        trigger: true
+    - task: freshen-kiki
+      file: cf-deployment-concourse-tasks/bbl-up/task.yml
+      input_mapping:
+        bbl-state: kiki-bbl-state
+      params:
+        BBL_STATE_DIR: "kiki"
+        BBL_IAAS: "gcp"
+        BBL_LB_CERT: {{kiki_bbl_lb_cert}}
+        BBL_LB_KEY: {{kiki_bbl_lb_key}}
+        LB_DOMAIN: "kiki.cf-app.com"
+        BBL_ENV_NAME: "kiki"
+        BBL_GCP_SERVICE_ACCOUNT_KEY: "google_account_creds.json"
+        BBL_GCP_PROJECT_ID: {{kiki_gcp_project_id}}
+        BBL_GCP_ZONE: {{kiki_gcp_zone}}
+        BBL_GCP_REGION: {{kiki_gcp_region}}
+      ensure:
+        put: kiki-bbl-state
+        params:
+          repository: updated-bbl-state
+          rebase: true
+    - task: run-bosh-cleanup
+      file: capi-ci/ci/bbl-tasks/run-bosh-cleanup.yml
+      input_mapping:
+        bbl-state: kiki-bbl-state
+      params:
+        BBL_STATE_DIR: "kiki"
 
 - name: freshen-ripley
   serial: true
