@@ -40,6 +40,7 @@ groups:
   - freshen-mulan
   - freshen-elsa
   - freshen-kiki
+  - freshen-🐳
 - name: mssql
   jobs:
   - freshen-ripley
@@ -1917,6 +1918,11 @@ jobs:
       - get: capi-ci
       - get: weekly-sunday
         trigger: true
+    - task: seed-capi-ci-private
+      file: capi-ci/ci/setup-environment/seed.yml
+      params:
+        ENVIRONMENT: kiki
+        DOMAIN: "kiki.cf-app.com"
     - task: freshen-kiki
       file: cf-deployment-concourse-tasks/bbl-up/task.yml
       input_mapping:
@@ -1943,6 +1949,22 @@ jobs:
         bbl-state: kiki-bbl-state
       params:
         BBL_STATE_DIR: "kiki"
+
+- name: freshen-🐳
+  serial: true
+  plan:
+    - aggregate:
+      - get: capi-ci
+      - get: capi-ci-private
+    - task: seed-capi-ci-private
+      file: capi-ci/ci/setup-environment/seed.yml
+      params:
+        ENVIRONMENT: whale
+        DOMAIN: "whale.cf-app.com"
+    - put: capi-ci-private
+      params:
+        repository: updated-capi-ci-private
+        rebase: true
 
 - name: freshen-ripley
   serial: true
