@@ -8,6 +8,7 @@ groups:
   - bump-capi-release
   - deploy-and-test-mulan
   - deploy-and-test-elsa
+  - deploy-and-test-kiki
   - bump-ci-passed
 - name: ship-it
   jobs:
