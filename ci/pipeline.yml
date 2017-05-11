@@ -1948,7 +1948,7 @@ jobs:
           repository: updated-bbl-state
           rebase: true
     - task: create-dns-record
-      file: capi-ci/ci/bbl-tasks/add-dns-record.yml
+      file: capi-ci/ci/bbl-tasks/create-dns-record.yml
       input_mapping:
         bbl-state: kiki-bbl-state
       params:
