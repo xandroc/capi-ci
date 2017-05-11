@@ -23,7 +23,7 @@ function write_cats_config() {
   "api": "api.${DOMAIN}",
   "apps_domain": "${DOMAIN}",
   "admin_user": "admin",
-  "admin_password": "replace-me",
+  "admin_password": "will-be-overridden-by-later-task",
   "skip_ssl_validation": true,
   "backend": "diego",
   "default_timeout": 60,
