@@ -1921,7 +1921,7 @@ jobs:
       file: capi-ci/ci/setup-environment/seed.yml
       params:
         ENVIRONMENT: kiki
-        DOMAIN: "kiki.cf-app.com"
+        DOMAIN: "kiki.capi.cf-app.com"
     - task: freshen-kiki
       file: cf-deployment-concourse-tasks/bbl-up/task.yml
       input_mapping:
@@ -1931,7 +1931,7 @@ jobs:
         BBL_IAAS: "gcp"
         BBL_LB_CERT: "certs/load-balancer/server.crt"
         BBL_LB_KEY: "certs/load-balancer/server.key"
-        LB_DOMAIN: "kiki.cf-app.com"
+        LB_DOMAIN: "kiki.capi.cf-app.com"
         BBL_ENV_NAME: "kiki"
         BBL_GCP_SERVICE_ACCOUNT_KEY: {{kiki_gcp_json_key}}
         BBL_GCP_PROJECT_ID: {{kiki_gcp_project_id}}
@@ -1942,6 +1942,14 @@ jobs:
         params:
           repository: updated-bbl-state
           rebase: true
+    - task: create-dns-record
+      file: capi-ci/ci/bbl-tasks/add-dns-record.yml
+      input_mapping:
+        bbl-state: kiki-bbl-state
+      params:
+        BBL_STATE_DIR: "kiki"
+        DNS_DOMAIN: "kiki.capi.cf-app.com"
+        DNS_GCP_SERVICE_ACCOUNT_KEY: {{dns_gcp_json_key}}
     - task: run-bosh-cleanup
       file: capi-ci/ci/bbl-tasks/run-bosh-cleanup.yml
       input_mapping:
