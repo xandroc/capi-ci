@@ -1923,6 +1923,10 @@ jobs:
       params:
         ENVIRONMENT: kiki
         DOMAIN: "kiki.capi.cf-app.com"
+    - put: capi-ci-private
+      params:
+        repository: updated-capi-ci-private
+        rebase: true
     - task: freshen-kiki
       file: cf-deployment-concourse-tasks/bbl-up/task.yml
       input_mapping:
