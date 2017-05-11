@@ -1,12 +1,13 @@
 #!/bin/bash
 
-set -eu
+set -eu -o pipefail
 
 # ENV
 : "${BBL_STATE_DIR:?}"
 : "${DNS_DOMAIN:?}"
 : "${SHARED_DNS_ZONE_NAME:?}"
 : "${GCP_DNS_SERVICE_ACCOUNT_KEY:?}"
+: "${GCP_PROJECT_ID:?}"
 
 # INPUTS
 script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -15,6 +16,7 @@ bbl_state_dir="${workspace_dir}/bbl-state/${BBL_STATE_DIR}"
 
 create_dns_record() {
   gcloud auth activate-service-account --key-file=<( echo "${GCP_DNS_SERVICE_ACCOUNT_KEY}" )
+  gcloud config set project "${GCP_PROJECT_ID}"
 
   record_count="$( gcloud dns record-sets list --zone "${SHARED_DNS_ZONE_NAME}" --name "${DNS_DOMAIN}" --format=json | jq 'length' )"
   if [ "${record_count}" == "0" ]; then
