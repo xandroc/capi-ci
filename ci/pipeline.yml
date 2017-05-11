@@ -1130,7 +1130,7 @@ jobs:
       source_file: bbl-vars/bbl-vars.json
       manifest: cf-deployment/cf-deployment.yml
       vars:
-        system_domain: "kiki.cf-app.com"
+        system_domain: "kiki.capi.cf-app.com"
       ops_files:
       - cf-deployment/operations/test/add-persistent-isolation-segment-diego-cell.yml
       - capi-ci/cf-deployment-operations/skip-cert-verify.yml
@@ -1155,7 +1155,7 @@ jobs:
     input_mapping:
       vars-store: kiki-deployment-vars
     params:
-      SYSTEM_DOMAIN: "kiki.cf-app.com"
+      SYSTEM_DOMAIN: "kiki.capi.cf-app.com"
       VARS_STORE_FILE: "vars-store.yml"
   - aggregate:
     - task: acceptance-tests
@@ -1173,9 +1173,9 @@ jobs:
       params:
         BOSH_DEPLOYMENT_NAME: cf
         BOSH_API_INSTANCE: api/0
-        CF_API_TARGET: https://api.kiki.cf-app.com
+        CF_API_TARGET: https://api.kiki.capi.cf-app.com
         CF_SKIP_SSL_VALIDATION: true
-        CF_APPS_DOMAIN: kiki.cf-app.com
+        CF_APPS_DOMAIN: kiki.capi.cf-app.com
         BBL_STATE_DIR: kiki
         VARS_STORE_PATH: "vars-store.yml"
         USE_CF_DEPLOYMENT_VARS: "true"
@@ -1954,7 +1954,9 @@ jobs:
       params:
         BBL_STATE_DIR: "kiki"
         DNS_DOMAIN: "kiki.capi.cf-app.com"
-        DNS_GCP_SERVICE_ACCOUNT_KEY: {{dns_gcp_json_key}}
+        GCP_DNS_SERVICE_ACCOUNT_KEY: {{dns_gcp_json_key}}
+        GCP_PROJECT_ID: {{dns_gcp_project_id}}
+        SHARED_DNS_ZONE_NAME: "capi"
     - task: run-bosh-cleanup
       file: capi-ci/ci/bbl-tasks/run-bosh-cleanup.yml
       input_mapping:
