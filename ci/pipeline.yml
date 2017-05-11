@@ -1915,6 +1915,7 @@ jobs:
         resource: cf-deployment-concourse-tasks-lfranklin
       - get: kiki-bbl-state
       - get: capi-ci
+      - get: capi-ci-private
       - get: weekly-sunday
         trigger: true
     - task: seed-capi-ci-private
