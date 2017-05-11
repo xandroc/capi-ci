@@ -12,7 +12,7 @@ inputs:
   - name: bbl-state
 
 run:
-  path: capi-ci/ci/setup-environment/create-dns-record.sh
+  path: capi-ci/ci/bbl-tasks/create-dns-record.sh
 
 params:
   BBL_STATE_DIR:
