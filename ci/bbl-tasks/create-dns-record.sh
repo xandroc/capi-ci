@@ -20,7 +20,7 @@ create_dns_record() {
 
   record_count="$( gcloud dns record-sets list --zone "${SHARED_DNS_ZONE_NAME}" --name "${DNS_DOMAIN}" --format=json | jq 'length' )"
   if [ "${record_count}" == "0" ]; then
-    bbl_name_servers="$( bbl lbs --json | jq -r '.cf_system_domain_dns_servers | join(\" \")' )"
+    bbl_name_servers="$( bbl lbs --json | jq -r '.cf_system_domain_dns_servers | join(" ")' )"
 
     gcloud dns record-sets transaction start --zone="${SHARED_DNS_ZONE_NAME}"
     gcloud dns record-sets transaction add --name "${DNS_DOMAIN}" --type=NS --zone="${SHARED_DNS_ZONE_NAME}" --ttl=300 ${bbl_name_servers}
