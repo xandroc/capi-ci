@@ -74,9 +74,10 @@ export BOSH_ENVIRONMENT=$(bbl director-address)
 export BOSH_GW_USER=vcap
 export BOSH_GW_HOST=$(bbl director-address | cut -d'/' -f3 | cut -d':' -f1)
 export BOSH_GW_PRIVATE_KEY=keypair/bosh.pem
+mkdir -p keypair
+bbl ssh-key > "$BOSH_GW_PRIVATE_KEY"
+chmod 600 "$BOSH_GW_PRIVATE_KEY"
 EOF
-    mkdir -p "${output_path}/keypair"
-    bbl ssh-key > "${output_path}/keypair/bosh.pem"
   fi
 }
 
