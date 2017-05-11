@@ -12,8 +12,10 @@ workspace_dir="$( cd "${script_dir}/../../../" && pwd )"
 capi_ci_private="${workspace_dir}/capi-ci-private"
 updated_capi_ci_private="${workspace_dir}/updated-capi-ci-private"
 
-cats_output_path="${updated_capi_ci_private}/${ENVIRONMENT}/cats_integration_config.json"
-lb_output_path="${updated_capi_ci_private}/${ENVIRONMENT}/certs/load-balancer"
+output_path="${updated_capi_ci_private}/${ENVIRONMENT}"
+cats_output_path="${output_path}/cats_integration_config.json"
+lb_output_path="${output_path}/certs/load-balancer"
+envrc_output_path="${output_path}/.envrc"
 
 # OUTPUTS
 function write_cats_config() {
@@ -62,6 +64,22 @@ function write_load_balancer_certs() {
   fi
 }
 
+function write_envrc() {
+  if [ ! -f "${envrc_output_path}" ]; then
+    cat <<- 'EOF' > "${envrc_output_path}"
+export BOSH_CA_CERT=$(bbl director-ca-cert)
+export BOSH_CLIENT=$(bbl director-username)
+export BOSH_CLIENT_SECRET=$(bbl director-password)
+export BOSH_ENVIRONMENT=$(bbl director-address)
+export BOSH_GW_USER=vcap
+export BOSH_GW_HOST=$(bbl director-address | cut -d'/' -f3 | cut -d':' -f1)
+export BOSH_GW_PRIVATE_KEY=keypair/bosh.pem
+EOF
+    mkdir -p "${output_path}/keypair"
+    bbl ssh-key > "${output_path}/keypair/bosh.pem"
+  fi
+}
+
 function commit_capi_ci_private() {
   set -x
   if [[ -n $(git status --porcelain) ]]; then
@@ -80,6 +98,7 @@ mkdir -p "${updated_capi_ci_private}/${ENVIRONMENT}"
 pushd "${updated_capi_ci_private}/${ENVIRONMENT}"
   write_cats_config
   write_load_balancer_certs
+  write_envrc
 
   commit_capi_ci_private
 popd
