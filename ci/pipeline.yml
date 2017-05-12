@@ -1107,6 +1107,8 @@ jobs:
     - get: capi-release-tarball
       passed: [create-capi-release]
       trigger: true
+    - get: cf-release
+      resource: cf-release-master
   - task: upload-capi-release-tarball
     file: capi-ci/ci/scripts/upload-release.yml
     input_mapping:
@@ -1157,6 +1159,8 @@ jobs:
     params:
       SYSTEM_DOMAIN: "kiki.capi.cf-app.com"
       VARS_STORE_FILE: "vars-store.yml"
+  - task: cats-from-cf-release
+    file: cats-concourse-task/cats-from-cf-release/task.yml
   - aggregate:
     - task: acceptance-tests
       file: cats-concourse-task/task.yml
