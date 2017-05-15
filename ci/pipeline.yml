@@ -1736,7 +1736,7 @@ jobs:
     - task: update-checkman
       file: capi-ci/ci/scripts/update_checkman.yml
       params:
-        IGNORED_JOBS: "freshen-buffy freshen-xena deploy-and-test-mysql-s3-bbs deploy-and-test-postgres-webdave-bridge"
+        IGNORED_JOBS: "freshen-buffy freshen-xena freshen-wasabi deploy-and-test-mysql-s3-bbs deploy-and-test-postgres-webdave-bridge deploy-and-test-ripley"
       on_success:
         put: slack-alert
         params:
