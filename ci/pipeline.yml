@@ -34,9 +34,7 @@ groups:
   jobs:
   - clean-all-the-boshes
   - freshen-wasabi
-  - freshen-xena
   - freshen-arya
-  - freshen-buffy
   - freshen-mulan
   - freshen-elsa
   - freshen-kiki
@@ -49,6 +47,8 @@ groups:
   jobs:
   - deploy-and-test-mysql-s3-bbs
   - deploy-and-test-postgres-webdave-bridge
+  - freshen-buffy
+  - freshen-xena
 
 resource_types:
 - name: bosh-release
