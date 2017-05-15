@@ -17,3 +17,5 @@ outputs:
 run:
   path: capi-ci/ci/scripts/update_checkman.sh
 
+params:
+  IGNORED_JOBS: ""
