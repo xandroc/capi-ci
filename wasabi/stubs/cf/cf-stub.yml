@@ -501,6 +501,9 @@ properties:
   loggregator_endpoint:
     shared_secret: (( secrets.loggregator_endpoint.shared_secret ))
 
+  metron_endpoint:
+    shared_secret: (( secrets.loggregator_endpoint.shared_secret ))
+
   syslog_daemon_config:
     address: (( env_specific.syslog_daemon_config.address ))
     port: (( env_specific.syslog_daemon_config.port ))
