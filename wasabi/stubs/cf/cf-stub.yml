@@ -357,6 +357,7 @@ properties:
         secret: (( secrets.uaa.clients.datadog-firehose-nozzle.secret ))
         scope: openid,oauth.approvals,doppler.firehose
         authorities: oauth.login,doppler.firehose
+        redirect-uri: /login
       login:
         secret: (( secrets.uaa.clients.login.secret ))
       developer_console:
