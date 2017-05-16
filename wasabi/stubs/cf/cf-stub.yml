@@ -418,6 +418,7 @@ properties:
     prof_port: 6060
 
   cc: &cc
+    default_to_diego_backend: false
     mutual_tls:
       ca_cert: (( secrets.cc.mutual_tls.ca_cert ))
       public_cert: (( secrets.cc.mutual_tls.public_cert ))
