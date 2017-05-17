@@ -1,0 +1,20 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: cloudfoundry/capi
+    tag: migration-compatibility
+
+inputs:
+  - name: cloud_controller_ng
+  - name: capi-ci
+  - name: bbl-vars
+
+run:
+  path: capi-ci/ci/scripts/migrations/apply_latest_migrations.sh
+
+params:
+  BOSH_API_INSTANCE:
+  BOSH_DEPLOYMENT_NAME:

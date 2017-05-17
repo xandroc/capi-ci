@@ -1090,6 +1090,9 @@ jobs:
   serial_groups: [deploy-kiki]
   plan:
   - aggregate:
+    - get: cloud_controller_ng
+      resource: cloud_controller_ng-master-migrations
+      trigger: true
     - get: cf-deployment-concourse-tasks
       resource: cf-deployment-concourse-tasks-v2
     - get: cats-concourse-task
@@ -1161,7 +1164,8 @@ jobs:
       VARS_STORE_FILE: "vars-store.yml"
   - task: cats-from-cf-release
     file: cats-concourse-task/cats-from-cf-release/task.yml
-  - aggregate:
+  - &run-kiki-tests
+    aggregate:
     - task: acceptance-tests
       file: cats-concourse-task/task.yml
       input_mapping:
@@ -1183,6 +1187,9 @@ jobs:
         BBL_STATE_DIR: kiki
         VARS_STORE_PATH: "vars-store.yml"
         USE_CF_DEPLOYMENT_VARS: "true"
+  - task: apply-cc-migrations
+    file: capi-ci/ci/migrations/apply_latest_migrations.yml
+  - *run-kiki-tests
 
 - name: deploy-and-test-mysql-s3-bbs
   serial: true
