@@ -1103,7 +1103,6 @@ jobs:
       passed: [create-capi-release]
     - get: kiki-bbl-state
     - get: kiki-integration-configs
-    - get: cf-acceptance-tests
     - get: sync-integration-tests
     - get: capi-ci
     - get: capi-ci-private
