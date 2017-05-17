@@ -5,7 +5,6 @@ set -eu
 # ENV
 : "${BOSH_API_INSTANCE:="api/0"}"
 : "${BOSH_DEPLOYMENT_NAME:="cf"}"
-: "${TERM:="xterm-256color"}"
 
 # INPUTS
 script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -23,8 +22,8 @@ BOSH_GW_PRIVATE_KEY_CONTENTS="$(jq -e -r .gw_private_key "${bbl_vars_file}")"
 export BOSH_ENVIRONMENT BOSH_CLIENT BOSH_CLIENT_SECRET BOSH_CA_CERT \
   BOSH_GW_USER BOSH_GW_HOST BOSH_GW_PRIVATE_KEY_CONTENTS
 
-green="$(tput setaf 2)"
-reset="$(tput sgr0)"
+green="$(tput -T xterm-256color setaf 2)"
+reset="$(tput -T xterm-256color sgr0)"
 tmp_dir="$( mktemp -d /tmp/capi-migrations.XXXXXXXXXX )"
 
 # The tsocks config file in the docker image is hardcoded to 8080
