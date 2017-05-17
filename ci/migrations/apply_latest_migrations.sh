@@ -5,6 +5,7 @@ set -eu
 # ENV
 : "${BOSH_API_INSTANCE:="api/0"}"
 : "${BOSH_DEPLOYMENT_NAME:="cf"}"
+: "${TERM:="xterm-256color"}"
 
 # INPUTS
 script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
