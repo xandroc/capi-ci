@@ -21,4 +21,4 @@ outputs:
   - name: bumped
 
 run:
-  path: capi-ci/ci/scripts/bump_capi_release_conditionally.sh
+  path: capi-ci/ci/scripts/bump_capi_release.sh
