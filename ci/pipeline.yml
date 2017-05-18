@@ -1119,6 +1119,10 @@ jobs:
     file: capi-ci/ci/scripts/extract_bbl_vars.yml
     params:
       ENV_NAME: kiki
+  - task: delete-deployment
+    file: capi-ci/ci/bosh/run_bosh_cmd.yml
+    params:
+      BOSH_ARGS: "delete-deployment -d cf"
   - put: kiki-deployment
     params:
       source_file: bbl-vars/bbl-vars.json
@@ -1181,6 +1185,10 @@ jobs:
   - task: apply-cc-migrations
     file: capi-ci/ci/migrations/apply_latest_migrations.yml
   - *run-kiki-tests
+  - task: delete-deployment
+    file: capi-ci/ci/bosh/run_bosh_cmd.yml
+    params:
+      BOSH_ARGS: "delete-deployment -d cf"
 
 - name: deploy-and-test-mysql-s3-bbs
   serial: true
