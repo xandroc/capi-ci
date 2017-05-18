@@ -26,8 +26,8 @@ green="$(tput -T xterm-256color setaf 2)"
 reset="$(tput -T xterm-256color sgr0)"
 tmp_dir="$( mktemp -d /tmp/capi-migrations.XXXXXXXXXX )"
 
-# The tsocks config file in the docker image is hardcoded to 8080
 tunnel_port="8080"
+proxychains_conf="${tmp_dir}/proxychains.conf"
 
 write_ssh_key() {
   echo "${green}Writing BOSH GW SSH key...${reset}"
@@ -55,6 +55,21 @@ start_background_ssh_tunnel() {
     -d "${BOSH_DEPLOYMENT_NAME}" \
     --opts="-D ${tunnel_port}" \
     --opts='-fN'
+}
+
+write_proxychains_config() {
+  echo "${green}Writing proxychains config file...${reset}"
+
+  cat << EOF > "${proxychains_conf}"
+strict_chain
+quiet_mode
+proxy_dns
+tcp_read_time_out 15000
+tcp_connect_time_out 8000
+
+[ProxyList]
+socks5 	127.0.0.1 ${tunnel_port}
+EOF
 }
 
 kill_background_ssh_tunnel() {
@@ -87,9 +102,9 @@ run_migrations() {
   pushd "${cloud_controller_dir}" > /dev/null
     bundle install
 
-    # tsocks forwards all TCP connections over the SSH SOCKS Proxy
-    tsocks bundle exec rake db:migrate
-    tsocks bundle exec rake db:ensure_migrations_are_current
+    # proxychains forwards all TCP connections over the SSH SOCKS Proxy
+    proxychains -f "${proxychains_conf}" bundle exec rake db:migrate
+    proxychains -f "${proxychains_conf}" bundle exec rake db:ensure_migrations_are_current
   popd > /dev/null
 }
 
@@ -104,6 +119,7 @@ main() {
   write_ssh_key
   download_cloud_controller_config
   start_background_ssh_tunnel
+  write_proxychains_config
 
   trap 'cleanup' EXIT
 
