@@ -9,11 +9,10 @@ image_resource:
 
 inputs:
   - name: capi-ci
-  - name: source-directory
   - name: environment
 
 run:
-  path: capi-ci/ci/bosh-lite/scripts/upload-to-gcs.sh
+  path: capi-ci/ci/gcs/delete-from-gcs.sh
 
 params:
   GCP_JSON_KEY:

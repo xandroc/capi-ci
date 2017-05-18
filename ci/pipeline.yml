@@ -145,29 +145,6 @@ resources:
     private_key: {{private_key}}
     uri: git@github.com:cloudfoundry/capi-ci-private.git
 
-- name: ripley-integration-configs
-  type: git
-  source:
-    branch: master
-    private_key: {{private_key}}
-    uri: git@github.com:cloudfoundry/capi-ci-private.git
-    paths: ["ripley/cats_integration_config.json"]
-
-- name: ripley-bbl-state
-  type: git
-  source:
-    branch: master
-    private_key: {{private_key}}
-    uri: git@github.com:cloudfoundry/capi-ci-private.git
-    paths: ["ripley/bbl-state.json"]
-
-- name: ripley-deployment-vars
-  type: gcs
-  source:
-    bucket: {{ripley_bosh_vars_bucket}}
-    json_key: {{ripley_gcp_json_key}}
-    versioned_file: &ripley_vars_store_path bosh/vars-store.yml
-
 - name: capi-release-master
   type: git
   source:
@@ -544,6 +521,24 @@ resources:
     private_key: {{private_key}}
     uri: git@github.com:cloudfoundry/cf-acceptance-tests.git
 
+# Ripley resources
+
+- name: ripley-integration-configs
+  type: git
+  source:
+    branch: master
+    private_key: {{private_key}}
+    uri: git@github.com:cloudfoundry/capi-ci-private.git
+    paths: ["ripley/cats_integration_config.json"]
+
+- name: ripley-bbl-state
+  type: git
+  source:
+    branch: master
+    private_key: {{private_key}}
+    uri: git@github.com:cloudfoundry/capi-ci-private.git
+    paths: ["ripley/bbl-state.json"]
+
 - name: azure-terraform
   type: terraform
   source:
@@ -561,7 +556,7 @@ resources:
       provider: gcs
       config:
         bucket: {{ripley_bosh_vars_bucket}}
-        file_name: *ripley_vars_store_path
+        file_name: &ripley_vars_store_path bosh/vars-store.yml
         json_key: {{ripley_gcp_json_key}}
 
 # Mulan resources
@@ -579,13 +574,6 @@ resources:
     private_key: {{private_key}}
     uri: git@github.com:cloudfoundry/capi-ci-private.git
 
-- name: mulan-deployment-vars
-  type: gcs
-  source:
-    bucket: {{mulan_bosh_vars_bucket}}
-    json_key: {{mulan_gcp_json_key}}
-    versioned_file: &mulan_vars_store_path "bosh/vars-store.yml"
-
 - name: mulan-deployment
   type: bosh2-deployment
   source:
@@ -593,7 +581,7 @@ resources:
       provider: gcs
       config:
         bucket: {{mulan_bosh_vars_bucket}}
-        file_name: *mulan_vars_store_path
+        file_name: &mulan_vars_store_path "bosh/vars-store.yml"
         json_key: {{mulan_gcp_json_key}}
 
 # Elsa resources
@@ -611,13 +599,6 @@ resources:
     private_key: {{private_key}}
     uri: git@github.com:cloudfoundry/capi-ci-private.git
 
-- name: elsa-deployment-vars
-  type: gcs
-  source:
-    bucket: {{elsa_bosh_vars_bucket}}
-    json_key: {{elsa_gcp_json_key}}
-    versioned_file: &elsa_vars_store_path "bosh/vars-store.yml"
-
 - name: elsa-deployment
   type: bosh2-deployment
   source:
@@ -625,7 +606,7 @@ resources:
       provider: gcs
       config:
         bucket: {{elsa_bosh_vars_bucket}}
-        file_name: *elsa_vars_store_path
+        file_name: &elsa_vars_store_path "bosh/vars-store.yml"
         json_key: {{elsa_gcp_json_key}}
 
 - name: elsa-aws-storage-terraform
@@ -653,13 +634,6 @@ resources:
     private_key: {{private_key}}
     uri: git@github.com:cloudfoundry/capi-ci-private.git
 
-- name: kiki-deployment-vars
-  type: gcs
-  source:
-    bucket: {{kiki_bosh_vars_bucket}}
-    json_key: {{kiki_gcp_json_key}}
-    versioned_file: &kiki_vars_store_path "bosh/vars-store.yml"
-
 - name: kiki-deployment
   type: bosh2-deployment
   source:
@@ -667,7 +641,7 @@ resources:
       provider: gcs
       config:
         bucket: {{kiki_bosh_vars_bucket}}
-        file_name: *kiki_vars_store_path
+        file_name: &kiki_vars_store_path "bosh/vars-store.yml"
         json_key: {{kiki_gcp_json_key}}
 
 jobs:
@@ -873,7 +847,6 @@ jobs:
     - get: capi-release
       resource: capi-release-develop
       passed: [create-capi-release]
-    - get: mulan-deployment-vars
     - get: mulan-bbl-state
     - get: mulan-integration-configs
     - get: cf-acceptance-tests
@@ -896,19 +869,19 @@ jobs:
       bbl-state: mulan-bbl-state
     params:
       BBL_STATE_DIR: "mulan"
-  - task: extract-bbl-vars
-    file: capi-ci/ci/scripts/extract_bbl_vars.yml
+  - task: extract-bbl-environment
+    file: capi-ci/ci/bbl-tasks/extract_bbl_environment.yml
     params:
       ENV_NAME: mulan
   - put: mulan-deployment
     params:
-      source_file: bbl-vars/bbl-vars.json
+      source_file: environment/metadata
       manifest: cf-deployment/cf-deployment.yml
       vars:
         system_domain: "mulan.cf-app.com"
         prometheus_password: {{prometheus_password}}
       vars_files:
-      - bbl-vars/bbl-vars.json # used by prometheus bosh exporter
+      - environment/metadata # used by prometheus bosh exporter
       ops_files:
       - cf-deployment/operations/test/add-persistent-isolation-segment-diego-cell.yml
       - capi-ci/cf-deployment-operations/skip-cert-verify.yml
@@ -919,6 +892,14 @@ jobs:
       - cf-deployment/operations/experimental/locket.yml
       - cf-deployment/operations/experimental/locket-postgres.yml
       - capi-ci/cf-deployment-operations/add-prometheus.yml
+  - task: download-vars-store
+    output_mapping:
+      destination-directory: mulan-deployment-vars
+    file: capi-ci/ci/gcs/download-from-gcs.yml
+    params:
+      GCP_JSON_KEY: {{mulan_gcp_json_key}}
+      GCP_BUCKET: {{mulan_bosh_vars_bucket}}
+      GCP_PATH: *mulan_vars_store_path
   - task: updated-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
     input_mapping:
@@ -975,7 +956,6 @@ jobs:
     - get: capi-release
       resource: capi-release-develop
       passed: [create-capi-release]
-    - get: elsa-deployment-vars
     - get: elsa-bbl-state
     - get: elsa-integration-configs
     - get: cf-acceptance-tests
@@ -998,8 +978,8 @@ jobs:
       bbl-state: elsa-bbl-state
     params:
       BBL_STATE_DIR: "elsa"
-  - task: extract-bbl-vars
-    file: capi-ci/ci/scripts/extract_bbl_vars.yml
+  - task: extract-bbl-environment
+    file: capi-ci/ci/bbl-tasks/extract_bbl_environment.yml
     params:
       ENV_NAME: elsa
   - put: elsa-aws-storage-terraform
@@ -1013,7 +993,7 @@ jobs:
         cdn_private_key: {{xena_cdn_private_key}}
   - put: elsa-deployment
     params:
-      source_file: bbl-vars/bbl-vars.json
+      source_file: environment/metadata
       manifest: cf-deployment/cf-deployment.yml
       vars:
         system_domain: "elsa.cf-app.com"
@@ -1029,6 +1009,14 @@ jobs:
       - capi-ci/cf-deployment-operations/use-s3-and-cdn-storage.yml
       - capi-ci/cf-deployment-operations/use-clustered-mysql.yml
       - capi-ci/cf-deployment-operations/add-datadog-firehose-nozzle-gcp.yml
+  - task: download-vars-store
+    output_mapping:
+      destination-directory: elsa-deployment-vars
+    file: capi-ci/ci/gcs/download-from-gcs.yml
+    params:
+      GCP_JSON_KEY: {{elsa_gcp_json_key}}
+      GCP_BUCKET: {{elsa_bosh_vars_bucket}}
+      GCP_PATH: *elsa_vars_store_path
   - task: updated-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
     input_mapping:
@@ -1102,8 +1090,8 @@ jobs:
       bbl-state: kiki-bbl-state
     params:
       BBL_STATE_DIR: "kiki"
-  - task: extract-bbl-vars
-    file: capi-ci/ci/scripts/extract_bbl_vars.yml
+  - task: extract-bbl-environment
+    file: capi-ci/ci/bbl-tasks/extract_bbl_environment.yml
     params:
       ENV_NAME: kiki
   - task: delete-deployment
@@ -1112,7 +1100,7 @@ jobs:
       BOSH_ARGS: "delete-deployment -d cf"
   - put: kiki-deployment
     params:
-      source_file: bbl-vars/bbl-vars.json
+      source_file: environment/metadata
       manifest: cf-deployment/cf-deployment.yml
       vars:
         system_domain: *kiki-domain
@@ -1122,7 +1110,14 @@ jobs:
       - cf-deployment/operations/scale-to-one-az.yml
       - capi-ci/cf-deployment-operations/scale-cells-to-two.yml
       - cf-deployment/operations/use-postgres.yml
-  - get: kiki-deployment-vars
+  - task: download-vars-store
+    output_mapping:
+      destination-directory: kiki-deployment-vars
+    file: capi-ci/ci/gcs/download-from-gcs.yml
+    params:
+      GCP_JSON_KEY: {{kiki_gcp_json_key}}
+      GCP_BUCKET: {{kiki_bosh_vars_bucket}}
+      GCP_PATH: *kiki_vars_store_path
   - task: updated-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
     input_mapping:
@@ -2095,7 +2090,6 @@ jobs:
       resource: version-sql-server
       params:
         pre: rc
-    - get: ripley-deployment-vars
     - get: ripley-integration-configs
     - get: cf-deployment-concourse-tasks
     - get: cats-concourse-task
@@ -2121,13 +2115,13 @@ jobs:
         db_name: {{azure_db_name}}
         db_admin_user: {{azure_db_admin_user}}
         db_admin_password: {{azure_db_admin_password}}
-  - task: extract-bbl-vars
-    file: capi-ci/ci/scripts/extract_bbl_vars.yml
+  - task: extract-bbl-environment
+    file: capi-ci/ci/bbl-tasks/extract_bbl_environment.yml
     params:
       ENV_NAME: ripley
   - put: ripley-deployment
     params:
-      source_file: bbl-vars/bbl-vars.json
+      source_file: environment/metadata
       manifest: cf-deployment/cf-deployment.yml
       stemcells:
       - gcp-stemcell/stemcell.tgz
@@ -2143,6 +2137,14 @@ jobs:
       - capi-ci/cf-deployment-operations/use-ms-sql-azure.yml
       - capi-ci/cf-deployment-operations/skip-cert-verify.yml
       - capi-ci/cf-deployment-operations/use-latest-capi.yml
+  - task: download-vars-store
+    output_mapping:
+      destination-directory: ripley-deployment-vars
+    file: capi-ci/ci/gcs/download-from-gcs.yml
+    params:
+      GCP_JSON_KEY: {{ripley_gcp_json_key}}
+      GCP_BUCKET: {{ripley_bosh_vars_bucket}}
+      GCP_PATH: *ripley_vars_store_path
   - task: updated-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
     input_mapping:

@@ -10,10 +10,10 @@ inputs:
   - name: capi-ci-private
 
 outputs:
-  - name: bbl-vars
+  - name: environment
 
 run:
-  path: capi-ci/ci/scripts/extract_bbl_vars.sh
+  path: capi-ci/ci/bbl-tasks/extract_bbl_environment.sh
 
 params:
   ENV_NAME: ""

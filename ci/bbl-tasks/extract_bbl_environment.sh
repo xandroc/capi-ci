@@ -16,14 +16,18 @@ read_with_escaped_newlines() {
 capi_ci_private="$( cd "${workspace_dir}/capi-ci-private" && pwd )"
 
 # OUTPUTS
-output_dir="$( cd "${workspace_dir}/bbl-vars/" && pwd )"
-output_file="${output_dir}/bbl-vars.json"
+output_dir="$( cd "${workspace_dir}/environment/" && pwd )"
+output_name_file="${output_dir}/name"
+output_metadata_file="${output_dir}/metadata"
+
+echo "Creating name file..."
+echo "${ENV_NAME}" > "${output_name_file}"
 
 echo "Creating bbl vars file..."
 
 pushd "${capi_ci_private}/${ENV_NAME}" > /dev/null
 
-cat <<- EOF > "${output_file}"
+cat <<- EOF > "${output_metadata_file}"
   {
     "deployment": "cf",
     "target": "$(bbl director-address)",
@@ -38,4 +42,4 @@ EOF
 
 popd > /dev/null
 
-echo "Successfully created bbl vars file at '${output_file}'!"
+echo "Successfully created bbl vars file at '${output_metadata_file}'!"

@@ -96,7 +96,7 @@ jobs:
                   - capi-ci/cf-deployment-operations/use-latest-stemcell.yml
                   - cf-deployment/operations/bosh-lite.yml
               - task: upload-to-gcs
-                file: capi-ci/ci/bosh-lite/scripts/upload-to-gcs.yml
+                file: capi-ci/ci/gcs/upload-to-gcs.yml
                 input_mapping:
                   environment: terraform
                   source-directory: director-state
@@ -133,7 +133,7 @@ jobs:
           params:
             acquire: true
       - task: download-from-gcs
-        file: capi-ci/ci/bosh-lite/scripts/download-from-gcs.yml
+        file: capi-ci/ci/gcs/download-from-gcs.yml
         input_mapping:
           environment: broken-pool
         output_mapping:
@@ -157,7 +157,7 @@ jobs:
         get_params:
           action: destroy
       - task: delete-from-gcs
-        file: capi-ci/ci/bosh-lite/scripts/delete-from-gcs.yml
+        file: capi-ci/ci/gcs/delete-from-gcs.yml
         input_mapping:
           environment: broken-pool
         params:

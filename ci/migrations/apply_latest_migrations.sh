@@ -10,7 +10,7 @@ set -eu
 script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 workspace_dir="$( cd "${script_dir}/../../.." && pwd )"
 cloud_controller_dir="${workspace_dir}/cloud_controller_ng"
-bbl_vars_file="${workspace_dir}/bbl-vars/bbl-vars.json"
+bbl_vars_file="${workspace_dir}/environment/metadata"
 
 BOSH_ENVIRONMENT="$(jq -e -r .target "${bbl_vars_file}")"
 BOSH_CLIENT="$(jq -e -r .client "${bbl_vars_file}")"

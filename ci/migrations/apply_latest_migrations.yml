@@ -10,7 +10,7 @@ image_resource:
 inputs:
   - name: cloud_controller_ng
   - name: capi-ci
-  - name: bbl-vars
+  - name: environment
 
 run:
   path: capi-ci/ci/migrations/apply_latest_migrations.sh
