@@ -11,7 +11,7 @@
     secret: "((uaa_clients_datadog-firehose-nozzle_secret))"
     scope: openid,oauth.approvals,doppler.firehose
     authorities: oauth.login,doppler.firehose
-
+    redirect-uri: /login
 
 - type: replace
   path: /instance_groups/-
