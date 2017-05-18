@@ -899,7 +899,7 @@ jobs:
     params:
       GCP_JSON_KEY: {{mulan_gcp_json_key}}
       GCP_BUCKET: {{mulan_bosh_vars_bucket}}
-      GCP_PATH: *mulan_vars_store_path
+      GCP_PATH: bosh
   - task: updated-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
     input_mapping:
@@ -1016,7 +1016,7 @@ jobs:
     params:
       GCP_JSON_KEY: {{elsa_gcp_json_key}}
       GCP_BUCKET: {{elsa_bosh_vars_bucket}}
-      GCP_PATH: *elsa_vars_store_path
+      GCP_PATH: bosh
   - task: updated-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
     input_mapping:
@@ -1117,7 +1117,7 @@ jobs:
     params:
       GCP_JSON_KEY: {{kiki_gcp_json_key}}
       GCP_BUCKET: {{kiki_bosh_vars_bucket}}
-      GCP_PATH: *kiki_vars_store_path
+      GCP_PATH: bosh
   - task: updated-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
     input_mapping:
@@ -2144,7 +2144,7 @@ jobs:
     params:
       GCP_JSON_KEY: {{ripley_gcp_json_key}}
       GCP_BUCKET: {{ripley_bosh_vars_bucket}}
-      GCP_PATH: *ripley_vars_store_path
+      GCP_PATH: bosh
   - task: updated-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
     input_mapping:

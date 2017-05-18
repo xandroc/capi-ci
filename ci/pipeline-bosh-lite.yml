@@ -104,6 +104,7 @@ jobs:
                   GCP_JSON_KEY: {{bosh_lite_gcp_json_key}}
                   GCP_BUCKET: {{bosh_lite_storage_bucket}}
                   GCP_PATH: director-state
+                  USE_ENV_NAMED_SUBDIR: true
               - put: pool
                 params:
                   add: bosh-lite-env-info/
@@ -142,6 +143,7 @@ jobs:
           GCP_JSON_KEY: {{bosh_lite_gcp_json_key}}
           GCP_BUCKET: {{bosh_lite_storage_bucket}}
           GCP_PATH: director-state
+          USE_ENV_NAMED_SUBDIR: true
       - task: delete-bosh-lite
         file: capi-ci/ci/bosh-lite/scripts/delete-bosh-lite.yml
       - put: terraform
@@ -164,6 +166,7 @@ jobs:
           GCP_JSON_KEY: {{bosh_lite_gcp_json_key}}
           GCP_BUCKET: {{bosh_lite_storage_bucket}}
           GCP_PATH: director-state
+          USE_ENV_NAMED_SUBDIR: true
       - put: broken-pool
         params:
           remove: broken-pool/
