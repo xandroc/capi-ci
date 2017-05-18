@@ -25,10 +25,6 @@ groups:
   - rc-docs
   - update-checkman
   - deliver-stories
-- name: xena-deployments
-  jobs:
-  - deploy-xena-datadog-firehose-nozzle
-  - deploy-cf-mysql
 - name: bosh
   jobs:
   - clean-all-the-boshes
@@ -49,6 +45,8 @@ groups:
   - freshen-xena
   - freshen-wasabi
   - migration-backwards-compatibility-test
+  - deploy-xena-datadog-firehose-nozzle
+  - deploy-cf-mysql
 
 resource_types:
 - name: bosh-release
