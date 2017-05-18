@@ -892,6 +892,7 @@ jobs:
     params:
       CATS_INTEGRATION_CONFIG_FILE: "mulan/cats_integration_config.json"
       VARS_STORE_FILE: "vars-store.yml"
+      SYSTEM_DOMAIN: *mulan-domain
     ensure:
       put: mulan-integration-configs
       params:
@@ -1008,6 +1009,7 @@ jobs:
     params:
       CATS_INTEGRATION_CONFIG_FILE: "elsa/cats_integration_config.json"
       VARS_STORE_FILE: "vars-store.yml"
+      SYSTEM_DOMAIN: *elsa-domain
     ensure:
       put: elsa-integration-configs
       params:
@@ -1107,6 +1109,7 @@ jobs:
       integration-configs: kiki-integration-configs
     params:
       CATS_INTEGRATION_CONFIG_FILE: "kiki/cats_integration_config.json"
+      SYSTEM_DOMAIN: *kiki-domain
       VARS_STORE_FILE: "vars-store.yml"
     ensure:
       put: kiki-integration-configs
@@ -2190,6 +2193,7 @@ jobs:
     params:
       CATS_INTEGRATION_CONFIG_FILE: "ripley/cats_integration_config.json"
       VARS_STORE_FILE: "vars-store.yml"
+      SYSTEM_DOMAIN: *ripley-domain
     ensure:
       put: ripley-integration-configs
       params:
