@@ -1143,6 +1143,7 @@ jobs:
     params:
       SYSTEM_DOMAIN: "kiki.capi.cf-app.com"
       VARS_STORE_FILE: "vars-store.yml"
+  # TODO: grab the CATs that matches the tag from cf-deployment (#145699509)
   - task: cats-from-cf-release
     file: cats-concourse-task/cats-from-cf-release/task.yml
   - &run-kiki-tests
