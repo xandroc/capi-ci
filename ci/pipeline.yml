@@ -908,7 +908,7 @@ jobs:
     - task: acceptance-tests
       file: cats-concourse-task/task.yml
       input_mapping:
-        integration-config: mulan-integration-configs
+        integration-config: updated-integration-configs
       params:
         NODES: 6
         CONFIG_FILE_PATH: "mulan/cats_integration_config.json"
@@ -1024,7 +1024,7 @@ jobs:
     - task: acceptance-tests
       file: cats-concourse-task/task.yml
       input_mapping:
-        integration-config: elsa-integration-configs
+        integration-config: updated-integration-configs
       params:
         NODES: 6
         CONFIG_FILE_PATH: "elsa/cats_integration_config.json"
@@ -1128,7 +1128,7 @@ jobs:
     - task: acceptance-tests
       file: cats-concourse-task/task.yml
       input_mapping:
-        integration-config: kiki-integration-configs
+        integration-config: updated-integration-configs
       params:
         NODES: 6
         CONFIG_FILE_PATH: "kiki/cats_integration_config.json"
@@ -2145,7 +2145,7 @@ jobs:
   - task: acceptance-tests
     file: cats-concourse-task/task.yml
     input_mapping:
-      integration-config: ripley-integration-configs
+      integration-config: updated-integration-configs
     params:
       NODES: 6
       CONFIG_FILE_PATH: "ripley/cats_integration_config.json"
