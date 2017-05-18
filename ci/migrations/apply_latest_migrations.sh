@@ -103,8 +103,8 @@ run_migrations() {
     bundle install
 
     # proxychains forwards all TCP connections over the SSH SOCKS Proxy
-    proxychains -f "${proxychains_conf}" bundle exec rake db:migrate
-    proxychains -f "${proxychains_conf}" bundle exec rake db:ensure_migrations_are_current
+    proxychains4 -f "${proxychains_conf}" bundle exec rake db:migrate
+    proxychains4 -f "${proxychains_conf}" bundle exec rake db:ensure_migrations_are_current
   popd > /dev/null
 }
 
