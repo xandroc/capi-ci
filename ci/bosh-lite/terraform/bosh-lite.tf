@@ -9,17 +9,27 @@ variable "zone" {
   default = "us-west1-a"
 }
 variable "env_name" {}
-variable "system_domain_suffix" {}
-variable "dns_zone_name" {}
 variable "internal_cidr" {
   default = "10.0.0.0/16"
 }
+
+variable "dns_zone_name" {}
+variable "dns_json_key" {}
+variable "dns_project_id" {}
+variable "system_domain_suffix" {}
 
 # RESOURCES
 
 provider "google" {
   credentials = "${var.json_key}"
   project = "${var.project_id}"
+  region = "${var.region}"
+}
+
+provider "google" {
+  alias = "dns"
+  credentials = "${var.dns_json_key}"
+  project = "${var.dns_project_id}"
   region = "${var.region}"
 }
 
@@ -56,6 +66,7 @@ resource "google_compute_address" "default" {
 }
 
 resource "google_dns_record_set" "default" {
+  provider = "google.dns"
   name = "*.${var.env_name}.${var.system_domain_suffix}."
   type = "A"
   ttl = 300

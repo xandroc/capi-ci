@@ -68,11 +68,13 @@ jobs:
           generate_random_name: true
           delete_on_failure: true
           terraform_source: capi-ci/ci/bosh-lite/terraform/
-          vars:
+          vars: &terraform-vars
             project_id: {{bosh_lite_project_id}}
+            json_key: {{bosh_lite_gcp_json_key}}
+            dns_project_id: {{dns_gcp_project_id}}
+            dns_json_key: {{dns_gcp_json_key}}
             system_domain_suffix: {{bosh_lite_system_domain_suffix}}
             dns_zone_name: {{bosh_lite_dns_zone_name}}
-            json_key: {{bosh_lite_gcp_json_key}}
       - do:
           - task: create-bosh-lite
             file: capi-ci/ci/bosh-lite/scripts/create-bosh-lite.yml
@@ -117,11 +119,7 @@ jobs:
             action: destroy
             env_name_file: terraform/name
             terraform_source: capi-ci/ci/bosh-lite/terraform/
-            vars:
-              project_id: {{bosh_lite_project_id}}
-              system_domain_suffix: {{bosh_lite_system_domain_suffix}}
-              dns_zone_name: {{bosh_lite_dns_zone_name}}
-              json_key: {{bosh_lite_gcp_json_key}}
+            vars: *terraform-vars
           get_params:
             action: destroy
 
@@ -151,11 +149,7 @@ jobs:
           action: destroy
           env_name_file: broken-pool/name
           terraform_source: capi-ci/ci/bosh-lite/terraform/
-          vars:
-            project_id: {{bosh_lite_project_id}}
-            system_domain_suffix: {{bosh_lite_system_domain_suffix}}
-            dns_zone_name: {{bosh_lite_dns_zone_name}}
-            json_key: {{bosh_lite_gcp_json_key}}
+          vars: *terraform-vars
         get_params:
           action: destroy
       - task: delete-from-gcs
