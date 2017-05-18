@@ -739,7 +739,7 @@ jobs:
       passed: [bridge-unit-tests]
       trigger: true
   - task: bump-capi-release
-    file: capi-ci/ci/scripts/bump_capi_release_conditionally.yml
+    file: capi-ci/ci/scripts/bump_capi_release.yml
   - put: capi-release-develop
     params:
       repository: bumped/capi-release
