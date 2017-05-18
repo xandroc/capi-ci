@@ -1098,6 +1098,7 @@ jobs:
     - get: cats-concourse-task
     - get: cf-deployment
       resource: cf-deployment
+      trigger: true
     - get: capi-release
       resource: capi-release-develop
       passed: [create-capi-release]
@@ -1106,18 +1107,8 @@ jobs:
     - get: sync-integration-tests
     - get: capi-ci
     - get: capi-ci-private
-    - get: capi-release-tarball
-      passed: [create-capi-release]
-      trigger: true
     - get: cf-release
       resource: cf-release-master
-  - task: upload-capi-release-tarball
-    file: capi-ci/ci/scripts/upload-release.yml
-    input_mapping:
-      bbl-state: kiki-bbl-state
-      release-tarball: capi-release-tarball
-    params:
-      BBL_STATE_DIR: "kiki"
   - task: kiki-stemcell-upload
     file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
     input_mapping:
@@ -1172,20 +1163,21 @@ jobs:
       params:
         NODES: 6
         CONFIG_FILE_PATH: "kiki/cats_integration_config.json"
-    - task: sync-integration-tests
-      file: sync-integration-tests/concourse/task_with_vars_store.yml
-      input_mapping:
-        environment: capi-ci-private
-        vars-store: kiki-deployment-vars
-      params:
-        BOSH_DEPLOYMENT_NAME: cf
-        BOSH_API_INSTANCE: api/0
-        CF_API_TARGET: https://api.kiki.capi.cf-app.com
-        CF_SKIP_SSL_VALIDATION: true
-        CF_APPS_DOMAIN: kiki.capi.cf-app.com
-        BBL_STATE_DIR: kiki
-        VARS_STORE_PATH: "vars-store.yml"
-        USE_CF_DEPLOYMENT_VARS: "true"
+    # TODO: re-add SITs after next capi-release (#145656693)
+    # - task: sync-integration-tests
+    #   file: sync-integration-tests/concourse/task_with_vars_store.yml
+    #   input_mapping:
+    #     environment: capi-ci-private
+    #     vars-store: kiki-deployment-vars
+    #   params:
+    #     BOSH_DEPLOYMENT_NAME: cf
+    #     BOSH_API_INSTANCE: api/0
+    #     CF_API_TARGET: https://api.kiki.capi.cf-app.com
+    #     CF_SKIP_SSL_VALIDATION: true
+    #     CF_APPS_DOMAIN: kiki.capi.cf-app.com
+    #     BBL_STATE_DIR: kiki
+    #     VARS_STORE_PATH: "vars-store.yml"
+    #     USE_CF_DEPLOYMENT_VARS: "true"
   - task: apply-cc-migrations
     file: capi-ci/ci/migrations/apply_latest_migrations.yml
   - *run-kiki-tests
