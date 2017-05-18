@@ -4,7 +4,6 @@ groups:
   - cc-unit-tests
   - bridge-unit-tests
   - create-capi-release
-  - migration-backwards-compatibility-test
   - bump-capi-release
   - deploy-and-test-mulan
   - deploy-and-test-elsa
@@ -49,6 +48,7 @@ groups:
   - freshen-buffy
   - freshen-xena
   - freshen-wasabi
+  - migration-backwards-compatibility-test
 
 resource_types:
 - name: bosh-release
@@ -315,14 +315,6 @@ resources:
     branch: pivotal-sqlserversupport
     private_key: {{private_key}}
     uri: git@github.com:cloudfoundry/cloud_controller_ng.git
-
-- name: cloud_controller_ng-master-migrations
-  type: git
-  source:
-    branch: master
-    private_key: {{private_key}}
-    uri: git@github.com:cloudfoundry/cloud_controller_ng.git
-    paths: ['db']
 
 - name: concourse-config
   type: git
@@ -728,9 +720,6 @@ jobs:
     - get: capi-release
       resource: capi-release-develop
       trigger: true
-    - get: cloud_controller_ng-master-migrations
-      passed: [migration-backwards-compatibility-test]
-      trigger: true
     - get: cloud_controller_ng
       passed: [cc-unit-tests]
       trigger: true
@@ -1091,17 +1080,11 @@ jobs:
   plan:
   - aggregate:
     - get: cloud_controller_ng
-      resource: cloud_controller_ng-master-migrations
-      trigger: true
     - get: cf-deployment-concourse-tasks
       resource: cf-deployment-concourse-tasks-v2
     - get: cats-concourse-task
     - get: cf-deployment
       resource: cf-deployment
-      trigger: true
-    - get: capi-release
-      resource: capi-release-develop
-      passed: [create-capi-release]
     - get: kiki-bbl-state
     - get: kiki-integration-configs
     - get: sync-integration-tests
@@ -1109,6 +1092,12 @@ jobs:
     - get: capi-ci-private
     - get: cf-release
       resource: cf-release-master
+    - get: capi-release
+      resource: capi-release-develop
+      passed: [create-capi-release]
+    - get: capi-release-tarball
+      passed: [create-capi-release]
+      trigger: true
   - task: kiki-stemcell-upload
     file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
     input_mapping:
@@ -1514,15 +1503,12 @@ jobs:
         tarball: true
     - get: cf-release
       resource: cf-release-master
-      trigger: true
     - get: capi-ci
     - get: capi-ci-private
     - get: aws-stemcell
       version:
         version: "3363.15" # new stemcell versions break dea support
     - get: cloud_controller_ng
-      resource: cloud_controller_ng-master-migrations
-      trigger: true
   - task: manifest
     privileged: true
     file: capi-ci/ci/scripts/create_cf_deployment_manifest.yml
@@ -1738,7 +1724,7 @@ jobs:
     - task: update-checkman
       file: capi-ci/ci/scripts/update_checkman.yml
       params:
-        IGNORED_JOBS: "freshen-buffy freshen-xena freshen-wasabi deploy-and-test-mysql-s3-bbs deploy-and-test-postgres-webdave-bridge deploy-and-test-ripley"
+        IGNORED_JOBS: "freshen-buffy freshen-xena freshen-wasabi migration-backwards-compatibility-test deploy-and-test-mysql-s3-bbs deploy-and-test-postgres-webdave-bridge deploy-and-test-ripley"
       on_success:
         put: slack-alert
         params:
@@ -2067,11 +2053,13 @@ jobs:
     passed:
       - deploy-and-test-elsa
       - deploy-and-test-mulan
+      - deploy-and-test-kiki
     trigger: true
   - get: capi-release-tarball
     passed:
       - deploy-and-test-elsa
       - deploy-and-test-mulan
+      - deploy-and-test-kiki
   - put: capi-release-ci-passed
     params:
       repository: capi-release
