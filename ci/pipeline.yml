@@ -1820,7 +1820,7 @@ jobs:
     - task: freshen-mulan
       file: cf-deployment-concourse-tasks/bbl-up/task.yml
       input_mapping:
-        bbl-state: mulan-bbl-state
+        bbl-state: updated-capi-ci-private
       params:
         BBL_STATE_DIR: "mulan"
         BBL_IAAS: "gcp"
@@ -1850,7 +1850,7 @@ jobs:
     - task: run-bosh-cleanup
       file: capi-ci/ci/bbl-tasks/run-bosh-cleanup.yml
       input_mapping:
-        bbl-state: mulan-bbl-state
+        bbl-state: updated-bbl-state
       params:
         BBL_STATE_DIR: "mulan"
 
@@ -1877,7 +1877,7 @@ jobs:
     - task: freshen-elsa
       file: cf-deployment-concourse-tasks/bbl-up/task.yml
       input_mapping:
-        bbl-state: elsa-bbl-state
+        bbl-state: updated-capi-ci-private
       params:
         BBL_STATE_DIR: "elsa"
         BBL_IAAS: "gcp"
@@ -1907,7 +1907,7 @@ jobs:
     - task: run-bosh-cleanup
       file: capi-ci/ci/bbl-tasks/run-bosh-cleanup.yml
       input_mapping:
-        bbl-state: elsa-bbl-state
+        bbl-state: updated-bbl-state
       params:
         BBL_STATE_DIR: "elsa"
 
@@ -1989,7 +1989,7 @@ jobs:
     - task: freshen-ripley
       file: cf-deployment-concourse-tasks/bbl-up/task.yml
       input_mapping:
-        bbl-state: ripley-bbl-state
+        bbl-state: updated-capi-ci-private
       params:
         BBL_STATE_DIR: "ripley"
         BBL_IAAS: "gcp"
