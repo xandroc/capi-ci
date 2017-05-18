@@ -62,7 +62,6 @@ write_proxychains_config() {
 
   cat << EOF > "${proxychains_conf}"
 strict_chain
-quiet_mode
 proxy_dns
 tcp_read_time_out 15000
 tcp_connect_time_out 8000
