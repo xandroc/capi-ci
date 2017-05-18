@@ -862,7 +862,7 @@ jobs:
       source_file: environment/metadata
       manifest: cf-deployment/cf-deployment.yml
       vars:
-        system_domain: "mulan.cf-app.com"
+        system_domain: *mulan-domain
         prometheus_password: {{prometheus_password}}
       vars_files:
       - environment/metadata # used by prometheus bosh exporter
@@ -902,7 +902,7 @@ jobs:
     input_mapping:
       vars-store: mulan-deployment-vars
     params:
-      SYSTEM_DOMAIN: "mulan.cf-app.com"
+      SYSTEM_DOMAIN: *mulan-domain
       VARS_STORE_FILE: "vars-store.yml"
   - aggregate:
     - task: acceptance-tests
@@ -920,9 +920,9 @@ jobs:
       params:
         BOSH_DEPLOYMENT_NAME: cf
         BOSH_API_INSTANCE: api/0
-        CF_API_TARGET: https://api.mulan.cf-app.com
+        CF_API_TARGET: https://api.mulan.capi.land
         CF_SKIP_SSL_VALIDATION: true
-        CF_APPS_DOMAIN: mulan.cf-app.com
+        CF_APPS_DOMAIN: *mulan-domain
         BBL_STATE_DIR: mulan
         VARS_STORE_PATH: "vars-store.yml"
         USE_CF_DEPLOYMENT_VARS: "true"
@@ -979,7 +979,7 @@ jobs:
       source_file: environment/metadata
       manifest: cf-deployment/cf-deployment.yml
       vars:
-        system_domain: "elsa.cf-app.com"
+        system_domain: *elsa-domain
         datadog_api_key: {{elsa_datadog_api_key}}
         datadog_metric_prefix: "datadog.nozzle."
       vars_files:
@@ -1018,7 +1018,7 @@ jobs:
     input_mapping:
       vars-store: elsa-deployment-vars
     params:
-      SYSTEM_DOMAIN: "elsa.cf-app.com"
+      SYSTEM_DOMAIN: *elsa-domain
       VARS_STORE_FILE: "vars-store.yml"
   - aggregate:
     - task: acceptance-tests
@@ -1036,9 +1036,9 @@ jobs:
       params:
         BOSH_DEPLOYMENT_NAME: cf
         BOSH_API_INSTANCE: api/0
-        CF_API_TARGET: https://api.elsa.cf-app.com
+        CF_API_TARGET: https://api.elsa.capi.land
         CF_SKIP_SSL_VALIDATION: true
-        CF_APPS_DOMAIN: elsa.cf-app.com
+        CF_APPS_DOMAIN: *elsa-domain
         BBL_STATE_DIR: elsa
         VARS_STORE_PATH: "vars-store.yml"
         USE_CF_DEPLOYMENT_VARS: "true"
@@ -1807,6 +1807,15 @@ jobs:
       - get: mulan-bbl-state
       - get: capi-ci
       - get: weekly-sunday
+    - task: seed-capi-ci-private
+      file: capi-ci/ci/setup-environment/seed.yml
+      params:
+        ENVIRONMENT: mulan
+        DOMAIN: &mulan-domain "mulan.capi.land"
+    - put: capi-ci-private
+      params:
+        repository: updated-capi-ci-private
+        rebase: true
     - task: freshen-mulan
       file: cf-deployment-concourse-tasks/bbl-up/task.yml
       input_mapping:
@@ -1816,7 +1825,7 @@ jobs:
         BBL_IAAS: "gcp"
         BBL_LB_CERT: "certs/load-balancer/server.crt"
         BBL_LB_KEY: "certs/load-balancer/server.key"
-        LB_DOMAIN: "mulan.cf-app.com"
+        LB_DOMAIN: *mulan-domain
         BBL_ENV_NAME: "mulan"
         BBL_GCP_SERVICE_ACCOUNT_KEY: {{mulan_gcp_json_key}}
         BBL_GCP_PROJECT_ID: {{mulan_gcp_project_id}}
@@ -1827,6 +1836,16 @@ jobs:
         params:
           repository: updated-bbl-state
           rebase: true
+    - task: create-dns-record
+      file: capi-ci/ci/bbl-tasks/create-dns-record.yml
+      input_mapping:
+       bbl-state: updated-bbl-state
+      params:
+        BBL_STATE_DIR: "mulan"
+        DNS_DOMAIN: *mulan-domain
+        GCP_DNS_SERVICE_ACCOUNT_KEY: {{dns_gcp_json_key}}
+        GCP_PROJECT_ID: {{dns_gcp_project_id}}
+        SHARED_DNS_ZONE_NAME: "capi-land"
     - task: run-bosh-cleanup
       file: capi-ci/ci/bbl-tasks/run-bosh-cleanup.yml
       input_mapping:
@@ -1844,6 +1863,15 @@ jobs:
       - get: capi-ci
       - get: weekly-sunday
         trigger: true
+    - task: seed-capi-ci-private
+      file: capi-ci/ci/setup-environment/seed.yml
+      params:
+        ENVIRONMENT: elsa
+        DOMAIN:   &elsa-domain "elsa.capi.land"
+    - put: capi-ci-private
+      params:
+        repository: updated-capi-ci-private
+        rebase: true
     - task: freshen-elsa
       file: cf-deployment-concourse-tasks/bbl-up/task.yml
       input_mapping:
@@ -1853,7 +1881,7 @@ jobs:
         BBL_IAAS: "gcp"
         BBL_LB_CERT: "certs/load-balancer/server.crt"
         BBL_LB_KEY: "certs/load-balancer/server.key"
-        LB_DOMAIN: "elsa.cf-app.com"
+        LB_DOMAIN: *elsa-domain
         BBL_ENV_NAME: "elsa"
         BBL_GCP_SERVICE_ACCOUNT_KEY: {{elsa_gcp_json_key}}
         BBL_GCP_PROJECT_ID: {{elsa_gcp_project_id}}
@@ -1864,6 +1892,16 @@ jobs:
         params:
           repository: updated-bbl-state
           rebase: true
+    - task: create-dns-record
+      file: capi-ci/ci/bbl-tasks/create-dns-record.yml
+      input_mapping:
+       bbl-state: updated-bbl-state
+      params:
+        BBL_STATE_DIR: "elsa"
+        DNS_DOMAIN: *elsa-domain
+        GCP_DNS_SERVICE_ACCOUNT_KEY: {{dns_gcp_json_key}}
+        GCP_PROJECT_ID: {{dns_gcp_project_id}}
+        SHARED_DNS_ZONE_NAME: "capi-land"
     - task: run-bosh-cleanup
       file: capi-ci/ci/bbl-tasks/run-bosh-cleanup.yml
       input_mapping:
@@ -1936,6 +1974,15 @@ jobs:
       - get: ripley-bbl-state
       - get: capi-ci
       - get: weekly-sunday
+    - task: seed-capi-ci-private
+      file: capi-ci/ci/setup-environment/seed.yml
+      params:
+        ENVIRONMENT: ripley
+        DOMAIN: &ripley-domain "ripley.capi.land"
+    - put: capi-ci-private
+      params:
+        repository: updated-capi-ci-private
+        rebase: true
     - task: freshen-ripley
       file: cf-deployment-concourse-tasks/bbl-up/task.yml
       input_mapping:
@@ -1945,7 +1992,7 @@ jobs:
         BBL_IAAS: "gcp"
         BBL_LB_CERT: "certs/load-balancer/server.crt"
         BBL_LB_KEY: "certs/load-balancer/server.key"
-        LB_DOMAIN: "ripley.cf-app.com"
+        LB_DOMAIN: *ripley-domain
         BBL_ENV_NAME: "ripley"
         BBL_GCP_SERVICE_ACCOUNT_KEY: {{ripley_gcp_json_key}}
         BBL_GCP_PROJECT_ID: {{ripley_gcp_project_id}}
@@ -1956,6 +2003,16 @@ jobs:
         params:
           repository: updated-bbl-state
           rebase: true
+    - task: create-dns-record
+      file: capi-ci/ci/bbl-tasks/create-dns-record.yml
+      input_mapping:
+        bbl-state: updated-bbl-state
+      params:
+        BBL_STATE_DIR: "ripley"
+        DNS_DOMAIN: *ripley-domain
+        GCP_DNS_SERVICE_ACCOUNT_KEY: {{dns_gcp_json_key}}
+        GCP_PROJECT_ID: {{dns_gcp_project_id}}
+        SHARED_DNS_ZONE_NAME: "capi-land"
     - task: run-bosh-cleanup
       file: capi-ci/ci/bbl-tasks/run-bosh-cleanup.yml
       input_mapping:
@@ -2105,7 +2162,7 @@ jobs:
       releases:
       - created-capi-release/*.tgz
       vars:
-        system_domain: ripley.cf-app.com
+        system_domain: *ripley-domain
       vars_files:
       - azure-terraform/metadata
       ops_files:
@@ -2140,7 +2197,7 @@ jobs:
     input_mapping:
       vars-store: ripley-deployment-vars
     params:
-      SYSTEM_DOMAIN: "ripley.cf-app.com"
+      SYSTEM_DOMAIN: *ripley-domain
       VARS_STORE_FILE: "vars-store.yml"
   - task: acceptance-tests
     file: cats-concourse-task/task.yml
