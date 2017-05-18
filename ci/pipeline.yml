@@ -1115,7 +1115,7 @@ jobs:
       source_file: bbl-vars/bbl-vars.json
       manifest: cf-deployment/cf-deployment.yml
       vars:
-        system_domain: "kiki.capi.cf-app.com"
+        system_domain: *kiki-domain
       ops_files:
       - cf-deployment/operations/test/add-persistent-isolation-segment-diego-cell.yml
       - capi-ci/cf-deployment-operations/skip-cert-verify.yml
@@ -1141,7 +1141,7 @@ jobs:
     input_mapping:
       vars-store: kiki-deployment-vars
     params:
-      SYSTEM_DOMAIN: "kiki.capi.cf-app.com"
+      SYSTEM_DOMAIN: *kiki-domain
       VARS_STORE_FILE: "vars-store.yml"
   # TODO: grab the CATs that matches the tag from cf-deployment (#145699509)
   - task: cats-from-cf-release
@@ -1164,9 +1164,9 @@ jobs:
     #   params:
     #     BOSH_DEPLOYMENT_NAME: cf
     #     BOSH_API_INSTANCE: api/0
-    #     CF_API_TARGET: https://api.kiki.capi.cf-app.com
+    #     CF_API_TARGET: https://api.kiki.capi.land
     #     CF_SKIP_SSL_VALIDATION: true
-    #     CF_APPS_DOMAIN: kiki.capi.cf-app.com
+    #     CF_APPS_DOMAIN: *kiki-domain
     #     BBL_STATE_DIR: kiki
     #     VARS_STORE_PATH: "vars-store.yml"
     #     USE_CF_DEPLOYMENT_VARS: "true"
@@ -1912,7 +1912,7 @@ jobs:
       file: capi-ci/ci/setup-environment/seed.yml
       params:
         ENVIRONMENT: kiki
-        DOMAIN: "kiki.capi.cf-app.com"
+        DOMAIN: &kiki-domain "kiki.capi.land"
     - put: capi-ci-private
       params:
         repository: updated-capi-ci-private
@@ -1926,7 +1926,7 @@ jobs:
         BBL_IAAS: "gcp"
         BBL_LB_CERT: "certs/load-balancer/server.crt"
         BBL_LB_KEY: "certs/load-balancer/server.key"
-        LB_DOMAIN: "kiki.capi.cf-app.com"
+        LB_DOMAIN: *kiki-domain
         BBL_ENV_NAME: "kiki"
         BBL_GCP_SERVICE_ACCOUNT_KEY: {{kiki_gcp_json_key}}
         BBL_GCP_PROJECT_ID: {{kiki_gcp_project_id}}
@@ -1943,10 +1943,10 @@ jobs:
         bbl-state: updated-bbl-state
       params:
         BBL_STATE_DIR: "kiki"
-        DNS_DOMAIN: "kiki.capi.cf-app.com"
+        DNS_DOMAIN: *kiki-domain
         GCP_DNS_SERVICE_ACCOUNT_KEY: {{dns_gcp_json_key}}
         GCP_PROJECT_ID: {{dns_gcp_project_id}}
-        SHARED_DNS_ZONE_NAME: "capi"
+        SHARED_DNS_ZONE_NAME: "capi-land"
     - task: run-bosh-cleanup
       file: capi-ci/ci/bbl-tasks/run-bosh-cleanup.yml
       input_mapping:
