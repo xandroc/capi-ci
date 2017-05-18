@@ -5,7 +5,7 @@ set -eu
 # INPUTS
 
 script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-workspace_dir="$( cd "${script_dir}/../../../../" && pwd )"
+workspace_dir="$( cd "${script_dir}/../../../" && pwd )"
 environment="$( cat "${workspace_dir}/environment/name" )"
 
 : ${GCP_JSON_KEY:?}
