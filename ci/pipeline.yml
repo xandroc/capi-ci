@@ -27,7 +27,6 @@ groups:
   - deliver-stories
 - name: bosh
   jobs:
-  - clean-all-the-boshes
   - freshen-arya
   - freshen-mulan
   - freshen-elsa
@@ -37,16 +36,6 @@ groups:
   - freshen-ripley
   - mssql-unit-tests
   - deploy-and-test-ripley
-- name: aws-graveyard
-  jobs:
-  - deploy-and-test-mysql-s3-bbs
-  - deploy-and-test-postgres-webdave-bridge
-  - freshen-buffy
-  - freshen-xena
-  - freshen-wasabi
-  - migration-backwards-compatibility-test
-  - deploy-xena-datadog-firehose-nozzle
-  - deploy-cf-mysql
 
 resource_types:
 - name: bosh-release
@@ -85,24 +74,12 @@ resources:
     stop: 23:30
     days: [Sunday]
 
-- name: daily
-  type: time
-  source:
-    location: America/Los_Angeles
-    start: 23:00
-    stop: 23:30
-
 - name: deliver-capi-stories
   type: tracker
   source:
     token: {{deliver_capi_tracker_token}}
     project_id: '966314'
     tracker_url: https://www.pivotaltracker.com
-
-- name: aws-stemcell
-  type: bosh-io-stemcell
-  source:
-    name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
 
 - name: gcp-stemcell
   type: bosh-io-stemcell
@@ -228,11 +205,6 @@ resources:
     private_key: {{private_key}}
     uri: git@github.com:cloudfoundry/cf-release.git
 
-- name: cf-release-final
-  type: bosh-io-release
-  source:
-    repository: cloudfoundry/cf-release
-
 - name: github-release
   type: github-release
   source:
@@ -241,41 +213,12 @@ resources:
     drafts: true
     access_token: {{github_access_token}}
 
-- name: cf-mysql-release
-  type: git
-  source:
-    branch: master
-    private_key: {{private_key}}
-    uri: git@github.com:cloudfoundry/cf-mysql-release.git
-
 - name: cf-release-master
   type: git
   source:
     branch: master
     private_key: {{private_key}}
     uri: git@github.com:cloudfoundry/cf-release.git
-
-- name: cf-release-tarball
-  type: s3
-  source:
-    bucket: cf-runtime-releases
-    regexp: cf-(\d+)-.*.tgz
-    access_key_id: {{cf_runtime_releases_s3_access_key}}
-    secret_access_key: {{cf_runtime_releases_s3_secret_key}}
-
-- name: cf-wasabi-deployment
-  type: bosh-deployment
-  source:
-    target: bosh.wasabi.cf-app.com:25555
-    username: {{wasabi_bosh_user}}
-    password: {{wasabi_bosh_password}}
-    deployment: cf-wasabi
-    ignore_ssl: true
-
-- name: cflinuxfs2-rootfs-tarball
-  type: bosh-io-release
-  source:
-    repository: cloudfoundry/cflinuxfs2-rootfs-release
 
 - name: cloud_controller_ng
   type: git
@@ -301,45 +244,12 @@ resources:
     private_key: {{private_key}}
     uri: git@github.com:cloudfoundry/capi-ci-private.git
 
-- name: datadog-firehose-nozzle-release
-  type: git
-  source:
-    branch: master
-    private_key: {{private_key}}
-    uri: git@github.com:cloudfoundry-incubator/datadog-firehose-nozzle-release.git
-
-- name: datadog-firehose-nozzle-release-final
-  type: bosh-io-release
-  source:
-    repository: cloudfoundry-incubator/datadog-firehose-nozzle-release
-
-- name: diego-ci
-  type: git
-  source:
-    private_key: {{private_key}}
-    uri: git@github.com:cloudfoundry-incubator/diego-ci
-
 - name: diego-release
   type: git
   source:
     branch: master
     private_key: {{private_key}}
     uri: git@github.com:cloudfoundry/diego-release.git
-
-- name: diego-release-tarball
-  type: bosh-io-release
-  source:
-    repository: cloudfoundry/diego-release
-
-- name: cf-mysql-release-tarball
-  type: bosh-io-release
-  source:
-    repository: cloudfoundry/cf-mysql-release
-
-- name: garden-runc-release-tarball
-  type: bosh-io-release
-  source:
-    repository: cloudfoundry/garden-runc-release
 
 - name: nsync
   type: git
@@ -373,110 +283,6 @@ resources:
     branch: master
     private_key: {{private_key}}
     uri: git@github.com:cloudfoundry/tps.git
-
-- name: buffy-acceptance-tests-logs
-  type: s3
-  source:
-    private: true
-    bucket: buffy-acceptance-tests-logs
-    regexp: acceptance_tests.(0)..*.tgz
-    access_key_id: {{wasabi_ci_artifacts_s3_access_key}}
-    secret_access_key: {{wasabi_ci_artifacts_s3_secret_key}}
-
-- name: buffy-deployment
-  type: bosh-deployment
-  source:
-    target: https://bosh.buffy.cf-app.com:25555
-    username: {{buffy_bosh_user}}
-    password: {{buffy_bosh_password}}
-    deployment: cf-buffy
-    ignore_ssl: true
-
-- name: buffy-diego-deployment
-  type: bosh-deployment
-  source:
-    target: https://bosh.buffy.cf-app.com:25555
-    username: {{buffy_bosh_user}}
-    password: {{buffy_bosh_password}}
-    deployment: cf-buffy-diego
-    ignore_ssl: true
-
-- name: buffy-stemcell-upload
-  type: bosh-stemcell
-  source:
-    target: https://bosh.buffy.cf-app.com:25555
-    username: {{buffy_bosh_user}}
-    password: {{buffy_bosh_password}}
-    ignore_ssl: true
-
-- name: buffy-release-upload
-  type: bosh-release
-  source:
-    target: https://bosh.buffy.cf-app.com:25555
-    username: {{buffy_bosh_user}}
-    password: {{buffy_bosh_password}}
-    ignore_ssl: true
-
-- name: xena-acceptance-tests-logs
-  type: s3
-  source:
-    private: true
-    bucket: xena-acceptance-tests-logs
-    regexp: acceptance_tests.(0)..*.tgz
-    access_key_id: {{wasabi_ci_artifacts_s3_access_key}}
-    secret_access_key: {{wasabi_ci_artifacts_s3_secret_key}}
-
-- name: xena-datadog-firehose-nozzle-deployment
-  type: bosh-deployment
-  source:
-    target: https://bosh.xena.cf-app.com:25555
-    username: {{xena_bosh_user}}
-    password: {{xena_bosh_password}}
-    deployment: datadog-firehose-nozzle
-    ignore_ssl: true
-
-- name: xena-deployment
-  type: bosh-deployment
-  source:
-    target: https://bosh.xena.cf-app.com:25555
-    username: {{xena_bosh_user}}
-    password: {{xena_bosh_password}}
-    deployment: cf-xena
-    ignore_ssl: true
-
-- name: xena-mysql-deployment
-  type: bosh-deployment
-  source:
-    target: https://bosh.xena.cf-app.com:25555
-    username: {{xena_bosh_user}}
-    password: {{xena_bosh_password}}
-    deployment: cf-xena-mysql
-    ignore_ssl: true
-
-- name: xena-stemcell-upload
-  type: bosh-stemcell
-  source:
-    target: https://bosh.xena.cf-app.com:25555
-    username: {{xena_bosh_user}}
-    password: {{xena_bosh_password}}
-    ignore_ssl: true
-
-- name: xena-release-upload
-  type: bosh-release
-  source:
-    target: https://bosh.xena.cf-app.com:25555
-    username: {{xena_bosh_user}}
-    password: {{xena_bosh_password}}
-    ignore_ssl: true
-
-- name: xena-diego-deployment
-  type: bosh-deployment
-  source:
-    target: https://bosh.xena.cf-app.com:25555
-    username: {{xena_bosh_user}}
-    password: {{xena_bosh_password}}
-    deployment: cf-xena-diego
-    ignore_ssl: true
 
 - name: cf-deployment
   type: git
@@ -762,61 +568,6 @@ jobs:
       put: slack-alert
       params:
         text: '[create-capi-release] OH NO! Failed to upload tarball'
-        icon_emoji: {{slack_failure_emoji}}
-
-- name: deploy-cf-mysql
-  serial: true
-  serial_groups: [deploy-xena-cf-mysql]
-  plan:
-  - aggregate:
-    - get: weekly-sunday
-      trigger: true
-    - get: cf-release
-      resource: cf-release-develop
-    - get: cf-mysql-release
-    - get: cf-mysql-release-tarball
-    - get: capi-ci
-    - get: capi-ci-private
-    - get: aws-stemcell
-  - task: generate-cf-manifest
-    privileged: true
-    file: capi-ci/ci/scripts/create_cf_deployment_manifest.yml
-    params:
-      INFRASTRUCTURE: aws
-      ENVIRONMENT: xena
-  - task: make-manifest
-    config:
-      platform: linux
-      image_resource:
-        type: docker-image
-        source:
-          repository: cloudfoundry/capi
-          tag: runtime-ci
-      inputs:
-      - name: generated-manifest
-        path: cf-manifest
-      - name: cf-mysql-release
-      - name: capi-ci
-      - name: capi-ci-private
-      outputs:
-      - name: generated-manifest
-      params:
-        ENV: xena
-        BOSH_DIRECTOR: https://bosh.xena.cf-app.com:25555
-        BOSH_USER: {{xena_bosh_user}}
-        BOSH_PASSWORD: {{xena_bosh_password}}
-      run:
-        path: capi-ci/ci/scripts/create_cf_mysql_deployment_manifest
-  - put: xena-mysql-deployment
-    params:
-      manifest: generated-manifest/deployment.yml
-      stemcells: [aws-stemcell/*.tgz]
-      releases:
-        - cf-mysql-release-tarball/*.tgz
-    on_failure:
-      put: slack-alert
-      params:
-        text: '[deploy-cf-mysql] OH NO! Failed deploying cf-mysql-release to xena'
         icon_emoji: {{slack_failure_emoji}}
 
 - name: deploy-and-test-mulan
@@ -1160,240 +911,6 @@ jobs:
     params:
       BOSH_ARGS: "delete-deployment -d cf"
 
-- name: deploy-and-test-mysql-s3-bbs
-  serial: true
-  serial_groups: [deploy-xena-cf]
-  plan:
-  - aggregate:
-    - get: cf-release-tarball
-    - get: capi-release-tarball
-      passed: [create-capi-release]
-    - get: capi-release
-      resource: capi-release-develop
-      passed: [create-capi-release]
-    - get: capi-ci
-    - get: capi-ci-private
-    - get: aws-stemcell
-    - get: cf-release
-      resource: cf-release-develop
-    - get: diego-ci
-    - get: diego-release
-      params:
-        submodules: none
-    - get: garden-runc-release-tarball
-    - get: diego-release-tarball
-    - get: cflinuxfs2-rootfs-tarball
-    - get: sync-integration-tests
-  - task: cf-manifest
-    privileged: true
-    file: capi-ci/ci/scripts/create_cf_deployment_manifest.yml
-    params:
-      INFRASTRUCTURE: aws
-      ENVIRONMENT: xena
-  - task: diego-manifest
-    file: capi-ci/ci/scripts/create_diego_release_manifest.yml
-    params:
-      BOSH_TARGET: bosh.xena.cf-app.com
-      BOSH_USER: {{xena_bosh_user}}
-      BOSH_PASSWORD: {{xena_bosh_password}}
-      DEPLOYMENTS_DIR: capi-ci-private
-      ENVIRONMENT_NAME: xena
-      INCLUDE_BRIDGE: false
-  - aggregate:
-    - put: xena-stemcell-upload
-      params:
-        stemcells:
-          - aws-stemcell/*.tgz
-    - put: upload-cf-release-tarball
-      resource: xena-release-upload
-      params:
-        releases:
-          - cf-release-tarball/*.tgz
-    - put: upload-release-tarballs
-      resource: xena-release-upload
-      params:
-        releases:
-          - capi-release-tarball/*.tgz
-          - diego-release-tarball/*.tgz
-          - garden-runc-release-tarball/*.tgz
-          - cflinuxfs2-rootfs-tarball/*.tgz
-  - put: xena-deployment
-    params:
-      manifest: generated-manifest/deployment.yml
-      stemcells: [aws-stemcell/*.tgz]
-      releases:
-        - cf-release-tarball/*.tgz
-        - capi-release-tarball/*.tgz
-    on_failure:
-      put: slack-alert
-      params:
-        text: '[deploy-and-test-mysql-s3-bbs] OH NO! Failed deploying cf-release to xena'
-        icon_emoji: {{slack_failure_emoji}}
-  - put: xena-diego-deployment
-    params:
-      manifest: generated-diego-manifest/diego-deployment.yml
-      releases:
-        - diego-release-tarball/*.tgz
-        - garden-runc-release-tarball/*.tgz
-        - cflinuxfs2-rootfs-tarball/*.tgz
-      stemcells: [aws-stemcell/*.tgz]
-    on_failure:
-      put: slack-alert
-      params:
-        text: '[deploy-and-test-mysql-s3-bbs] OH NO! Failed deploying diego to xena'
-        icon_emoji: {{slack_failure_emoji}}
-  - task: enable-feature-flags
-    file: capi-ci/ci/scripts/enable_feature_flags.yml
-    params:
-      CF_API_TARGET: https://api.xena.cf-app.com
-      CF_ADMIN_PASSWORD: {{xena_cf_admin_password}}
-  - aggregate:
-    - task: acceptance-tests
-      privileged: true
-      file: capi-ci/ci/scripts/run_bosh_command.yml
-      input_mapping: {manifest: generated-manifest}
-      params:
-        <<: *bosh-target-xena
-        DEPLOYMENT_YML: manifest/deployment.yml
-        COMMAND: 'run errand acceptance_tests --keep-alive --download-logs --logs-dir bosh-logs'
-      ensure:
-        put: xena-acceptance-tests-logs
-        params:
-          file: bosh-logs/acceptance_tests*.tgz
-    - task: sync-integration-tests
-      file: sync-integration-tests/concourse/task.yml
-      input_mapping: {environment: capi-ci-private}
-      params:
-        BOSH_DEPLOYMENT_NAME: cf-xena
-        BOSH_API_INSTANCE: api_z1/0
-        CF_API_TARGET: https://api.xena.cf-app.com
-        CF_ADMIN_PASSWORD: {{xena_cf_admin_password}}
-        CF_SKIP_SSL_VALIDATION: true
-        CF_APPS_DOMAIN: xena-app.cf-app.com
-        BBL_STATE_DIR: xena
-    on_failure:
-      put: slack-alert
-      params:
-        text: '[deploy-and-test-mysql-s3-bbs] OH NO! Failed on acceptance-tests'
-        icon_emoji: {{slack_failure_emoji}}
-
-- name: deploy-and-test-postgres-webdave-bridge
-  serial: true
-  serial_groups: [deploy-buffy-cf]
-  plan:
-  - aggregate:
-    - get: cf-release-tarball
-    - get: capi-release-tarball
-      passed: [create-capi-release]
-    - get: capi-release
-      resource: capi-release-develop
-      passed: [create-capi-release]
-    - get: capi-ci
-    - get: capi-ci-private
-    - get: aws-stemcell
-    - get: cf-release
-      resource: cf-release-develop
-    - get: diego-ci
-    - get: diego-release
-      params:
-        submodules: none
-    - get: garden-runc-release-tarball
-    - get: diego-release-tarball
-    - get: cflinuxfs2-rootfs-tarball
-    - get: sync-integration-tests
-  - task: cf-manifest
-    privileged: true
-    file: capi-ci/ci/scripts/create_cf_deployment_manifest.yml
-    params:
-      INFRASTRUCTURE: aws
-      ENVIRONMENT: buffy
-  - task: diego-manifest
-    file: capi-ci/ci/scripts/create_diego_release_manifest.yml
-    params:
-      BOSH_TARGET: bosh.buffy.cf-app.com
-      BOSH_USER: {{buffy_bosh_user}}
-      BOSH_PASSWORD: {{buffy_bosh_password}}
-      DEPLOYMENTS_DIR: capi-ci-private
-      ENVIRONMENT_NAME: buffy
-      INCLUDE_BRIDGE: true
-  - aggregate:
-    - put: buffy-stemcell-upload
-      params:
-        stemcells:
-          - aws-stemcell/*.tgz
-    - put: upload-cf-release-tarball
-      resource: buffy-release-upload
-      params:
-        releases:
-          - cf-release-tarball/*.tgz
-    - put: upload-release-tarballs
-      resource: buffy-release-upload
-      params:
-        releases:
-          - capi-release-tarball/*.tgz
-          - diego-release-tarball/*.tgz
-          - garden-runc-release-tarball/*.tgz
-          - cflinuxfs2-rootfs-tarball/*.tgz
-  - put: buffy-deployment
-    params:
-      manifest: generated-manifest/deployment.yml
-      stemcells: [aws-stemcell/*.tgz]
-      releases:
-        - cf-release-tarball/*.tgz
-        - capi-release-tarball/*.tgz
-    on_failure:
-      put: slack-alert
-      params:
-        text: '[deploy-and-test-postgres-webdave-bridge] OH NO! Failed deploying cf-release to buffy'
-        icon_emoji: {{slack_failure_emoji}}
-  - put: buffy-diego-deployment
-    params:
-      manifest: generated-diego-manifest/diego-deployment.yml
-      releases:
-        - diego-release-tarball/*.tgz
-        - garden-runc-release-tarball/*.tgz
-        - cflinuxfs2-rootfs-tarball/*.tgz
-      stemcells: [aws-stemcell/*.tgz]
-    on_failure:
-      put: slack-alert
-      params:
-        text: '[deploy-and-test-postgres-webdave-bridge] OH NO! Failed deploying diego to buffy'
-        icon_emoji: {{slack_failure_emoji}}
-  - task: enable-feature-flags
-    file: capi-ci/ci/scripts/enable_feature_flags.yml
-    params:
-      CF_API_TARGET: https://api.buffy.cf-app.com
-      CF_ADMIN_PASSWORD: {{buffy_cf_admin_password}}
-  - aggregate:
-    - task: acceptance-tests
-      privileged: true
-      file: capi-ci/ci/scripts/run_bosh_command.yml
-      input_mapping: {manifest: generated-manifest}
-      params:
-        <<: *bosh-target-buffy
-        DEPLOYMENT_YML: manifest/deployment.yml
-        COMMAND: 'run errand acceptance_tests --keep-alive --download-logs --logs-dir bosh-logs'
-      ensure:
-        put: buffy-acceptance-tests-logs
-        params:
-          file: bosh-logs/acceptance_tests*.tgz
-    - task: sync-integration-tests
-      file: sync-integration-tests/concourse/task.yml
-      input_mapping: {environment: capi-ci-private}
-      params:
-        BOSH_DEPLOYMENT_NAME: cf-buffy
-        BOSH_API_INSTANCE: api_z1/0
-        CF_API_TARGET: https://api.buffy.cf-app.com
-        CF_ADMIN_PASSWORD: {{buffy_cf_admin_password}}
-        CF_SKIP_SSL_VALIDATION: true
-        CF_APPS_DOMAIN: buffy-app.cf-app.com
-        BBL_STATE_DIR: buffy
-    on_failure:
-      put: slack-alert
-      params:
-        text: '[deploy-and-test-postgres-webdave-bridge] OH NO! Failed on acceptance-tests'
-        icon_emoji: {{slack_failure_emoji}}
-
 - name: ship-it
   serial_groups: [version]
   plan:
@@ -1473,138 +990,6 @@ jobs:
     params:
       repository: bumped/cf-release
       rebase: true
-
-- name: migration-backwards-compatibility-test
-  serial: true
-  serial_groups: [deploy-wasabi-migrations]
-  plan:
-  - aggregate:
-    - get: cf-release-final
-      params:
-        tarball: true
-    - get: cf-release
-      resource: cf-release-master
-    - get: capi-ci
-    - get: capi-ci-private
-    - get: aws-stemcell
-      version:
-        version: "3363.15" # new stemcell versions break dea support
-    - get: cloud_controller_ng
-  - task: manifest
-    privileged: true
-    file: capi-ci/ci/scripts/create_cf_deployment_manifest.yml
-    params:
-      INFRASTRUCTURE: aws
-      ENVIRONMENT: wasabi
-  - task: delete-wasabi-deployment
-    privileged: true
-    file: capi-ci/ci/scripts/run_bosh_command.yml
-    input_mapping: {manifest: generated-manifest}
-    params:
-      <<: *bosh-target-wasabi
-      DEPLOYMENT_YML: manifest/deployment.yml
-      COMMAND: 'delete deployment cf-wasabi'
-  - put: cf-wasabi-deployment
-    params:
-      manifest: generated-manifest/deployment.yml
-      stemcells: [aws-stemcell/*.tgz]
-      releases: [ cf-release-final/release.tgz]
-  - task: smoke-tests
-    privileged: true
-    file: capi-ci/ci/scripts/run_bosh_command.yml
-    input_mapping: {manifest: generated-manifest}
-    params:
-      <<: *bosh-target-wasabi
-      DEPLOYMENT_YML: manifest/deployment.yml
-      COMMAND: 'run errand smoke_tests --keep-alive'
-  - task: apply-migrations
-    privileged: true
-    file: capi-ci/ci/scripts/apply_cc_migrations.yml
-    params:
-      CONNECTION_STRING: {{cc_db_connection_string}}
-      ENVIRONMENT: wasabi
-      DB_HOST: 10.0.30.30
-      TUNNEL_HOST: bosh.wasabi.cf-app.com
-  - task: acceptance-tests
-    privileged: true
-    file: capi-ci/ci/scripts/run_bosh_command.yml
-    input_mapping: {manifest: generated-manifest}
-    params:
-      <<: *bosh-target-wasabi
-      DEPLOYMENT_YML: manifest/deployment.yml
-      COMMAND: 'run errand acceptance_tests --keep-alive --download-logs --logs-dir bosh-logs'
-    on_success:
-      task: cleanup-wasabi-deployment
-      privileged: true
-      file: capi-ci/ci/scripts/run_bosh_command.yml
-      input_mapping: {manifest: generated-manifest}
-      params:
-        <<: *bosh-target-wasabi
-        DEPLOYMENT_YML: manifest/deployment.yml
-        COMMAND: 'delete deployment cf-wasabi'
-
-- name: clean-all-the-boshes
-  plan:
-  - aggregate:
-    - get: capi-ci
-    - get: daily
-      trigger: true
-  - aggregate:
-    - task: cleanup-ci
-      privileged: true
-      file: capi-ci/ci/scripts/run_bosh_cleanup.yml
-      params: &bosh-target-ci
-        BOSH_DIRECTOR: https://bosh.capi.ci.cf-app.com:25555
-        BOSH_USER: {{ci_bosh_user}}
-        BOSH_PASSWORD: {{ci_bosh_password}}
-    - task: cleanup-wasabi
-      privileged: true
-      file: capi-ci/ci/scripts/run_bosh_cleanup.yml
-      params: &bosh-target-wasabi
-        BOSH_DIRECTOR: https://bosh.wasabi.cf-app.com:25555
-        BOSH_USER: {{wasabi_bosh_user}}
-        BOSH_PASSWORD: {{wasabi_bosh_password}}
-    - task: cleanup-xena
-      privileged: true
-      file: capi-ci/ci/scripts/run_bosh_cleanup.yml
-      params: &bosh-target-xena
-        BOSH_DIRECTOR: https://bosh.xena.cf-app.com:25555
-        BOSH_USER: {{xena_bosh_user}}
-        BOSH_PASSWORD: {{xena_bosh_password}}
-    - task: cleanup-buffy
-      privileged: true
-      file: capi-ci/ci/scripts/run_bosh_cleanup.yml
-      params: &bosh-target-buffy
-        BOSH_DIRECTOR: https://bosh.buffy.cf-app.com:25555
-        BOSH_USER: {{buffy_bosh_user}}
-        BOSH_PASSWORD: {{buffy_bosh_password}}
-    on_failure:
-      put: slack-alert
-      params:
-        text: '[clean-all-the-boshes] OH NO! Failed to clean old boshes https://capi.ci.cf-app.com/?groups=bosh'
-        icon_emoji: {{slack_failure_emoji}}
-
-- name: deploy-xena-datadog-firehose-nozzle
-  serial_groups: [deploy-xena-datadog]
-  plan:
-  - aggregate:
-    - get: datadog-firehose-nozzle-release-final
-      params:
-        tarball: true
-      trigger: true
-    - get: datadog-firehose-nozzle-release
-    - get: aws-stemcell
-    - get: capi-ci-private
-    - get: capi-ci
-  - task: manifest
-    file: capi-ci/ci/scripts/create_datadog_firehose_nozzle_manifest.yml
-    params:
-      ENVIRONMENT: xena
-  - put: xena-datadog-firehose-nozzle-deployment
-    params:
-      manifest: generated-manifest/deployment.yml
-      stemcells: [aws-stemcell/*.tgz]
-      releases: [ datadog-firehose-nozzle-release-final/release.tgz]
 
 - name: rc-docs
   serial: true
@@ -1705,7 +1090,7 @@ jobs:
     - task: update-checkman
       file: capi-ci/ci/scripts/update_checkman.yml
       params:
-        IGNORED_JOBS: "freshen-buffy freshen-xena freshen-wasabi migration-backwards-compatibility-test deploy-and-test-mysql-s3-bbs deploy-and-test-postgres-webdave-bridge deploy-and-test-ripley"
+        IGNORED_JOBS: "deploy-and-test-ripley"
       on_success:
         put: slack-alert
         params:
@@ -1720,29 +1105,6 @@ jobs:
       params:
         repository: updated-capi-checkman
         rebase: true
-
-- name: freshen-wasabi
-  serial: true
-  serial_groups: [deploy-wasabi-migrations]
-  plan:
-  - aggregate:
-    - get: capi-ci
-    - get: env-repo
-      resource: capi-ci-private
-    - get: weekly-sunday
-  - task: freshen-wasabi
-    file: capi-ci/ci/scripts/freshen_bosh.yml
-    params:
-      BBL_DIR: wasabi
-    on_failure:
-      put: slack-alert
-      params:
-        text: '[freshen-wasabi] OH NO! Failed to freshen wasabi https://capi.ci.cf-app.com/?groups=bosh'
-        icon_emoji: {{slack_failure_emoji}}
-  - put: capi-ci-private
-    params:
-      repository: updated-env-repo
-      rebase: true
 
 - name: freshen-arya
   serial: true
@@ -1778,30 +1140,6 @@ jobs:
         bbl-state: arya-bbl-state
       params:
         BBL_STATE_DIR: "arya"
-
-- name: freshen-xena
-  serial: true
-  serial_groups: [deploy-xena-cf, deploy-xena-diego, deploy-xena-datadog, deploy-xena-cf-mysql]
-  plan:
-  - aggregate:
-    - get: capi-ci
-    - get: env-repo
-      resource: capi-ci-private
-    - get: weekly-sunday
-  - task: freshen-xena
-    file: capi-ci/ci/scripts/freshen_bosh.yml
-    params:
-      BBL_DIR: xena
-    on_failure:
-      put: slack-alert
-      params:
-        text: '[freshen-xena] OH NO! Failed to freshen xena https://capi.ci.cf-app.com/?groups=bosh'
-        icon_emoji: {{slack_failure_emoji}}
-    ensure:
-      put: capi-ci-private
-      params:
-        repository: updated-env-repo
-        rebase: true
 
 - name: freshen-mulan
   serial: true
@@ -2027,28 +1365,6 @@ jobs:
         bbl-state: ripley-bbl-state
       params:
         BBL_STATE_DIR: "ripley"
-
-- name: freshen-buffy
-  serial: true
-  plan:
-  - aggregate:
-    - get: capi-ci
-    - get: env-repo
-      resource: capi-ci-private
-    - get: weekly-sunday
-  - task: freshen-buffy
-    file: capi-ci/ci/scripts/freshen_bosh.yml
-    params:
-      BBL_DIR: buffy
-    on_failure:
-      put: slack-alert
-      params:
-        text: '[freshen-buffy] OH NO! Failed to freshen arya https://capi.ci.cf-app.com/?groups=bosh'
-        icon_emoji: {{slack_failure_emoji}}
-  - put: capi-ci-private
-    params:
-      repository: updated-env-repo
-      rebase: true
 
 - name: deliver-stories
   serial: true
