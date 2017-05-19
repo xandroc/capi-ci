@@ -1082,6 +1082,8 @@ jobs:
     file: capi-ci/ci/bosh/run_bosh_cmd.yml
     params:
       BOSH_ARGS: "delete-deployment -d cf"
+  - task: create-capi-release
+    file: capi-ci/ci/bosh/create_capi_release_from_cf_release.yml
   - put: kiki-deployment
     params:
       source_file: environment/metadata
@@ -1091,6 +1093,7 @@ jobs:
       ops_files:
       - cf-deployment/operations/test/add-persistent-isolation-segment-diego-cell.yml
       - capi-ci/cf-deployment-operations/skip-cert-verify.yml
+      - capi-ci/cf-deployment-operations/use-latest-capi.yml
       - cf-deployment/operations/scale-to-one-az.yml
       - capi-ci/cf-deployment-operations/scale-cells-to-two.yml
       - cf-deployment/operations/use-postgres.yml

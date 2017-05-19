@@ -1,0 +1,16 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: cloudfoundry/capi
+    tag: bosh
+
+inputs:
+  - name: capi-ci
+  - name: environment
+  - name: cf-release
+
+run:
+  path: capi-ci/ci/bosh/create_capi_release_from_cf_release.sh
