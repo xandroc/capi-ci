@@ -848,6 +848,8 @@ jobs:
       - cf-deployment/operations/scale-to-one-az.yml
       - capi-ci/cf-deployment-operations/scale-cells-to-two.yml
       - cf-deployment/operations/use-postgres.yml
+  - task: apply-cc-migrations
+    file: capi-ci/ci/migrations/apply_latest_migrations.yml
   - task: download-vars-store
     output_mapping:
       destination-directory: kiki-deployment-vars
@@ -879,8 +881,7 @@ jobs:
       VARS_STORE_FILE: "vars-store.yml"
   - task: cats-from-cf-release
     file: cats-concourse-task/cats-from-cf-release/task.yml
-  - &run-kiki-tests
-    aggregate:
+  - aggregate:
     - task: acceptance-tests
       file: cats-concourse-task/task.yml
       input_mapping:
@@ -903,9 +904,6 @@ jobs:
     #     BBL_STATE_DIR: kiki
     #     VARS_STORE_PATH: "vars-store.yml"
     #     USE_CF_DEPLOYMENT_VARS: "true"
-  - task: apply-cc-migrations
-    file: capi-ci/ci/migrations/apply_latest_migrations.yml
-  - *run-kiki-tests
   - task: delete-deployment
     file: capi-ci/ci/bosh/run_bosh_cmd.yml
     params:
