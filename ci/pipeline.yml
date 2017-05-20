@@ -722,10 +722,10 @@ jobs:
       env_name: elsa
       terraform_source: capi-ci/terraform/aws-s3-buckets/
       vars:
-        aws_access_key: {{xena_aws_access_key}}
-        aws_secret_key: {{xena_aws_secret_key}}
-        cdn_key_pair_id: {{xena_cdn_key_pair_id}}
-        cdn_private_key: {{xena_cdn_private_key}}
+        aws_access_key: {{wasabi_aws_access_key}}
+        aws_secret_key: {{wasabi_aws_secret_key}}
+        cdn_key_pair_id: {{wasabi_cdn_key_pair_id}}
+        cdn_private_key: {{wasabi_cdn_private_key}}
   - put: elsa-deployment
     params:
       source_file: environment/metadata
