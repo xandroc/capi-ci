@@ -84,7 +84,7 @@ cache_ip_for_hostname() {
 
   # `head -n1 | xargs echo` forces the CLI into non-tty mode and trims newlines
   db_ip="$(bosh ssh -d "${BOSH_DEPLOYMENT_NAME}" "${BOSH_API_INSTANCE}" \
-    -c 'dig +short ${dns_hostname}' -r --column=Stdout | head -n1 | xargs echo)"
+    -c "dig +short ${dns_hostname}" -r --column=Stdout | head -n1 | xargs echo)"
 
   # BOSH CLI return '-' if stdout is empty
   if [ "${db_ip}" != "-" ]; then
@@ -99,7 +99,7 @@ cache_ip_for_hostname() {
 run_migrations() {
   echo "${green}Applying latest migrations to deployment...${reset}"
   pushd "${cloud_controller_dir}" > /dev/null
-    bundle install
+    bundle install --jobs 4 --retry 4
 
     # proxychains forwards all TCP connections over the SSH SOCKS Proxy
     proxychains4 -f "${proxychains_conf}" bundle exec rake db:migrate
@@ -110,7 +110,7 @@ run_migrations() {
 cleanup() {
   echo "${green}Cleaning up...${reset}"
   kill_background_ssh_tunnel
-  rm -rf ${tmp_dir}
+  rm -rf "${tmp_dir}"
   echo "${green}Finished cleanup.${reset}"
 }
 
