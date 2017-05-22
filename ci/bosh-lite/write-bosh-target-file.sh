@@ -12,7 +12,7 @@ indent_contents_of() {
 
 # INPUTS
 script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-workspace_dir="$( cd "${script_dir}/../../../../" && pwd )"
+workspace_dir="$( cd "${script_dir}/../../../" && pwd )"
 env_info="${workspace_dir}/bosh-lite-env-info"
 
 # OUTPUTS
@@ -20,7 +20,7 @@ env_info="${workspace_dir}/bosh-lite-env-info"
 output_dir="${workspace_dir}/bosh-target"
 
 source "${env_info}/metadata"
-env_name="$(cat ${env_info}/name)"
+env_name="$(cat "${env_info}/name")"
 
 ## Create target.json
 output_file="${output_dir}/target.yml"

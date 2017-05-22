@@ -7,7 +7,7 @@ set -eu
 
 # INPUTS
 script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-workspace_dir="$( cd "${script_dir}/../../../../" && pwd )"
+workspace_dir="$( cd "${script_dir}/../../../" && pwd )"
 deployment_repo="${workspace_dir}/bosh-deployment"
 terraform_dir="${workspace_dir}/terraform"
 
@@ -22,13 +22,12 @@ pushd "${state_dir}" > /dev/null
     -o "${deployment_repo}/gcp/bosh-lite-vm-type.yml" \
     -o "${deployment_repo}/jumpbox-user.yml" \
     -o "${deployment_repo}/external-ip-not-recommended.yml" \
-    -v director_name="Bosh Lite Director" \
+    -v director_name="bosh-lite" \
     -v gcp_credentials_json="'${GCP_JSON_KEY}'" \
     -l "${terraform_dir}/metadata" \
     > ./director.yml
 
     echo -e "\nDeploying new Bosh-Lite..."
-    env_name="$( cat "${terraform_dir}/name" )"
     bosh create-env \
        --state ./state.json \
        --vars-store ./creds.yml \
