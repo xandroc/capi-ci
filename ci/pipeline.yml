@@ -734,6 +734,7 @@ jobs:
         system_domain: *elsa-domain
         datadog_api_key: {{elsa_datadog_api_key}}
         datadog_metric_prefix: "datadog.nozzle."
+        new_relic_license_key: {{new_relic_license_key}}
       vars_files:
         - elsa-aws-storage-terraform/metadata
       ops_files:
@@ -744,6 +745,7 @@ jobs:
       - capi-ci/cf-deployment-operations/use-s3-and-cdn-storage.yml
       - capi-ci/cf-deployment-operations/use-clustered-mysql.yml
       - capi-ci/cf-deployment-operations/add-datadog-firehose-nozzle-gcp.yml
+      - capi-ci/cf-deployment-operations/add-new-relic.yml
   - task: download-vars-store
     output_mapping:
       destination-directory: elsa-deployment-vars
