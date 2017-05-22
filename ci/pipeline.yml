@@ -5,9 +5,9 @@ groups:
   - bridge-unit-tests
   - create-capi-release
   - bump-capi-release
-  - deploy-and-test-mulan
-  - deploy-and-test-elsa
-  - deploy-and-test-kiki
+  - mulan-postgres-webdav-bridge
+  - elsa-mysql-s3-bypass
+  - kiki-back-compat-migrations
   - bump-ci-passed
 - name: ship-it
   jobs:
@@ -27,15 +27,15 @@ groups:
   - deliver-stories
 - name: bosh
   jobs:
-  - freshen-arya
-  - freshen-mulan
-  - freshen-elsa
-  - freshen-kiki
+  - update-bosh-arya
+  - update-bosh-mulan
+  - update-bosh-elsa
+  - update-bosh-kiki
 - name: mssql
   jobs:
-  - freshen-ripley
+  - update-bosh-ripley
   - mssql-unit-tests
-  - deploy-and-test-ripley
+  - ripley-mssql
 
 resource_types:
 - name: bosh-release
@@ -570,7 +570,7 @@ jobs:
         text: '[create-capi-release] OH NO! Failed to upload tarball'
         icon_emoji: {{slack_failure_emoji}}
 
-- name: deploy-and-test-mulan
+- name: mulan-postgres-webdav-bridge
   serial: true
   serial_groups: [deploy-mulan]
   plan:
@@ -679,7 +679,7 @@ jobs:
         VARS_STORE_PATH: "vars-store.yml"
         USE_CF_DEPLOYMENT_VARS: "true"
 
-- name: deploy-and-test-elsa
+- name: elsa-mysql-s3-bypass
   serial: true
   serial_groups: [deploy-elsa]
   plan:
@@ -796,7 +796,7 @@ jobs:
         VARS_STORE_PATH: "vars-store.yml"
         USE_CF_DEPLOYMENT_VARS: "true"
 
-- name: deploy-and-test-kiki
+- name: kiki-back-compat-migrations
   serial: true
   serial_groups: [deploy-kiki]
   plan:
@@ -1088,7 +1088,7 @@ jobs:
     - task: update-checkman
       file: capi-ci/ci/scripts/update_checkman.yml
       params:
-        IGNORED_JOBS: "deploy-and-test-ripley"
+        IGNORED_JOBS: "ripley-mssql"
       on_success:
         put: slack-alert
         params:
@@ -1104,7 +1104,7 @@ jobs:
         repository: updated-capi-checkman
         rebase: true
 
-- name: freshen-arya
+- name: update-bosh-arya
   serial: true
   plan:
     - aggregate:
@@ -1112,7 +1112,7 @@ jobs:
       - get: arya-bbl-state
       - get: capi-ci
       - get: weekly-sunday
-    - task: freshen-arya
+    - task: update-bosh-arya
       file: cf-deployment-concourse-tasks/bbl-up/task.yml
       input_mapping:
         bbl-state: arya-bbl-state
@@ -1139,7 +1139,7 @@ jobs:
       params:
         BBL_STATE_DIR: "arya"
 
-- name: freshen-mulan
+- name: update-bosh-mulan
   serial: true
   serial_groups: [deploy-mulan]
   plan:
@@ -1158,7 +1158,7 @@ jobs:
       params:
         repository: updated-capi-ci-private
         rebase: true
-    - task: freshen-mulan
+    - task: update-bosh-mulan
       file: cf-deployment-concourse-tasks/bbl-up/task.yml
       input_mapping:
         bbl-state: updated-capi-ci-private
@@ -1195,7 +1195,7 @@ jobs:
       params:
         BBL_STATE_DIR: "mulan"
 
-- name: freshen-elsa
+- name: update-bosh-elsa
   serial: true
   serial_groups: [deploy-elsa]
   plan:
@@ -1215,7 +1215,7 @@ jobs:
       params:
         repository: updated-capi-ci-private
         rebase: true
-    - task: freshen-elsa
+    - task: update-bosh-elsa
       file: cf-deployment-concourse-tasks/bbl-up/task.yml
       input_mapping:
         bbl-state: updated-capi-ci-private
@@ -1252,7 +1252,7 @@ jobs:
       params:
         BBL_STATE_DIR: "elsa"
 
-- name: freshen-kiki
+- name: update-bosh-kiki
   serial: true
   serial_groups: [deploy-kiki]
   plan:
@@ -1271,7 +1271,7 @@ jobs:
       params:
         repository: updated-capi-ci-private
         rebase: true
-    - task: freshen-kiki
+    - task: update-bosh-kiki
       file: cf-deployment-concourse-tasks/bbl-up/task.yml
       input_mapping:
         bbl-state: updated-capi-ci-private
@@ -1308,7 +1308,7 @@ jobs:
       params:
         BBL_STATE_DIR: "kiki"
 
-- name: freshen-ripley
+- name: update-bosh-ripley
   serial: true
   serial_groups: [deploy-ripley]
   plan:
@@ -1327,7 +1327,7 @@ jobs:
       params:
         repository: updated-capi-ci-private
         rebase: true
-    - task: freshen-ripley
+    - task: update-bosh-ripley
       file: cf-deployment-concourse-tasks/bbl-up/task.yml
       input_mapping:
         bbl-state: updated-capi-ci-private
@@ -1401,15 +1401,15 @@ jobs:
   - get: capi-release
     resource: capi-release-develop
     passed:
-      - deploy-and-test-elsa
-      - deploy-and-test-mulan
-      - deploy-and-test-kiki
+      - elsa-mysql-s3-bypass
+      - mulan-postgres-webdav-bridge
+      - kiki-back-compat-migrations
     trigger: true
   - get: capi-release-tarball
     passed:
-      - deploy-and-test-elsa
-      - deploy-and-test-mulan
-      - deploy-and-test-kiki
+      - elsa-mysql-s3-bypass
+      - mulan-postgres-webdav-bridge
+      - kiki-back-compat-migrations
   - put: capi-release-ci-passed
     params:
       repository: capi-release
@@ -1427,7 +1427,7 @@ jobs:
     params:
       DB: mssql
 
-- name: deploy-and-test-ripley
+- name: ripley-mssql
   serial: true
   plan:
   - aggregate:
