@@ -9,8 +9,8 @@ image_resource:
 
 inputs:
   - name: capi-ci
-  - name: bosh-deployment
-  - name: director-state
+  - name: cf-deployment
+  - name: bosh-lite-env-info
 
 run:
-  path: capi-ci/ci/bosh-lite/scripts/delete-bosh-lite.sh
+  path: capi-ci/ci/bosh-lite/upload-cf-assets.sh

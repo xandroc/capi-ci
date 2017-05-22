@@ -12,7 +12,7 @@ inputs:
   # Input mapping to directory containing .tgz files
 
 run:
-  path: capi-ci/ci/scripts/upload-release.sh
+  path: capi-ci/ci/bosh/upload-release.sh
 
 params:
   BBL_STATE_DIR:

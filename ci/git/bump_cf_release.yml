@@ -10,10 +10,10 @@ image_resource:
 inputs:
   - name: capi-ci
   - name: capi-release
-  - name: capi-final-releases
+  - name: cf-release
 
 outputs:
-  - name: generated-release
+  - name: bumped
 
 run:
-  path: capi-ci/ci/scripts/generate_github_release
+  path: capi-ci/ci/git/bump_cf_release.sh

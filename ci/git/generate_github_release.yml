@@ -8,12 +8,12 @@ image_resource:
     tag: runtime-ci
 
 inputs:
-  - name: cloud_controller_ng
-  - name: concourse-config
   - name: capi-ci
+  - name: capi-release
+  - name: capi-final-releases
 
-params:
-  GEMNASIUM_API_KEY:
+outputs:
+  - name: generated-release
 
 run:
-  path: capi-ci/ci/scripts/cloud_controller_ng_dependencies.sh
+  path: capi-ci/ci/git/generate_github_release

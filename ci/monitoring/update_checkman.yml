@@ -8,16 +8,14 @@ image_resource:
     tag: runtime-ci
 
 inputs:
-  - name: capi-release
   - name: capi-ci
-  - name: version
-  - name: cloud_controller_ng
+  - name: capi-checkman
 
 outputs:
-  - name: created-capi-release
+  - name: updated-capi-checkman
 
 run:
-  path: capi-ci/ci/scripts/create_capi_release.sh
+  path: capi-ci/ci/monitoring/update_checkman.sh
 
 params:
-  CC_BRANCH:
+  IGNORED_JOBS: ""

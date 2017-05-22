@@ -8,14 +8,16 @@ image_resource:
     tag: runtime-ci
 
 inputs:
-  - name: version
-  - name: capi-ci
-  - name: capi-ci-private
   - name: capi-release
-  - name: capi-release-tarball
+  - name: capi-ci
+  - name: version
+  - name: cloud_controller_ng
 
 outputs:
-  - name: finalized-release
+  - name: created-capi-release
 
 run:
-  path: capi-ci/ci/scripts/finalize_release
+  path: capi-ci/ci/bosh/create_capi_release.sh
+
+params:
+  CC_BRANCH:

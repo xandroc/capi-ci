@@ -8,14 +8,12 @@ image_resource:
     tag: runtime-ci
 
 inputs:
+  - name: cloud_controller_ng
+  - name: concourse-config
   - name: capi-ci
-  - name: capi-checkman
-
-outputs:
-  - name: updated-capi-checkman
-
-run:
-  path: capi-ci/ci/scripts/update_checkman.sh
 
 params:
-  IGNORED_JOBS: ""
+  GEMNASIUM_API_KEY:
+
+run:
+  path: capi-ci/ci/monitoring/cloud_controller_ng_dependencies.sh

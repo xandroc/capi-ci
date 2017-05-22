@@ -9,8 +9,10 @@ image_resource:
 
 inputs:
   - name: capi-ci
-  - name: cf-deployment
   - name: bosh-lite-env-info
 
+outputs:
+  - name: bosh-target
+
 run:
-  path: capi-ci/ci/bosh-lite/scripts/upload-cf-assets.sh
+  path: capi-ci/ci/bosh-lite/write-bosh-target-file.sh

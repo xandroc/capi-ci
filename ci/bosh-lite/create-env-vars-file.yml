@@ -16,4 +16,4 @@ outputs:
   - name: bosh-lite-env-info
 
 run:
-  path: capi-ci/ci/bosh-lite/scripts/create-env-vars-file.sh
+  path: capi-ci/ci/bosh-lite/create-env-vars-file.sh

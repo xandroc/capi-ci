@@ -5,17 +5,12 @@ image_resource:
   type: docker-image
   source:
     repository: cloudfoundry/capi
-    tag: rc-docs
+    tag: ruby-units
 
 inputs:
   - name: cloud_controller_ng
   - name: capi-ci
-  - name: cc-api-v2-version
-
-
-outputs:
-  - name: cloud_controller_ng_bumped_docs
 
 run:
-  path: capi-ci/ci/scripts/bump_v2_docs_api_version.sh
+  path: capi-ci/ci/test-unit/run_cc_unit_tests
 

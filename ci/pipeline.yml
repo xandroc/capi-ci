@@ -446,7 +446,7 @@ jobs:
     - get: concourse-config
     - get: capi-ci
   - task: check-dependencies
-    file: capi-ci/ci/scripts/cloud_controller_ng_dependencies.yml
+    file: capi-ci/ci/monitoring/cloud_controller_ng_dependencies.yml
     params:
       GEMNASIUM_API_KEY: {{gemnasium_api_key}}
 
@@ -458,7 +458,7 @@ jobs:
     - get: capi-ci
   - aggregate:
     - task: run-cc-unit-tests-mysql
-      file: capi-ci/ci/scripts/run_cc_unit_tests.yml
+      file: capi-ci/ci/test-unit/run_cc_unit_tests.yml
       params:
         DB: mysql
       on_failure:
@@ -467,7 +467,7 @@ jobs:
           text: '[cc-unit-tests] OH NO! Failed when running with mysql'
           icon_emoji: {{slack_failure_emoji}}
     - task: run-cc-unit-tests-postgres
-      file: capi-ci/ci/scripts/run_cc_unit_tests.yml
+      file: capi-ci/ci/test-unit/run_cc_unit_tests.yml
       params:
         DB: postgres
       on_failure:
@@ -504,7 +504,7 @@ jobs:
       passed: [bridge-unit-tests]
       trigger: true
   - task: bump-capi-release
-    file: capi-ci/ci/scripts/bump_capi_release.yml
+    file: capi-ci/ci/git/bump_capi_release.yml
   - put: capi-release-develop
     params:
       repository: bumped/capi-release
@@ -529,7 +529,7 @@ jobs:
         submodules:
         - src/code.cloudfoundry.org/bbs
   - task: run-bridge-unit-tests
-    file: capi-ci/ci/scripts/run_bridge_unit_tests.yml
+    file: capi-ci/ci/test-unit/run_bridge_unit_tests.yml
 
 - name: create-capi-release
   serial_groups: [version]
@@ -555,7 +555,7 @@ jobs:
         text: '[create-capi-release] OH NO! Failed to update version'
         icon_emoji: {{slack_failure_emoji}}
   - task: create-release-tarball
-    file: capi-ci/ci/scripts/create_capi_release.yml
+    file: capi-ci/ci/bosh/create_capi_release.yml
     on_failure:
       put: slack-alert
       params:
@@ -592,7 +592,7 @@ jobs:
       passed: [create-capi-release]
       trigger: true
   - task: upload-capi-release-tarball
-    file: capi-ci/ci/scripts/upload-release.yml
+    file: capi-ci/ci/bosh/upload-release.yml
     input_mapping:
       bbl-state: mulan-bbl-state
       release-tarball: capi-release-tarball
@@ -701,7 +701,7 @@ jobs:
       passed: [create-capi-release]
       trigger: true
   - task: upload-capi-release-tarball
-    file: capi-ci/ci/scripts/upload-release.yml
+    file: capi-ci/ci/bosh/upload-release.yml
     input_mapping:
       bbl-state: elsa-bbl-state
       release-tarball: capi-release-tarball
@@ -925,7 +925,7 @@ jobs:
   - put: version
     params: {file: version/version}
   - task: finalize-release
-    file: capi-ci/ci/scripts/finalize-release.yml
+    file: capi-ci/ci/bosh/finalize-release.yml
   - put: capi-final-releases
     params:
       file: finalized-release/capi-*.tgz
@@ -959,7 +959,7 @@ jobs:
       passed: [ship-it]
       trigger: true
   - task: generate-github-release
-    file: capi-ci/ci/scripts/generate_github_release.yml
+    file: capi-ci/ci/git/generate_github_release.yml
   - put: github-release
     params:
       commitish: generated-release/commitish
@@ -983,7 +983,7 @@ jobs:
         submodules:
         - src/capi-release
   - task: bump-cf-release
-    file: capi-ci/ci/scripts/bump_cf_release.yml
+    file: capi-ci/ci/git/bump_cf_release.yml
   - put: cf-release-develop
     params:
       repository: bumped/cf-release
@@ -1001,7 +1001,7 @@ jobs:
         submodules:
           - src/cloud_controller_ng
   - task: push-rc-docs
-    file: capi-ci/ci/scripts/push_rc_docs.yml
+    file: capi-ci/ci/docs/push_rc_docs.yml
     params: &docs-aws-account
       AWS_DEFAULT_REGION: us-east-1
       AWS_ACCESS_KEY_ID: {{docs_s3_access_key}}
@@ -1051,7 +1051,7 @@ jobs:
       passed: [bump-cc-v2-api]
     - get: cloud_controller_ng
   - task: bump-v2-docs
-    file: capi-ci/ci/scripts/bump_v2_docs_api_version.yml
+    file: capi-ci/ci/docs/bump_v2_docs_api_version.yml
   - put: cloud_controller_ng
     params:
       repository: cloud_controller_ng_bumped_docs/cloud_controller_ng
@@ -1070,7 +1070,7 @@ jobs:
         submodules:
           - src/cloud_controller_ng
   - task: push-docs
-    file: capi-ci/ci/scripts/push_docs.yml
+    file: capi-ci/ci/docs/push_docs.yml
     params:
       GITHUB_PUSH_KEY: {{private_key}}
     on_failure:
@@ -1086,7 +1086,7 @@ jobs:
         trigger: true
       - get: capi-checkman
     - task: update-checkman
-      file: capi-ci/ci/scripts/update_checkman.yml
+      file: capi-ci/ci/monitoring/update_checkman.yml
       params:
         IGNORED_JOBS: "ripley-mssql"
       on_success:
@@ -1390,7 +1390,7 @@ jobs:
     - get: capi-release
       resource: capi-release-develop
   - task: merge-master-into-develop
-    file: capi-ci/ci/scripts/merge_master_into_develop.yml
+    file: capi-ci/ci/git/merge_master_into_develop.yml
   - put: capi-release-develop
     params:
       repository: merged/capi-release
@@ -1423,7 +1423,7 @@ jobs:
     - get: capi-ci
   - task: run-cc-unit-tests-mssql
     privileged: true # required to run mssql in nested docker container
-    file: capi-ci/ci/scripts/run_cc_unit_tests.yml
+    file: capi-ci/ci/test-unit/run_cc_unit_tests.yml
     params:
       DB: mssql
 
@@ -1455,7 +1455,7 @@ jobs:
     params:
       file: version/version
   - task: create-release-tarball
-    file: capi-ci/ci/scripts/create_capi_release.yml
+    file: capi-ci/ci/bosh/create_capi_release.yml
     params:
       CC_BRANCH: pivotal-sqlserversupport
   - put: azure-terraform

@@ -11,4 +11,4 @@ outputs:
   - name: merged
 
 run:
-  path: capi-ci/ci/scripts/merge_master_into_develop.sh
+  path: capi-ci/ci/git/merge_master_into_develop.sh

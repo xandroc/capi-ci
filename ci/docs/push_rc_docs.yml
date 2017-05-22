@@ -12,7 +12,10 @@ inputs:
   - name: capi-ci
 
 run:
-  path: capi-ci/ci/scripts/push_docs
+  path: capi-ci/ci/docs/push_rc_docs
 
 params:
+  AWS_DEFAULT_REGION:
+  AWS_ACCESS_KEY_ID:
+  AWS_SECRET_ACCESS_KEY:
   GITHUB_PUSH_KEY:

@@ -16,7 +16,7 @@ outputs:
   - name: director-state
 
 run:
-  path: capi-ci/ci/bosh-lite/scripts/create-bosh-lite.sh
+  path: capi-ci/ci/bosh-lite/create-bosh-lite.sh
 
 params:
   GCP_JSON_KEY:      ""

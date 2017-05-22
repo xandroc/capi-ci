@@ -8,12 +8,17 @@ image_resource:
     tag: runtime-ci
 
 inputs:
-  - name: capi-ci
+  - name: cloud_controller_ng
   - name: capi-release
-  - name: cf-release
+  - name: capi-ci
+  - name: diego-release
+  - name: cc-uploader
+  - name: nsync
+  - name: stager
+  - name: tps
 
 outputs:
   - name: bumped
 
 run:
-  path: capi-ci/ci/scripts/bump_cf_release.sh
+  path: capi-ci/ci/git/bump_capi_release.sh

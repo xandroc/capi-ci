@@ -5,12 +5,12 @@ image_resource:
   type: docker-image
   source:
     repository: cloudfoundry/capi
-    tag: ruby-units
+    tag: bosh-lite
 
 inputs:
-  - name: cloud_controller_ng
   - name: capi-ci
+  - name: bosh-deployment
+  - name: director-state
 
 run:
-  path: capi-ci/ci/scripts/run_cc_unit_tests
-
+  path: capi-ci/ci/bosh-lite/delete-bosh-lite.sh
