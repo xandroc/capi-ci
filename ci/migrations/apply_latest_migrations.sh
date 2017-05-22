@@ -99,7 +99,21 @@ cache_ip_for_hostname() {
 run_migrations() {
   echo "${green}Applying latest migrations to deployment...${reset}"
   pushd "${cloud_controller_dir}" > /dev/null
-    bundle install --jobs 4 --retry 4
+    set +e
+    for i in {1..3}; do
+      bundle install
+      exit_code="$?"
+
+      if [ "${exit_code}" == "0" ]; then
+        break
+      fi
+    done
+    set -e
+
+    if [ "${exit_code}" != "0" ]; then
+      echo "ERROR: Failed to run bundle, exiting..."
+      exit "${exit_code}"
+    fi
 
     # proxychains forwards all TCP connections over the SSH SOCKS Proxy
     proxychains4 -f "${proxychains_conf}" bundle exec rake db:migrate
