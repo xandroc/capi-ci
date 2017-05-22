@@ -1,9 +1,0 @@
----
-properties:
-  cc: &cc
-    default_to_diego_backend: true
-  acceptance_tests:
-    backend: diego
-    skip_diego_unsupported_tests: true
-    include_v3: true
-

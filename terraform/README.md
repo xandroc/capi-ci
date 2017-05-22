@@ -1,4 +1,4 @@
-## Creating an Azure App Registration for Terraform
+## Using Terraform on Azure
 
 See [this blog post](http://toddysm.com/2016/12/08/how-to-configure-terraform-to-work-with-azure-resource-manager/) for configuring Terraform + Azure. Summary below.
 
