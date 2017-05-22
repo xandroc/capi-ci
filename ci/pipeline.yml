@@ -1111,17 +1111,27 @@ jobs:
       - get: cf-deployment-concourse-tasks
       - get: arya-bbl-state
       - get: capi-ci
+      - get: capi-ci-private
       - get: weekly-sunday
+    - task: seed-capi-ci-private
+      file: capi-ci/ci/setup-environment/seed.yml
+      params:
+        ENVIRONMENT: arya
+        DOMAIN: &arya-domain "arya.capi.land"
+    - put: capi-ci-private
+      params:
+        repository: updated-capi-ci-private
+        rebase: true
     - task: update-bosh-arya
       file: cf-deployment-concourse-tasks/bbl-up/task.yml
       input_mapping:
-        bbl-state: arya-bbl-state
+        bbl-state: updated-capi-ci-private
       params:
         BBL_STATE_DIR: "arya"
         BBL_IAAS: "gcp"
         BBL_LB_CERT: "certs/load-balancer/server.crt"
         BBL_LB_KEY: "certs/load-balancer/server.key"
-        LB_DOMAIN: "arya.cf-app.com"
+        LB_DOMAIN: *arya-domain
         BBL_ENV_NAME: "arya"
         BBL_GCP_SERVICE_ACCOUNT_KEY: {{arya_gcp_json_key}}
         BBL_GCP_PROJECT_ID: {{arya_gcp_project_id}}
@@ -1132,10 +1142,20 @@ jobs:
         params:
           repository: updated-bbl-state
           rebase: true
+    - task: create-dns-record
+      file: capi-ci/ci/bbl-tasks/create-dns-record.yml
+      input_mapping:
+       bbl-state: updated-bbl-state
+      params:
+        BBL_STATE_DIR: "arya"
+        DNS_DOMAIN: *arya-domain
+        GCP_DNS_SERVICE_ACCOUNT_KEY: {{dns_gcp_json_key}}
+        GCP_PROJECT_ID: {{dns_gcp_project_id}}
+        SHARED_DNS_ZONE_NAME: "capi-land"
     - task: run-bosh-cleanup
       file: capi-ci/ci/bbl-tasks/run-bosh-cleanup.yml
       input_mapping:
-        bbl-state: arya-bbl-state
+        bbl-state: updated-bbl-state
       params:
         BBL_STATE_DIR: "arya"
 
