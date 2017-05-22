@@ -1,6 +1,6 @@
 ---
 - type: replace
-  path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/cc/newrelic
+  path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/cc/newrelic?
   value: &new-relic
     environment_name: ((system_domain))
     license_key: ((new_relic_license_key))
@@ -11,9 +11,9 @@
       record_sql: raw
 
 - type: replace
-  path: /instance_groups/name=cc-worker/jobs/name=cloud_controller_worker/properties/cc/newrelic
+  path: /instance_groups/name=cc-worker/jobs/name=cloud_controller_worker/properties/cc/newrelic?
   value: *new-relic
 
 - type: replace
-  path: /instance_groups/name=cc-clock/jobs/name=cloud_controller_clock/properties/cc/newrelic
+  path: /instance_groups/name=cc-clock/jobs/name=cloud_controller_clock/properties/cc/newrelic?
   value: *new-relic
