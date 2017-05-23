@@ -38,14 +38,6 @@ groups:
   - ripley-mssql
 
 resource_types:
-- name: bosh-release
-  type: docker-image
-  source:
-    repository: cloudfoundry/bosh-release-resource
-- name: bosh-stemcell
-  type: docker-image
-  source:
-    repository: cloudfoundry/bosh-stemcell-resource
 - name: slack-notification
   type: docker-image
   source:
