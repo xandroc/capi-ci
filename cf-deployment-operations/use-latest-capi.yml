@@ -4,7 +4,7 @@
   value: latest
 
 - type: remove
-  path: /releases/name=capi/url
+  path: /releases/name=capi/url?
 
 - type: remove
-  path: /releases/name=capi/sha1
+  path: /releases/name=capi/sha1?
