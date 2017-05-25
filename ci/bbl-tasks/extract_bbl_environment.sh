@@ -34,7 +34,7 @@ cat <<- EOF > "${output_metadata_file}"
     "client": "$(bbl director-username)",
     "client_secret": "$(bbl director-password)",
     "ca_cert": "$(read_with_escaped_newlines <(bbl director-ca-cert))",
-    "gw_user": "vcap",
+    "gw_user": "jumpbox",
     "gw_host": "$(bbl director-address | cut -d'/' -f3 | cut -d':' -f1)",
     "gw_private_key": "$(read_with_escaped_newlines <(bbl ssh-key))"
   }
