@@ -607,6 +607,8 @@ jobs:
       vars:
         system_domain: *mulan-domain
         prometheus_password: {{prometheus_password}}
+        syslog_remote_address: {{mulan_syslog_remote_address}}
+        syslog_remote_port: {{mulan_syslog_remote_port}}
       vars_files:
       - environment/metadata # used by prometheus bosh exporter
       ops_files:
@@ -619,6 +621,7 @@ jobs:
       - cf-deployment/operations/experimental/locket.yml
       - cf-deployment/operations/experimental/locket-postgres.yml
       - capi-ci/cf-deployment-operations/add-prometheus.yml
+      - capi-ci/cf-deployment-operations/add-remote-syslog.yml
   - task: download-vars-store
     output_mapping:
       destination-directory: mulan-deployment-vars
@@ -727,6 +730,8 @@ jobs:
         datadog_api_key: {{elsa_datadog_api_key}}
         datadog_metric_prefix: "datadog.nozzle."
         new_relic_license_key: {{new_relic_license_key}}
+        syslog_remote_address: {{elsa_syslog_remote_address}}
+        syslog_remote_port: {{elsa_syslog_remote_port}}
       vars_files:
         - elsa-aws-storage-terraform/metadata
       ops_files:
@@ -738,6 +743,7 @@ jobs:
       - capi-ci/cf-deployment-operations/use-clustered-mysql.yml
       - capi-ci/cf-deployment-operations/add-datadog-firehose-nozzle-gcp.yml
       - capi-ci/cf-deployment-operations/add-new-relic.yml
+      - capi-ci/cf-deployment-operations/add-remote-syslog.yml
   - task: download-vars-store
     output_mapping:
       destination-directory: elsa-deployment-vars
@@ -835,6 +841,8 @@ jobs:
       manifest: cf-deployment/cf-deployment.yml
       vars:
         system_domain: *kiki-domain
+        syslog_remote_address: {{kiki_syslog_remote_address}}
+        syslog_remote_port: {{kiki_syslog_remote_port}}
       ops_files:
       - cf-deployment/operations/test/add-persistent-isolation-segment-diego-cell.yml
       - capi-ci/cf-deployment-operations/skip-cert-verify.yml
@@ -842,6 +850,7 @@ jobs:
       - cf-deployment/operations/scale-to-one-az.yml
       - capi-ci/cf-deployment-operations/scale-cells-to-two.yml
       - cf-deployment/operations/use-postgres.yml
+      - capi-ci/cf-deployment-operations/add-remote-syslog.yml
   - task: apply-cc-migrations
     file: capi-ci/ci/migrations/apply_latest_migrations.yml
   - task: download-vars-store

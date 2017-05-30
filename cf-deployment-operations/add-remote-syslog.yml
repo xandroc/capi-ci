@@ -1,0 +1,7 @@
+---
+- type: replace
+  path: /properties?/syslog_daemon_config
+  value:
+    enable: true
+    address: ((syslog_remote_address))
+    port: ((syslog_remote_port))
