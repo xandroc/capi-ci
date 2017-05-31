@@ -49,12 +49,6 @@ resources:
       uri: https://github.com/cloudfoundry/cf-deployment.git
   - name: cf-deploy
     type: bosh-deployment
-    source:
-      vars_store:
-        provider: gcs
-        config:
-          bucket: {{bosh_lite_storage_bucket}}
-          json_key: {{bosh_lite_gcp_json_key}}
 
 jobs:
   - name: create-bosh-lite
