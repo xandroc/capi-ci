@@ -1,0 +1,6 @@
+---
+# must be included after credhub.yml ops-file
+- type: replace
+  path: /variables/credhub_tls/options/alternative_names/-
+  value:
+  - ((external_ip))

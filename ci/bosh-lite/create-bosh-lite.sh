@@ -22,6 +22,9 @@ pushd "${state_dir}" > /dev/null
     -o "${deployment_repo}/gcp/bosh-lite-vm-type.yml" \
     -o "${deployment_repo}/jumpbox-user.yml" \
     -o "${deployment_repo}/external-ip-not-recommended.yml" \
+    -o "${deployment_repo}/uaa.yml" \
+    -o "${deployment_repo}/credhub.yml" \
+    -o "${script_dir}/use-external-ip-credhub.yml" \
     -v director_name="bosh-lite" \
     -v gcp_credentials_json="'${GCP_JSON_KEY}'" \
     -l "${terraform_dir}/metadata" \

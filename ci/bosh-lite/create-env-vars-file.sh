@@ -24,6 +24,8 @@ export BOSH_GW_USER="jumpbox"
 export BOSH_GW_HOST="$(bosh interpolate --path /external_ip "${terraform_metadata_file}")"
 export BOSH_GW_PRIVATE_KEY_CONTENTS="$(bosh interpolate --path /jumpbox_ssh/private_key "${creds_file}")"
 export BOSH_LITE_DOMAIN="$(bosh interpolate --path /system_domain "${terraform_metadata_file}")"
+export CREDHUB_USERNAME="credhub-cli"
+export CREDHUB_PASSWORD="$(bosh interpolate --path /credhub_cli_password "${creds_file}")"
 EOD
 
 cp "${terraform_name_file}" "${output_dir}/name"
