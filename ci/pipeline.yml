@@ -617,8 +617,8 @@ jobs:
       - capi-ci/cf-deployment-operations/use-latest-capi.yml
       - cf-deployment/operations/scale-to-one-az.yml
       - capi-ci/cf-deployment-operations/scale-cells-to-two.yml
-      - cf-deployment/operations/use-postgres.yml
       - cf-deployment/operations/experimental/locket.yml
+      - cf-deployment/operations/use-postgres.yml
       - cf-deployment/operations/experimental/locket-postgres.yml
       - capi-ci/cf-deployment-operations/add-prometheus.yml
       - capi-ci/cf-deployment-operations/add-remote-syslog.yml
