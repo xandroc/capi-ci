@@ -621,6 +621,7 @@ jobs:
       - cf-deployment/operations/use-postgres.yml
       - cf-deployment/operations/experimental/locket-postgres.yml
       - capi-ci/cf-deployment-operations/add-prometheus.yml
+      - capi-ci/cf-deployment-operations/add-prometheus-capi-homepage.yml
       - capi-ci/cf-deployment-operations/add-remote-syslog.yml
   - task: download-vars-store
     output_mapping:
