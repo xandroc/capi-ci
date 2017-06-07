@@ -12,6 +12,10 @@ resource_types:
   source:
     repository: cfcommunity/slack-notification-resource
     tag: latest
+- name: cron-resource
+  type: docker-image
+  source:
+    repository: cftoolsmiths/cron-test
 
 resources:
   - name: terraform
@@ -64,6 +68,11 @@ resources:
     type: slack-notification
     source:
       url: {{slack_url}}
+  - name: friday-afternoon
+    type: cron-resource
+    source:
+      expression: "30 13 * * 5"
+      location: "America/Los_Angeles"
 
 jobs:
   - name: create-bosh-lite
@@ -179,6 +188,8 @@ jobs:
       - aggregate:
         - get: capi-ci
         - get: pool-repo
+        - get: friday-afternoon
+          trigger: true
       - task: print-claimed-envs
         file: capi-ci/ci/bosh-lite/print-claimed-envs.yml
         input_mapping:
