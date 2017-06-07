@@ -7,6 +7,11 @@ resource_types:
   type: docker-image
   source:
     repository: cloudfoundry/bosh-deployment-resource
+- name: slack-notification
+  type: docker-image
+  source:
+    repository: cfcommunity/slack-notification-resource
+    tag: latest
 
 resources:
   - name: terraform
@@ -42,6 +47,12 @@ resources:
       uri: git@github.com:cloudfoundry/capi-env-pool.git
       pool: broken-bosh-lites
       private_key: {{bosh_lite_pool_deploy_key}}
+  - name: pool-repo
+    type: git
+    source:
+      branch: master
+      uri: git@github.com:cloudfoundry/capi-env-pool.git
+      private_key: {{bosh_lite_pool_deploy_key}}
   - name: cf-deployment
     type: git
     source:
@@ -49,6 +60,10 @@ resources:
       uri: https://github.com/cloudfoundry/cf-deployment.git
   - name: cf-deploy
     type: bosh-deployment
+  - name: slack-alert
+    type: slack-notification
+    source:
+      url: {{slack_url}}
 
 jobs:
   - name: create-bosh-lite
@@ -158,3 +173,20 @@ jobs:
       - put: broken-pool
         params:
           remove: broken-pool/
+
+  - name: slack-claimed-envs
+    plan:
+      - aggregate:
+        - get: capi-ci
+        - get: pool-repo
+      - task: print-claimed-envs
+        file: capi-ci/ci/bosh-lite/print-claimed-envs.yml
+        input_mapping:
+          env-pool: pool-repo
+      - put: slack-alert
+        params:
+          channel: {{slack_notification_channel}}
+          text_file: message/message.txt
+          silent: true
+          username: "BOSH Herder"
+          icon_emoji: ":bosh:"
