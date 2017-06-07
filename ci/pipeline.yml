@@ -736,7 +736,6 @@ jobs:
       vars_files:
         - elsa-aws-storage-terraform/metadata
       ops_files:
-      - cf-deployment/operations/workarounds/use-4-azs-for-router.yml
       - cf-deployment/operations/test/add-persistent-isolation-segment-diego-cell.yml
       - capi-ci/cf-deployment-operations/skip-cert-verify.yml
       - capi-ci/cf-deployment-operations/use-latest-capi.yml
