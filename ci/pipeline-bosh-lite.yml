@@ -88,6 +88,7 @@ resources:
 
 jobs:
   - name: create-bosh-lite
+    serial_groups: [add-to-pool]
     plan:
       - aggregate:
         - get: capi-ci
@@ -198,6 +199,7 @@ jobs:
           remove: broken-pool/
 
   - name: check-pool-size
+    serial_groups: [add-to-pool]
     build_logs_to_retain: 100
     plan:
       - aggregate:
