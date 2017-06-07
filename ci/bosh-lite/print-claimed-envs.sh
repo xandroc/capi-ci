@@ -4,7 +4,7 @@ set -eu
 
 # ENV
 : "${POOL_NAME:="bosh-lites"}"
-: "${SLACK_NOTIFICATION_PREFIX:=""}"
+: "${MESSAGE_PREFIX:=""}"
 
 # INPUTS
 script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -34,8 +34,8 @@ pushd "${pool_dir}/claimed" > /dev/null
   done
 
   message="Time for another bosh-lite round-up! If you have a bosh-lite claimed that you no longer need, run \`unclaim_bosh_lite ENV_NAME\` to set it free!"
-  if [ -n "${SLACK_NOTIFICATION_PREFIX}" ]; then
-    message="${SLACK_NOTIFICATION_PREFIX} ${message}"
+  if [ -n "${MESSAGE_PREFIX}" ]; then
+    message="${MESSAGE_PREFIX} ${message}"
   fi
   echo "${message}" >> "${output_file}"
   echo "" >> "${output_file}"

@@ -18,4 +18,4 @@ run:
   path: capi-ci/ci/bosh-lite/print-claimed-envs.sh
 
 params:
-  SLACK_NOTIFICATION_PREFIX: ""
+  MESSAGE_PREFIX: ""
