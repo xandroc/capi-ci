@@ -183,6 +183,8 @@ jobs:
         file: capi-ci/ci/bosh-lite/print-claimed-envs.yml
         input_mapping:
           env-pool: pool-repo
+        params:
+          MESSAGE_PREFIX: {{slack_notification_prefix}}
       - put: slack-alert
         params:
           channel: {{slack_notification_channel}}

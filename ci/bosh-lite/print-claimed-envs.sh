@@ -4,6 +4,7 @@ set -eu
 
 # ENV
 : "${POOL_NAME:="bosh-lites"}"
+: "${SLACK_NOTIFICATION_PREFIX:=""}"
 
 # INPUTS
 script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -32,7 +33,11 @@ pushd "${pool_dir}/claimed" > /dev/null
     output="${output}${file}\t${claimed_by}\t${claimed_since}\n"
   done
 
-  echo "Time for another bosh-lite round-up! If you have a bosh-lite claimed that you no longer need, run \`unclaim_bosh_lite ENV_NAME\` to set it free!" >> "${output_file}"
+  message="Time for another bosh-lite round-up! If you have a bosh-lite claimed that you no longer need, run \`unclaim_bosh_lite ENV_NAME\` to set it free!"
+  if [ -n "${SLACK_NOTIFICATION_PREFIX}" ]; then
+    message="${SLACK_NOTIFICATION_PREFIX} ${message}"
+  fi
+  echo "${message}" >> "${output_file}"
   echo "" >> "${output_file}"
   echo -e "${output}" | column -t -s $'\t' >> "${output_file}"
 
