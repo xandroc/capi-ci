@@ -733,8 +733,10 @@ jobs:
         new_relic_license_key: {{new_relic_license_key}}
         syslog_remote_address: {{elsa_syslog_remote_address}}
         syslog_remote_port: {{elsa_syslog_remote_port}}
+        prometheus_password: {{prometheus_password}}
       vars_files:
         - elsa-aws-storage-terraform/metadata
+        - environment/metadata # used by prometheus bosh exporter
       ops_files:
       - cf-deployment/operations/test/add-persistent-isolation-segment-diego-cell.yml
       - capi-ci/cf-deployment-operations/skip-cert-verify.yml
@@ -745,6 +747,8 @@ jobs:
       - capi-ci/cf-deployment-operations/add-datadog-firehose-nozzle-gcp.yml
       - capi-ci/cf-deployment-operations/add-new-relic.yml
       - capi-ci/cf-deployment-operations/add-remote-syslog.yml
+      - capi-ci/cf-deployment-operations/add-prometheus.yml
+      - capi-ci/cf-deployment-operations/add-prometheus-capi-homepage.yml
   - task: download-vars-store
     output_mapping:
       destination-directory: elsa-deployment-vars
