@@ -499,26 +499,16 @@
         "list": [
           {
             "allValue": null,
-            "current": {
-              "tags": [],
-              "text": "cf",
-              "value": "cf"
-            },
+            "current": {},
             "datasource": "prometheus",
             "hide": 0,
             "includeAll": false,
             "label": "Environment",
             "multi": false,
             "name": "environment",
-            "options": [
-              {
-                "selected": true,
-                "text": "cf",
-                "value": "cf"
-              }
-            ],
+            "options": [],
             "query": "label_values(firehose_value_metric_cc_requests_completed, environment)",
-            "refresh": 0,
+            "refresh": 1,
             "regex": "",
             "sort": 0,
             "tagValuesQuery": "",
@@ -529,26 +519,16 @@
           },
           {
             "allValue": null,
-            "current": {
-              "tags": [],
-              "text": "mulan.capi.land",
-              "value": "mulan.capi.land"
-            },
+            "current": {},
             "datasource": "prometheus",
             "hide": 0,
             "includeAll": false,
             "label": "Deployment",
             "multi": false,
             "name": "bosh_deployment",
-            "options": [
-              {
-                "selected": true,
-                "text": "mulan.capi.land",
-                "value": "mulan.capi.land"
-              }
-            ],
+            "options": [],
             "query": "label_values(firehose_value_metric_cc_requests_completed{environment=~\"$environment\"}, bosh_deployment)",
-            "refresh": 0,
+            "refresh": 1,
             "regex": "",
             "sort": 0,
             "tagValuesQuery": "",
