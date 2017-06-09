@@ -39,7 +39,9 @@ pushd "${pool_dir}/claimed" > /dev/null
   fi
   echo "${message}" >> "${output_file}"
   echo "" >> "${output_file}"
+  echo '```' >> "${output_file}"
   echo -e "${output}" | column -t -s $'\t' >> "${output_file}"
+  echo '```' >> "${output_file}"
 
   echo "Message:"
   cat "${output_file}"
