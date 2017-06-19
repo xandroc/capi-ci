@@ -1,0 +1,4 @@
+---
+- type: replace
+  path: /instance_groups/name=cc-worker/jobs/name=cloud_controller_worker/properties/cc?/perform_blob_cleanup?
+  value: true

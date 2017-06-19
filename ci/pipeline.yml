@@ -623,6 +623,7 @@ jobs:
       - capi-ci/cf-deployment-operations/add-prometheus.yml
       - capi-ci/cf-deployment-operations/add-prometheus-capi-homepage.yml
       - capi-ci/cf-deployment-operations/add-remote-syslog.yml
+      - capi-ci/cf-deployment-operations/enable-perform-blob-cleanup.yml
   - task: download-vars-store
     output_mapping:
       destination-directory: mulan-deployment-vars
@@ -750,6 +751,7 @@ jobs:
       - capi-ci/cf-deployment-operations/add-remote-syslog.yml
       - capi-ci/cf-deployment-operations/add-prometheus.yml
       - capi-ci/cf-deployment-operations/add-prometheus-capi-homepage.yml
+      - capi-ci/cf-deployment-operations/enable-perform-blob-cleanup.yml
   - task: download-vars-store
     output_mapping:
       destination-directory: elsa-deployment-vars
