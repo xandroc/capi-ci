@@ -2,7 +2,7 @@
 # To keep the volume of logs down and reduce noise, this file selectively logs only the jobs
 # CAPI team maintains or interacts with regularly. Add more jobs as needed.
 - type: replace
-  path: /instance_groups/name=diego-bbs/jobs/name=metron_agent/properties/syslog_daemon_config?
+  path: /instance_groups/name=diego-api/jobs/name=metron_agent/properties/syslog_daemon_config?
   value: &remote-syslog
     enable: true
     address: ((syslog_remote_address))
