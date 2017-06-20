@@ -13,7 +13,6 @@ function setup_bosh_env_vars() {
 }
 
 function upload_stemcell() {
-  # TODO: check whether correct version already exists before downloading this
   bosh upload-stemcell https://bosh.io/d/stemcells/bosh-google-kvm-windows2012R2-go_agent
 }
 
