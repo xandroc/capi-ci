@@ -10,7 +10,7 @@ inputs:
 - name: bbl-state
 
 run:
-  path: capi-ci/ci/bosh/upload-release.sh
+  path: capi-ci/ci/bosh/upload-windows-stemcell-for-gcp.sh
 
 params:
   BBL_STATE_DIR:
