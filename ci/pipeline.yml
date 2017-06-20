@@ -304,6 +304,13 @@ resources:
     private_key: {{private_key}}
     uri: git@github.com:cloudfoundry/cf-acceptance-tests.git
 
+- name: windows-acceptance-tests
+  type: git
+  source:
+    branch: master
+    private_key: {{private_key}}
+    uri: git@github.com:cloudfoundry/wats.git
+
 # Ripley resources
 
 - name: ripley-integration-configs
@@ -691,6 +698,7 @@ jobs:
     - get: elsa-bbl-state
     - get: elsa-integration-configs
     - get: cf-acceptance-tests
+    - get: windows-acceptance-tests
     - get: sync-integration-tests
     - get: capi-ci
     - get: capi-ci-private
@@ -774,6 +782,7 @@ jobs:
       integration-configs: elsa-integration-configs
     params:
       CATS_INTEGRATION_CONFIG_FILE: "elsa/cats_integration_config.json"
+      WATS_INTEGRATION_CONFIG_FILE: "elsa/wats_integration_config.json"
       VARS_STORE_FILE: "vars-store.yml"
       SYSTEM_DOMAIN: *elsa-domain
     ensure:
@@ -789,13 +798,20 @@ jobs:
       SYSTEM_DOMAIN: *elsa-domain
       VARS_STORE_FILE: "vars-store.yml"
   - aggregate:
-    - task: acceptance-tests
+    - task: run-cats
       file: cats-concourse-task/task.yml
       input_mapping:
         integration-config: updated-integration-configs
       params:
         NODES: 6
         CONFIG_FILE_PATH: "elsa/cats_integration_config.json"
+    - task: run-wats
+      file: capi-ci/ci/wats/run-wats.yml
+      input_mapping:
+        integration-config: updated-integration-configs
+      params:
+        NODES: 6
+        CONFIG_FILE_PATH: "elsa/wats_integration_config.json"
     - task: sync-integration-tests
       file: sync-integration-tests/concourse/task_with_vars_store.yml
       input_mapping:
