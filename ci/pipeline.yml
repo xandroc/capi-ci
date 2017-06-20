@@ -704,8 +704,14 @@ jobs:
       release-tarball: capi-release-tarball
     params:
       BBL_STATE_DIR: "elsa"
-  - task: elsa-stemcell-upload
+  - task: elsa-linux-stemcell-upload
     file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    input_mapping:
+      bbl-state: elsa-bbl-state
+    params:
+      BBL_STATE_DIR: "elsa"
+  - task: elsa-windows-stemcell-upload
+    file: capi-ci/ci/bosh/upload-windows-stemcell-for-gcp.yml
     input_mapping:
       bbl-state: elsa-bbl-state
     params:
@@ -752,6 +758,7 @@ jobs:
       - capi-ci/cf-deployment-operations/add-prometheus.yml
       - capi-ci/cf-deployment-operations/add-prometheus-capi-homepage.yml
       - capi-ci/cf-deployment-operations/enable-perform-blob-cleanup.yml
+      - cf-deployment/operations/windows-cell.yml
   - task: download-vars-store
     output_mapping:
       destination-directory: elsa-deployment-vars
