@@ -755,6 +755,8 @@ jobs:
       ops_files:
       - cf-deployment/operations/test/add-persistent-isolation-segment-diego-cell.yml
       - cf-deployment/operations/tcp-routing-gcp.yml
+      - cf-deployment/operations/windows-cell.yml
+      - capi-ci/cf-deployment-operations/skip-cert-verify-on-windows-cell.yml
       - capi-ci/cf-deployment-operations/skip-cert-verify.yml
       - capi-ci/cf-deployment-operations/use-latest-capi.yml
       - capi-ci/cf-deployment-operations/bypass-cc-bridge.yml
@@ -766,7 +768,6 @@ jobs:
       - capi-ci/cf-deployment-operations/add-prometheus.yml
       - capi-ci/cf-deployment-operations/add-prometheus-capi-homepage.yml
       - capi-ci/cf-deployment-operations/enable-perform-blob-cleanup.yml
-      - cf-deployment/operations/windows-cell.yml
   - task: download-vars-store
     output_mapping:
       destination-directory: elsa-deployment-vars
