@@ -925,7 +925,6 @@ jobs:
       params:
         NODES: 6
         CONFIG_FILE_PATH: "kiki/cats_integration_config.json"
-        SKIP_REGEXP: "droplet features copying a droplet can copy a droplet|v3 buildpack app lifecycle with a ruby_buildpack can run apps with processes from the Procfile"
     - task: sync-integration-tests
       file: sync-integration-tests/concourse/task_with_vars_store.yml
       input_mapping:
