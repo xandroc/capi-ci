@@ -22,10 +22,10 @@ resources:
     type: terraform
     source:
       storage:
-        bucket: {{bosh_lite_storage_bucket}}
+        bucket: ((bosh_lite_storage_bucket))
         bucket_path: bosh-lite/
-        access_key_id: {{bosh_lite_storage_access_key}}
-        secret_access_key: {{bosh_lite_storage_secret_key}}
+        access_key_id: ((bosh_lite_storage_access_key))
+        secret_access_key: ((bosh_lite_storage_secret_key))
         endpoint: storage.googleapis.com
   - name: capi-ci
     type: git
@@ -43,26 +43,26 @@ resources:
       branch: master
       uri: git@github.com:cloudfoundry/capi-env-pool.git
       pool: bosh-lites
-      private_key: {{bosh_lite_pool_deploy_key}}
+      private_key: ((bosh_lite_pool_deploy_key))
   - name: broken-pool
     type: pool
     source:
       branch: master
       uri: git@github.com:cloudfoundry/capi-env-pool.git
       pool: broken-bosh-lites
-      private_key: {{bosh_lite_pool_deploy_key}}
+      private_key: ((bosh_lite_pool_deploy_key))
   - name: pool-repo
     type: git
     source:
       branch: master
       uri: git@github.com:cloudfoundry/capi-env-pool.git
-      private_key: {{bosh_lite_pool_deploy_key}}
+      private_key: ((bosh_lite_pool_deploy_key))
   - name: create-bosh-lite-trigger
     type: git
     source:
       branch: master
       uri: git@github.com:cloudfoundry/capi-env-pool.git
-      private_key: {{bosh_lite_pool_deploy_key}}
+      private_key: ((bosh_lite_pool_deploy_key))
       paths:
         - .trigger-bosh-lites-create # updated by check-pool-size
   - name: destroy-bosh-lite-trigger
@@ -70,7 +70,7 @@ resources:
     source:
       branch: master
       uri: git@github.com:cloudfoundry/capi-env-pool.git
-      private_key: {{bosh_lite_pool_deploy_key}}
+      private_key: ((bosh_lite_pool_deploy_key))
       paths:
         - .trigger-bosh-lites-destroy # updated by unclaim_bosh_lite alias
   - name: cf-deployment
@@ -83,7 +83,7 @@ resources:
   - name: slack-alert
     type: slack-notification
     source:
-      url: {{slack_url}}
+      url: ((slack_url))
   - name: friday-afternoon
     type: cron-resource
     source:
@@ -110,17 +110,17 @@ jobs:
           delete_on_failure: true
           terraform_source: capi-ci/terraform/bosh-lite/
           vars: &terraform-vars
-            project_id: {{bosh_lite_project_id}}
-            json_key: {{bosh_lite_gcp_json_key}}
-            dns_project_id: {{dns_gcp_project_id}}
-            dns_json_key: {{dns_gcp_json_key}}
-            system_domain_suffix: {{bosh_lite_system_domain_suffix}}
-            dns_zone_name: {{bosh_lite_dns_zone_name}}
+            project_id: ((bosh_lite_project_id))
+            json_key: ((bosh_lite_gcp_json_key))
+            dns_project_id: ((dns_gcp_project_id))
+            dns_json_key: ((dns_gcp_json_key))
+            system_domain_suffix: ((bosh_lite_system_domain_suffix))
+            dns_zone_name: ((bosh_lite_dns_zone_name))
       - do:
           - task: create-bosh-lite
             file: capi-ci/ci/bosh-lite/create-bosh-lite.yml
             params:
-              GCP_JSON_KEY: {{bosh_lite_gcp_json_key}}
+              GCP_JSON_KEY: ((bosh_lite_gcp_json_key))
           - do:
               - task: create-env-vars-file
                 file: capi-ci/ci/bosh-lite/create-env-vars-file.yml
@@ -145,8 +145,8 @@ jobs:
                   environment: terraform
                   source-directory: director-state
                 params:
-                  GCP_JSON_KEY: {{bosh_lite_gcp_json_key}}
-                  GCP_BUCKET: {{bosh_lite_storage_bucket}}
+                  GCP_JSON_KEY: ((bosh_lite_gcp_json_key))
+                  GCP_BUCKET: ((bosh_lite_storage_bucket))
                   GCP_PATH: director-state
                   USE_ENV_NAMED_SUBDIR: true
               - put: pool
@@ -182,8 +182,8 @@ jobs:
         output_mapping:
           destination-directory: director-state
         params:
-          GCP_JSON_KEY: {{bosh_lite_gcp_json_key}}
-          GCP_BUCKET: {{bosh_lite_storage_bucket}}
+          GCP_JSON_KEY: ((bosh_lite_gcp_json_key))
+          GCP_BUCKET: ((bosh_lite_storage_bucket))
           GCP_PATH: director-state
           USE_ENV_NAMED_SUBDIR: true
       - task: delete-bosh-lite
@@ -201,8 +201,8 @@ jobs:
         input_mapping:
           environment: broken-pool
         params:
-          GCP_JSON_KEY: {{bosh_lite_gcp_json_key}}
-          GCP_BUCKET: {{bosh_lite_storage_bucket}}
+          GCP_JSON_KEY: ((bosh_lite_gcp_json_key))
+          GCP_BUCKET: ((bosh_lite_storage_bucket))
           GCP_PATH: director-state
           USE_ENV_NAMED_SUBDIR: true
       - put: broken-pool
@@ -241,10 +241,10 @@ jobs:
         input_mapping:
           env-pool: pool-repo
         params:
-          MESSAGE_PREFIX: {{slack_notification_prefix}}
+          MESSAGE_PREFIX: ((slack_notification_prefix))
       - put: slack-alert
         params:
-          channel: {{slack_notification_channel}}
+          channel: ((slack_notification_channel))
           text_file: message/message.txt
           silent: true
           username: "BOSH Herder"

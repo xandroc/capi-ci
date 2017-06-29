@@ -13,13 +13,13 @@ resources:
   type: git
   source:
     branch: master
-    private_key: {{private_key}}
+    private_key: ((private_key))
     uri: git@github.com:cloudfoundry/capi-ci-private.git
 
 - name: concourse
   type: github-release
   source:
-    access_token: {{github_access_token}}
+    access_token: ((github_access_token))
     repository: concourse
     user: concourse
 
@@ -27,15 +27,15 @@ resources:
   type: bosh-deployment
   source:
     target: 34.192.151.213:25555
-    username: {{ci_bosh_user}}
-    password: {{ci_bosh_password}}
+    username: ((ci_bosh_user))
+    password: ((ci_bosh_password))
     deployment: concourse
     ignore_ssl: true
 
 - name: concourse-config
   type: git
   source:
-    private_key: {{private_key}}
+    private_key: ((private_key))
     uri: git@github.com:cloudfoundry/capi-ci-private.git
 
 jobs:

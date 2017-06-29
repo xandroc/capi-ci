@@ -69,7 +69,7 @@ resources:
 - name: deliver-capi-stories
   type: tracker
   source:
-    token: {{deliver_capi_tracker_token}}
+    token: ((deliver_capi_tracker_token))
     project_id: '966314'
     tracker_url: https://www.pivotaltracker.com
 
@@ -83,56 +83,56 @@ resources:
   source:
     bucket: capi-final-releases
     regexp: capi-(.*).tgz
-    access_key_id: {{wasabi_ci_artifacts_s3_access_key}}
-    secret_access_key: {{wasabi_ci_artifacts_s3_secret_key}}
+    access_key_id: ((wasabi_ci_artifacts_s3_access_key))
+    secret_access_key: ((wasabi_ci_artifacts_s3_secret_key))
 
 - name: capi-checkman
   type: git
   source:
     branch: master
-    private_key: {{private_key}}
+    private_key: ((private_key))
     uri: git@github.com:cloudfoundry/capi-checkman.git
 
 - name: capi-ci
   type: git
   source:
     branch: master
-    private_key: {{private_key}}
+    private_key: ((private_key))
     uri: git@github.com:cloudfoundry/capi-ci.git
 
 - name: capi-ci-private
   type: git
   source:
     branch: master
-    private_key: {{private_key}}
+    private_key: ((private_key))
     uri: git@github.com:cloudfoundry/capi-ci-private.git
 
 - name: arya-bbl-state
   type: git
   source:
     branch: master
-    private_key: {{private_key}}
+    private_key: ((private_key))
     uri: git@github.com:cloudfoundry/capi-ci-private.git
 
 - name: capi-release-master
   type: git
   source:
     branch: master
-    private_key: {{private_key}}
+    private_key: ((private_key))
     uri: git@github.com:cloudfoundry/capi-release.git
 
 - name: capi-release-ci-passed
   type: git
   source:
     branch: ci-passed
-    private_key: {{private_key}}
+    private_key: ((private_key))
     uri: git@github.com:cloudfoundry/capi-release.git
 
 - name: capi-release-develop
   type: git
   source:
     branch: develop
-    private_key: {{private_key}}
+    private_key: ((private_key))
     uri: git@github.com:cloudfoundry/capi-release.git
 
 - name: capi-release-tarball
@@ -140,14 +140,14 @@ resources:
   source:
     bucket: capi-releases
     regexp: capi-(.*)-.*-.*.tgz
-    access_key_id: {{wasabi_ci_artifacts_s3_access_key}}
-    secret_access_key: {{wasabi_ci_artifacts_s3_secret_key}}
+    access_key_id: ((wasabi_ci_artifacts_s3_access_key))
+    secret_access_key: ((wasabi_ci_artifacts_s3_secret_key))
 
 - name: version
   type: semver
   source:
-    access_key_id: {{wasabi_ci_artifacts_s3_access_key}}
-    secret_access_key: {{wasabi_ci_artifacts_s3_secret_key}}
+    access_key_id: ((wasabi_ci_artifacts_s3_access_key))
+    secret_access_key: ((wasabi_ci_artifacts_s3_secret_key))
     initial_version: 0.0.0
     bucket: capi-release-versions
     key: current-capi-release-version
@@ -156,8 +156,8 @@ resources:
 - name: version-sql-server
   type: semver
   source:
-    access_key_id: {{wasabi_ci_artifacts_s3_access_key}}
-    secret_access_key: {{wasabi_ci_artifacts_s3_secret_key}}
+    access_key_id: ((wasabi_ci_artifacts_s3_access_key))
+    secret_access_key: ((wasabi_ci_artifacts_s3_secret_key))
     initial_version: 1.25.0
     bucket: capi-release-versions
     key: temporary-capi-release-sql-server-version
@@ -171,7 +171,7 @@ resources:
     branch: master
     file: config/version
     git_user: 'CAPI CI <cf-capi-eng+ci@pivotal.io>'
-    private_key: {{private_key}}
+    private_key: ((private_key))
 
 - name: cc-api-v2-version
   type: semver
@@ -181,20 +181,20 @@ resources:
     branch: master
     file: config/version_v2
     git_user: 'CAPI CI <cf-capi-eng+ci@pivotal.io>'
-    private_key: {{private_key}}
+    private_key: ((private_key))
 
 - name: cc-uploader
   type: git
   source:
     branch: master
-    private_key: {{private_key}}
+    private_key: ((private_key))
     uri: git@github.com:cloudfoundry/cc-uploader.git
 
 - name: cf-release-develop
   type: git
   source:
     branch: develop
-    private_key: {{private_key}}
+    private_key: ((private_key))
     uri: git@github.com:cloudfoundry/cf-release.git
 
 - name: github-release
@@ -203,27 +203,27 @@ resources:
     user: cloudfoundry
     repository: capi-release
     drafts: true
-    access_token: {{github_access_token}}
+    access_token: ((github_access_token))
 
 - name: cf-release-master
   type: git
   source:
     branch: master
-    private_key: {{private_key}}
+    private_key: ((private_key))
     uri: git@github.com:cloudfoundry/cf-release.git
 
 - name: cloud_controller_ng
   type: git
   source:
     branch: master
-    private_key: {{private_key}}
+    private_key: ((private_key))
     uri: git@github.com:cloudfoundry/cloud_controller_ng.git
 
 - name: cloud_controller_ng_sql_server
   type: git
   source:
     branch: pivotal-sqlserversupport
-    private_key: {{private_key}}
+    private_key: ((private_key))
     uri: git@github.com:cloudfoundry/cloud_controller_ng.git
 
 - name: concourse-config
@@ -233,82 +233,82 @@ resources:
     - wasabi
     ignore_paths:
     - wasabi/deployments/pipeline.yml
-    private_key: {{private_key}}
+    private_key: ((private_key))
     uri: git@github.com:cloudfoundry/capi-ci-private.git
 
 - name: diego-release
   type: git
   source:
     branch: master
-    private_key: {{private_key}}
+    private_key: ((private_key))
     uri: git@github.com:cloudfoundry/diego-release.git
 
 - name: nsync
   type: git
   source:
     branch: master
-    private_key: {{private_key}}
+    private_key: ((private_key))
     uri: git@github.com:cloudfoundry/nsync.git
 
 - name: slack-alert
   type: slack-notification
   source:
-    url: {{slack_failure_hook_url}}
+    url: ((slack_failure_hook_url))
 
 - name: stager
   type: git
   source:
     branch: master
-    private_key: {{private_key}}
+    private_key: ((private_key))
     uri: git@github.com:cloudfoundry/stager.git
 
 - name: sync-integration-tests
   type: git
   source:
     branch: master
-    private_key: {{private_key}}
+    private_key: ((private_key))
     uri: git@github.com:cloudfoundry/sync-integration-tests.git
 
 - name: tps
   type: git
   source:
     branch: master
-    private_key: {{private_key}}
+    private_key: ((private_key))
     uri: git@github.com:cloudfoundry/tps.git
 
 - name: cf-deployment
   type: git
   source:
     uri: git@github.com:cloudfoundry/cf-deployment.git
-    private_key: {{private_key}}
+    private_key: ((private_key))
     branch: release-candidate
 
 - name: cf-deployment-concourse-tasks
   type: git
   source:
     branch: master
-    private_key: {{private_key}}
+    private_key: ((private_key))
     uri: git@github.com:cloudfoundry/cf-deployment-concourse-tasks.git
 
 - name: cats-concourse-task
   type: git
   source:
     branch: master
-    private_key: {{private_key}}
+    private_key: ((private_key))
     uri: git@github.com:cloudfoundry/cats-concourse-task.git
 
 - name: cf-acceptance-tests
   type: git
   source:
     branch: master
-    private_key: {{private_key}}
+    private_key: ((private_key))
     uri: git@github.com:cloudfoundry/cf-acceptance-tests.git
 
 - name: windows-acceptance-tests
   type: git
   source:
     branch: master
-    private_key: {{private_key}}
+    private_key: ((private_key))
     uri: git@github.com:cloudfoundry/wats.git
 
 # Ripley resources
@@ -317,7 +317,7 @@ resources:
   type: git
   source:
     branch: master
-    private_key: {{private_key}}
+    private_key: ((private_key))
     uri: git@github.com:cloudfoundry/capi-ci-private.git
     paths: ["ripley/cats_integration_config.json"]
 
@@ -325,7 +325,7 @@ resources:
   type: git
   source:
     branch: master
-    private_key: {{private_key}}
+    private_key: ((private_key))
     uri: git@github.com:cloudfoundry/capi-ci-private.git
     paths: ["ripley/bbl-state.json"]
 
@@ -335,8 +335,8 @@ resources:
     storage:
       bucket: capi-ripley-deployments
       bucket_path: azure
-      access_key_id: {{gcp_storage_access_key}}
-      secret_access_key: {{gcp_storage_secret_key}}
+      access_key_id: ((gcp_storage_access_key))
+      secret_access_key: ((gcp_storage_secret_key))
       endpoint: storage.googleapis.com
 
 - name: ripley-deployment
@@ -345,23 +345,23 @@ resources:
     vars_store:
       provider: gcs
       config:
-        bucket: {{ripley_bosh_vars_bucket}}
+        bucket: ((ripley_bosh_vars_bucket))
         file_name: &ripley_vars_store_path bosh/vars-store.yml
-        json_key: {{ripley_gcp_json_key}}
+        json_key: ((ripley_gcp_json_key))
 
 # Mulan resources
 - name: mulan-bbl-state
   type: git
   source:
     branch: master
-    private_key: {{private_key}}
+    private_key: ((private_key))
     uri: git@github.com:cloudfoundry/capi-ci-private.git
 
 - name: mulan-integration-configs
   type: git
   source:
     branch: master
-    private_key: {{private_key}}
+    private_key: ((private_key))
     uri: git@github.com:cloudfoundry/capi-ci-private.git
 
 - name: mulan-deployment
@@ -370,23 +370,23 @@ resources:
     vars_store:
       provider: gcs
       config:
-        bucket: {{mulan_bosh_vars_bucket}}
+        bucket: ((mulan_bosh_vars_bucket))
         file_name: &mulan_vars_store_path "bosh/vars-store.yml"
-        json_key: {{mulan_gcp_json_key}}
+        json_key: ((mulan_gcp_json_key))
 
 # Elsa resources
 - name: elsa-bbl-state
   type: git
   source:
     branch: master
-    private_key: {{private_key}}
+    private_key: ((private_key))
     uri: git@github.com:cloudfoundry/capi-ci-private.git
 
 - name: elsa-integration-configs
   type: git
   source:
     branch: master
-    private_key: {{private_key}}
+    private_key: ((private_key))
     uri: git@github.com:cloudfoundry/capi-ci-private.git
 
 - name: elsa-deployment
@@ -395,18 +395,18 @@ resources:
     vars_store:
       provider: gcs
       config:
-        bucket: {{elsa_bosh_vars_bucket}}
+        bucket: ((elsa_bosh_vars_bucket))
         file_name: &elsa_vars_store_path "bosh/vars-store.yml"
-        json_key: {{elsa_gcp_json_key}}
+        json_key: ((elsa_gcp_json_key))
 
 - name: elsa-aws-storage-terraform
   type: terraform
   source:
     storage:
-      bucket: {{elsa_bosh_vars_bucket}}
+      bucket: ((elsa_bosh_vars_bucket))
       bucket_path: aws-storage
-      access_key_id: {{gcp_storage_access_key}}
-      secret_access_key: {{gcp_storage_secret_key}}
+      access_key_id: ((gcp_storage_access_key))
+      secret_access_key: ((gcp_storage_secret_key))
       endpoint: storage.googleapis.com
 
 # Kiki resources
@@ -414,14 +414,14 @@ resources:
   type: git
   source:
     branch: master
-    private_key: {{private_key}}
+    private_key: ((private_key))
     uri: git@github.com:cloudfoundry/capi-ci-private.git
 
 - name: kiki-integration-configs
   type: git
   source:
     branch: master
-    private_key: {{private_key}}
+    private_key: ((private_key))
     uri: git@github.com:cloudfoundry/capi-ci-private.git
 
 - name: kiki-deployment
@@ -430,9 +430,9 @@ resources:
     vars_store:
       provider: gcs
       config:
-        bucket: {{kiki_bosh_vars_bucket}}
+        bucket: ((kiki_bosh_vars_bucket))
         file_name: &kiki_vars_store_path "bosh/vars-store.yml"
-        json_key: {{kiki_gcp_json_key}}
+        json_key: ((kiki_gcp_json_key))
 
 jobs:
 
@@ -447,7 +447,7 @@ jobs:
   - task: check-dependencies
     file: capi-ci/ci/monitoring/cloud_controller_ng_dependencies.yml
     params:
-      GEMNASIUM_API_KEY: {{gemnasium_api_key}}
+      GEMNASIUM_API_KEY: ((gemnasium_api_key))
 
 - name: cc-unit-tests
   plan:
@@ -464,7 +464,7 @@ jobs:
         put: slack-alert
         params:
           text: '[cc-unit-tests] OH NO! Failed when running with mysql'
-          icon_emoji: {{slack_failure_emoji}}
+          icon_emoji: ((slack_failure_emoji))
     - task: run-cc-unit-tests-postgres
       file: capi-ci/ci/test-unit/run_cc_unit_tests.yml
       params:
@@ -473,7 +473,7 @@ jobs:
         put: slack-alert
         params:
           text: '[cc-unit-tests] OH NO! Failed when running with postgres'
-          icon_emoji: {{slack_failure_emoji}}
+          icon_emoji: ((slack_failure_emoji))
 
 - name: bump-capi-release
   plan:
@@ -552,14 +552,14 @@ jobs:
       put: slack-alert
       params:
         text: '[create-capi-release] OH NO! Failed to update version'
-        icon_emoji: {{slack_failure_emoji}}
+        icon_emoji: ((slack_failure_emoji))
   - task: create-release-tarball
     file: capi-ci/ci/bosh/create_capi_release.yml
     on_failure:
       put: slack-alert
       params:
         text: '[create-capi-release] OH NO! Failed to create tarball'
-        icon_emoji: {{slack_failure_emoji}}
+        icon_emoji: ((slack_failure_emoji))
   - put: capi-release-tarball
     params:
       file: created-capi-release/capi-*.tgz
@@ -567,7 +567,7 @@ jobs:
       put: slack-alert
       params:
         text: '[create-capi-release] OH NO! Failed to upload tarball'
-        icon_emoji: {{slack_failure_emoji}}
+        icon_emoji: ((slack_failure_emoji))
 
 - name: mulan-postgres-webdav-bridge
   serial: true
@@ -613,9 +613,9 @@ jobs:
       manifest: cf-deployment/cf-deployment.yml
       vars:
         system_domain: *mulan-domain
-        prometheus_password: {{prometheus_password}}
-        syslog_remote_address: {{mulan_syslog_remote_address}}
-        syslog_remote_port: {{mulan_syslog_remote_port}}
+        prometheus_password: ((prometheus_password))
+        syslog_remote_address: ((mulan_syslog_remote_address))
+        syslog_remote_port: ((mulan_syslog_remote_port))
       vars_files:
       - environment/metadata # used by prometheus bosh exporter
       ops_files:
@@ -636,8 +636,8 @@ jobs:
       destination-directory: mulan-deployment-vars
     file: capi-ci/ci/gcs/download-from-gcs.yml
     params:
-      GCP_JSON_KEY: {{mulan_gcp_json_key}}
-      GCP_BUCKET: {{mulan_bosh_vars_bucket}}
+      GCP_JSON_KEY: ((mulan_gcp_json_key))
+      GCP_BUCKET: ((mulan_bosh_vars_bucket))
       GCP_PATH: bosh
   - task: updated-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
@@ -733,22 +733,22 @@ jobs:
       env_name: elsa
       terraform_source: capi-ci/terraform/aws-s3-buckets/
       vars:
-        aws_access_key: {{wasabi_aws_access_key}}
-        aws_secret_key: {{wasabi_aws_secret_key}}
-        cdn_key_pair_id: {{wasabi_cdn_key_pair_id}}
-        cdn_private_key: {{wasabi_cdn_private_key}}
+        aws_access_key: ((wasabi_aws_access_key))
+        aws_secret_key: ((wasabi_aws_secret_key))
+        cdn_key_pair_id: ((wasabi_cdn_key_pair_id))
+        cdn_private_key: ((wasabi_cdn_private_key))
   - put: elsa-deployment
     params:
       source_file: environment/metadata
       manifest: cf-deployment/cf-deployment.yml
       vars:
         system_domain: *elsa-domain
-        datadog_api_key: {{elsa_datadog_api_key}}
+        datadog_api_key: ((elsa_datadog_api_key))
         datadog_metric_prefix: "datadog.nozzle."
-        new_relic_license_key: {{new_relic_license_key}}
-        syslog_remote_address: {{elsa_syslog_remote_address}}
-        syslog_remote_port: {{elsa_syslog_remote_port}}
-        prometheus_password: {{prometheus_password}}
+        new_relic_license_key: ((new_relic_license_key))
+        syslog_remote_address: ((elsa_syslog_remote_address))
+        syslog_remote_port: ((elsa_syslog_remote_port))
+        prometheus_password: ((prometheus_password))
       vars_files:
         - elsa-aws-storage-terraform/metadata
         - environment/metadata # used by prometheus bosh exporter
@@ -774,8 +774,8 @@ jobs:
       destination-directory: elsa-deployment-vars
     file: capi-ci/ci/gcs/download-from-gcs.yml
     params:
-      GCP_JSON_KEY: {{elsa_gcp_json_key}}
-      GCP_BUCKET: {{elsa_bosh_vars_bucket}}
+      GCP_JSON_KEY: ((elsa_gcp_json_key))
+      GCP_BUCKET: ((elsa_bosh_vars_bucket))
       GCP_PATH: bosh
   - task: updated-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
@@ -874,8 +874,8 @@ jobs:
       manifest: cf-deployment/cf-deployment.yml
       vars:
         system_domain: *kiki-domain
-        syslog_remote_address: {{kiki_syslog_remote_address}}
-        syslog_remote_port: {{kiki_syslog_remote_port}}
+        syslog_remote_address: ((kiki_syslog_remote_address))
+        syslog_remote_port: ((kiki_syslog_remote_port))
       ops_files:
       - cf-deployment/operations/test/add-persistent-isolation-segment-diego-cell.yml
       - capi-ci/cf-deployment-operations/skip-cert-verify.yml
@@ -891,8 +891,8 @@ jobs:
       destination-directory: kiki-deployment-vars
     file: capi-ci/ci/gcs/download-from-gcs.yml
     params:
-      GCP_JSON_KEY: {{kiki_gcp_json_key}}
-      GCP_BUCKET: {{kiki_bosh_vars_bucket}}
+      GCP_JSON_KEY: ((kiki_gcp_json_key))
+      GCP_BUCKET: ((kiki_bosh_vars_bucket))
       GCP_PATH: bosh
   - task: updated-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
@@ -1039,14 +1039,14 @@ jobs:
     file: capi-ci/ci/docs/push_rc_docs.yml
     params: &docs-aws-account
       AWS_DEFAULT_REGION: us-east-1
-      AWS_ACCESS_KEY_ID: {{docs_s3_access_key}}
-      AWS_SECRET_ACCESS_KEY: {{docs_s3_secret_key}}
-      GITHUB_PUSH_KEY: {{private_key}}
+      AWS_ACCESS_KEY_ID: ((docs_s3_access_key))
+      AWS_SECRET_ACCESS_KEY: ((docs_s3_secret_key))
+      GITHUB_PUSH_KEY: ((private_key))
     on_failure:
       put: slack-alert
       params:
         text: '[rc-docs] OH NO! Failed to update documentation https://capi.ci.cf-app.com/?groups=migrations-dependencies-docs'
-        icon_emoji: {{slack_failure_emoji}}
+        icon_emoji: ((slack_failure_emoji))
 
 - name: bump-cc-v3-api
   serial: true
@@ -1107,12 +1107,12 @@ jobs:
   - task: push-docs
     file: capi-ci/ci/docs/push_docs.yml
     params:
-      GITHUB_PUSH_KEY: {{private_key}}
+      GITHUB_PUSH_KEY: ((private_key))
     on_failure:
       put: slack-alert
       params:
         text: '[publish-docs] OH NO! Failed to update documentation https://capi.ci.cf-app.com/?groups=migrations-dependencies-docs'
-        icon_emoji: {{slack_failure_emoji}}
+        icon_emoji: ((slack_failure_emoji))
 
 - name: update-checkman
   plan:
@@ -1133,7 +1133,7 @@ jobs:
         put: slack-alert
         params:
           text: '[update-checkman] OH NO! There was a problem updating configuration! https://capi.ci.cf-app.com/?groups=migrations-dependencies-docs'
-          icon_emoji: {{slack_failure_emoji}}
+          icon_emoji: ((slack_failure_emoji))
     - put: capi-checkman
       params:
         repository: updated-capi-checkman
@@ -1168,10 +1168,10 @@ jobs:
         BBL_LB_KEY: "certs/load-balancer/server.key"
         LB_DOMAIN: *arya-domain
         BBL_ENV_NAME: "arya"
-        BBL_GCP_SERVICE_ACCOUNT_KEY: {{arya_gcp_json_key}}
-        BBL_GCP_PROJECT_ID: {{arya_gcp_project_id}}
-        BBL_GCP_ZONE: {{arya_gcp_zone}}
-        BBL_GCP_REGION: {{arya_gcp_region}}
+        BBL_GCP_SERVICE_ACCOUNT_KEY: ((arya_gcp_json_key))
+        BBL_GCP_PROJECT_ID: ((arya_gcp_project_id))
+        BBL_GCP_ZONE: ((arya_gcp_zone))
+        BBL_GCP_REGION: ((arya_gcp_region))
       ensure:
         put: arya-bbl-state
         params:
@@ -1184,8 +1184,8 @@ jobs:
       params:
         BBL_STATE_DIR: "arya"
         DNS_DOMAIN: *arya-domain
-        GCP_DNS_SERVICE_ACCOUNT_KEY: {{dns_gcp_json_key}}
-        GCP_PROJECT_ID: {{dns_gcp_project_id}}
+        GCP_DNS_SERVICE_ACCOUNT_KEY: ((dns_gcp_json_key))
+        GCP_PROJECT_ID: ((dns_gcp_project_id))
         SHARED_DNS_ZONE_NAME: "capi-land"
     - task: run-bosh-cleanup
       file: capi-ci/ci/bbl-tasks/run-bosh-cleanup.yml
@@ -1225,10 +1225,10 @@ jobs:
         BBL_LB_KEY: "certs/load-balancer/server.key"
         LB_DOMAIN: *mulan-domain
         BBL_ENV_NAME: "mulan"
-        BBL_GCP_SERVICE_ACCOUNT_KEY: {{mulan_gcp_json_key}}
-        BBL_GCP_PROJECT_ID: {{mulan_gcp_project_id}}
-        BBL_GCP_ZONE: {{mulan_gcp_zone}}
-        BBL_GCP_REGION: {{mulan_gcp_region}}
+        BBL_GCP_SERVICE_ACCOUNT_KEY: ((mulan_gcp_json_key))
+        BBL_GCP_PROJECT_ID: ((mulan_gcp_project_id))
+        BBL_GCP_ZONE: ((mulan_gcp_zone))
+        BBL_GCP_REGION: ((mulan_gcp_region))
       ensure:
         put: mulan-bbl-state
         params:
@@ -1241,8 +1241,8 @@ jobs:
       params:
         BBL_STATE_DIR: "mulan"
         DNS_DOMAIN: *mulan-domain
-        GCP_DNS_SERVICE_ACCOUNT_KEY: {{dns_gcp_json_key}}
-        GCP_PROJECT_ID: {{dns_gcp_project_id}}
+        GCP_DNS_SERVICE_ACCOUNT_KEY: ((dns_gcp_json_key))
+        GCP_PROJECT_ID: ((dns_gcp_project_id))
         SHARED_DNS_ZONE_NAME: "capi-land"
     - task: run-bosh-cleanup
       file: capi-ci/ci/bbl-tasks/run-bosh-cleanup.yml
@@ -1282,10 +1282,10 @@ jobs:
         BBL_LB_KEY: "certs/load-balancer/server.key"
         LB_DOMAIN: *elsa-domain
         BBL_ENV_NAME: "elsa"
-        BBL_GCP_SERVICE_ACCOUNT_KEY: {{elsa_gcp_json_key}}
-        BBL_GCP_PROJECT_ID: {{elsa_gcp_project_id}}
-        BBL_GCP_ZONE: {{elsa_gcp_zone}}
-        BBL_GCP_REGION: {{elsa_gcp_region}}
+        BBL_GCP_SERVICE_ACCOUNT_KEY: ((elsa_gcp_json_key))
+        BBL_GCP_PROJECT_ID: ((elsa_gcp_project_id))
+        BBL_GCP_ZONE: ((elsa_gcp_zone))
+        BBL_GCP_REGION: ((elsa_gcp_region))
       ensure:
         put: elsa-bbl-state
         params:
@@ -1298,8 +1298,8 @@ jobs:
       params:
         BBL_STATE_DIR: "elsa"
         DNS_DOMAIN: *elsa-domain
-        GCP_DNS_SERVICE_ACCOUNT_KEY: {{dns_gcp_json_key}}
-        GCP_PROJECT_ID: {{dns_gcp_project_id}}
+        GCP_DNS_SERVICE_ACCOUNT_KEY: ((dns_gcp_json_key))
+        GCP_PROJECT_ID: ((dns_gcp_project_id))
         SHARED_DNS_ZONE_NAME: "capi-land"
     - task: run-bosh-cleanup
       file: capi-ci/ci/bbl-tasks/run-bosh-cleanup.yml
@@ -1338,10 +1338,10 @@ jobs:
         BBL_LB_KEY: "certs/load-balancer/server.key"
         LB_DOMAIN: *kiki-domain
         BBL_ENV_NAME: "kiki"
-        BBL_GCP_SERVICE_ACCOUNT_KEY: {{kiki_gcp_json_key}}
-        BBL_GCP_PROJECT_ID: {{kiki_gcp_project_id}}
-        BBL_GCP_ZONE: {{kiki_gcp_zone}}
-        BBL_GCP_REGION: {{kiki_gcp_region}}
+        BBL_GCP_SERVICE_ACCOUNT_KEY: ((kiki_gcp_json_key))
+        BBL_GCP_PROJECT_ID: ((kiki_gcp_project_id))
+        BBL_GCP_ZONE: ((kiki_gcp_zone))
+        BBL_GCP_REGION: ((kiki_gcp_region))
       ensure:
         put: kiki-bbl-state
         params:
@@ -1354,8 +1354,8 @@ jobs:
       params:
         BBL_STATE_DIR: "kiki"
         DNS_DOMAIN: *kiki-domain
-        GCP_DNS_SERVICE_ACCOUNT_KEY: {{dns_gcp_json_key}}
-        GCP_PROJECT_ID: {{dns_gcp_project_id}}
+        GCP_DNS_SERVICE_ACCOUNT_KEY: ((dns_gcp_json_key))
+        GCP_PROJECT_ID: ((dns_gcp_project_id))
         SHARED_DNS_ZONE_NAME: "capi-land"
     - task: run-bosh-cleanup
       file: capi-ci/ci/bbl-tasks/run-bosh-cleanup.yml
@@ -1394,10 +1394,10 @@ jobs:
         BBL_LB_KEY: "certs/load-balancer/server.key"
         LB_DOMAIN: *ripley-domain
         BBL_ENV_NAME: "ripley"
-        BBL_GCP_SERVICE_ACCOUNT_KEY: {{ripley_gcp_json_key}}
-        BBL_GCP_PROJECT_ID: {{ripley_gcp_project_id}}
-        BBL_GCP_ZONE: {{ripley_gcp_zone}}
-        BBL_GCP_REGION: {{ripley_gcp_region}}
+        BBL_GCP_SERVICE_ACCOUNT_KEY: ((ripley_gcp_json_key))
+        BBL_GCP_PROJECT_ID: ((ripley_gcp_project_id))
+        BBL_GCP_ZONE: ((ripley_gcp_zone))
+        BBL_GCP_REGION: ((ripley_gcp_region))
       ensure:
         put: ripley-bbl-state
         params:
@@ -1410,8 +1410,8 @@ jobs:
       params:
         BBL_STATE_DIR: "ripley"
         DNS_DOMAIN: *ripley-domain
-        GCP_DNS_SERVICE_ACCOUNT_KEY: {{dns_gcp_json_key}}
-        GCP_PROJECT_ID: {{dns_gcp_project_id}}
+        GCP_DNS_SERVICE_ACCOUNT_KEY: ((dns_gcp_json_key))
+        GCP_PROJECT_ID: ((dns_gcp_project_id))
         SHARED_DNS_ZONE_NAME: "capi-land"
     - task: run-bosh-cleanup
       file: capi-ci/ci/bbl-tasks/run-bosh-cleanup.yml
@@ -1519,14 +1519,14 @@ jobs:
       env_name: leia
       terraform_source: capi-ci/terraform/azure-ms-sql/
       vars:
-        subscription_id: {{azure_subscription_id}}
-        client_id: {{azure_client_id}}
-        client_secret: {{azure_client_secret}}
-        tenant_id: {{azure_tenant_id}}
-        resource_group: {{azure_resource_group}}
-        db_name: {{azure_db_name}}
-        db_admin_user: {{azure_db_admin_user}}
-        db_admin_password: {{azure_db_admin_password}}
+        subscription_id: ((azure_subscription_id))
+        client_id: ((azure_client_id))
+        client_secret: ((azure_client_secret))
+        tenant_id: ((azure_tenant_id))
+        resource_group: ((azure_resource_group))
+        db_name: ((azure_db_name))
+        db_admin_user: ((azure_db_admin_user))
+        db_admin_password: ((azure_db_admin_password))
   - task: extract-bbl-environment
     file: capi-ci/ci/bbl-tasks/extract_bbl_environment.yml
     params:
@@ -1554,8 +1554,8 @@ jobs:
       destination-directory: ripley-deployment-vars
     file: capi-ci/ci/gcs/download-from-gcs.yml
     params:
-      GCP_JSON_KEY: {{ripley_gcp_json_key}}
-      GCP_BUCKET: {{ripley_bosh_vars_bucket}}
+      GCP_JSON_KEY: ((ripley_gcp_json_key))
+      GCP_BUCKET: ((ripley_bosh_vars_bucket))
       GCP_PATH: bosh
   - task: updated-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
