@@ -14,7 +14,7 @@ script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 workspace_dir="$( cd "${script_dir}/../../../" && pwd )"
 bbl_state_dir="${workspace_dir}/bbl-state/${BBL_STATE_DIR}"
 
-tmp_dir="$(mktmp -d /tmp/create-dns-record.XXXXXXXX)"
+tmp_dir="$(mktemp -d /tmp/create-dns-record.XXXXXXXX)"
 trap '{ rm -rf "${tmp_dir}"; }' EXIT
 
 create_dns_record() {
