@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -exu
+set -eu
 
 pushd capi-release
   (git rev-parse HEAD ) > ../capi-final-releases/commitish

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -e -x
+set -e
 
 function setup_git_user() {
   git config user.name 'CAPI CI'

@@ -82,7 +82,6 @@ EOF
 }
 
 function commit_capi_ci_private() {
-  set -x
   if [[ -n $(git status --porcelain) ]]; then
     git config user.name "CI Bot"
     git config user.email "cf-capi-eng@pivotal.io"
@@ -90,7 +89,6 @@ function commit_capi_ci_private() {
     git add "${updated_capi_ci_private}/${ENVIRONMENT}"
     git commit -m "Initial commit for '${ENVIRONMENT}'"
   fi
-  set +x
 }
 
 git clone "${capi_ci_private}" "${updated_capi_ci_private}"

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -e -x
+set -e
 
 function setup_ssh_for_git() {
   mkdir ${HOME}/.ssh

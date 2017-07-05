@@ -1,24 +1,25 @@
 #!/bin/bash
-set -exu
+set -eu
 
 function setup_bosh_env_vars() {
-  set +x
+  echo "Setting env vars..."
   pushd "bbl-state/${BBL_STATE_DIR}"
     export BOSH_CA_CERT="$(bbl director-ca-cert)"
     export BOSH_ENVIRONMENT=$(bbl director-address)
     export BOSH_CLIENT=$(bbl director-username)
     export BOSH_CLIENT_SECRET=$(bbl director-password)
   popd
-  set -x
 }
 
 function bosh_clean_up() {
+  echo "Running bosh clean-up on ${BOSH_ENVIRONMENT}..."
   bosh -n clean-up --all
 }
 
 function main() {
   setup_bosh_env_vars
   bosh_clean_up
+  echo "Done"
 }
 
 main

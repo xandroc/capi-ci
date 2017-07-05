@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -e -x
+set -e
 
 function setup_v3_ssh() {
   mkdir ${HOME}/.ssh

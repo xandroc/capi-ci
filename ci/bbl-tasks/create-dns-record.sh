@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -exu -o pipefail
+set -eu -o pipefail
 
 # ENV
 : "${BBL_STATE_DIR:?}"
