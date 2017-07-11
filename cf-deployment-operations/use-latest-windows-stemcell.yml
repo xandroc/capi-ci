@@ -1,0 +1,5 @@
+---
+- type: replace
+  path: /stemcells/alias=windows/version
+  value: 'latest'
+
