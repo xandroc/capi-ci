@@ -769,6 +769,7 @@ jobs:
       - capi-ci/cf-deployment-operations/add-prometheus.yml
       - capi-ci/cf-deployment-operations/add-prometheus-capi-homepage.yml
       - capi-ci/cf-deployment-operations/enable-perform-blob-cleanup.yml
+      - capi-ci/cf-deployment-operations/use-latest-windows-stemcell.yml
   - task: download-vars-store
     output_mapping:
       destination-directory: elsa-deployment-vars
