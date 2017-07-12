@@ -2,8 +2,3 @@
 - type: replace
   path: /stemcells/alias=windows/version
   value: 'latest'
-- type: replace
-  path: /stemcells/alias=windows/url?
-  value: 'https://s3.amazonaws.com/bosh-windows-stemcells-release-candidates/light-bosh-stemcell-1093.0.0-build.1-google-kvm-windows2012R2-go_agent.tgz'
-
-
