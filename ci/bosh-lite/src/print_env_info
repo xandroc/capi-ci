@@ -1,0 +1,31 @@
+#!/bin/bash
+
+: "${pool_dir:="/Users/pivotal/workspace/capi-env-pool/bosh-lites/claimed"}"
+
+function print_env_info {
+  pushd "$pool_dir" > /dev/null
+    claimed_files="$(git log --reverse --name-only --pretty=format: * | xargs)"
+
+    output="*ENV*\t*CLAIMED BY*\t*CLAIMED SINCE*\n"
+    for file in ${claimed_files}; do
+      file="$( basename "${file}" )"
+      author="$(git log --pretty='format:%an' "${file}")"
+      committer="$(git log --pretty='format:%cn' "${file}")"
+      claimed_since="$(git log --pretty='format:%ar' "${file}")"
+
+      if [ "${author}" != "${committer}" ]; then
+        claimed_by="${author}+${committer}"
+      else
+        claimed_by="${author}"
+      fi
+
+      output="${output}${file}\t${claimed_by}\t${claimed_since}\n"
+    done
+
+  popd
+  echo -e "$output" | column -t -s $'\t'
+}
+
+if [ "$1" != "--concourse" ]; then
+    print_env_info
+fi
