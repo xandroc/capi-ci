@@ -8,6 +8,7 @@ groups:
   - bosh-lite-docker
   - spiff-docker
   - runtime-ci
+  - sits-docker
 
 resources:
 - name: weekly
@@ -39,6 +40,22 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry/capi-dockerfiles.git
     paths: [capi-runtime-ci/Dockerfile]
+
+- name: capi-dockerfiles-sits
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/sync-integration-tests.git
+    paths: [concourse/Dockerfile]
+
+- name: docker-image-sits
+  type: docker-image
+  source:
+    repository: cloudfoundry/capi
+    tag: sits
+    username: ((dockerhub_user))
+    password: ((dockerhub_pass))
+    email: ((dockerhub_email))
 
 - name: docker-image-runtime-ci
   type: docker-image
@@ -200,3 +217,13 @@ jobs:
   - put: docker-image-spiff
     params:
       build: capi-dockerfiles-spiff/spiff
+- name: sits-docker
+  serial: true
+  plan:
+  - aggregate:
+    - get: weekly
+      trigger: true
+    - get: capi-dockerfiles-sits
+  - put: docker-image-sits
+    params:
+      build: capi-dockerfiles-sits/concourse
