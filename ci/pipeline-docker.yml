@@ -154,6 +154,7 @@ jobs:
     - get: weekly
       trigger: true
     - get: capi-dockerfiles-rc-docs
+      trigger: true
   - put: docker-image-rc-docs
     params:
       build: capi-dockerfiles-rc-docs/rc-docs
@@ -164,6 +165,7 @@ jobs:
     - get: weekly
       trigger: true
     - get: capi-dockerfiles-ruby-units
+      trigger: true
   - put: docker-image-ruby-units
     params:
       build: capi-dockerfiles-ruby-units/capi-ruby-units
@@ -174,6 +176,7 @@ jobs:
     - get: weekly
       trigger: true
     - get: capi-dockerfiles-go-units
+      trigger: true
   - put: docker-image-go-units
     params:
       build: capi-dockerfiles-go-units/capi-go-units
@@ -184,6 +187,7 @@ jobs:
     - get: weekly
       trigger: true
     - get: capi-dockerfiles-bbl
+      trigger: true
   - put: docker-image-bbl
     params:
       build: capi-dockerfiles-bbl/bbl
@@ -194,6 +198,7 @@ jobs:
     - get: weekly
       trigger: true
     - get: capi-dockerfiles-runtime-ci
+      trigger: true
   - put: docker-image-runtime-ci
     params:
       build: capi-dockerfiles-runtime-ci/capi-runtime-ci
@@ -204,6 +209,7 @@ jobs:
     - get: weekly
       trigger: true
     - get: capi-dockerfiles-bosh-lite
+      trigger: true
   - put: docker-image-bosh-lite
     params:
       build: capi-dockerfiles-bosh-lite/bosh-lite
@@ -214,6 +220,7 @@ jobs:
     - get: weekly
       trigger: true
     - get: capi-dockerfiles-spiff
+      trigger: true
   - put: docker-image-spiff
     params:
       build: capi-dockerfiles-spiff/spiff
@@ -224,6 +231,7 @@ jobs:
     - get: weekly
       trigger: true
     - get: capi-dockerfiles-sits
+      trigger: true
   - put: docker-image-sits
     params:
       build: capi-dockerfiles-sits/concourse
