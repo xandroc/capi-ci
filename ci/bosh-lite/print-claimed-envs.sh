@@ -14,7 +14,7 @@ pool_dir="${workspace_dir}/env-pool/${POOL_NAME}"
 # OUTPUTS
 output_file="${workspace_dir}/message/message.txt"
 
-. "${script_dir}/src/print_env_info" --concourse
+. "${script_dir}/src/print_env_info"
 
 message="Time for another bosh-lite round-up! If you have a bosh-lite claimed that you no longer need, run \`unclaim_bosh_lite ENV_NAME\` to set it free!"
 if [ -n "${MESSAGE_PREFIX}" ]; then

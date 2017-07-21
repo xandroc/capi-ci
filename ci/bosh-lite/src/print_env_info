@@ -1,9 +1,9 @@
 #!/bin/bash
 
-: "${pool_dir:="/Users/pivotal/workspace/capi-env-pool/bosh-lites/claimed"}"
+: "${pool_dir:="/Users/pivotal/workspace/capi-env-pool/bosh-lites"}"
 
 function print_env_info {
-  pushd "$pool_dir" > /dev/null
+  pushd "${pool_dir}/claimed" > /dev/null
     claimed_files="$(git log --reverse --name-only --pretty=format: * | xargs)"
 
     output="*ENV*\t*CLAIMED BY*\t*CLAIMED SINCE*\n"
@@ -26,6 +26,4 @@ function print_env_info {
   echo -e "$output" | column -t -s $'\t'
 }
 
-if [ "$1" != "--concourse" ]; then
-    print_env_info
-fi
+print_env_info
