@@ -12,7 +12,7 @@ function setup_bosh_env_vars() {
 
 function upload_release() {
   for filename in release-tarball/*.tgz; do
-    bosh2 upload-release --sha2 "$filename"
+    bosh upload-release --sha2 "$filename"
   done
 }
 
