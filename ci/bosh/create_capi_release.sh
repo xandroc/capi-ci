@@ -23,17 +23,17 @@ pushd capi-release
     git checkout $CC_COMMIT_SHA
   popd
 
-  CAPI_RELEASE_OUT="../create-release.out"
   for i in {1..5}; do
     echo "Syncing blobs, attempt $i"
-    bosh -n --parallel 10 sync blobs && break
+    bosh2 -n sync-blobs --sha2 --parallel=10 && break
   done
 
   ./scripts/unused_blobs
 
+  TARBALL_NAME=capi-${VERSION}-${CAPI_COMMIT_SHA}-${CC_COMMIT_SHA}.tgz
   for i in {1..5}; do
     echo "Creating release, attempt $i"
-    bosh -n create release --with-tarball --version $VERSION --force | tee -a $CAPI_RELEASE_OUT
+    bosh2 -n create-release --sha2 --tarball=$TARBALL_NAME --version $VERSION --force
     EXIT_STATUS=${PIPESTATUS[0]}
     if [ "$EXIT_STATUS" = "0" ]; then
       break
@@ -45,11 +45,11 @@ pushd capi-release
     exit $EXIT_STATUS
   fi
 
-  TARBALL=`grep -a "Release tarball" $CAPI_RELEASE_OUT | cut -d " " -f4`
-  if [ "$TARBALL" = "" ]; then
+ if [ ! -f $TARBALL_NAME ]; then
     echo "No release tarball found"
     exit 1
-  fi
+ fi
+
 popd
 
-mv $TARBALL created-capi-release/capi-${VERSION}-${CAPI_COMMIT_SHA}-${CC_COMMIT_SHA}.tgz
+mv capi-release/$TARBALL_NAME created-capi-release/

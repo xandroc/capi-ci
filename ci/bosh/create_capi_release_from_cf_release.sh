@@ -22,8 +22,6 @@ export BOSH_ENVIRONMENT BOSH_CLIENT BOSH_CLIENT_SECRET BOSH_CA_CERT \
   BOSH_GW_USER BOSH_GW_HOST BOSH_GW_PRIVATE_KEY_CONTENTS
 
 pushd "${cf_release_dir}/src/capi-release" > /dev/null
-  # TODO: switch to Golang bosh once it supports symlinks
-  bosh1 -n --parallel 10 create release
-
-  bosh -n upload-release --rebase
+  bosh create-release -n --sha2 --parallel=10
+  bosh upload-release -n --sha2 --rebase
 popd > /dev/null
