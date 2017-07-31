@@ -22,6 +22,7 @@ export BOSH_ENVIRONMENT BOSH_CLIENT BOSH_CLIENT_SECRET BOSH_CA_CERT \
   BOSH_GW_USER BOSH_GW_HOST BOSH_GW_PRIVATE_KEY_CONTENTS
 
 pushd "${cf_release_dir}/src/capi-release" > /dev/null
-  bosh create-release -n --sha2 --parallel=10
+  bosh sync-blobs -n  --sha2 --parallel=10
+  bosh create-release -n --sha2
   bosh upload-release -n --sha2 --rebase
 popd > /dev/null
