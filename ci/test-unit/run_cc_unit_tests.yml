@@ -5,7 +5,7 @@ image_resource:
   type: docker-image
   source:
     repository: cloudfoundry/capi
-    tag: ruby-units
+    tag: ruby-units-old
 
 inputs:
   - name: cloud_controller_ng
