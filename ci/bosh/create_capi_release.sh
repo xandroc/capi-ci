@@ -25,7 +25,7 @@ pushd capi-release
 
   for i in {1..5}; do
     echo "Syncing blobs, attempt $i"
-    bosh -n sync-blobs --sha2 --parallel=10 && break
+    bosh sync-blobs --sha2 --parallel=10 && break
   done
 
   ./scripts/unused_blobs
@@ -33,7 +33,7 @@ pushd capi-release
   TARBALL_NAME=capi-${VERSION}-${CAPI_COMMIT_SHA}-${CC_COMMIT_SHA}.tgz
   for i in {1..5}; do
     echo "Creating release, attempt $i"
-    bosh -n create-release --sha2 --tarball=$TARBALL_NAME --version $VERSION --force
+    bosh create-release --sha2 --tarball=$TARBALL_NAME --version $VERSION --force
     EXIT_STATUS=${PIPESTATUS[0]}
     if [ "$EXIT_STATUS" = "0" ]; then
       break
