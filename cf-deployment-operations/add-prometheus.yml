@@ -182,6 +182,6 @@
   path: /releases/-
   value:
     name: prometheus
-    url: https://bosh.io/d/github.com/cloudfoundry-community/prometheus-boshrelease?v=17.3.0
-    version: 17.3.0
-    sha1: 7289cdc9fc3903ae69282fbe25d8f963a22bf31c
+    url: https://bosh.io/d/github.com/cloudfoundry-community/prometheus-boshrelease?v=17.6.1
+    version: 17.6.1
+    sha1: a971f74ed1173f9965fae06637f9fd5e9ccb0b34
