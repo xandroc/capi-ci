@@ -965,11 +965,11 @@ jobs:
     file: capi-ci/ci/bosh/finalize-release.yml
   - put: capi-final-releases
     params:
-      file: finalized-release/capi-*.tgz
+      file: finalized-release-tarball/capi-*.tgz
   - put: capi-release
     resource: capi-release-master
     params:
-      repository: finalized-release/capi-release
+      repository: finalized-release-git-repo/capi-release
       tag: version/version
   - put: version
     params:

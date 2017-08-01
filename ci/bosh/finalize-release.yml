@@ -12,10 +12,10 @@ inputs:
   - name: capi-ci
   - name: capi-ci-private
   - name: capi-release
-  - name: capi-release-tarball
 
 outputs:
-  - name: finalized-release
+  - name: finalized-release-git-repo
+  - name: finalized-release-tarball
 
 run:
   path: capi-ci/ci/bosh/finalize_release
