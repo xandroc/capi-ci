@@ -55,6 +55,12 @@
                 static_configs:
                   - targets:
                     - localhost:9186
+              - job_name: cf
+                scrape_interval: 2m
+                scrape_timeout: 2m
+                static_configs:
+                  - targets:
+                    - localhost:9193
 
       - name: bosh_exporter
         release: prometheus
@@ -79,6 +85,18 @@
               client_secret: ((prometheus_uaa_client_secret))
             doppler:
               url: wss://doppler.((system_domain)):443
+            metrics:
+              environment: cf
+      - name: cf_exporter
+        release: prometheus
+        properties:
+          cf_exporter:
+            skip_ssl_verify: true
+            cf:
+              api_url: https://api.((system_domain))
+              client_id: prometheus
+              client_secret: ((prometheus_uaa_client_secret))
+              deployment_name: cf
             metrics:
               environment: cf
 
