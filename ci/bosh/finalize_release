@@ -7,8 +7,6 @@ source ~/.bashrc
 FINAL_RELEASE_VERSION=$(cat version/version)
 DEV_RELEASE_TARBALL=$(ls ${PWD}/capi-release-tarball/*.tgz)
 
-RELEASE_TGZ="releases/capi/capi-${FINAL_RELEASE_VERSION}.tgz"
-
 function setup_git_user() {
   pushd capi-release
     git config user.name 'CAPI CI'
@@ -23,7 +21,6 @@ function copy_private_yml() {
 function create_release() {
   pushd capi-release
     bosh -n finalize-release --name capi --version "${FINAL_RELEASE_VERSION}" "${DEV_RELEASE_TARBALL}"
-    mv "${RELEASE_TGZ}" "../finalized-release/capi-${FINAL_RELEASE_VERSION}.tgz"
 
     git add -A
     git commit -m "Create final release ${FINAL_RELEASE_VERSION}"

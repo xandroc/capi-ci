@@ -963,9 +963,11 @@ jobs:
     params: {file: version/version}
   - task: finalize-release
     file: capi-ci/ci/bosh/finalize-release.yml
+  - task: create-final-capi-release
+    file: capi-ci/ci/bosh/create_final_capi_release.yml
   - put: capi-final-releases
     params:
-      file: finalized-release/capi-*.tgz
+      file: created-capi-release/*.tgz
   - put: capi-release
     resource: capi-release-master
     params:

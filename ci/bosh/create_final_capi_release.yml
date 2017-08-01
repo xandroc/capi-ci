@@ -1,0 +1,22 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: cloudfoundry/capi
+    tag: runtime-ci
+
+inputs:
+  - name: capi-release
+  - name: capi-ci
+  - name: version
+
+outputs:
+  - name: created-capi-release
+
+run:
+  path: capi-ci/ci/bosh/create_final_capi_release.sh
+
+params:
+  CC_BRANCH:
