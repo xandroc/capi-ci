@@ -631,6 +631,7 @@ jobs:
       - capi-ci/cf-deployment-operations/add-prometheus-capi-homepage.yml
       - capi-ci/cf-deployment-operations/add-remote-syslog.yml
       - capi-ci/cf-deployment-operations/enable-perform-blob-cleanup.yml
+      - capi-ci/cf-deployment-operations/temporary/disable-uaa-get-requests.yml
   - task: download-vars-store
     output_mapping:
       destination-directory: mulan-deployment-vars
@@ -772,6 +773,7 @@ jobs:
       - capi-ci/cf-deployment-operations/add-prometheus-capi-homepage.yml
       - capi-ci/cf-deployment-operations/enable-perform-blob-cleanup.yml
       - capi-ci/cf-deployment-operations/use-latest-windows-stemcell.yml
+      - capi-ci/cf-deployment-operations/temporary/disable-uaa-get-requests.yml
   - task: download-vars-store
     output_mapping:
       destination-directory: elsa-deployment-vars
@@ -888,6 +890,7 @@ jobs:
       - capi-ci/cf-deployment-operations/scale-cells-to-two.yml
       - cf-deployment/operations/use-postgres.yml
       - capi-ci/cf-deployment-operations/add-remote-syslog.yml
+      - capi-ci/cf-deployment-operations/temporary/disable-uaa-get-requests.yml
   - task: apply-cc-migrations
     file: capi-ci/ci/migrations/apply_latest_migrations.yml
   - task: download-vars-store
@@ -1554,6 +1557,7 @@ jobs:
       - capi-ci/cf-deployment-operations/use-ms-sql-azure.yml
       - capi-ci/cf-deployment-operations/skip-cert-verify.yml
       - capi-ci/cf-deployment-operations/use-latest-capi.yml
+      - capi-ci/cf-deployment-operations/temporary/disable-uaa-get-requests.yml
   - task: download-vars-store
     output_mapping:
       destination-directory: ripley-deployment-vars
