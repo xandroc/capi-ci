@@ -3,16 +3,28 @@ set -e
 
 : ${DB:?}
 
-pushd cloud_controller_ng > /dev/null
-  service mysql restart
-  service postgresql restart
-  if [ "${DB}" = "mssql" ]; then
+start_db() {
+  if [ "${DB}" = "mysql" ]; then
+    # HACK: change access time on mysql files to copy them into the writable layer
+    # Context: https://github.com/moby/moby/issues/34390
+    find /var/lib/mysql/mysql -exec touch -c -a {} +
+    service mysql restart
+  elif [ "${DB}" = "postgres" ]; then
+    service postgresql restart
+  elif [ "${DB}" = "mssql" ]; then
     service docker start
     trap 'service docker stop' EXIT
     sleep 5
 
     LOG_FILE="/tmp/mssql.log" ./scripts/run-ms-sql-background.sh
+  else
+    echo "Uknown DB type '${DB}', this script only supports 'mysql', 'postgres', and 'mssql'"
+    exit 1
   fi
+}
+
+pushd cloud_controller_ng > /dev/null
+  start_db
 
   bundle install
 
