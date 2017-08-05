@@ -6,12 +6,13 @@ function print_env_info {
   pushd "${pool_dir}/claimed" > /dev/null
     claimed_files="$(git log --reverse --name-only --pretty=format: * | xargs)"
 
-    output="*ENV*\t*CLAIMED BY*\t*CLAIMED SINCE*\n"
+    output="*ENV*\t*CLAIMED BY*\t*CLAIMED ON*\t*CLAIMED SINCE*\n"
     for file in ${claimed_files}; do
       file="$( basename "${file}" )"
       author="$(git log --pretty='format:%an' "${file}")"
       committer="$(git log --pretty='format:%cn' "${file}")"
       claimed_since="$(git log --pretty='format:%ar' "${file}")"
+      workstation="$(git log --pretty='format:%s' "${file}" | sed -E "s/^manually claim [^[:space:]]+ on ([^[:space:]]+).*$/\1/")"
 
       if [ "${author}" != "${committer}" ]; then
         claimed_by="${author}+${committer}"
@@ -19,7 +20,7 @@ function print_env_info {
         claimed_by="${author}"
       fi
 
-      output="${output}${file}\t${claimed_by}\t${claimed_since}\n"
+      output="${output}${file}\t${claimed_by}\t${workstation}\t${claimed_since}\n"
     done
 
   popd
