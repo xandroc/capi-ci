@@ -880,8 +880,11 @@ jobs:
       manifest: cf-deployment/cf-deployment.yml
       vars:
         system_domain: *kiki-domain
+        prometheus_password: ((prometheus_password))
         syslog_remote_address: ((kiki_syslog_remote_address))
         syslog_remote_port: ((kiki_syslog_remote_port))
+      vars_files:
+      - environment/metadata # used by prometheus bosh exporter
       ops_files:
       - cf-deployment/operations/test/add-persistent-isolation-segment-diego-cell.yml
       - capi-ci/cf-deployment-operations/skip-cert-verify.yml
@@ -889,6 +892,8 @@ jobs:
       - cf-deployment/operations/scale-to-one-az.yml
       - capi-ci/cf-deployment-operations/scale-cells-to-two.yml
       - cf-deployment/operations/use-postgres.yml
+      - capi-ci/cf-deployment-operations/add-prometheus.yml
+      - capi-ci/cf-deployment-operations/add-prometheus-capi-homepage.yml
       - capi-ci/cf-deployment-operations/add-remote-syslog.yml
       - capi-ci/cf-deployment-operations/temporary/disable-uaa-get-requests.yml
   - task: apply-cc-migrations
@@ -930,7 +935,7 @@ jobs:
       input_mapping:
         integration-config: updated-integration-configs
       params:
-        NODES: 6
+        NODES: 4
         CONFIG_FILE_PATH: "kiki/cats_integration_config.json"
         CAPTURE_LOGS: true
     - task: sync-integration-tests
