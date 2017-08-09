@@ -6,6 +6,42 @@
     private_key: "((postgres_cert.private_key))"
 
 - type: replace
+  path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/ccdb/address?
+  value: sql-db.service.cf.internal
+
+- type: replace
+  path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/ccdb/ca_cert?
+  value: "((postgres_cert.ca))"
+
+- type: replace
+  path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/ccdb/ssl_verify_hostname?
+  value: true
+
+- type: replace
+  path: /instance_groups/name=cc-worker/jobs/name=cloud_controller_worker/properties/ccdb/address?
+  value: sql-db.service.cf.internal
+
+- type: replace
+  path: /instance_groups/name=cc-worker/jobs/name=cloud_controller_worker/properties/ccdb/ca_cert?
+  value: "((postgres_cert.ca))"
+
+- type: replace
+  path: /instance_groups/name=cc-worker/jobs/name=cloud_controller_worker/properties/ccdb/ssl_verify_hostname?
+  value: true
+
+- type: replace
+  path: /instance_groups/name=cc-clock/jobs/name=cloud_controller_clock/properties/ccdb/address?
+  value: sql-db.service.cf.internal
+
+- type: replace
+  path: /instance_groups/name=cc-clock/jobs/name=cloud_controller_clock/properties/ccdb/ca_cert?
+  value: "((postgres_cert.ca))"
+
+- type: replace
+  path: /instance_groups/name=cc-clock/jobs/name=cloud_controller_clock/properties/ccdb/ssl_verify_hostname?
+  value: true
+
+- type: replace
   path: /variables?/name=postgres_ca?
   value:
     name: postgres_ca
@@ -24,11 +60,3 @@
       common_name: sql-db.service.cf.internal
       extended_key_usage:
       - server_auth
-
-- type: replace
-  path: /releases/name=postgres
-  value:
-    name: postgres
-    url: https://bosh.io/d/github.com/cloudfoundry/postgres-release?v=18
-    version: 18
-    sha1: ad62d5d7e4b7875316ecd5b972f26ee842c4b605
