@@ -60,3 +60,12 @@
       common_name: sql-db.service.cf.internal
       extended_key_usage:
       - server_auth
+
+# Remove this once https://github.com/cloudfoundry/cf-deployment/pull/204 is merged
+- type: replace
+  path: /releases/name=postgres
+  value:
+    name: postgres
+    url: https://bosh.io/d/github.com/cloudfoundry/postgres-release?v=18
+    version: 18
+    sha1: ad62d5d7e4b7875316ecd5b972f26ee842c4b605
