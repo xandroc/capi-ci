@@ -632,6 +632,7 @@ jobs:
       - capi-ci/cf-deployment-operations/add-prometheus-capi-homepage.yml
       - capi-ci/cf-deployment-operations/add-remote-syslog.yml
       - capi-ci/cf-deployment-operations/enable-perform-blob-cleanup.yml
+      - capi-ci/cf-deployment-operations/silence-noisy-logs.yml
       - capi-ci/cf-deployment-operations/temporary/disable-uaa-get-requests.yml
   - task: download-vars-store
     output_mapping:
@@ -773,6 +774,7 @@ jobs:
       - capi-ci/cf-deployment-operations/add-prometheus.yml
       - capi-ci/cf-deployment-operations/add-prometheus-capi-homepage.yml
       - capi-ci/cf-deployment-operations/enable-perform-blob-cleanup.yml
+      - capi-ci/cf-deployment-operations/silence-noisy-logs.yml
       - capi-ci/cf-deployment-operations/use-latest-windows-stemcell.yml
       - capi-ci/cf-deployment-operations/temporary/disable-uaa-get-requests.yml
   - task: download-vars-store
