@@ -283,6 +283,13 @@ resources:
     private_key: ((private_key))
     branch: release-candidate
 
+- name: cf-deployment-master
+  type: git
+  source:
+    uri: git@github.com:cloudfoundry/cf-deployment.git
+    private_key: ((private_key))
+    branch: master
+
 - name: cf-deployment-concourse-tasks
   type: git
   source:
@@ -848,7 +855,7 @@ jobs:
     - get: cf-deployment-concourse-tasks
     - get: cats-concourse-task
     - get: cf-deployment
-      resource: cf-deployment
+      resource: cf-deployment-master
     - get: kiki-bbl-state
     - get: kiki-integration-configs
     - get: sync-integration-tests
