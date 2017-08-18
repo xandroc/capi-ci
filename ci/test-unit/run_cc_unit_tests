@@ -12,6 +12,7 @@ start_db() {
   elif [ "${DB}" = "postgres" ]; then
     service postgresql restart
   elif [ "${DB}" = "mssql" ]; then
+    service docker stop
     dockerd --data-root /scratch/docker ${server_args} >/tmp/docker.log 2>&1 &
     echo $! > /tmp/docker.pid
 
