@@ -15,5 +15,5 @@
   path: /instance_groups/name=doppler/jobs/name=syslog_drain_binder/properties/ssl/skip_cert_verify?
   value: false
 - type: replace
-  path: /instance_groups/name=nozzle/jobs/name=nozzle/properties/nozzle/insecure_ssl_skip_verify?
+  path: /instance_groups/name=nozzle/jobs/name=datadog-firehose-nozzle/properties/nozzle/insecure_ssl_skip_verify?
   value: false
