@@ -769,9 +769,10 @@ jobs:
       - cf-deployment/operations/tcp-routing-gcp.yml
       - cf-deployment/operations/windows-cell.yml
       - cf-deployment/operations/experimental/enable-prefer-declarative-healthchecks.yml
-      - capi-ci/cf-deployment-operations/skip-cert-verify-on-windows-cell.yml
+      - cf-deployment/operations/disable-router-tls-termination.yml
+      - capi-ci/cf-deployment-operations/disable-skip-cert-verify-on-windows-cell.yml
       - capi-ci/cf-deployment-operations/windows-cell-consul-mutual-tls.yml
-      - capi-ci/cf-deployment-operations/skip-cert-verify.yml
+      - capi-ci/cf-deployment-operations/disable-skip-cert-verify.yml
       - capi-ci/cf-deployment-operations/use-latest-capi.yml
       - capi-ci/cf-deployment-operations/bypass-cc-bridge.yml
       - capi-ci/cf-deployment-operations/use-s3-and-cdn-storage.yml
@@ -840,7 +841,7 @@ jobs:
         BOSH_DEPLOYMENT_NAME: cf
         BOSH_API_INSTANCE: api/0
         CF_API_TARGET: https://api.elsa.capi.land
-        CF_SKIP_SSL_VALIDATION: true
+        CF_SKIP_SSL_VALIDATION: false
         CF_APPS_DOMAIN: *elsa-domain
         BBL_STATE_DIR: elsa
         VARS_STORE_PATH: "vars-store.yml"
