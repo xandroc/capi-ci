@@ -772,12 +772,12 @@ jobs:
       - cf-deployment/operations/disable-router-tls-termination.yml
       - capi-ci/cf-deployment-operations/disable-skip-cert-verify-on-windows-cell.yml
       - capi-ci/cf-deployment-operations/windows-cell-consul-mutual-tls.yml
-      - capi-ci/cf-deployment-operations/disable-skip-cert-verify.yml
       - capi-ci/cf-deployment-operations/use-latest-capi.yml
       - capi-ci/cf-deployment-operations/bypass-cc-bridge.yml
       - capi-ci/cf-deployment-operations/use-s3-and-cdn-storage.yml
       - capi-ci/cf-deployment-operations/use-clustered-mysql.yml
       - capi-ci/cf-deployment-operations/add-datadog-firehose-nozzle-gcp.yml
+      - capi-ci/cf-deployment-operations/disable-skip-cert-verify.yml
       - capi-ci/cf-deployment-operations/add-new-relic.yml
       - capi-ci/cf-deployment-operations/add-remote-syslog.yml
       - capi-ci/cf-deployment-operations/add-prometheus.yml
