@@ -4,9 +4,8 @@
 # At time of writing, the AWS S3 cert was signed by https://baltimore-cybertrust-root.chain-demos.digicert.com/info/index.html,
 #   but if this certificate rotates the CA below will need to be changed.
 -  type: replace
-   path: /instance_groups/name=windows-cell/jobs/name=rep_windows/properties/diego/ssl?
-   value:
-     skip_cert_verify: false
+   path: /instance_groups/name=windows-cell/jobs/name=rep_windows/properties/diego/ssl?/skip_cert_verify
+   value: false
 -  type: replace
    path: /instance_groups/name=windows-cell/jobs/name=rep_windows/properties/diego/executor/ca_certs_for_downloads
    value: |

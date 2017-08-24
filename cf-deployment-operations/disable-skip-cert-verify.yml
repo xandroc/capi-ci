@@ -21,5 +21,5 @@
   path: /instance_groups/name=log-api/jobs/name=loggregator_trafficcontroller/properties/ssl/skip_cert_verify?
   value: false
 - type: replace
-  path: /instance_groups/name=diego-cell/jobs/name=rep/properties/diego/ssl/skip_cert_verify?
+  path: /instance_groups/name=diego-cell/jobs/name=rep/properties/diego/ssl?/skip_cert_verify
   value: false
