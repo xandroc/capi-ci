@@ -14,10 +14,6 @@
   value: "((postgres_cert.ca))"
 
 - type: replace
-  path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/ccdb/ssl_verify_hostname?
-  value: true
-
-- type: replace
   path: /instance_groups/name=cc-worker/jobs/name=cloud_controller_worker/properties/ccdb/address?
   value: sql-db.service.cf.internal
 
@@ -26,20 +22,12 @@
   value: "((postgres_cert.ca))"
 
 - type: replace
-  path: /instance_groups/name=cc-worker/jobs/name=cloud_controller_worker/properties/ccdb/ssl_verify_hostname?
-  value: true
-
-- type: replace
   path: /instance_groups/name=cc-clock/jobs/name=cloud_controller_clock/properties/ccdb/address?
   value: sql-db.service.cf.internal
 
 - type: replace
   path: /instance_groups/name=cc-clock/jobs/name=cloud_controller_clock/properties/ccdb/ca_cert?
   value: "((postgres_cert.ca))"
-
-- type: replace
-  path: /instance_groups/name=cc-clock/jobs/name=cloud_controller_clock/properties/ccdb/ssl_verify_hostname?
-  value: true
 
 - type: replace
   path: /variables?/name=postgres_ca?
