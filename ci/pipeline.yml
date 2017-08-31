@@ -944,8 +944,11 @@ jobs:
     params:
       SYSTEM_DOMAIN: *kiki-domain
       VARS_STORE_FILE: "vars-store.yml"
-  - task: cats-from-cf-release
-    file: cats-concourse-task/cats-from-cf-release/task.yml
+  # TODO: Switch this back after next cf-release
+  # https://www.pivotaltracker.com/story/show/150715092
+  - get: cf-acceptance-tests
+  # - task: cats-from-cf-release
+  #   file: cats-concourse-task/cats-from-cf-release/task.yml
   - aggregate:
     - task: acceptance-tests
       file: cats-concourse-task/task.yml
