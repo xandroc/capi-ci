@@ -6,5 +6,5 @@
   value:
     name: routing
     url: https://storage.googleapis.com/capi-gcp-502-fix/routing-release-gcp-fix.tgz
-    version: 0.162.0+dev.2
-    sha1: 0ec4ef79783547ab58d37bfc64af43a736619a63
+    version: 0.162.0+dev.3
+    sha1: 55ca8acbc7fdb4f4250b60456f427bfd587ffa32
