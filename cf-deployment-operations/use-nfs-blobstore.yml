@@ -1,0 +1,146 @@
+- type: replace
+  path: /instance_groups/-
+  value:
+    name: nfstestserver
+    azs: [z1]
+    instances: 1
+    stemcell: default
+    vm_type: m3.medium
+    networks: [ name: default ]
+    jobs:
+    - name: consul_agent
+      release: consul
+      consumes:
+        consul_common: {from: consul_common_link}
+        consul_server: nil
+        consul_client: {from: consul_client_link}
+      properties:
+        consul:
+          agent:
+            services:
+              nfstestserver:
+                name: nfstestserver
+                check: {}
+    - name: nfstestserver
+      release: nfs-volume
+      properties:
+        nfstestserver: {}
+- type: replace
+  path: /releases/-
+  value:
+    name: nfs-volume
+    version: 1.0.6
+    url: https://bosh.io/d/github.com/cloudfoundry-incubator/nfs-volume-release?v=1.0.6
+    sha1: 3ea1110e862ce27ee53bd0b2c482fe53af36ed06
+
+## set nfs properties
+# cloud_controller_ng
+- type: replace
+  path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/nfs_server?
+  value:
+    address: nfstestserver.service.cf.internal
+    share: /export2/certs
+    nfs4: false
+
+- type: replace
+  path: /instance_groups/name=api/jobs/-
+  value:
+    name: nfs_mounter
+    properties:
+      nfs_server:
+        address: nfstestserver.service.cf.internal
+        share: /export2/certs
+        nfs4: false
+    release: capi
+
+# cc-worker
+- type: replace
+  path: /instance_groups/name=cc-worker/jobs/name=cloud_controller_worker/properties/nfs_server?
+  value:
+    address: nfstestserver.service.cf.internal
+    share: /export2/certs
+    nfs4: false
+
+- type: replace
+  path: /instance_groups/name=cc-worker/jobs/-
+  value:
+    name: nfs_mounter
+    properties:
+      nfs_server:
+        address: nfstestserver.service.cf.internal
+        share: /export2/certs
+        nfs4: false
+    release: capi
+
+# cc-clock
+- type: replace
+  path: /instance_groups/name=cc-clock/jobs/name=cloud_controller_clock/properties/nfs_server?
+  value:
+    address: nfstestserver.service.cf.internal
+    share: /export2/certs
+    nfs4: false
+
+- type: replace
+  path: /instance_groups/name=cc-clock/jobs/-
+  value:
+    name: nfs_mounter
+    properties:
+      nfs_server:
+        address: nfstestserver.service.cf.internal
+        share: /export2/certs
+        nfs4: false
+    release: capi
+
+- type: remove
+  path: '/instance_groups/name=blobstore'
+
+- type: replace
+  path: '/instance_groups/name=api/jobs/name=cloud_controller_ng/properties/cc/buildpacks'
+  value: &s3buildpacks
+    blobstore_type: 'fog'
+    fog_connection: &fog_connection
+      provider: Local
+      local_root: /var/vcap/nfs
+
+- type: replace
+  path: '/instance_groups/name=api/jobs/name=cloud_controller_ng/properties/cc/droplets'
+  value: &s3droplet
+    blobstore_type: 'fog'
+    fog_connection: *fog_connection
+- type: replace
+  path: '/instance_groups/name=api/jobs/name=cloud_controller_ng/properties/cc/packages'
+  value: &s3packages
+    blobstore_type: 'fog'
+    fog_connection: *fog_connection
+- type: replace
+  path: '/instance_groups/name=api/jobs/name=cloud_controller_ng/properties/cc/resource_pool'
+  value: &s3resourcepool
+    blobstore_type: 'fog'
+    fog_connection: *fog_connection
+
+- type: replace
+  path: '/instance_groups/name=cc-worker/jobs/name=cloud_controller_worker/properties/cc/buildpacks'
+  value: *s3buildpacks
+- type: replace
+  path: '/instance_groups/name=cc-worker/jobs/name=cloud_controller_worker/properties/cc/droplets'
+  value: *s3droplet
+- type: replace
+  path: '/instance_groups/name=cc-worker/jobs/name=cloud_controller_worker/properties/cc/packages'
+  value: *s3packages
+- type: replace
+  path: '/instance_groups/name=cc-worker/jobs/name=cloud_controller_worker/properties/cc/resource_pool'
+  value: *s3resourcepool
+
+
+- type: replace
+  path: '/instance_groups/name=cc-clock/jobs/name=cloud_controller_clock/properties/cc/buildpacks'
+  value: *s3buildpacks
+- type: replace
+  path: '/instance_groups/name=cc-clock/jobs/name=cloud_controller_clock/properties/cc/droplets'
+  value: *s3droplet
+- type: replace
+  path: '/instance_groups/name=cc-clock/jobs/name=cloud_controller_clock/properties/cc/packages'
+  value: *s3packages
+- type: replace
+  path: '/instance_groups/name=cc-clock/jobs/name=cloud_controller_clock/properties/cc/resource_pool'
+  value: *s3resourcepool
