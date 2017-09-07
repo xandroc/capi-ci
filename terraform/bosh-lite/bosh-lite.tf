@@ -6,7 +6,7 @@ variable "region" {
   default = "us-west1"
 }
 variable "zone" {
-  default = "us-west1-a"
+  default = "us-west1-b"
 }
 variable "env_name" {}
 variable "internal_cidr" {
