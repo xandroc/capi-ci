@@ -6,6 +6,7 @@ groups:
   - create-capi-release
   - bump-capi-release
   - mulan-postgres-webdav-bridge
+  - buffy-bits-postgres-webdav
   - elsa-mysql-s3-bypass
   - kiki-back-compat-migrations
   - bump-ci-passed
@@ -29,6 +30,7 @@ groups:
   jobs:
   - update-bosh-arya
   - update-bosh-mulan
+  - update-bosh-buffy
   - update-bosh-elsa
   - update-bosh-kiki
 - name: mssql
@@ -381,6 +383,31 @@ resources:
         file_name: &mulan_vars_store_path "bosh/vars-store.yml"
         json_key: ((mulan_gcp_json_key))
 
+# Buffy resources
+- name: buffy-bbl-state
+  type: git
+  source:
+    branch: master
+    private_key: ((private_key))
+    uri: git@github.com:cloudfoundry/capi-ci-private.git
+
+- name: buffy-integration-configs
+  type: git
+  source:
+    branch: master
+    private_key: ((private_key))
+    uri: git@github.com:cloudfoundry/capi-ci-private.git
+
+- name: buffy-deployment
+  type: bosh2-deployment
+  source:
+    vars_store:
+      provider: gcs
+      config:
+        bucket: ((buffy_bosh_vars_bucket))
+        file_name: &buffy_vars_store_path "bosh/vars-store.yml"
+        json_key: ((buffy_gcp_json_key))
+
 # Elsa resources
 - name: elsa-bbl-state
   type: git
@@ -694,6 +721,133 @@ jobs:
         CF_SKIP_SSL_VALIDATION: true
         CF_APPS_DOMAIN: *mulan-domain
         BBL_STATE_DIR: mulan
+        VARS_STORE_PATH: "vars-store.yml"
+        USE_CF_DEPLOYMENT_VARS: "true"
+
+- name: buffy-bits-postgres-webdav
+  serial: true
+  serial_groups: [deploy-buffy]
+  plan:
+  - aggregate:
+    - get: cf-deployment-concourse-tasks
+    - get: cats-concourse-task
+    - get: cf-deployment
+      resource: cf-deployment
+    - get: capi-release
+      resource: capi-release-develop
+      passed: [create-capi-release]
+    - get: buffy-bbl-state
+    - get: buffy-integration-configs
+    - get: cf-acceptance-tests
+    - get: sync-integration-tests
+    - get: capi-ci
+    - get: capi-ci-private
+    - get: capi-release-tarball
+      passed: [create-capi-release]
+      trigger: true
+  - task: upload-capi-release-tarball
+    file: capi-ci/ci/bosh/upload-release.yml
+    input_mapping:
+      bbl-state: buffy-bbl-state
+      release-tarball: capi-release-tarball
+    params:
+      BBL_STATE_DIR: "buffy"
+  - task: buffy-stemcell-upload
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    input_mapping:
+      bbl-state: buffy-bbl-state
+    params:
+      BBL_STATE_DIR: "buffy"
+  - task: extract-bbl-environment
+    file: capi-ci/ci/bbl-tasks/extract_bbl_environment.yml
+    params:
+      ENV_NAME: buffy
+  - put: buffy-deployment
+    params:
+      source_file: environment/metadata
+      manifest: cf-deployment/cf-deployment.yml
+      vars:
+        system_domain: *buffy-domain
+        prometheus_password: ((prometheus_password))
+        #TODO: add back in logit ops file and vars when our logit account has more than 3 stacks
+#        syslog_remote_address: ((buffy_syslog_remote_address))
+#        syslog_remote_port: ((buffy_syslog_remote_port))
+      vars_files:
+      - environment/metadata # used by prometheus bosh exporter
+      ops_files:
+      - cf-deployment/operations/test/add-persistent-isolation-segment-diego-cell.yml
+      - capi-ci/cf-deployment-operations/skip-cert-verify.yml
+      - capi-ci/cf-deployment-operations/use-latest-capi.yml
+      - cf-deployment/operations/scale-to-one-az.yml
+      - capi-ci/cf-deployment-operations/scale-up-cells.yml
+      - capi-ci/cf-deployment-operations/bypass-cc-bridge.yml
+      - cf-deployment/operations/experimental/locket.yml
+      - cf-deployment/operations/use-postgres.yml
+      - capi-ci/cf-deployment-operations/use-ssl-postgres.yml
+      - cf-deployment/operations/experimental/locket-postgres.yml
+      - capi-ci/cf-deployment-operations/add-prometheus.yml
+      - capi-ci/cf-deployment-operations/add-prometheus-capi-homepage.yml
+#      - capi-ci/cf-deployment-operations/add-remote-syslog.yml
+      - capi-ci/cf-deployment-operations/enable-perform-blob-cleanup.yml
+      - capi-ci/cf-deployment-operations/log-all-sequel-activity.yml
+      - capi-ci/cf-deployment-operations/silence-noisy-logs.yml
+      - capi-ci/cf-deployment-operations/temporary/disable-uaa-get-requests.yml
+      - capi-ci/cf-deployment-operations/temporary/use-routing-502-fix.yml
+      - cf-deployment/operations/experimental/bits-service.yml
+      - cf-deployment/operations/experimental/bits-service-webdav.yml
+      - capi-ci/cf-deployment-operations/temporary/use-dev-release-bits-service.yml
+
+  - task: download-vars-store
+    output_mapping:
+      destination-directory: buffy-deployment-vars
+    file: capi-ci/ci/gcs/download-from-gcs.yml
+    params:
+      GCP_JSON_KEY: ((buffy_gcp_json_key))
+      GCP_BUCKET: ((buffy_bosh_vars_bucket))
+      GCP_PATH: bosh
+  - task: updated-integration-configs
+    file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
+    input_mapping:
+      vars-store: buffy-deployment-vars
+      integration-configs: buffy-integration-configs
+    params:
+      CATS_INTEGRATION_CONFIG_FILE: "buffy/cats_integration_config.json"
+      VARS_STORE_FILE: "vars-store.yml"
+      SYSTEM_DOMAIN: *buffy-domain
+    ensure:
+      put: buffy-integration-configs
+      params:
+        repository: updated-integration-configs
+        rebase: true
+  - task: enable-feature-flags
+    file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
+    input_mapping:
+      vars-store: buffy-deployment-vars
+    params:
+      SYSTEM_DOMAIN: *buffy-domain
+      VARS_STORE_FILE: "vars-store.yml"
+  - aggregate:
+    - task: acceptance-tests
+      file: cats-concourse-task/task.yml
+      input_mapping:
+        integration-config: updated-integration-configs
+      params:
+        NODES: 6
+        CONFIG_FILE_PATH: "buffy/cats_integration_config.json"
+        SKIP_REGEXP: "Stages with multiple admin buildpacks"
+        CAPTURE_LOGS: true
+    - task: sync-integration-tests
+      file: sync-integration-tests/concourse/task_with_vars_store.yml
+      input_mapping:
+        environment: capi-ci-private
+        vars-store: buffy-deployment-vars
+      params:
+        BOSH_DEPLOYMENT_NAME: cf
+        BOSH_API_INSTANCE: api/0
+        CF_API_TARGET: https://api.buffy.capi.land
+        CF_SKIP_SSL_VALIDATION: true
+        CF_APPS_DOMAIN: *buffy-domain
+        BBL_STATE_DIR: buffy
         VARS_STORE_PATH: "vars-store.yml"
         USE_CF_DEPLOYMENT_VARS: "true"
 
@@ -1285,6 +1439,64 @@ jobs:
         bbl-state: updated-bbl-state
       params:
         BBL_STATE_DIR: "mulan"
+
+- name: update-bosh-buffy
+  serial: true
+  serial_groups: [deploy-buffy]
+  plan:
+    - aggregate:
+      - get: cf-deployment-concourse-tasks
+      - get: buffy-bbl-state
+      - get: capi-ci
+      - get: capi-ci-private
+      - get: weekly-sunday
+        trigger: true
+    - task: seed-capi-ci-private
+      file: capi-ci/ci/setup-environment/seed.yml
+      params:
+        ENVIRONMENT: buffy
+        DOMAIN: &buffy-domain "buffy.capi.land"
+    - put: capi-ci-private
+      params:
+        repository: updated-capi-ci-private
+        rebase: true
+    - task: update-bosh-buffy
+      file: cf-deployment-concourse-tasks/bbl-up/task.yml
+      input_mapping:
+        bbl-state: updated-capi-ci-private
+        ops-files: updated-capi-ci-private
+      params:
+        BBL_STATE_DIR: "buffy"
+        BBL_IAAS: "gcp"
+        BBL_LB_CERT: "certs/load-balancer/server.crt"
+        BBL_LB_KEY: "certs/load-balancer/server.key"
+        LB_DOMAIN: *buffy-domain
+        BBL_ENV_NAME: "buffy"
+        BBL_GCP_SERVICE_ACCOUNT_KEY: ((buffy_gcp_json_key))
+        BBL_GCP_PROJECT_ID: ((buffy_gcp_project_id))
+        BBL_GCP_ZONE: ((buffy_gcp_zone))
+        BBL_GCP_REGION: ((buffy_gcp_region))
+      ensure:
+        put: buffy-bbl-state
+        params:
+          repository: updated-bbl-state
+          rebase: true
+    - task: create-dns-record
+      file: capi-ci/ci/bbl-tasks/create-dns-record.yml
+      input_mapping:
+       bbl-state: updated-bbl-state
+      params:
+        BBL_STATE_DIR: "buffy"
+        DNS_DOMAIN: *buffy-domain
+        GCP_DNS_SERVICE_ACCOUNT_KEY: ((dns_gcp_json_key))
+        GCP_PROJECT_ID: ((dns_gcp_project_id))
+        SHARED_DNS_ZONE_NAME: "capi-land"
+    - task: run-bosh-cleanup
+      file: capi-ci/ci/bbl-tasks/run-bosh-cleanup.yml
+      input_mapping:
+        bbl-state: updated-bbl-state
+      params:
+        BBL_STATE_DIR: "buffy"
 
 - name: update-bosh-elsa
   serial: true

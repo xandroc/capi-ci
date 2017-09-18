@@ -1,0 +1,10 @@
+# This can be removed once cf-deployment contains a url for the bits-service release
+# https://github.com/cloudfoundry-incubator/bits-service-release/issues/15
+
+- type: replace
+  path: /releases/name=bit-service
+  value:
+    name: bits-service
+    version: 0+dev.1
+    url: https://storage.googleapis.com/capi-buffy-deployments/bits-service-0%2Bdev.1.tgz
+    sha1: e5cd59803b0e44ac44bd75ae29bd9a5dc90cf15b
