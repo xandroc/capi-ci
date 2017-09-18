@@ -6,7 +6,6 @@ groups:
   - create-capi-release
   - bump-capi-release
   - mulan-postgres-webdav-bridge
-  - buffy-bits-postgres-webdav
   - elsa-mysql-s3-bypass
   - kiki-back-compat-migrations
   - bump-ci-passed
@@ -30,9 +29,12 @@ groups:
   jobs:
   - update-bosh-arya
   - update-bosh-mulan
-  - update-bosh-buffy
   - update-bosh-elsa
   - update-bosh-kiki
+- name: bits
+  jobs:
+  - update-bosh-buffy
+  - buffy-bits-postgres-webdav
 - name: mssql
   jobs:
   - update-bosh-ripley
@@ -1312,7 +1314,7 @@ jobs:
     - task: update-checkman
       file: capi-ci/ci/monitoring/update_checkman.yml
       params:
-        IGNORED_JOBS: "ripley-mssql"
+        IGNORED_JOBS: "ripley-mssql buffy-bits-postgres-webdav"
       on_success:
         put: slack-alert
         params:
