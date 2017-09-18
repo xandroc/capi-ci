@@ -2,7 +2,7 @@
 # https://github.com/cloudfoundry-incubator/bits-service-release/issues/15
 
 - type: replace
-  path: /releases/name=bit-service
+  path: /releases/name=bits-service
   value:
     name: bits-service
     version: 0+dev.1
