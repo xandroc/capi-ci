@@ -169,6 +169,7 @@ jobs:
     plan:
       - aggregate:
         - get: destroy-bosh-lite-trigger
+          version: every
           trigger: true
         - get: capi-ci
         - get: bosh-deployment
