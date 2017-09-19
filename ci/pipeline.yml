@@ -771,9 +771,8 @@ jobs:
       vars:
         system_domain: *buffy-domain
         prometheus_password: ((prometheus_password))
-        #TODO: add back in logit ops file and vars when our logit account has more than 3 stacks
-#        syslog_remote_address: ((buffy_syslog_remote_address))
-#        syslog_remote_port: ((buffy_syslog_remote_port))
+        syslog_remote_address: ((buffy_syslog_remote_address))
+        syslog_remote_port: ((buffy_syslog_remote_port))
       vars_files:
       - environment/metadata # used by prometheus bosh exporter
       ops_files:
@@ -789,7 +788,7 @@ jobs:
       - cf-deployment/operations/experimental/locket-postgres.yml
       - capi-ci/cf-deployment-operations/add-prometheus.yml
       - capi-ci/cf-deployment-operations/add-prometheus-capi-homepage.yml
-#      - capi-ci/cf-deployment-operations/add-remote-syslog.yml
+      - capi-ci/cf-deployment-operations/add-remote-syslog.yml
       - capi-ci/cf-deployment-operations/enable-perform-blob-cleanup.yml
       - capi-ci/cf-deployment-operations/log-all-sequel-activity.yml
       - capi-ci/cf-deployment-operations/silence-noisy-logs.yml
