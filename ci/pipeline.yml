@@ -40,6 +40,9 @@ groups:
   - update-bosh-ripley
   - mssql-unit-tests
   - ripley-mssql
+- name: bbr
+  jobs:
+  - run-drats
 
 resource_types:
 - name: slack-notification
@@ -469,6 +472,16 @@ resources:
         bucket: ((kiki_bosh_vars_bucket))
         file_name: &kiki_vars_store_path "bosh/vars-store.yml"
         json_key: ((kiki_gcp_json_key))
+
+# BBR resources
+- name: bbr-deployment
+  type: bosh2-deployment
+  source:
+    deployment: cf
+    target: ((bbr-bosh-director))
+    client: admin
+    client_secret: ((bbr-client-secret))
+    ca_cert: ((bbr-ca-cert))
 
 jobs:
 
@@ -1840,3 +1853,38 @@ jobs:
       NODES: 6
       CONFIG_FILE_PATH: "ripley/cats_integration_config.json"
       CAPTURE_LOGS: true
+
+- name: run-drats
+  serial: false
+  plan:
+  - aggregate:
+    - get: cf-deployment
+      resource: cf-deployment
+    - get: capi-ci
+    - get: capi-ci-private
+    - get: capi-release-tarball
+      passed: [create-capi-release]
+      trigger: true
+  - task: upload-capi-release-tarball
+    file: capi-ci/ci/drats/upload-release.yml
+    input_mapping:
+      release-tarball: capi-release-tarball
+    params:
+      BOSH_CA_CERT: ((bbr-ca-cert))
+      BOSH_ENVIRONMENT: ((bbr-bosh-director))
+      BOSH_CLIENT: admin
+      BOSH_CLIENT_SECRET: ((bbr-client-secret))
+  - put: bbr-deployment
+    params:
+      manifest: cf-deployment/cf-deployment.yml
+      vars:
+        system_domain: sugar-tiger.capi.land
+      ops_files:
+      - capi-ci/cf-deployment-operations/use-latest-stemcell.yml
+      - capi-ci/cf-deployment-operations/skip-cert-verify.yml
+      - capi-ci/cf-deployment-operations/bosh-lite-mysql.yml
+      - cf-deployment/operations/bypass-cc-bridge.yml
+      - capi-ci/cf-deployment-operations/temporary/deploy-capi-backup-restore.yml
+      - cf-deployment/operations/use-compiled-releases.yml
+      - capi-ci/cf-deployment-operations/use-latest-capi.yml
+      - capi-ci/cf-deployment-operations/temporary/use-routing-502-fix.yml
