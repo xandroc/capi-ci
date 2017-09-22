@@ -106,14 +106,14 @@
 
 # cc-clock
 - type: replace
-  path: /instance_groups/name=cc-clock/jobs/name=cloud_controller_clock/properties/nfs_server?
+  path: /instance_groups/name=scheduler/jobs/name=cloud_controller_clock/properties/nfs_server?
   value:
     address: nfstestserver.service.cf.internal
     share: /export2/certs
     nfsv4: false
 
 - type: replace
-  path: /instance_groups/name=cc-clock/jobs/-
+  path: /instance_groups/name=scheduler/jobs/-
   value:
     name: nfs_mounter
     properties:
@@ -165,14 +165,14 @@
 
 
 - type: replace
-  path: '/instance_groups/name=cc-clock/jobs/name=cloud_controller_clock/properties/cc/buildpacks'
+  path: '/instance_groups/name=scheduler/jobs/name=cloud_controller_clock/properties/cc/buildpacks'
   value: *s3buildpacks
 - type: replace
-  path: '/instance_groups/name=cc-clock/jobs/name=cloud_controller_clock/properties/cc/droplets'
+  path: '/instance_groups/name=scheduler/jobs/name=cloud_controller_clock/properties/cc/droplets'
   value: *s3droplet
 - type: replace
-  path: '/instance_groups/name=cc-clock/jobs/name=cloud_controller_clock/properties/cc/packages'
+  path: '/instance_groups/name=scheduler/jobs/name=cloud_controller_clock/properties/cc/packages'
   value: *s3packages
 - type: replace
-  path: '/instance_groups/name=cc-clock/jobs/name=cloud_controller_clock/properties/cc/resource_pool'
+  path: '/instance_groups/name=scheduler/jobs/name=cloud_controller_clock/properties/cc/resource_pool'
   value: *s3resourcepool
