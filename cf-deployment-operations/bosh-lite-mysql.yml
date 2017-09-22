@@ -9,7 +9,7 @@
     static_ips: [10.244.0.34]
 
 - type: replace
-  path: /instance_groups/name=cc-bridge/jobs/name=nsync/properties/capi/nsync/diego_privileged_containers?
+  path: /instance_groups/name=scheduler/jobs/name=nsync/properties/capi/nsync/diego_privileged_containers?
   value: true
 
 # --- Add Bosh Lite Security Groups ---
@@ -26,7 +26,7 @@
   - dns
   - load_balancer
 - type: replace
-  path: /instance_groups/name=cc-clock/jobs/name=cloud_controller_clock/properties/cc/default_running_security_groups
+  path: /instance_groups/name=scheduler/jobs/name=cloud_controller_clock/properties/cc/default_running_security_groups
   value:
   - public_networks
   - dns
@@ -46,7 +46,7 @@
     - destination: 10.244.0.34
       protocol: all
 - type: replace
-  path: /instance_groups/name=cc-clock/jobs/name=cloud_controller_clock/properties/cc/security_group_definitions/-
+  path: /instance_groups/name=scheduler/jobs/name=cloud_controller_clock/properties/cc/security_group_definitions/-
   value:
     name: load_balancer
     rules:
@@ -55,9 +55,9 @@
 
 # ----- Move SSH Proxy from diego-brain to router ----
 - type: remove
-  path: /instance_groups/name=diego-brain/vm_extensions
+  path: /instance_groups/name=scheduler/vm_extensions
 - type: remove
-  path: /instance_groups/name=diego-brain/jobs/name=ssh_proxy
+  path: /instance_groups/name=scheduler/jobs/name=ssh_proxy
 - type: replace
   path: /instance_groups/name=router/vm_extensions
   value:
@@ -103,9 +103,6 @@
   path: /instance_groups/name=uaa/instances
   value: 1
 - type: replace
-  path: /instance_groups/name=diego-brain/instances
-  value: 1
-- type: replace
   path: /instance_groups/name=diego-cell/instances
   value: 1
 - type: replace
@@ -121,7 +118,7 @@
   path: /instance_groups/name=cc-worker/instances
   value: 1
 - type: replace
-  path: /instance_groups/name=cc-bridge/instances
+  path: /instance_groups/name=scheduler/instances
   value: 1
 - type: replace
   path: /instance_groups/name=doppler/instances

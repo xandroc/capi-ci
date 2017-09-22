@@ -53,14 +53,14 @@
 
 
 - type: replace
-  path: '/instance_groups/name=cc-clock/jobs/name=cloud_controller_clock/properties/cc/buildpacks'
+  path: '/instance_groups/name=scheduler/jobs/name=cloud_controller_clock/properties/cc/buildpacks'
   value: *s3buildpacks
 - type: replace
-  path: '/instance_groups/name=cc-clock/jobs/name=cloud_controller_clock/properties/cc/droplets'
+  path: '/instance_groups/name=scheduler/jobs/name=cloud_controller_clock/properties/cc/droplets'
   value: *s3droplet
 - type: replace
-  path: '/instance_groups/name=cc-clock/jobs/name=cloud_controller_clock/properties/cc/packages'
+  path: '/instance_groups/name=scheduler/jobs/name=cloud_controller_clock/properties/cc/packages'
   value: *s3packages
 - type: replace
-  path: '/instance_groups/name=cc-clock/jobs/name=cloud_controller_clock/properties/cc/resource_pool'
+  path: '/instance_groups/name=scheduler/jobs/name=cloud_controller_clock/properties/cc/resource_pool'
   value: *s3resourcepool

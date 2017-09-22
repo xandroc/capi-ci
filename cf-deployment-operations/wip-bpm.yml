@@ -27,25 +27,25 @@
 
 # Enable for CC Bridge
 - type: replace
-  path: /instance_groups/name=cc-bridge/jobs/-
+  path: /instance_groups/name=scheduler/jobs/-
   value:
     name: bpm
     release: bpm
 
 - type: replace
-  path: /instance_groups/name=cc-bridge/jobs/name=cc_uploader/properties/bpm?/enabled?
+  path: /instance_groups/name=api/jobs/name=cc_uploader/properties/bpm?/enabled?
   value: true
 
 - type: replace
-  path: /instance_groups/name=cc-bridge/jobs/name=nsync/properties/bpm?/enabled?
+  path: /instance_groups/name=scheduler/jobs/name=nsync/properties/bpm?/enabled?
   value: true
 
 - type: replace
-  path: /instance_groups/name=cc-bridge/jobs/name=stager/properties/bpm?/enabled?
+  path: /instance_groups/name=api/jobs/name=stager/properties/bpm?/enabled?
   value: true
 
 - type: replace
-  path: /instance_groups/name=cc-bridge/jobs/name=tps/properties/bpm?/enabled?
+  path: /instance_groups/name=scheduler/jobs/name=tps/properties/bpm?/enabled?
   value: true
 
 # # Enable for Cloud Controller
@@ -61,13 +61,13 @@
 
 # Enable for Cloud Controller Clock
 - type: replace
-  path: /instance_groups/name=cc-clock/jobs/-
+  path: /instance_groups/name=scheduler/jobs/-
   value:
     name: bpm
     release: bpm
 
 - type: replace
-  path: /instance_groups/name=cc-clock/jobs/name=cloud_controller_clock/properties/bpm?/enabled?
+  path: /instance_groups/name=scheduler/jobs/name=cloud_controller_clock/properties/bpm?/enabled?
   value: true
 
 # Enable for Cloud Controller Worker

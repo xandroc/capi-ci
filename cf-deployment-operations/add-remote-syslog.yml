@@ -25,17 +25,9 @@
   value: *remote-syslog
 
 - type: replace
-  path: /instance_groups/name=diego-brain/jobs/name=metron_agent/properties/syslog_daemon_config?
-  value: *remote-syslog
-
-- type: replace
   path: /instance_groups/name=diego-cell/jobs/name=metron_agent/properties/syslog_daemon_config?
   value: *remote-syslog
 
 - type: replace
-  path: /instance_groups/name=cc-clock/jobs/name=metron_agent/properties/syslog_daemon_config?
-  value: *remote-syslog
-
-- type: replace
-  path: /instance_groups/name=cc-bridge?/jobs/name=metron_agent/properties/syslog_daemon_config?
+  path: /instance_groups/name=scheduler/jobs/name=metron_agent/properties/syslog_daemon_config?
   value: *remote-syslog
