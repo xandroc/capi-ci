@@ -41,34 +41,34 @@
   path: /instance_groups/name=tcp-router?
   value:
     azs:
-      - z1
-      - z2
-      instances: 2
-      vm_type: minimal
-      stemcell: default
-      vm_extensions:
-      - cf-tcp-router-network-properties
-      networks:
-      - name: default
-      jobs:
-      - name: consul_agent
-        release: consul
-        consumes:
-          consul_common: {from: consul_common_link}
-          consul_server: nil
-          consul_client: {from: consul_client_link}
-      - name: tcp_router
-        release: routing
-        properties:
-          tcp_router:
-            oauth_secret: "((uaa_clients_tcp_router_secret))"
-            router_group: default-tcp
-          uaa:
-            ca_cert: "((uaa_ca.certificate))"
-            tls_port: 8443
-      - name: metron_agent
-        release: loggregator
-        properties: *metron_agent_properties
+    - z1
+    - z2
+    instances: 2
+    vm_type: minimal
+    stemcell: default
+    vm_extensions:
+    - cf-tcp-router-network-properties
+    networks:
+    - name: default
+    jobs:
+    - name: consul_agent
+      release: consul
+      consumes:
+        consul_common: {from: consul_common_link}
+        consul_server: nil
+        consul_client: {from: consul_client_link}
+    - name: tcp_router
+      release: routing
+      properties:
+        tcp_router:
+          oauth_secret: "((uaa_clients_tcp_router_secret))"
+          router_group: default-tcp
+        uaa:
+          ca_cert: "((uaa_ca.certificate))"
+          tls_port: 8443
+    - name: metron_agent
+      release: loggregator
+      properties: *metron_agent_properties
 - type: replace
   path: /instance_groups/name=scheduler/jobs/name=cloud_controller_clock/properties/hm9000?/port
   value: -1
