@@ -1,16 +1,3 @@
-groups:
-- name: docker
-  jobs:
-  - rc-docs-docker
-  - ruby-units-docker
-  - go-units-docker
-  - bbl-docker
-  - bosh-docker
-  - bosh-lite-docker
-  - spiff-docker
-  - runtime-ci
-  - sits-docker
-
 resources:
 - name: weekly
   type: time
@@ -147,6 +134,22 @@ resources:
     password: ((dockerhub_pass))
     email: ((dockerhub_email))
 
+- name: capi-dockerfiles-migration-compatibility
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/capi-dockerfiles.git
+    paths: [capi-migration-compatibility/Dockerfile]
+
+- name: docker-image-migration-compatibility
+  type: docker-image
+  source:
+    repository: cloudfoundry/capi
+    tag: migration-compatibility
+    username: ((dockerhub_user))
+    password: ((dockerhub_pass))
+    email: ((dockerhub_email))
+
 - name: capi-dockerfiles-spiff
   type: git
   source:
@@ -241,6 +244,17 @@ jobs:
   - put: docker-image-bosh
     params:
       build: capi-dockerfiles-bosh/bosh
+- name: migration-compatibility-docker
+  serial: true
+  plan:
+  - aggregate:
+    - get: weekly
+      trigger: true
+    - get: capi-dockerfiles-migration-compatibility
+      trigger: true
+  - put: docker-image-migration-compatibility
+    params:
+      build: capi-dockerfiles-migration-compatibility/capi-migration-compatibility
 - name: spiff-docker
   serial: true
   plan:
