@@ -44,8 +44,6 @@
       - destination: 0.0.0.0/0
         ports: '53'
         protocol: udp
-- type: remove
-  path: /instance_groups/name=cc-worker/jobs/name=cloud_controller_worker/properties/cc/install_buildpacks
 - type: replace
   path: /instance_groups/name=cc-worker/jobs/name=cloud_controller_worker/properties/cc/bulk_api_password?
   value: "((cc_bulk_api_password))"
@@ -116,8 +114,6 @@
 - type: replace
   path: /instance_groups/name=scheduler/jobs/name=cloud_controller_clock/properties/cc/default_staging_security_groups?
   value: *cc_default_staging_security_groups
-- type: remove
-  path: /instance_groups/name=scheduler/jobs/name=cloud_controller_clock/properties/cc/install_buildpacks
 - type: replace
   path: /instance_groups/name=scheduler/jobs/name=cloud_controller_clock/properties/cc/bulk_api_password?
   value: "((cc_bulk_api_password))"
