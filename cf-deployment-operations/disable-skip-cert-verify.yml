@@ -12,9 +12,6 @@
   path: /instance_groups/name=smoke-tests/jobs/name=smoke_tests/properties/smoke_tests/skip_ssl_validation?
   value: false
 - type: replace
-  path: /instance_groups/name=doppler/jobs/name=syslog_drain_binder/properties/ssl/skip_cert_verify?
-  value: false
-- type: replace
   path: /instance_groups/name=doppler/jobs/name=doppler/properties/doppler?/syslog_skip_cert_verify
   value: false
 - type: replace
