@@ -127,7 +127,7 @@
 - type: replace
   path: /instance_groups/name=scheduler/jobs/name=cloud_controller_clock/properties/app_domains?
   value: *app_domains
-- type:
+- type: replace
   path: /instance_groups/name=scheduler/jobs/name=cloud_controller_clock/properties/uaa/url?
   value: https://uaa.((system_domain))
 - type: replace
