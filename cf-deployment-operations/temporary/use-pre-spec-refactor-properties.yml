@@ -16,13 +16,37 @@
   value: -1
 - type: replace
   path: /instance_groups/name=cc-worker/jobs/name=cloud_controller_worker/properties/cc/default_running_security_groups?
-  value: *cc_default_running_security_groups
+  value: &cc_default_running_security_groups
+    - public_networks
+    - dns
 - type: replace
   path: /instance_groups/name=cc-worker/jobs/name=cloud_controller_worker/properties/cc/default_staging_security_groups?
-  value: *cc_default_staging_security_groups
+  value: &cc_default_staging_security_groups
+    - public_networks
+    - dns
 - type: replace
   path: /instance_groups/name=cc-worker/jobs/name=cloud_controller_worker/properties/cc/security_group_definitions?
-  value: *cc_security_group_definitions
+  value: &cc_security_group_definitions
+    - name: public_networks
+      rules:
+      - destination: 0.0.0.0-9.255.255.255
+        protocol: all
+      - destination: 11.0.0.0-169.253.255.255
+        protocol: all
+      - destination: 169.255.0.0-172.15.255.255
+        protocol: all
+      - destination: 172.32.0.0-192.167.255.255
+        protocol: all
+      - destination: 192.169.0.0-255.255.255.255
+        protocol: all
+    - name: dns
+      rules:
+      - destination: 0.0.0.0/0
+        ports: '53'
+        protocol: tcp
+      - destination: 0.0.0.0/0
+        ports: '53'
+        protocol: udp
 - type: remove
   path: /instance_groups/name=cc-worker/jobs/name=cloud_controller_worker/properties/cc/install_buildpacks
 - type: replace
@@ -30,10 +54,17 @@
   value: "((cc_bulk_api_password))"
 - type: replace
   path: /instance_groups/name=cc-worker/jobs/name=cloud_controller_worker/properties/cc/quota_definitions?
-  value: *quota_definitions
+  value: &quota_definitions
+    default:
+      memory_limit: 102400
+      non_basic_services_allowed: true
+      total_routes: 1000
+      total_services: -1
+      total_reserved_route_ports: 100
 - type: replace
   path: /instance_groups/name=cc-worker/jobs/name=cloud_controller_worker/properties/app_domains?
-  value: *app_domains
+  value: &app_domains
+    - "((system_domain))"
 - type: replace
   path: /instance_groups/name=cc-worker/jobs/name=cloud_controller_worker/properties/uaa/url?
   value: https://uaa.((system_domain))
@@ -68,7 +99,17 @@
           tls_port: 8443
     - name: metron_agent
       release: loggregator
-      properties: *metron_agent_properties
+      properties: &metron_agent_properties
+        metron_agent:
+          deployment: "((system_domain))"
+        metron_endpoint:
+          shared_secret: "((dropsonde_shared_secret))"
+        loggregator:
+          tls:
+            ca_cert: "((loggregator_tls_metron.ca))"
+            metron:
+              cert: "((loggregator_tls_metron.certificate))"
+              key: "((loggregator_tls_metron.private_key))"
 - type: replace
   path: /instance_groups/name=scheduler/jobs/name=cloud_controller_clock/properties/hm9000?/port
   value: -1
