@@ -9,9 +9,6 @@
   path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/hm9000?/port
   value: -1
 - type: replace
-  path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/cc/install_buildpack
-  value:
-- type: replace
   path: /instance_groups/name=cc-worker/jobs/name=cloud_controller_worker/properties/hm9000?/port
   value: -1
 - type: replace
