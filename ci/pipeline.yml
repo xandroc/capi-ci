@@ -42,7 +42,7 @@ groups:
   - ripley-mssql
 - name: bbr
   jobs:
-  - deploy-bbr
+  - deploy-bbr-mysql
   - run-drats
 
 resource_types:
@@ -1867,7 +1867,7 @@ jobs:
       CONFIG_FILE_PATH: "ripley/cats_integration_config.json"
       CAPTURE_LOGS: true
 
-- name: deploy-bbr
+- name: deploy-bbr-mysql
   serial: false
   plan:
   - aggregate:
@@ -1900,14 +1900,13 @@ jobs:
       - capi-ci/cf-deployment-operations/temporary/deploy-capi-backup-restore.yml
       - cf-deployment/operations/use-compiled-releases.yml
       - capi-ci/cf-deployment-operations/use-latest-capi.yml
-      - capi-ci/cf-deployment-operations/temporary/use-routing-502-fix.yml
 
 - name: run-drats
   serial: false
   plan:
   - aggregate:
     - get: capi-release-tarball
-      passed: [deploy-bbr]
+      passed: [deploy-bbr-mysql]
       trigger: true
     - get: drats
       trigger: true
