@@ -3,9 +3,22 @@ platform: linux
 image_resource:
   type: docker-image
   source:
-    repository: relintdockerhubpushbot/cf-deployment-concourse-tasks
+    repository: cloudfoundry/capi
+    tag: bbr-run-drats
 
 inputs:
+  - name: capi-ci
+  - name: drats
 
 run:
   path: capi-ci/ci/drats/run-drats.sh
+
+params:
+  BOSH_URL: ""
+  BOSH_CLIENT_SECRET: ""
+  CF_ADMIN_PASSWORD: ""
+  DEPLOYMENT_TO_BACKUP: ""
+  DEPLOYMENT_TO_RESTORE: ""
+  BBR_BUILD_PATH: ""
+  BOSH_CLIENT: ""
+  BOSH_CA_CERT: ""

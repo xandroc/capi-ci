@@ -134,12 +134,28 @@ resources:
     password: ((dockerhub_pass))
     email: ((dockerhub_email))
 
+- name: capi-dockerfiles-bbr-run-drats
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/capi-dockerfiles.git
+    paths: [bbr-run-drats/Dockerfile]
+
 - name: capi-dockerfiles-migration-compatibility
   type: git
   source:
     branch: master
     uri: https://github.com/cloudfoundry/capi-dockerfiles.git
     paths: [capi-migration-compatibility/Dockerfile]
+
+- name: docker-image-bbr-run-drats
+  type: docker-image
+  source:
+    repository: cloudfoundry/capi
+    tag: bbr-run-drats
+    username: ((dockerhub_user))
+    password: ((dockerhub_pass))
+    email: ((dockerhub_email))
 
 - name: docker-image-migration-compatibility
   type: docker-image
@@ -244,6 +260,17 @@ jobs:
   - put: docker-image-bosh
     params:
       build: capi-dockerfiles-bosh/bosh
+- name: capi-dockerfiles-bbr-run-drats
+  serial: true
+  plan:
+  - aggregate:
+    - get: weekly
+      trigger: true
+    - get: capi-dockerfiles-bbr-run-drats
+      trigger: true
+  - put: docker-image-bbr-run-drats
+    params:
+      build: capi-dockerfiles-bbr-run-drats/bbr-run-drats
 - name: migration-compatibility-docker
   serial: true
   plan:

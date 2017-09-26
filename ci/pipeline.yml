@@ -1912,52 +1912,16 @@ jobs:
   serial: false
   plan:
   - aggregate:
-    - get: bbr-binary
     - get: capi-release-tarball
       passed: [deploy-bbr]
       trigger: true
     - get: drats
       trigger: true
+    - get: capi-ci
   - task: run
-    config:
-      platform: linux
-      image_resource:
-        type: docker-image
-        source:
-          repository: relintdockerhubpushbot/cf-deployment-concourse-tasks
-      inputs:
-      - name: bbr-binary
-      - name: drats
-      run:
-        path: sh
-        args:
-        - -c
-        - |
-          sudo apt-get install -y --force-yes apt-transport-https
-          echo "$BOSH_CA_CERT" > /ca-cert.pem
-          tar -xvf bbr-binary/bbr*.tar
-          chmod a+x releases/bbr
-          mv /usr/bin/bosh /usr/bin/bosh-cli
-
-          sudo apt-get install -y --force-yes apt-transport-https
-          wget -q -O - https://packages.cloudfoundry.org/debian/cli.cloudfoundry.org.key | sudo apt-key add -
-          echo "deb http://packages.cloudfoundry.org/debian stable main" | sudo tee /etc/apt/sources.list.d/cloudfoundry-cli.list
-          sudo apt-get update -y
-          sudo apt-get install cf-cli -y
-
-          curl https://glide.sh/get | sh
-          mkdir $GOPATH/src/github.com/cloudfoundry-incubator/
-          cp -r drats $GOPATH/src/github.com/cloudfoundry-incubator/disaster-recovery-acceptance-tests
-          cd $GOPATH/src/github.com/cloudfoundry-incubator/disaster-recovery-acceptance-tests
-          ./scripts/run_acceptance_tests.sh
+    file: capi-ci/ci/drats/run-drats.yml
     params:
       BOSH_CA_CERT: ((bbr-ca-cert))
-      BOSH_ENVIRONMENT: ((bbr-bosh-director))
-      BOSH_CLIENT: admin
       BOSH_CLIENT_SECRET: ((bbr-client-secret))
-      DEPLOYMENT_TO_BACKUP: cf
-      DEPLOYMENT_TO_RESTORE: cf
       BOSH_URL: ((bbr-bosh-director))
-      BOSH_CERT_PATH: /ca-cert.pem
-      BBR_BUILD_PATH: releases/bbr
       CF_ADMIN_PASSWORD: ((bbr-cf-admin-password))
