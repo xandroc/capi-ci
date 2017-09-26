@@ -489,12 +489,6 @@ resources:
     client_secret: ((bbr-client-secret))
     ca_cert: ((bbr-ca-cert))
 
-- name: bbr-binary
-  type: file-url
-  source:
-    url: https://github.com/cloudfoundry-incubator/bosh-backup-and-restore/releases/download/v1.0.0/bbr-1.0.0.tar
-    filename: bbr.tar
-
 - name: drats
   type: git
   source:
