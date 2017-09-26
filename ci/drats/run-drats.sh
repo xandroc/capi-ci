@@ -5,11 +5,13 @@ set -eu
 : "${BOSH_URL:?}"
 : "${BOSH_CLIENT_SECRET:?}"
 : "${CF_ADMIN_PASSWORD:?}"
+: "${BOSH_GW_PRIVATE_KEY_CONTENTS:?}"
 : "${DEPLOYMENT_TO_BACKUP:=cf}"
 : "${DEPLOYMENT_TO_RESTORE:=cf}"
 : "${BBR_BUILD_PATH:=/usr/local/bin/bbr}"
 : "${BOSH_CLIENT:=admin}"
 : "${BOSH_CA_CERT:=""}"
+: "${BOSH_GW_USER:="jumpbox"}"
 
 # INPUTS
 script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -18,7 +20,10 @@ drats_dir="${workspace_dir}/drats"
 
 tmp_dir="$( mktemp -d /tmp/run-drats.XXXXXXXXXX )"
 
-sshuttle -r "${BOSH_URL}" 10.0.0.0/8 &
+ssh_key="${tmpdir}/bosh.pem"
+echo "${BOSH_GW_PRIVATE_KEY_CONTENTS}" > "${ssh_key}"
+chmod 600 "${ssh_key}"
+sshuttle -e "ssh -i "${ssh_key}" -o 'StrictHostKeyChecking no' -o 'UserKnownHostsFile /dev/null'" -r "${BOSH_GW_USER}@${BOSH_URL}" 10.0.0.0/8 &
 tunnel_pid="$!"
 
 cleanup() {

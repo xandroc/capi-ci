@@ -1919,3 +1919,4 @@ jobs:
       BOSH_CLIENT_SECRET: ((bbr-client-secret))
       BOSH_URL: ((bbr-bosh-director))
       CF_ADMIN_PASSWORD: ((bbr-cf-admin-password))
+      BOSH_GW_PRIVATE_KEY_CONTENTS: ((bbr-bosh-gw-private-key))
