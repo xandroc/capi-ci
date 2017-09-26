@@ -1891,7 +1891,7 @@ jobs:
     params:
       manifest: cf-deployment/cf-deployment.yml
       vars:
-        system_domain: sugar-tiger.capi.land
+        system_domain: dour-fancier.capi.land
       ops_files:
       - capi-ci/cf-deployment-operations/use-latest-stemcell.yml
       - capi-ci/cf-deployment-operations/skip-cert-verify.yml
