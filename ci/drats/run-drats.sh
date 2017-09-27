@@ -21,7 +21,7 @@ drats_src="${workspace_dir}/drats"
 
 drats_dir="${GOPATH}/src/github.com/cloudfoundry-incubator/disaster-recovery-acceptance-tests"
 mkdir -p "${drats_dir}"
-cp -a "${drats_dir}/." "${drats_dir}"
+cp -a "${drats_src}/." "${drats_dir}"
 
 tmpdir="$( mktemp -d /tmp/run-drats.XXXXXXXXXX )"
 
