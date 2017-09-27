@@ -12,12 +12,9 @@ inputs:
   - name: bbl-state
 
 run:
-  path: capi-ci/ci/bbl-tasks/create-dns-record.sh
+  path: capi-ci/ci/bbl-tasks/open-bosh-lite-ports.sh
 
 params:
   BBL_STATE_DIR:
-  DNS_DOMAIN:
-  GCP_DNS_SERVICE_ACCOUNT_KEY:
+  GCP_SERVICE_ACCOUNT_KEY:
   GCP_PROJECT_ID:
-  SHARED_DNS_ZONE_NAME:
-  IS_BOSH_LITE:

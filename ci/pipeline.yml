@@ -310,6 +310,12 @@ resources:
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/cf-deployment-concourse-tasks.git
 
+- name: cf-deployment-concourse-tasks-pr-is-bosh-lite
+  type: git
+  source:
+    branch: PR-is-bosh-lite-to-bbl-up
+    uri: https://github.com/ljfranklin/cf-deployment-concourse-tasks.git
+
 - name: cats-concourse-task
   type: git
   source:
@@ -330,6 +336,13 @@ resources:
     branch: master
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/wats.git
+
+- name: bosh-deployment
+  type: git
+  source:
+    branch: master
+    private_key: ((private_key))
+    uri: git@github.com:cloudfoundry/bosh-deployment.git
 
 # Ripley resources
 
@@ -478,6 +491,14 @@ resources:
         bucket: ((kiki_bosh_vars_bucket))
         file_name: &kiki_vars_store_path "bosh/vars-store.yml"
         json_key: ((kiki_gcp_json_key))
+
+# Xena resources
+- name: xena-mysql-bbl-state
+  type: git
+  source:
+    branch: master
+    private_key: ((private_key))
+    uri: git@github.com:cloudfoundry/capi-ci-private.git
 
 # BBR resources
 - name: bbr-deployment
@@ -1639,6 +1660,73 @@ jobs:
         bbl-state: updated-bbl-state
       params:
         BBL_STATE_DIR: "kiki"
+
+- name: update-bosh-xena-mysql
+  serial: true
+  plan:
+    - aggregate:
+      - get: cf-deployment-concourse-tasks
+        resource: cf-deployment-concourse-tasks-pr-is-bosh-lite
+      - get: xena-mysql-bbl-state
+      - get: capi-ci
+      - get: capi-ci-private
+      - get: weekly-sunday
+        trigger: true
+      - get: bosh-deployment
+    - task: seed-capi-ci-private
+      file: capi-ci/ci/setup-environment/seed.yml
+      params:
+        ENVIRONMENT: xena-mysql
+        DOMAIN: &xena-mysql-domain "xena-mysql.capi.land"
+    - put: capi-ci-private
+      params:
+        repository: updated-capi-ci-private
+        rebase: true
+    - task: update-bosh-xena-mysql
+      file: cf-deployment-concourse-tasks/bbl-up/task.yml
+      input_mapping:
+        bbl-state: updated-capi-ci-private
+        ops-files: bosh-deployment
+      params:
+        BBL_STATE_DIR: "xena-mysql"
+        BBL_IAAS: "gcp"
+        BBL_ENV_NAME: "xena-mysql"
+        BBL_GCP_SERVICE_ACCOUNT_KEY: ((xena_gcp_json_key))
+        BBL_GCP_PROJECT_ID: ((xena_gcp_project_id))
+        BBL_GCP_ZONE: ((xena_gcp_zone))
+        BBL_GCP_REGION: ((xena_gcp_region))
+        IS_BOSH_LITE: true
+        OPS_FILES: bosh-deployment/bosh-lite.yml bosh-deployment/bosh-lite-runc.yml bosh-deployment/gcp/bosh-lite-vm-type.yml
+      ensure:
+        put: xena-mysql-bbl-state
+        params:
+          repository: updated-bbl-state
+          rebase: true
+    - task: open-bosh-lite-ports
+      file: capi-ci/ci/bbl-tasks/open-bosh-lite-ports.yml
+      input_mapping:
+        bbl-state: updated-bbl-state
+      params:
+        BBL_STATE_DIR: "xena-mysql"
+        GCP_SERVICE_ACCOUNT_KEY: ((xena_gcp_json_key))
+        GCP_PROJECT_ID: ((xena_gcp_project_id))
+    - task: create-dns-record
+      file: capi-ci/ci/bbl-tasks/create-dns-record.yml
+      input_mapping:
+       bbl-state: updated-bbl-state
+      params:
+        BBL_STATE_DIR: "xena-mysql"
+        DNS_DOMAIN: *xena-mysql-domain
+        GCP_DNS_SERVICE_ACCOUNT_KEY: ((dns_gcp_json_key))
+        GCP_PROJECT_ID: ((dns_gcp_project_id))
+        SHARED_DNS_ZONE_NAME: "capi-land"
+        IS_BOSH_LITE: true
+    - task: run-bosh-cleanup
+      file: capi-ci/ci/bbl-tasks/run-bosh-cleanup.yml
+      input_mapping:
+        bbl-state: updated-bbl-state
+      params:
+        BBL_STATE_DIR: "xena-mysql"
 
 - name: update-bosh-ripley
   serial: true
