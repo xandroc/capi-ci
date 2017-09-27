@@ -3,11 +3,23 @@
 : "${pool_dir:="/Users/pivotal/workspace/capi-env-pool/bosh-lites"}"
 
 function print_env_info {
-  pushd "${pool_dir}/claimed" > /dev/null
-    claimed_files="$(git log --reverse --name-only --pretty=format: * | xargs)"
+  # Colors
+  local red blue
+  red='\033[0;31m'
+  blue='\033[0;34m'
+  nc='\033[0m'
 
-    output="*ENV*\t*CLAIMED BY*\t*CLAIMED ON*\t*CLAIMED SINCE*\n"
-    for file in ${claimed_files}; do
+  echo -e "${blue}Rounding up claimed environments...${nc}"
+
+  pushd "${pool_dir}/claimed" > /dev/null
+    stale_claimed_files="$(git log --reverse --name-only --pretty=format: --until="7 days ago" -- * | xargs)"
+    fresh_claimed_files="$(git log --reverse --name-only --pretty=format: --after="7 days ago" -- * | xargs)"
+
+
+    output="${blue}\n* ENV *\t* CLAIMED BY *\t* CLAIMED ON *\t* CLAIMED SINCE *\n"
+
+    output="${output}${red}\n"
+    for file in ${stale_claimed_files}; do
       file="$( basename "${file}" )"
       author="$(git log --pretty='format:%an' "${file}")"
       committer="$(git log --pretty='format:%cn' "${file}")"
@@ -20,10 +32,28 @@ function print_env_info {
         claimed_by="${author}"
       fi
 
-      output="${output}${file}\t${claimed_by}\t${workstation}\t${claimed_since}\n"
+        output="${output}${file}\t${claimed_by}\t${workstation}\t${claimed_since}\n"
     done
 
-  popd
+    output="${output}${nc}\n"
+
+    for file in ${fresh_claimed_files}; do
+      file="$( basename "${file}" )"
+      author="$(git log --pretty='format:%an' "${file}")"
+      committer="$(git log --pretty='format:%cn' "${file}")"
+      claimed_since="$(git log --pretty='format:%ar' "${file}")"
+      workstation="$(git log --pretty='format:%s' "${file}" | sed -E "s/^manually claim [^[:space:]]+ on ([^[:space:]]+).*$/\1/")"
+
+      if [ "${author}" != "${committer}" ]; then
+        claimed_by="${author}+${committer}"
+      else
+        claimed_by="${author}"
+      fi
+
+        output="${output}${file}\t${claimed_by}\t${workstation}\t${claimed_since}\n"
+    done
+
+  popd > /dev/null
   echo -e "$output" | column -t -s $'\t'
 }
 
