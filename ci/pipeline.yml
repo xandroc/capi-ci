@@ -492,8 +492,8 @@ resources:
 - name: drats
   type: git
   source:
-    branch: add-cf-admin-password-hack
-    uri: https://github.com/tcdowney/disaster-recovery-acceptance-tests
+    branch: master
+    uri: https://github.com/cloudfoundry-incubator/disaster-recovery-acceptance-tests.git
 
 jobs:
 
