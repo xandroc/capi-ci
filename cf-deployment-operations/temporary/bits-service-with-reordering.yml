@@ -80,15 +80,3 @@
 - type: replace
   path: /instance_groups/name=scheduler/jobs/name=cloud_controller_clock/properties/cc/bits_service?
   value: *bits-service-config
-
-- type: replace
-  path: /variables/-
-  value:
-    name: bits_service_secret
-    type: password
-
-- type: replace
-  path: /variables/-
-  value:
-    name: bits_service_signing_password
-    type: password
