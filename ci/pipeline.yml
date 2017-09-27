@@ -31,6 +31,7 @@ groups:
   - update-bosh-mulan
   - update-bosh-elsa
   - update-bosh-kiki
+  - update-bosh-xena-mysql
 - name: bits
   jobs:
   - update-bosh-buffy
@@ -1696,7 +1697,7 @@ jobs:
         BBL_GCP_ZONE: ((xena_gcp_zone))
         BBL_GCP_REGION: ((xena_gcp_region))
         IS_BOSH_LITE: true
-        OPS_FILES: bosh-deployment/bosh-lite.yml bosh-deployment/bosh-lite-runc.yml bosh-deployment/gcp/bosh-lite-vm-type.yml
+        OPS_FILES: bosh-lite.yml bosh-lite-runc.yml gcp/bosh-lite-vm-type.yml
       ensure:
         put: xena-mysql-bbl-state
         params:
