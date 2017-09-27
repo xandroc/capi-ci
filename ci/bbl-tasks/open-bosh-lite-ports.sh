@@ -17,7 +17,7 @@ trap '{ rm -rf "${tmp_dir}"; }' EXIT
 
 open_bosh_lite_ports() {
   service_key_path="${tmp_dir}/gcp.json"
-  echo "${GCP_DNS_SERVICE_ACCOUNT_KEY}" > "${service_key_path}"
+  echo "${GCP_SERVICE_ACCOUNT_KEY}" > "${service_key_path}"
   gcloud auth activate-service-account --key-file="${service_key_path}"
   gcloud config set project "${GCP_PROJECT_ID}"
 
