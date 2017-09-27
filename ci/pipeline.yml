@@ -1887,6 +1887,7 @@ jobs:
       BOSH_ENVIRONMENT: ((bbr-bosh-director))
       BOSH_CLIENT: admin
       BOSH_CLIENT_SECRET: ((bbr-client-secret))
+  # TODO: delete deployment to ensure clean slate
   - put: bbr-deployment
     params:
       manifest: cf-deployment/cf-deployment.yml
