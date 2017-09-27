@@ -1,0 +1,18 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/cf-deployment-concourse-tasks
+
+inputs:
+  - name: capi-ci
+  - name: environment
+  - name: cloud-config
+
+run:
+  path: capi-ci/ci/bosh/update_cloud_config.sh
+
+params:
+  CLOUD_CONFIG_PATH:

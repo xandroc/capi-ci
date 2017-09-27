@@ -1670,6 +1670,7 @@ jobs:
       - get: xena-mysql-bbl-state
       - get: capi-ci
       - get: capi-ci-private
+      - get: cf-deployment
       - get: weekly-sunday
         trigger: true
       - get: bosh-deployment
@@ -1702,6 +1703,18 @@ jobs:
         params:
           repository: updated-bbl-state
           rebase: true
+    - task: extract-bbl-environment
+      file: capi-ci/ci/bbl-tasks/extract_bbl_environment.yml
+      input_mapping:
+        capi-ci-private: updated-bbl-state
+      params:
+        ENV_NAME: xena-mysql
+    - task: update-cloud-config
+      file: capi-ci/ci/bosh/update_cloud_config.yml
+      input_mapping:
+        cloud-config: cf-deployment
+      params:
+        CLOUD_CONFIG_PATH: bosh-lite/cloud-config.yml
     - task: open-bosh-lite-ports
       file: capi-ci/ci/bbl-tasks/open-bosh-lite-ports.yml
       input_mapping:
