@@ -1714,7 +1714,7 @@ jobs:
       input_mapping:
         cloud-config: cf-deployment
       params:
-        CLOUD_CONFIG_PATH: bosh-lite/cloud-config.yml
+        CLOUD_CONFIG_PATH: iaas-support/bosh-lite/cloud-config.yml
     - task: open-bosh-lite-ports
       file: capi-ci/ci/bbl-tasks/open-bosh-lite-ports.yml
       input_mapping:
