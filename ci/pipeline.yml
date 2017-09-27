@@ -806,7 +806,6 @@ jobs:
       - capi-ci/cf-deployment-operations/use-latest-capi.yml
       - cf-deployment/operations/scale-to-one-az.yml
       - capi-ci/cf-deployment-operations/scale-up-cells.yml
-      - cf-deployment/operations/bypass-cc-bridge.yml
       - cf-deployment/operations/experimental/locket.yml
       - cf-deployment/operations/use-postgres.yml
       - capi-ci/cf-deployment-operations/use-ssl-postgres.yml
@@ -819,11 +818,11 @@ jobs:
       - capi-ci/cf-deployment-operations/silence-noisy-logs.yml
       - capi-ci/cf-deployment-operations/temporary/disable-uaa-get-requests.yml
       - capi-ci/cf-deployment-operations/temporary/use-routing-502-fix.yml
+      - cf-deployment/operations/experimental/bits-service.yml
       # TODO: replace me with cf-deployment bits-service.yml ops file once bosh ordering issue is resolved
       # https://github.com/cloudfoundry/bosh-cli/issues/317
       - capi-ci/cf-deployment-operations/temporary/bits-service-with-reordering.yml
       - cf-deployment/operations/experimental/bits-service-webdav.yml
-      - capi-ci/cf-deployment-operations/temporary/use-dev-release-bits-service.yml
 
   - task: download-vars-store
     output_mapping:

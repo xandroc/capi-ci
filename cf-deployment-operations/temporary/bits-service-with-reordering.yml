@@ -92,10 +92,3 @@
   value:
     name: bits_service_signing_password
     type: password
-
-- type: replace
-  path: /releases/-
-  value:
-    name: bits-service
-    version: latest
-    # TODO: get a URL
