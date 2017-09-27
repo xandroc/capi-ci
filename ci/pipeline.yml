@@ -1894,7 +1894,7 @@ jobs:
       ops_files:
       - capi-ci/cf-deployment-operations/use-latest-stemcell.yml
       - capi-ci/cf-deployment-operations/skip-cert-verify.yml
-      - cf-deployment/operations/bypass-cc-bridge.yml
+      - cf-deployment/operations/bosh-lite.yml
       - capi-ci/cf-deployment-operations/temporary/deploy-capi-backup-restore.yml
       - cf-deployment/operations/use-compiled-releases.yml
       - capi-ci/cf-deployment-operations/use-latest-capi.yml
