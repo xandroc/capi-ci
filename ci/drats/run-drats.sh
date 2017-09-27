@@ -12,11 +12,16 @@ set -eu
 : "${BOSH_CLIENT:=admin}"
 : "${BOSH_CA_CERT:=""}"
 : "${BOSH_GW_USER:="jumpbox"}"
+: "${GOPATH:=/go}"
 
 # INPUTS
 script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 workspace_dir="$( cd "${script_dir}/../../../" && pwd )"
-drats_dir="${workspace_dir}/drats"
+drats_src="${workspace_dir}/drats"
+
+drats_dir="${GOPATH}/src/github.com/cloudfoundry-incubator/disaster-recovery-acceptance-tests"
+mkdir -p "${drats_dir}"
+cp -a "${drats_dir}/." "${drats_dir}"
 
 tmpdir="$( mktemp -d /tmp/run-drats.XXXXXXXXXX )"
 

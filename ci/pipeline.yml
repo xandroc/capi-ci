@@ -1914,6 +1914,7 @@ jobs:
     - get: capi-ci
   - task: run
     file: capi-ci/ci/drats/run-drats.yml
+    privileged: true
     params:
       BOSH_CA_CERT: ((bbr-ca-cert))
       BOSH_CLIENT_SECRET: ((bbr-client-secret))
