@@ -43,8 +43,7 @@ groups:
   - ripley-mssql
 - name: bbr
   jobs:
-  - deploy-bbr-mysql
-  - run-drats
+  - xena-mysql-drats
 
 resource_types:
 - name: slack-notification
@@ -501,15 +500,15 @@ resources:
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/capi-ci-private.git
 
-# BBR resources
-- name: bbr-deployment
+- name: xena-mysql-deployment
   type: bosh2-deployment
   source:
-    deployment: cf
-    target: ((bbr-bosh-director))
-    client: admin
-    client_secret: ((bbr-client-secret))
-    ca_cert: ((bbr-ca-cert))
+    vars_store:
+      provider: gcs
+      config:
+        bucket: ((xena_bosh_vars_bucket))
+        file_name: &xena_mysql_vars_store_path "bosh-mysql/vars-store.yml"
+        json_key: ((xena_gcp_json_key))
 
 - name: drats
   type: git
@@ -1954,8 +1953,8 @@ jobs:
       CONFIG_FILE_PATH: "ripley/cats_integration_config.json"
       CAPTURE_LOGS: true
 
-- name: deploy-bbr-mysql
-  serial: false
+- name: xena-mysql-drats
+  serial: true
   plan:
   - aggregate:
     - get: cf-deployment
@@ -1965,45 +1964,37 @@ jobs:
     - get: capi-release-tarball
       passed: [create-capi-release]
       trigger: true
-  - task: upload-capi-release-tarball
-    file: capi-ci/ci/drats/upload-release.yml
-    input_mapping:
-      release-tarball: capi-release-tarball
-    params:
-      BOSH_CA_CERT: ((bbr-ca-cert))
-      BOSH_ENVIRONMENT: ((bbr-bosh-director))
-      BOSH_CLIENT: admin
-      BOSH_CLIENT_SECRET: ((bbr-client-secret))
+    - get: drats
   # TODO: delete deployment to ensure clean slate
-  - put: bbr-deployment
+  - task: extract-bbl-environment
+    file: capi-ci/ci/bbl-tasks/extract_bbl_environment.yml
     params:
+      ENV_NAME: xena-mysql
+  - put: xena-mysql-deployment
+    params:
+      source_file: environment/metadata
       manifest: cf-deployment/cf-deployment.yml
       vars:
-        system_domain: dour-fancier.capi.land
+        system_domain: *xena-mysql-domain
+      releases:
+      - capi-release-tarball/*.tgz
       ops_files:
-      - capi-ci/cf-deployment-operations/use-latest-stemcell.yml
       - capi-ci/cf-deployment-operations/skip-cert-verify.yml
       - cf-deployment/operations/bosh-lite.yml
       - capi-ci/cf-deployment-operations/temporary/deploy-capi-backup-restore.yml
       - cf-deployment/operations/use-compiled-releases.yml
       - capi-ci/cf-deployment-operations/use-latest-capi.yml
-
-- name: run-drats
-  serial: false
-  plan:
-  - aggregate:
-    - get: capi-release-tarball
-      passed: [deploy-bbr-mysql]
-      trigger: true
-    - get: drats
-      trigger: true
-    - get: capi-ci
-  - task: run
+  - task: download-vars-store
+    output_mapping:
+      destination-directory: xena-mysql-deployment-vars
+    file: capi-ci/ci/gcs/download-from-gcs.yml
+    params:
+      GCP_JSON_KEY: ((xena_gcp_json_key))
+      GCP_BUCKET: ((xena_bosh_vars_bucket))
+      GCP_PATH: bosh-mysql
+  - task: run-drats
     file: capi-ci/ci/drats/run-drats.yml
     privileged: true
-    params:
-      BOSH_CA_CERT: ((bbr-ca-cert))
-      BOSH_CLIENT_SECRET: ((bbr-client-secret))
-      BOSH_URL: ((bbr-bosh-director))
-      CF_ADMIN_PASSWORD: ((bbr-cf-admin-password))
-      BOSH_GW_PRIVATE_KEY_CONTENTS: ((bbr-bosh-gw-private-key))
+    input_mapping:
+      environment: extract-bbl-environment
+      vars-store: xena-mysql-deployment-vars

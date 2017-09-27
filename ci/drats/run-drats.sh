@@ -2,26 +2,35 @@
 set -eu
 
 # ENV
-: "${BOSH_URL:?}"
-: "${BOSH_CLIENT_SECRET:?}"
-: "${CF_ADMIN_PASSWORD:?}"
-: "${BOSH_GW_PRIVATE_KEY_CONTENTS:?}"
 : "${DEPLOYMENT_TO_BACKUP:=cf}"
 : "${DEPLOYMENT_TO_RESTORE:=cf}"
 : "${BBR_BUILD_PATH:=/usr/local/bin/bbr}"
-: "${BOSH_CLIENT:=admin}"
-: "${BOSH_CA_CERT:=""}"
-: "${BOSH_GW_USER:="jumpbox"}"
 : "${GOPATH:=/go}"
+: "${VARS_STORE_PATH:=vars-store.yml}"
 
 # INPUTS
 script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 workspace_dir="$( cd "${script_dir}/../../../" && pwd )"
 drats_src="${workspace_dir}/drats"
+environment_dir="${workspace_dir}/environment"
+vars_store_dir="${workspace_dir}/vars-store"
 
 drats_dir="${GOPATH}/src/github.com/cloudfoundry-incubator/disaster-recovery-acceptance-tests"
 mkdir -p "${drats_dir}"
 cp -a "${drats_src}/." "${drats_dir}"
+
+source "${environment_dir}/metadata"
+
+: "${BOSH_ENVIRONMENT:?}"
+export BOSH_URL="${BOSH_ENVIRONMENT}"
+: "${BOSH_GW_PRIVATE_KEY_CONTENTS:?}"
+: "${BOSH_CLIENT:?}"
+: "${BOSH_CLIENT_SECRET:?}"
+: "${BOSH_GW_USER:?}"
+: "${BOSH_CA_CERT:=""}"
+
+CF_ADMIN_PASSWORD="$(bosh interpolate "${vars_store_dir}/${VARS_STORE_PATH}" --path=/cf_admin_password)"
+export CF_ADMIN_PASSWORD
 
 tmpdir="$( mktemp -d /tmp/run-drats.XXXXXXXXXX )"
 

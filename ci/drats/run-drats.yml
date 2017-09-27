@@ -9,18 +9,15 @@ image_resource:
 inputs:
   - name: capi-ci
   - name: drats
+  - name: environment
+  - name: vars-store
 
 run:
   path: capi-ci/ci/drats/run-drats.sh
 
 params:
-  BOSH_URL: ""
-  BOSH_GW_PRIVATE_KEY_CONTENTS: ""
-  BOSH_GW_USER: ""
-  BOSH_CLIENT_SECRET: ""
-  CF_ADMIN_PASSWORD: ""
   DEPLOYMENT_TO_BACKUP: ""
   DEPLOYMENT_TO_RESTORE: ""
   BBR_BUILD_PATH: ""
-  BOSH_CLIENT: ""
-  BOSH_CA_CERT: ""
+  GOPATH: ""
+  VARS_STORE_PATH: ""
