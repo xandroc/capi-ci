@@ -41,7 +41,7 @@ create_dns_record() {
   else
     gcloud dns record-sets transaction start --zone="${SHARED_DNS_ZONE_NAME}"
 
-    gcp_records_json="$( gcloud dns record-sets list --zone "${SHARED_DNS_ZONE_NAME}" --name "${DNS_DOMAIN}" --format=json )"
+    gcp_records_json="$( gcloud dns record-sets list --zone "${SHARED_DNS_ZONE_NAME}" --name "*.${DNS_DOMAIN}" --format=json )"
     record_count="$( echo "${gcp_records_json}" | jq 'length' )"
     if [ "${record_count}" != "0" ]; then
       existing_record_ip="$( echo "${gcp_records_json}" | jq -r '.[0].rrdatas | join(" ")' )"
