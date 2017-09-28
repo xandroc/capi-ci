@@ -24,6 +24,8 @@ BOSH_URL="$(jq -e -r .target "${env_file}")"
 BOSH_CLIENT="$(jq -e -r .client "${env_file}")"
 BOSH_CLIENT_SECRET="$(jq -e -r .client_secret "${env_file}")"
 BOSH_CA_CERT="$(jq -e -r .ca_cert "${env_file}")"
+BOSH_GW_USER="$(jq -e -r .gw_user "${env_file}")"
+BOSH_GW_HOST="$(jq -e -r .gw_host "${env_file}")"
 BOSH_GW_PRIVATE_KEY_CONTENTS="$(jq -e -r .gw_private_key "${env_file}")"
 export BOSH_URL BOSH_CLIENT BOSH_CLIENT_SECRET BOSH_CA_CERT
 
@@ -35,7 +37,7 @@ tmpdir="$( mktemp -d /tmp/run-drats.XXXXXXXXXX )"
 ssh_key="${tmpdir}/bosh.pem"
 echo "${BOSH_GW_PRIVATE_KEY_CONTENTS}" > "${ssh_key}"
 chmod 600 "${ssh_key}"
-sshuttle -e "ssh -i "${ssh_key}" -o 'StrictHostKeyChecking no' -o 'UserKnownHostsFile /dev/null'" -r "${BOSH_GW_USER}@${BOSH_URL}" 10.0.0.0/8 &
+sshuttle -e "ssh -i "${ssh_key}" -o 'StrictHostKeyChecking no' -o 'UserKnownHostsFile /dev/null'" -r "${BOSH_GW_USER}@${BOSH_GW_HOST}" 10.0.0.0/8 &
 tunnel_pid="$!"
 
 cleanup() {
