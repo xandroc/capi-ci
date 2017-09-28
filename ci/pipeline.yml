@@ -2017,5 +2017,4 @@ jobs:
     file: capi-ci/ci/drats/run-drats.yml
     privileged: true
     input_mapping:
-      environment: extract-bbl-environment
       vars-store: xena-mysql-deployment-vars
