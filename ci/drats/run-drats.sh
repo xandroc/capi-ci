@@ -19,15 +19,13 @@ drats_dir="${GOPATH}/src/github.com/cloudfoundry-incubator/disaster-recovery-acc
 mkdir -p "${drats_dir}"
 cp -a "${drats_src}/." "${drats_dir}"
 
-source "${environment_dir}/metadata"
-
-: "${BOSH_ENVIRONMENT:?}"
-export BOSH_URL="${BOSH_ENVIRONMENT}"
-: "${BOSH_GW_PRIVATE_KEY_CONTENTS:?}"
-: "${BOSH_CLIENT:?}"
-: "${BOSH_CLIENT_SECRET:?}"
-: "${BOSH_GW_USER:?}"
-: "${BOSH_CA_CERT:=""}"
+env_file="${environment_dir}/metadata"
+BOSH_URL="$(jq -e -r .target "${env_file}")"
+BOSH_CLIENT="$(jq -e -r .client "${env_file}")"
+BOSH_CLIENT_SECRET="$(jq -e -r .client_secret "${env_file}")"
+BOSH_CA_CERT="$(jq -e -r .ca_cert "${env_file}")"
+BOSH_GW_PRIVATE_KEY_CONTENTS="$(jq -e -r .gw_private_key "${bbl_vars_file}")"
+export BOSH_URL BOSH_CLIENT BOSH_CLIENT_SECRET BOSH_CA_CERT
 
 CF_ADMIN_PASSWORD="$(bosh interpolate "${vars_store_dir}/${VARS_STORE_PATH}" --path=/cf_admin_password)"
 export CF_ADMIN_PASSWORD
