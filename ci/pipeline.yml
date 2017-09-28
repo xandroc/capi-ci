@@ -1974,11 +1974,19 @@ jobs:
       resource: cf-deployment
     - get: capi-ci
     - get: capi-ci-private
+    - get: cf-deployment-concourse-tasks
     - get: capi-release-tarball
       passed: [create-capi-release]
       trigger: true
     - get: drats
   # TODO: delete deployment to ensure clean slate
+  - task: stemcell-upload
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    input_mapping:
+      bbl-state: capi-ci-private
+    params:
+      BBL_STATE_DIR: xena-mysql
+      INFRASTRUCTURE: bosh-lite
   - task: extract-bbl-environment
     file: capi-ci/ci/bbl-tasks/extract_bbl_environment.yml
     params:
