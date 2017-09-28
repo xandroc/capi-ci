@@ -1697,7 +1697,7 @@ jobs:
         BBL_GCP_ZONE: ((xena_gcp_zone))
         BBL_GCP_REGION: ((xena_gcp_region))
         IS_BOSH_LITE: true
-        OPS_FILES: bosh-lite.yml bosh-lite-runc.yml gcp/bosh-lite-vm-type.yml
+        OPS_FILES: bosh-lite.yml gcp/bosh-lite-vm-type.yml
       ensure:
         put: xena-mysql-bbl-state
         params:
