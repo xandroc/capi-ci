@@ -16,6 +16,6 @@ bosh -n upload-stemcell \
   "https://bosh.io/d/stemcells/bosh-warden-boshlite-ubuntu-trusty-go_agent?v=${stemcell_version}"
 
 echo "Uploading cloud-config..."
-bosh -n update-cloud-config "${cf_deployment_repo}/bosh-lite/cloud-config.yml"
+bosh -n update-cloud-config "${cf_deployment_repo}/iaas-support/bosh-lite/cloud-config.yml"
 
 echo "Done."
