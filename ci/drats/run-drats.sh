@@ -24,7 +24,7 @@ BOSH_URL="$(jq -e -r .target "${env_file}")"
 BOSH_CLIENT="$(jq -e -r .client "${env_file}")"
 BOSH_CLIENT_SECRET="$(jq -e -r .client_secret "${env_file}")"
 BOSH_CA_CERT="$(jq -e -r .ca_cert "${env_file}")"
-BOSH_GW_PRIVATE_KEY_CONTENTS="$(jq -e -r .gw_private_key "${bbl_vars_file}")"
+BOSH_GW_PRIVATE_KEY_CONTENTS="$(jq -e -r .gw_private_key "${env_file}")"
 export BOSH_URL BOSH_CLIENT BOSH_CLIENT_SECRET BOSH_CA_CERT
 
 CF_ADMIN_PASSWORD="$(bosh interpolate "${vars_store_dir}/${VARS_STORE_PATH}" --path=/cf_admin_password)"
