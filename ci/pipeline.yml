@@ -1400,6 +1400,7 @@ jobs:
       - get: capi-ci
       - get: capi-ci-private
       - get: weekly-sunday
+        trigger: true
     - task: seed-capi-ci-private
       file: capi-ci/ci/setup-environment/seed.yml
       params:
@@ -1848,6 +1849,7 @@ jobs:
       - get: capi-ci
       - get: capi-ci-private
       - get: weekly-sunday
+        trigger: true
     - task: seed-capi-ci-private
       file: capi-ci/ci/setup-environment/seed.yml
       params:
