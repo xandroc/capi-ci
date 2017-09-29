@@ -21,13 +21,13 @@ open_bosh_lite_ports() {
   gcloud auth activate-service-account --key-file="${service_key_path}"
   gcloud config set project "${GCP_PROJECT_ID}"
 
-  firewall_rule_name="${GCP_PROJECT_ID}-bosh-lite"
+  bbl_state_path="${bbl_state_dir}/bbl-state.json"
+  director_tag="$(jq -r .tfState "${bbl_state_path}" | jq -r .modules[0].outputs.bosh_director_tag_name.value)"
+  director_network="$(jq -r .tfState "${bbl_state_path}" | jq -r .modules[0].outputs.network_name.value)"
+
+  firewall_rule_name="${director_tag}-${director_network}-bosh-lite"
 
   if ! gcloud compute firewall-rules describe "${firewall_rule_name}"; then
-    bbl_state_path="${bbl_state_dir}/bbl-state.json"
-    director_tag="$(jq -r .tfState "${bbl_state_path}" | jq -r .modules[0].outputs.bosh_director_tag_name.value)"
-    director_network="$(jq -r .tfState "${bbl_state_path}" | jq -r .modules[0].outputs.network_name.value)"
-
     gcloud compute firewall-rules \
       create "${firewall_rule_name}" \
       --allow=tcp:80,tcp:443,tcp:2222 \
