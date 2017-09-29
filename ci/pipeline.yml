@@ -1935,12 +1935,16 @@ jobs:
       - elsa-mysql-s3-bypass
       - mulan-postgres-webdav-bridge
       - kiki-back-compat-migrations
+      - xena-mysql-drats
+      - xena-postgres-drats
     trigger: true
   - get: capi-release-tarball
     passed:
       - elsa-mysql-s3-bypass
       - mulan-postgres-webdav-bridge
       - kiki-back-compat-migrations
+      - xena-mysql-drats
+      - xena-postgres-drats
   - put: capi-release-ci-passed
     params:
       repository: capi-release
@@ -2072,11 +2076,13 @@ jobs:
     - get: capi-ci
     - get: capi-ci-private
     - get: cf-deployment-concourse-tasks
+    - get: capi-release
+      resource: capi-release-develop
+      passed: [create-capi-release]
     - get: capi-release-tarball
       passed: [create-capi-release]
       trigger: true
     - get: drats
-  # TODO: delete deployment to ensure clean slate
   - task: stemcell-upload
     file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
     input_mapping:
@@ -2134,6 +2140,9 @@ jobs:
     - get: capi-ci
     - get: capi-ci-private
     - get: cf-deployment-concourse-tasks
+    - get: capi-release
+      resource: capi-release-develop
+      passed: [create-capi-release]
     - get: capi-release-tarball
       passed: [create-capi-release]
       trigger: true
