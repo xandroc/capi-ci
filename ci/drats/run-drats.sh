@@ -2,11 +2,11 @@
 set -eu
 
 # ENV
-: "${DEPLOYMENT_TO_BACKUP:=cf}"
-: "${DEPLOYMENT_TO_RESTORE:=cf}"
+: "${CF_DEPLOYMENT_NAME:=cf}"
 : "${BBR_BUILD_PATH:=/usr/local/bin/bbr}"
 : "${GOPATH:=/go}"
 : "${VARS_STORE_PATH:=vars-store.yml}"
+: "${CF_ADMIN_USERNAME:=admin}"
 
 # INPUTS
 script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"

@@ -16,8 +16,8 @@ run:
   path: capi-ci/ci/drats/run-drats.sh
 
 params:
-  DEPLOYMENT_TO_BACKUP: ""
-  DEPLOYMENT_TO_RESTORE: ""
+  CF_DEPLOYMENT_NAME: ""
+  CF_ADMIN_USERNAME: ""
   BBR_BUILD_PATH: ""
   GOPATH: ""
   VARS_STORE_PATH: ""
