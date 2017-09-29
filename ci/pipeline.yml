@@ -8,6 +8,8 @@ groups:
   - mulan-postgres-webdav-bridge
   - elsa-mysql-s3-bypass
   - kiki-back-compat-migrations
+  - xena-mysql-drats
+  - xena-postgres-drats
   - bump-ci-passed
 - name: ship-it
   jobs:
@@ -42,10 +44,6 @@ groups:
   - update-bosh-ripley
   - mssql-unit-tests
   - ripley-mssql
-- name: bbr
-  jobs:
-  - xena-mysql-drats
-  - xena-postgres-drats
 
 resource_types:
 - name: slack-notification
