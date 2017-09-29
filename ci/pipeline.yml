@@ -2088,6 +2088,10 @@ jobs:
     file: capi-ci/ci/bbl-tasks/extract_bbl_environment.yml
     params:
       ENV_NAME: xena-mysql
+  - task: delete-deployment
+    file: capi-ci/ci/bosh/run_bosh_cmd.yml
+    params:
+      BOSH_ARGS: "delete-deployment -d cf"
   - put: xena-mysql-deployment
     params:
       source_file: environment/metadata
@@ -2112,9 +2116,14 @@ jobs:
       GCP_PATH: bosh-mysql
   - task: run-drats
     file: capi-ci/ci/drats/run-drats.yml
-    privileged: true
+    privileged: true # necessary for sshuttle util
     input_mapping:
       vars-store: xena-mysql-deployment-vars
+    on_success:
+      task: delete-deployment
+      file: capi-ci/ci/bosh/run_bosh_cmd.yml
+      params:
+        BOSH_ARGS: "delete-deployment -d cf"
 
 - name: xena-postgres-drats
   serial: true
@@ -2129,7 +2138,6 @@ jobs:
       passed: [create-capi-release]
       trigger: true
     - get: drats
-  # TODO: delete deployment to ensure clean slate
   - task: stemcell-upload
     file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
     input_mapping:
@@ -2141,6 +2149,10 @@ jobs:
     file: capi-ci/ci/bbl-tasks/extract_bbl_environment.yml
     params:
       ENV_NAME: xena-postgres
+  - task: delete-deployment
+    file: capi-ci/ci/bosh/run_bosh_cmd.yml
+    params:
+      BOSH_ARGS: "delete-deployment -d cf"
   - put: xena-postgres-deployment
     params:
       source_file: environment/metadata
@@ -2166,6 +2178,11 @@ jobs:
       GCP_PATH: bosh-postgres
   - task: run-drats
     file: capi-ci/ci/drats/run-drats.yml
-    privileged: true
+    privileged: true # necessary for sshuttle util
     input_mapping:
       vars-store: xena-postgres-deployment-vars
+    on_success:
+      task: delete-deployment
+      file: capi-ci/ci/bosh/run_bosh_cmd.yml
+      params:
+        BOSH_ARGS: "delete-deployment -d cf"
