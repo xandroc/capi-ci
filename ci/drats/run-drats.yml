@@ -16,6 +16,7 @@ run:
   path: capi-ci/ci/drats/run-drats.sh
 
 params:
+  CF_API_URL: ""
   CF_DEPLOYMENT_NAME: ""
   CF_ADMIN_USERNAME: ""
   BBR_BUILD_PATH: ""

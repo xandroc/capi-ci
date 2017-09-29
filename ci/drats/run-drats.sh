@@ -2,6 +2,7 @@
 set -eu
 
 # ENV
+: "${CF_API_URL:?}"
 : "${CF_DEPLOYMENT_NAME:=cf}"
 : "${BBR_BUILD_PATH:=/usr/local/bin/bbr}"
 : "${GOPATH:=/go}"

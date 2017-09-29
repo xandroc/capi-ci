@@ -2127,6 +2127,8 @@ jobs:
     privileged: true # necessary for sshuttle util
     input_mapping:
       vars-store: xena-mysql-deployment-vars
+    params:
+      CF_API_URL: https://api.xena-mysql.capi.land
     on_success:
       task: delete-deployment
       file: capi-ci/ci/bosh/run_bosh_cmd.yml
@@ -2192,6 +2194,8 @@ jobs:
     privileged: true # necessary for sshuttle util
     input_mapping:
       vars-store: xena-postgres-deployment-vars
+    params:
+      CF_API_URL: https://api.xena-postgres.capi.land
     on_success:
       task: delete-deployment
       file: capi-ci/ci/bosh/run_bosh_cmd.yml
