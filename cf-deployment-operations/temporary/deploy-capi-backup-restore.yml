@@ -43,6 +43,10 @@
     value: true
 
   - type: replace
+    path: /instance_groups/name=scheduler/jobs/name=tps/properties/cloud_controller?/release_level_backup
+    value: true
+
+  - type: replace
     path: /instance_groups/name=cc-worker/jobs/name=cloud_controller_worker/properties/cloud_controller?/release_level_backup
     value: true
 
