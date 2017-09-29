@@ -32,6 +32,7 @@ groups:
   - update-bosh-elsa
   - update-bosh-kiki
   - update-bosh-xena-mysql
+  - update-bosh-xena-postgres
 - name: bits
   jobs:
   - update-bosh-buffy
@@ -44,6 +45,7 @@ groups:
 - name: bbr
   jobs:
   - xena-mysql-drats
+  - xena-postgres-drats
 
 resource_types:
 - name: slack-notification
@@ -508,6 +510,23 @@ resources:
       config:
         bucket: ((xena_bosh_vars_bucket))
         file_name: &xena_mysql_vars_store_path "bosh-mysql/vars-store.yml"
+        json_key: ((xena_gcp_json_key))
+
+- name: xena-postgres-bbl-state
+  type: git
+  source:
+    branch: master
+    private_key: ((private_key))
+    uri: git@github.com:cloudfoundry/capi-ci-private.git
+
+- name: xena-postgres-deployment
+  type: bosh2-deployment
+  source:
+    vars_store:
+      provider: gcs
+      config:
+        bucket: ((xena_bosh_vars_bucket))
+        file_name: &xena_postgres_vars_store_path "bosh-postgres/vars-store.yml"
         json_key: ((xena_gcp_json_key))
 
 - name: drats
@@ -1741,6 +1760,86 @@ jobs:
       params:
         BBL_STATE_DIR: "xena-mysql"
 
+- name: update-bosh-xena-postgres
+  serial: true
+  plan:
+    - aggregate:
+      - get: cf-deployment-concourse-tasks
+        resource: cf-deployment-concourse-tasks-pr-is-bosh-lite
+      - get: xena-postgres-bbl-state
+      - get: capi-ci
+      - get: capi-ci-private
+      - get: cf-deployment
+      - get: weekly-sunday
+        trigger: true
+      - get: bosh-deployment
+    - task: seed-capi-ci-private
+      file: capi-ci/ci/setup-environment/seed.yml
+      params:
+        ENVIRONMENT: xena-postgres
+        DOMAIN: &xena-postgres-domain "xena-postgres.capi.land"
+    - put: capi-ci-private
+      params:
+        repository: updated-capi-ci-private
+        rebase: true
+    - task: update-bosh-xena-postgres
+      file: cf-deployment-concourse-tasks/bbl-up/task.yml
+      input_mapping:
+        bbl-state: updated-capi-ci-private
+        ops-files: bosh-deployment
+      params:
+        BBL_STATE_DIR: "xena-postgres"
+        BBL_IAAS: "gcp"
+        BBL_ENV_NAME: "xena-postgres"
+        BBL_GCP_SERVICE_ACCOUNT_KEY: ((xena_gcp_json_key))
+        BBL_GCP_PROJECT_ID: ((xena_gcp_project_id))
+        BBL_GCP_ZONE: ((xena_gcp_zone))
+        BBL_GCP_REGION: ((xena_gcp_region))
+        IS_BOSH_LITE: true
+        OPS_FILES: bosh-lite.yml gcp/bosh-lite-vm-type.yml
+      ensure:
+        put: xena-postgres-bbl-state
+        params:
+          repository: updated-bbl-state
+          rebase: true
+    - task: extract-bbl-environment
+      file: capi-ci/ci/bbl-tasks/extract_bbl_environment.yml
+      input_mapping:
+        capi-ci-private: updated-bbl-state
+      params:
+        ENV_NAME: xena-postgres
+    - task: update-cloud-config
+      file: capi-ci/ci/bosh/update_cloud_config.yml
+      input_mapping:
+        cloud-config: cf-deployment
+      params:
+        CLOUD_CONFIG_PATH: iaas-support/bosh-lite/cloud-config.yml
+    - task: open-bosh-lite-ports
+      file: capi-ci/ci/bbl-tasks/open-bosh-lite-ports.yml
+      input_mapping:
+        bbl-state: updated-bbl-state
+      params:
+        BBL_STATE_DIR: "xena-postgres"
+        GCP_SERVICE_ACCOUNT_KEY: ((xena_gcp_json_key))
+        GCP_PROJECT_ID: ((xena_gcp_project_id))
+    - task: create-dns-record
+      file: capi-ci/ci/bbl-tasks/create-dns-record.yml
+      input_mapping:
+       bbl-state: updated-bbl-state
+      params:
+        BBL_STATE_DIR: "xena-postgres"
+        DNS_DOMAIN: *xena-postgres-domain
+        GCP_DNS_SERVICE_ACCOUNT_KEY: ((dns_gcp_json_key))
+        GCP_PROJECT_ID: ((dns_gcp_project_id))
+        SHARED_DNS_ZONE_NAME: "capi-land"
+        IS_BOSH_LITE: true
+    - task: run-bosh-cleanup
+      file: capi-ci/ci/bbl-tasks/run-bosh-cleanup.yml
+      input_mapping:
+        bbl-state: updated-bbl-state
+      params:
+        BBL_STATE_DIR: "xena-postgres"
+
 - name: update-bosh-ripley
   serial: true
   serial_groups: [deploy-ripley]
@@ -2018,3 +2117,57 @@ jobs:
     privileged: true
     input_mapping:
       vars-store: xena-mysql-deployment-vars
+
+- name: xena-postgres-drats
+  serial: true
+  plan:
+  - aggregate:
+    - get: cf-deployment
+      resource: cf-deployment
+    - get: capi-ci
+    - get: capi-ci-private
+    - get: cf-deployment-concourse-tasks
+    - get: capi-release-tarball
+      passed: [create-capi-release]
+      trigger: true
+    - get: drats
+  # TODO: delete deployment to ensure clean slate
+  - task: stemcell-upload
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    input_mapping:
+      bbl-state: capi-ci-private
+    params:
+      BBL_STATE_DIR: xena-postgres
+      INFRASTRUCTURE: bosh-lite
+  - task: extract-bbl-environment
+    file: capi-ci/ci/bbl-tasks/extract_bbl_environment.yml
+    params:
+      ENV_NAME: xena-postgres
+  - put: xena-postgres-deployment
+    params:
+      source_file: environment/metadata
+      manifest: cf-deployment/cf-deployment.yml
+      vars:
+        system_domain: *xena-postgres-domain
+      releases:
+      - capi-release-tarball/*.tgz
+      ops_files:
+      - capi-ci/cf-deployment-operations/skip-cert-verify.yml
+      - cf-deployment/operations/bosh-lite.yml
+      - capi-ci/cf-deployment-operations/temporary/deploy-capi-backup-restore.yml
+      - cf-deployment/operations/use-compiled-releases.yml
+      - capi-ci/cf-deployment-operations/use-latest-capi.yml
+      - cf-deployment/operations/use-postgres.yml
+  - task: download-vars-store
+    output_mapping:
+      destination-directory: xena-postgres-deployment-vars
+    file: capi-ci/ci/gcs/download-from-gcs.yml
+    params:
+      GCP_JSON_KEY: ((xena_gcp_json_key))
+      GCP_BUCKET: ((xena_bosh_vars_bucket))
+      GCP_PATH: bosh-postgres
+  - task: run-drats
+    file: capi-ci/ci/drats/run-drats.yml
+    privileged: true
+    input_mapping:
+      vars-store: xena-postgres-deployment-vars
