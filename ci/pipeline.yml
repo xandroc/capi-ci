@@ -735,7 +735,6 @@ jobs:
       - capi-ci/cf-deployment-operations/log-all-sequel-activity.yml
       - capi-ci/cf-deployment-operations/silence-noisy-logs.yml
       - capi-ci/cf-deployment-operations/temporary/disable-uaa-get-requests.yml
-      - capi-ci/cf-deployment-operations/temporary/use-routing-502-fix.yml
   - task: download-vars-store
     output_mapping:
       destination-directory: mulan-deployment-vars
@@ -855,7 +854,6 @@ jobs:
       - capi-ci/cf-deployment-operations/log-all-sequel-activity.yml
       - capi-ci/cf-deployment-operations/silence-noisy-logs.yml
       - capi-ci/cf-deployment-operations/temporary/disable-uaa-get-requests.yml
-      - capi-ci/cf-deployment-operations/temporary/use-routing-502-fix.yml
       - cf-deployment/operations/experimental/bits-service.yml
       # TODO: replace me with cf-deployment bits-service.yml ops file once bosh ordering issue is resolved
       # https://github.com/cloudfoundry/bosh-cli/issues/317
@@ -1008,7 +1006,6 @@ jobs:
       - capi-ci/cf-deployment-operations/silence-noisy-logs.yml
       - capi-ci/cf-deployment-operations/use-latest-windows-stemcell.yml
       - capi-ci/cf-deployment-operations/temporary/disable-uaa-get-requests.yml
-      - capi-ci/cf-deployment-operations/temporary/use-routing-502-fix.yml
   - task: download-vars-store
     output_mapping:
       destination-directory: elsa-deployment-vars
@@ -1132,7 +1129,6 @@ jobs:
       - capi-ci/cf-deployment-operations/add-remote-syslog.yml
       - capi-ci/cf-deployment-operations/log-all-sequel-activity.yml
       - capi-ci/cf-deployment-operations/temporary/disable-uaa-get-requests.yml
-      - capi-ci/cf-deployment-operations/temporary/use-routing-502-fix.yml
       - capi-ci/cf-deployment-operations/temporary/use-pre-spec-refactor-properties.yml
   - task: apply-cc-migrations
     file: capi-ci/ci/migrations/apply_latest_migrations.yml
