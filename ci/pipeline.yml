@@ -727,6 +727,7 @@ jobs:
       - cf-deployment/operations/use-postgres.yml
       - capi-ci/cf-deployment-operations/use-ssl-postgres.yml
       - cf-deployment/operations/experimental/locket-postgres.yml
+      - capi-ci/cf-deployment-operations/enable-cc-bridge.yml
       - capi-ci/cf-deployment-operations/add-prometheus.yml
       - capi-ci/cf-deployment-operations/add-prometheus-capi-homepage.yml
       - capi-ci/cf-deployment-operations/add-remote-syslog.yml
