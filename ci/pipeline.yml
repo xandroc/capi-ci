@@ -987,7 +987,6 @@ jobs:
         - capi-ci-private/elsa/certs/router/certs.yml
       ops_files:
       - cf-deployment/operations/test/add-persistent-isolation-segment-diego-cell.yml
-      - cf-deployment/operations/tcp-routing-gcp.yml
       - cf-deployment/operations/windows-cell.yml
       - capi-ci/cf-deployment-operations/skip-cert-verify-on-windows-cell.yml
       - cf-deployment/operations/experimental/enable-prefer-declarative-healthchecks.yml
