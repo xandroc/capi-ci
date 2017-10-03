@@ -13,8 +13,10 @@ function setup_bosh_env_vars() {
 
 function update_bosh_cloud_config() {
   echo "Updating bosh cloud-config on ${BOSH_ENVIRONMENT}..."
-  bosh -n update-cloud-config <(bbl cloud-config) \
-    -o capi-ci/cf-deployment-operations/temporary/credhub-lb-cloud-properties.yml
+  pushd "bbl-state/${BBL_STATE_DIR}"
+    bosh -n update-cloud-config <(bbl cloud-config) \
+      -o ../../capi-ci/cf-deployment-operations/temporary/credhub-lb-cloud-properties.yml
+  popd
 }
 
 function main() {
