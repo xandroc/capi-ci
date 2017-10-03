@@ -467,6 +467,16 @@ resources:
       secret_access_key: ((gcp_storage_secret_key))
       endpoint: storage.googleapis.com
 
+- name: elsa-credhub-lb-terraform
+  type: terraform
+  source:
+    storage:
+      bucket: ((elsa_bosh_vars_bucket))
+      bucket_path: credhub-lb-storage
+      access_key_id: ((gcp_storage_access_key))
+      secret_access_key: ((gcp_storage_secret_key))
+      endpoint: storage.googleapis.com
+
 # Kiki resources
 - name: kiki-bbl-state
   type: git
@@ -968,6 +978,14 @@ jobs:
         aws_secret_key: ((wasabi_aws_secret_key))
         cdn_key_pair_id: ((wasabi_cdn_key_pair_id))
         cdn_private_key: ((wasabi_cdn_private_key))
+  - put: elsa-credhub-lb-terraform
+    params:
+      env_name: elsa
+      terraform_source: capi-ci/terraform/credhub-lb/
+      vars:
+        project_id: cf-capi-elsa
+        network_name: elsa-network
+        json_key: ((elsa_gcp_json_key))
   - put: elsa-deployment
     params:
       source_file: environment/metadata
@@ -1006,6 +1024,9 @@ jobs:
       - capi-ci/cf-deployment-operations/silence-noisy-logs.yml
       - capi-ci/cf-deployment-operations/use-latest-windows-stemcell.yml
       - capi-ci/cf-deployment-operations/temporary/disable-uaa-get-requests.yml
+      - cf-deployment/operations/experimental/enable-instance-identity-credentials.yml
+      - cf-deployment/operations/experimental/secure-service-credentials.yml
+      - capi-ci/cf-deployment-operations/temporary/secure-service-credentials-capi-cert.yml
   - task: download-vars-store
     output_mapping:
       destination-directory: elsa-deployment-vars
@@ -1610,6 +1631,12 @@ jobs:
         GCP_DNS_SERVICE_ACCOUNT_KEY: ((dns_gcp_json_key))
         GCP_PROJECT_ID: ((dns_gcp_project_id))
         SHARED_DNS_ZONE_NAME: "capi-land"
+    - task: update-cloud-config
+      file: capi-ci/ci/bbl-tasks/update-cloud-config-with-credhub.yml
+      input_mapping:
+        bbl-state: updated-bbl-state
+      params:
+        BBL_STATE_DIR: "elsa"
     - task: run-bosh-cleanup
       file: capi-ci/ci/bbl-tasks/run-bosh-cleanup.yml
       input_mapping:
