@@ -10,7 +10,7 @@ inputs:
 - name: bbl-state
 
 run:
-  path: capi-ci/ci/bbl-tasks/update-cloud-config-with-credhub
+  path: capi-ci/ci/bbl-tasks/update-cloud-config-with-credhub.sh
 
 params:
   BBL_STATE_DIR:
