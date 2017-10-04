@@ -35,6 +35,7 @@ provider "google" {
 
 resource "google_compute_network" "default" {
   name = "${var.env_name}"
+  auto_create_subnetworks = false
 }
 
 resource "google_compute_subnetwork" "default" {
