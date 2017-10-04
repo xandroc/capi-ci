@@ -314,7 +314,7 @@ resources:
   type: git
   source:
     branch: PR-is-bosh-lite-to-bbl-up
-    uri: https://github.com/ljfranklin/cf-deployment-concourse-tasks.git
+    uri: https://github.com/gerg/cf-deployment-concourse-tasks.git
 
 - name: cats-concourse-task
   type: git
