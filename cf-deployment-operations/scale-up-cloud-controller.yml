@@ -1,0 +1,10 @@
+# ----- Scale Up ☝️ ------
+- type: replace
+  path: /instance_groups/name=scheduler/instances
+  value: 2
+- type: replace
+  path: /instance_groups/name=api/instances
+  value: 2
+- type: replace
+  path: /instance_groups/name=cc-worker/instances
+  value: 2
