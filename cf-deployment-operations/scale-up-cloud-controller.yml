@@ -1,4 +1,3 @@
-# ----- Scale Up ☝️ ------
 - type: replace
   path: /instance_groups/name=scheduler/instances
   value: 2

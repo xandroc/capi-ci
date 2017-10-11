@@ -2131,6 +2131,7 @@ jobs:
       - capi-ci/cf-deployment-operations/temporary/deploy-capi-backup-restore.yml
       - cf-deployment/operations/use-compiled-releases.yml
       - capi-ci/cf-deployment-operations/use-latest-capi.yml
+      - capi-ci/cf-deployment-operations/scale-up-cloud-controller.yml
   - task: download-vars-store
     output_mapping:
       destination-directory: xena-mysql-deployment-vars
@@ -2198,6 +2199,7 @@ jobs:
       - cf-deployment/operations/use-compiled-releases.yml
       - capi-ci/cf-deployment-operations/use-latest-capi.yml
       - cf-deployment/operations/use-postgres.yml
+      - capi-ci/cf-deployment-operations/scale-up-cloud-controller.yml
   - task: download-vars-store
     output_mapping:
       destination-directory: xena-postgres-deployment-vars
