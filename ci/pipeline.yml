@@ -1145,7 +1145,6 @@ jobs:
       - capi-ci/cf-deployment-operations/add-remote-syslog.yml
       - capi-ci/cf-deployment-operations/log-all-sequel-activity.yml
       - capi-ci/cf-deployment-operations/temporary/disable-uaa-get-requests.yml
-      - capi-ci/cf-deployment-operations/temporary/use-pre-spec-refactor-properties.yml
   - task: apply-cc-migrations
     file: capi-ci/ci/migrations/apply_latest_migrations.yml
   - task: download-vars-store
