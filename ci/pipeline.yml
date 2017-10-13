@@ -1636,12 +1636,6 @@ jobs:
         bbl-state: updated-bbl-state
       params:
         BBL_STATE_DIR: "elsa"
-    - task: update-runtime-config
-      file: capi-ci/ci/bbl-tasks/update-runtime-config.yml
-      input_mapping:
-        bbl-state: updated-bbl-state
-      params:
-        BBL_STATE_DIR: "elsa"
     - task: run-bosh-cleanup
       file: capi-ci/ci/bbl-tasks/run-bosh-cleanup.yml
       input_mapping:
