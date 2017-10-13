@@ -1,0 +1,12 @@
+---
+- type: replace
+  path: /releases/-
+  value:
+    name: bosh-dns
+      version: 0.0.7
+      url: http://bosh.io/d/github.com/cloudfoundry/bosh-dns-release?v=0.0.7
+      sha1: 032fd263e940ec12589c920a348a004bd993b3c5
+- type: replace
+  path: /instance_groups/name=diego-cell/jobs/name=cni/properties?/cf_networking/dns_servers
+  value:
+  - 169.254.0.2

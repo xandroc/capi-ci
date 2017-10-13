@@ -1,8 +1,8 @@
 releases:
 - name: bosh-dns
-  version: 0.0.7
-  url: http://bosh.io/d/github.com/cloudfoundry/bosh-dns-release?v=0.0.7
-  sha1: 032fd263e940ec12589c920a348a004bd993b3c5
+  sha1: 0d55ec52b3a5c54a8284388d2400bf4c0172d7af
+  url: https://bosh.io/d/github.com/cloudfoundry/bosh-dns-release?v=0.0.8
+  version: 0.0.8
 
 addons:
 - name: bosh-dns

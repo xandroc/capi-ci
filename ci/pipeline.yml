@@ -1023,6 +1023,8 @@ jobs:
       - capi-ci/cf-deployment-operations/temporary/disable-uaa-get-requests.yml
       - cf-deployment/operations/experimental/enable-instance-identity-credentials.yml
       - cf-deployment/operations/experimental/secure-service-credentials.yml
+      - cf-deployment/operations/experimental/use-bosh-dns.yml
+      - cf-deployment/operations/experimental/use-bosh-dns-for-containers.yml
   - task: download-vars-store
     output_mapping:
       destination-directory: elsa-deployment-vars
