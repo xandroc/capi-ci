@@ -1599,7 +1599,7 @@ jobs:
       file: cf-deployment-concourse-tasks/bbl-up/task.yml
       input_mapping:
         bbl-state: updated-capi-ci-private
-        ops-files: updated-capi-ci-private
+        ops-files: bosh-deployment
       params:
         BBL_STATE_DIR: "elsa"
         BBL_IAAS: "gcp"
@@ -1611,6 +1611,8 @@ jobs:
         BBL_GCP_PROJECT_ID: ((elsa_gcp_project_id))
         BBL_GCP_ZONE: ((elsa_gcp_zone))
         BBL_GCP_REGION: ((elsa_gcp_region))
+        OPS_FILES:
+          - "local-dns.yml"
       ensure:
         put: elsa-bbl-state
         params:
@@ -1628,6 +1630,12 @@ jobs:
         SHARED_DNS_ZONE_NAME: "capi-land"
     - task: update-cloud-config
       file: capi-ci/ci/bbl-tasks/update-cloud-config-with-credhub.yml
+      input_mapping:
+        bbl-state: updated-bbl-state
+      params:
+        BBL_STATE_DIR: "elsa"
+    - task: update-runtime-config
+      file: capi-ci/ci/bbl-tasks/update-runtime-config.yml
       input_mapping:
         bbl-state: updated-bbl-state
       params:

@@ -1,0 +1,20 @@
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/cf-deployment-concourse-tasks
+
+inputs:
+- name: capi-ci
+- name: bbl-state
+
+run:
+  path: capi-ci/ci/bbl-tasks/update-runtime-config.sh
+
+params:
+  BBL_STATE_DIR:
+  # - Optional
+  # - Path to the directory containing the `bbl-state.json` file
+  # - The path is relative to root of the `bbl-state` input
+  # - If unspecified, uses the root of the `bbl-state` input
