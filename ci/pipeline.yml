@@ -1584,6 +1584,7 @@ jobs:
       - get: elsa-bbl-state
       - get: capi-ci
       - get: capi-ci-private
+      - get: bosh-deployment
       - get: weekly-sunday
         trigger: true
     - task: seed-capi-ci-private
@@ -1611,8 +1612,7 @@ jobs:
         BBL_GCP_PROJECT_ID: ((elsa_gcp_project_id))
         BBL_GCP_ZONE: ((elsa_gcp_zone))
         BBL_GCP_REGION: ((elsa_gcp_region))
-        OPS_FILES:
-          - "local-dns.yml"
+        OPS_FILES: "local-dns.yml"
       ensure:
         put: elsa-bbl-state
         params:
