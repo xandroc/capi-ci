@@ -744,6 +744,7 @@ jobs:
       - capi-ci/cf-deployment-operations/temporary/disable-uaa-get-requests.yml
       - capi-ci/cf-deployment-operations/enable-cef-security-event-logging.yml
       - capi-ci/cf-deployment-operations/temporary/set-gorouter-keep-alive.yml
+      - capi-ci/cf-deployment-operations/temporary/use-syslog-addon.yml
   - task: download-vars-store
     output_mapping:
       destination-directory: mulan-deployment-vars
@@ -1505,12 +1506,6 @@ jobs:
         params:
           repository: updated-bbl-state
           rebase: true
-    - task: update-runtime-config
-      file: capi-ci/ci/bbl-tasks/add-syslog-to-runtime-config.yml
-      input_mapping:
-        bbl-state: updated-bbl-state
-      params:
-        BBL_STATE_DIR: "mulan"
     - task: create-dns-record
       file: capi-ci/ci/bbl-tasks/create-dns-record.yml
       input_mapping:
