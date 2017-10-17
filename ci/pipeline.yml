@@ -857,7 +857,6 @@ jobs:
       - capi-ci/cf-deployment-operations/use-ssl-postgres.yml
       - capi-ci/cf-deployment-operations/add-prometheus.yml
       - capi-ci/cf-deployment-operations/add-prometheus-capi-homepage.yml
-      - capi-ci/cf-deployment-operations/add-remote-syslog.yml
       - capi-ci/cf-deployment-operations/enable-perform-blob-cleanup.yml
       - capi-ci/cf-deployment-operations/log-all-sequel-activity.yml
       - capi-ci/cf-deployment-operations/silence-noisy-logs.yml
@@ -867,7 +866,7 @@ jobs:
       # https://github.com/cloudfoundry/bosh-cli/issues/317
       - capi-ci/cf-deployment-operations/temporary/bits-service-with-reordering.yml
       - cf-deployment/operations/experimental/bits-service-webdav.yml
-
+      - capi-ci/cf-deployment-operations/temporary/use-syslog-addon.yml
   - task: download-vars-store
     output_mapping:
       destination-directory: buffy-deployment-vars
@@ -1014,7 +1013,6 @@ jobs:
       - capi-ci/cf-deployment-operations/disable-skip-cert-verify.yml
       - capi-ci/cf-deployment-operations/disable-skip-cert-verify-iso-seg.yml
       - capi-ci/cf-deployment-operations/add-new-relic.yml
-      - capi-ci/cf-deployment-operations/add-remote-syslog.yml
       - capi-ci/cf-deployment-operations/add-prometheus.yml
       - capi-ci/cf-deployment-operations/add-prometheus-capi-homepage.yml
       - capi-ci/cf-deployment-operations/enable-perform-blob-cleanup.yml
@@ -1028,6 +1026,7 @@ jobs:
       - cf-deployment/operations/experimental/use-bosh-dns.yml
       - cf-deployment/operations/experimental/use-bosh-dns-for-containers.yml
       - capi-ci/cf-deployment-operations/seed-credhub-asg.yml
+      - capi-ci/cf-deployment-operations/temporary/use-syslog-addon.yml
   - task: download-vars-store
     output_mapping:
       destination-directory: elsa-deployment-vars
@@ -1148,10 +1147,10 @@ jobs:
       - cf-deployment/operations/use-postgres.yml
       - capi-ci/cf-deployment-operations/add-prometheus.yml
       - capi-ci/cf-deployment-operations/add-prometheus-capi-homepage.yml
-      - capi-ci/cf-deployment-operations/add-remote-syslog.yml
       - capi-ci/cf-deployment-operations/log-all-sequel-activity.yml
       - capi-ci/cf-deployment-operations/temporary/disable-uaa-get-requests.yml
       - capi-ci/cf-deployment-operations/temporary/set-gorouter-keep-alive.yml
+      - capi-ci/cf-deployment-operations/temporary/use-syslog-addon.yml
   - task: apply-cc-migrations
     file: capi-ci/ci/migrations/apply_latest_migrations.yml
   - task: download-vars-store
