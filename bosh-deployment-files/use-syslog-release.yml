@@ -1,0 +1,18 @@
+---
+
+addons:
+- name: syslog_forwarder
+  jobs:
+  - name: syslog_forwarder
+    release: syslog
+  properties:
+    syslog:
+      address: 6b37b779-ae97-49bb-a4c7-6185cbdd2541-ls.logit.io
+      port: 18884
+      transport: tcp
+      fallback_servers: []
+      custom_rule: ""
+
+releases:
+- name: syslog
+  version: '11'

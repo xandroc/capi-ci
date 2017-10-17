@@ -738,7 +738,6 @@ jobs:
       - capi-ci/cf-deployment-operations/enable-cc-bridge.yml
       - capi-ci/cf-deployment-operations/add-prometheus.yml
       - capi-ci/cf-deployment-operations/add-prometheus-capi-homepage.yml
-      - capi-ci/cf-deployment-operations/add-remote-syslog.yml
       - capi-ci/cf-deployment-operations/enable-perform-blob-cleanup.yml
       - capi-ci/cf-deployment-operations/log-all-sequel-activity.yml
       - capi-ci/cf-deployment-operations/silence-noisy-logs.yml
@@ -1506,6 +1505,12 @@ jobs:
         params:
           repository: updated-bbl-state
           rebase: true
+    - task: update-runtime-config
+      file: capi-ci/ci/bbl-tasks/add-syslog-to-runtime-config.yml
+      input_mapping:
+        bbl-state: updated-bbl-state
+      params:
+        BBL_STATE_DIR: "mulan"
     - task: create-dns-record
       file: capi-ci/ci/bbl-tasks/create-dns-record.yml
       input_mapping:
