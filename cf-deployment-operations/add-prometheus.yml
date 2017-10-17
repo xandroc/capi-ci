@@ -73,7 +73,7 @@
               password: ((client_secret))
               ca_cert: ((ca_cert))
             metrics:
-              environment: cf
+              environment: ((system_domain))
       - name: firehose_exporter
         release: prometheus
         properties:
@@ -86,7 +86,7 @@
             doppler:
               url: wss://doppler.((system_domain)):443
             metrics:
-              environment: cf
+              environment: ((system_domain))
       - name: cf_exporter
         release: prometheus
         properties:
@@ -98,7 +98,7 @@
               client_secret: ((prometheus_uaa_client_secret))
               deployment_name: cf
             metrics:
-              environment: cf
+              environment: ((system_domain))
 
       - name: prometheus_dashboards
         release: prometheus
