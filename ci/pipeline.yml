@@ -744,6 +744,7 @@ jobs:
       - capi-ci/cf-deployment-operations/silence-noisy-logs.yml
       - capi-ci/cf-deployment-operations/temporary/disable-uaa-get-requests.yml
       - capi-ci/cf-deployment-operations/enable-cef-security-event-logging.yml
+      - capi-ci/cf-deployment-operations/temporary/set-gorouter-keep-alive.yml
   - task: download-vars-store
     output_mapping:
       destination-directory: mulan-deployment-vars
@@ -1023,6 +1024,7 @@ jobs:
       - capi-ci/cf-deployment-operations/temporary/disable-uaa-get-requests.yml
       - cf-deployment/operations/experimental/enable-instance-identity-credentials.yml
       - cf-deployment/operations/experimental/secure-service-credentials.yml
+      - capi-ci/cf-deployment-operations/temporary/set-gorouter-keep-alive.yml
   - task: download-vars-store
     output_mapping:
       destination-directory: elsa-deployment-vars
@@ -1146,6 +1148,7 @@ jobs:
       - capi-ci/cf-deployment-operations/add-remote-syslog.yml
       - capi-ci/cf-deployment-operations/log-all-sequel-activity.yml
       - capi-ci/cf-deployment-operations/temporary/disable-uaa-get-requests.yml
+      - capi-ci/cf-deployment-operations/temporary/set-gorouter-keep-alive.yml
   - task: apply-cc-migrations
     file: capi-ci/ci/migrations/apply_latest_migrations.yml
   - task: download-vars-store
