@@ -746,6 +746,7 @@ jobs:
       - capi-ci/cf-deployment-operations/temporary/set-gorouter-keep-alive.yml
       - capi-ci/cf-deployment-operations/temporary/use-syslog-addon.yml
       - cf-deployment/operations/experimental/secure-service-credentials.yml
+      - cf-deployment/operations/experimental/secure-service-credentials-postgres.yml
       - capi-ci/cf-deployment-operations/seed-credhub-asg.yml
       - capi-ci/cf-deployment-operations/disable-credhub-interpolate-service-bindings.yml
   - task: download-vars-store
