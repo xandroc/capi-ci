@@ -733,8 +733,12 @@ jobs:
       - capi-ci/cf-deployment-operations/use-latest-capi.yml
       - cf-deployment/operations/scale-to-one-az.yml
       - capi-ci/cf-deployment-operations/scale-up-cells.yml
+      - cf-deployment/operations/experimental/secure-service-credentials.yml
       - cf-deployment/operations/use-postgres.yml
       - capi-ci/cf-deployment-operations/use-ssl-postgres.yml
+      - cf-deployment/operations/experimental/secure-service-credentials-postgres.yml
+      - capi-ci/cf-deployment-operations/seed-credhub-asg.yml
+      - capi-ci/cf-deployment-operations/disable-credhub-interpolate-service-bindings.yml
       - capi-ci/cf-deployment-operations/enable-cc-bridge.yml
       - capi-ci/cf-deployment-operations/add-prometheus.yml
       - capi-ci/cf-deployment-operations/add-prometheus-capi-homepage.yml
@@ -745,10 +749,6 @@ jobs:
       - capi-ci/cf-deployment-operations/enable-cef-security-event-logging.yml
       - capi-ci/cf-deployment-operations/temporary/set-gorouter-keep-alive.yml
       - capi-ci/cf-deployment-operations/temporary/use-syslog-addon.yml
-      - cf-deployment/operations/experimental/secure-service-credentials.yml
-      - cf-deployment/operations/experimental/secure-service-credentials-postgres.yml
-      - capi-ci/cf-deployment-operations/seed-credhub-asg.yml
-      - capi-ci/cf-deployment-operations/disable-credhub-interpolate-service-bindings.yml
   - task: download-vars-store
     output_mapping:
       destination-directory: mulan-deployment-vars
