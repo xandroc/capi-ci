@@ -733,6 +733,7 @@ jobs:
       - capi-ci/cf-deployment-operations/use-latest-capi.yml
       - cf-deployment/operations/scale-to-one-az.yml
       - capi-ci/cf-deployment-operations/scale-up-cells.yml
+      - cf-deployment/operations/experimental/enable-instance-identity-credentials.yml
       - cf-deployment/operations/experimental/secure-service-credentials.yml
       - cf-deployment/operations/use-postgres.yml
       - capi-ci/cf-deployment-operations/use-ssl-postgres.yml
