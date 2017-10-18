@@ -745,6 +745,9 @@ jobs:
       - capi-ci/cf-deployment-operations/enable-cef-security-event-logging.yml
       - capi-ci/cf-deployment-operations/temporary/set-gorouter-keep-alive.yml
       - capi-ci/cf-deployment-operations/temporary/use-syslog-addon.yml
+      - cf-deployment/operations/experimental/secure-service-credentials.yml
+      - capi-ci/cf-deployment-operations/seed-credhub-asg.yml
+      - capi-ci/cf-deployment-operations/disable-credhub-interpolate-service-bindings.yml
   - task: download-vars-store
     output_mapping:
       destination-directory: mulan-deployment-vars
@@ -1022,10 +1025,10 @@ jobs:
       - capi-ci/cf-deployment-operations/temporary/disable-uaa-get-requests.yml
       - cf-deployment/operations/experimental/enable-instance-identity-credentials.yml
       - cf-deployment/operations/experimental/secure-service-credentials.yml
+      - capi-ci/cf-deployment-operations/seed-credhub-asg.yml
       - capi-ci/cf-deployment-operations/temporary/set-gorouter-keep-alive.yml
       - capi-ci/cf-deployment-operations/temporary/bosh-dns-with-iso-seg.yml
       - cf-deployment/operations/experimental/use-bosh-dns-for-containers.yml
-      - capi-ci/cf-deployment-operations/seed-credhub-asg.yml
       - capi-ci/cf-deployment-operations/temporary/use-syslog-addon.yml
   - task: download-vars-store
     output_mapping:
