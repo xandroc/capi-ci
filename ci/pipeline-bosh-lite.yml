@@ -139,6 +139,7 @@ jobs:
                   - capi-ci/cf-deployment-operations/use-latest-stemcell.yml
                   - cf-deployment/operations/bosh-lite.yml
                   - cf-deployment/operations/use-compiled-releases.yml
+                  - capi-ci/cf-deployment-operations/seed-credhub-asg.yml
               - task: upload-to-gcs
                 file: capi-ci/ci/gcs/upload-to-gcs.yml
                 input_mapping:
