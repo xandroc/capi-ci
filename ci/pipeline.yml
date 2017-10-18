@@ -749,6 +749,8 @@ jobs:
       - capi-ci/cf-deployment-operations/temporary/disable-uaa-get-requests.yml
       - capi-ci/cf-deployment-operations/enable-cef-security-event-logging.yml
       - capi-ci/cf-deployment-operations/temporary/set-gorouter-keep-alive.yml
+      - capi-ci/cf-deployment-operations/temporary/bosh-dns-with-iso-seg.yml
+      - cf-deployment/operations/experimental/use-bosh-dns-for-containers.yml
       - capi-ci/cf-deployment-operations/temporary/use-syslog-addon.yml
   - task: download-vars-store
     output_mapping:
@@ -1493,7 +1495,7 @@ jobs:
       file: cf-deployment-concourse-tasks/bbl-up/task.yml
       input_mapping:
         bbl-state: updated-capi-ci-private
-        ops-files: updated-capi-ci-private
+        ops-files: capi-ci
       params:
         BBL_STATE_DIR: "mulan"
         BBL_IAAS: "gcp"
@@ -1505,6 +1507,9 @@ jobs:
         BBL_GCP_PROJECT_ID: ((mulan_gcp_project_id))
         BBL_GCP_ZONE: ((mulan_gcp_zone))
         BBL_GCP_REGION: ((mulan_gcp_region))
+        # TODO: change this back once bosh-deployment includes Director 263.3 or higher
+#        OPS_FILES: "local-dns.yml"
+        OPS_FILES: "cf-deployment-operations/temporary/hack-enable-bosh-dns.yml"
       ensure:
         put: mulan-bbl-state
         params:
