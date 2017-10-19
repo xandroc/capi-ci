@@ -1,0 +1,6 @@
+---
+
+# ----- Reduce the gorouter's registration interval
+- type: replace
+  path: /instance_groups/name=uaa/jobs/name=route_registrar/properties/route_registrar/routes/registration_interval
+  value: 3s
