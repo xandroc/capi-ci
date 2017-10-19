@@ -1,6 +1,6 @@
 #!/bin/bash
 
-: "${pool_dir:="/Users/pivotal/workspace/capi-env-pool/bosh-lites"}"
+: "${pool_dir:="/${HOME:-/Users/pivotal}/workspace/capi-env-pool/bosh-lites"}"
 
 function print_env_info {
   # Colors
