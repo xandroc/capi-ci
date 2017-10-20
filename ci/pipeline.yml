@@ -869,9 +869,6 @@ jobs:
       - capi-ci/cf-deployment-operations/silence-noisy-logs.yml
       - capi-ci/cf-deployment-operations/temporary/disable-uaa-get-requests.yml
       - cf-deployment/operations/experimental/bits-service.yml
-      # TODO: replace me with cf-deployment bits-service.yml ops file once bosh ordering issue is resolved
-      # https://github.com/cloudfoundry/bosh-cli/issues/317
-      - capi-ci/cf-deployment-operations/temporary/bits-service-with-reordering.yml
       - cf-deployment/operations/experimental/bits-service-webdav.yml
       - capi-ci/cf-deployment-operations/temporary/use-syslog-addon.yml
   - task: download-vars-store
