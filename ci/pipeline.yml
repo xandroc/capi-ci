@@ -2146,6 +2146,7 @@ jobs:
       - cf-deployment/operations/use-compiled-releases.yml
       - capi-ci/cf-deployment-operations/use-latest-capi.yml
       - capi-ci/cf-deployment-operations/scale-up-cloud-controller.yml
+      - capi-ci/cf-deployment-operations/temporary/set-gorouter-requested-route-reg-interval.yml
   - task: download-vars-store
     output_mapping:
       destination-directory: xena-mysql-deployment-vars
@@ -2215,6 +2216,7 @@ jobs:
       - capi-ci/cf-deployment-operations/use-latest-capi.yml
       - cf-deployment/operations/use-postgres.yml
       - capi-ci/cf-deployment-operations/scale-up-cloud-controller.yml
+      - capi-ci/cf-deployment-operations/temporary/set-gorouter-requested-route-reg-interval.yml
   - task: download-vars-store
     output_mapping:
       destination-directory: xena-postgres-deployment-vars
