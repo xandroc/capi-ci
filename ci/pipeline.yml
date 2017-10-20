@@ -748,7 +748,6 @@ jobs:
       - capi-ci/cf-deployment-operations/silence-noisy-logs.yml
       - capi-ci/cf-deployment-operations/temporary/disable-uaa-get-requests.yml
       - capi-ci/cf-deployment-operations/enable-cef-security-event-logging.yml
-      - capi-ci/cf-deployment-operations/temporary/set-gorouter-keep-alive.yml
       - capi-ci/cf-deployment-operations/temporary/bosh-dns-with-iso-seg.yml
       - cf-deployment/operations/experimental/use-bosh-dns-for-containers.yml
       - capi-ci/cf-deployment-operations/temporary/use-syslog-addon.yml
@@ -1027,7 +1026,6 @@ jobs:
       - cf-deployment/operations/experimental/enable-instance-identity-credentials.yml
       - cf-deployment/operations/experimental/secure-service-credentials.yml
       - capi-ci/cf-deployment-operations/seed-credhub-asg.yml
-      - capi-ci/cf-deployment-operations/temporary/set-gorouter-keep-alive.yml
       - capi-ci/cf-deployment-operations/temporary/bosh-dns-with-iso-seg.yml
       - cf-deployment/operations/experimental/use-bosh-dns-for-containers.yml
       - capi-ci/cf-deployment-operations/temporary/use-syslog-addon.yml
@@ -1153,7 +1151,6 @@ jobs:
       - capi-ci/cf-deployment-operations/add-prometheus-capi-homepage.yml
       - capi-ci/cf-deployment-operations/log-all-sequel-activity.yml
       - capi-ci/cf-deployment-operations/temporary/disable-uaa-get-requests.yml
-      - capi-ci/cf-deployment-operations/temporary/set-gorouter-keep-alive.yml
       - capi-ci/cf-deployment-operations/temporary/use-syslog-addon.yml
   - task: apply-cc-migrations
     file: capi-ci/ci/migrations/apply_latest_migrations.yml

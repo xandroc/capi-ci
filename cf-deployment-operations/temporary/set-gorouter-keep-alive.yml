@@ -1,5 +1,0 @@
-# Temporarily set gorouter Idle Timeout back to 650
-# Hoping it fixes some curl timeouts...
-- type: replace
-  path: /instance_groups/name=router/jobs/name=gorouter/properties/router/frontend_idle_timeout?
-  value: 650
