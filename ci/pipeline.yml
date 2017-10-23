@@ -2116,6 +2116,8 @@ jobs:
       passed: [create-capi-release]
       trigger: true
     - get: drats
+      # TODO: remove pinned version once NFS is not required #152214917
+      version: {ref: 9bff4edcfb5d4915f3f6b80fae3efdeaacc7abfd}
   - task: stemcell-upload
     file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
     input_mapping:
@@ -2185,6 +2187,8 @@ jobs:
       passed: [create-capi-release]
       trigger: true
     - get: drats
+      # TODO: remove pinned version once NFS is not required #152214917
+      version: {ref: 9bff4edcfb5d4915f3f6b80fae3efdeaacc7abfd}
   - task: stemcell-upload
     file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
     input_mapping:
