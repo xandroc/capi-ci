@@ -583,6 +583,24 @@ jobs:
         params:
           text: '[cc-unit-tests] OH NO! Failed when running with postgres'
           icon_emoji: ((slack_failure_emoji))
+    - task: run-cc-performance-tests-mysql
+      file: capi-ci/ci/test-performance/run_cc_performance_tests.yml
+      params:
+        DB: mysql
+      on_failure:
+        put: slack-alert
+        params:
+          text: '[cc-performance-tests] OH NO! Failed when running with mysql'
+          icon_emoji: ((slack_failure_emoji))
+    - task: run-cc-performance-tests-postgres
+      file: capi-ci/ci/test-performance/run_cc_performance_tests.yml
+      params:
+        DB: postgres
+      on_failure:
+        put: slack-alert
+        params:
+          text: '[cc-performance-tests] OH NO! Failed when running with postgres'
+          icon_emoji: ((slack_failure_emoji))
 
 - name: bump-capi-release
   plan:

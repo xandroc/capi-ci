@@ -15,5 +15,5 @@ params:
   DB:
 
 run:
-  path: capi-ci/ci/test-unit/run_cc_unit_tests
+  path: capi-ci/ci/test-performance/run_cc_performance_tests
 

@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+set -e
+
+: ${DB:?}
+
+start_db() {
+  if [ "${DB}" = "mysql" ]; then
+    # HACK: change access time on mysql files to copy them into the writable layer
+    # Context: https://github.com/moby/moby/issues/34390
+    find /var/lib/mysql/mysql -exec touch -c -a {} +
+    service mysql restart
+  elif [ "${DB}" = "postgres" ]; then
+    service postgresql restart
+  elif [ "${DB}" = "mssql" ]; then
+    service docker start
+    sleep 5
+    service docker stop
+    dockerd --data-root /scratch/docker ${server_args} >/tmp/docker.log 2>&1 &
+    echo $! > /tmp/docker.pid
+
+    trap stop_docker EXIT
+    sleep 5
+
+    LOG_FILE="/tmp/mssql.log" ./scripts/run-ms-sql-background.sh
+  else
+    echo "Uknown DB type '${DB}', this script only supports 'mysql', 'postgres', and 'mssql'"
+    exit 1
+  fi
+}
+
+stop_docker() {
+  local pid=$(cat /tmp/docker.pid)
+  if [ -z "$pid" ]; then
+    return 0
+  fi
+
+  kill -TERM $pid
+  wait $pid
+}
+
+pushd cloud_controller_ng > /dev/null
+  start_db
+
+  bundle install
+
+  bundle exec rake spec:performance
+popd > /dev/null
