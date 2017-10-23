@@ -1,0 +1,5 @@
+# UAA has a bug in their BBR unlock where it occasionally doesn't register login.DOMAIN fast enough
+# https://www.pivotaltracker.com/story/show/152218506
+- type: replace
+  path: /instance_groups/name=uaa/instances
+  value: 2
