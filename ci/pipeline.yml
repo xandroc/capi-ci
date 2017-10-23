@@ -745,12 +745,12 @@ jobs:
       - capi-ci/cf-deployment-operations/add-prometheus-capi-homepage.yml
       - capi-ci/cf-deployment-operations/enable-perform-blob-cleanup.yml
       - capi-ci/cf-deployment-operations/log-all-sequel-activity.yml
+      - capi-ci/cf-deployment-operations/temporary/use-syslog-addon.yml
       - capi-ci/cf-deployment-operations/silence-noisy-logs.yml
       - capi-ci/cf-deployment-operations/temporary/disable-uaa-get-requests.yml
       - capi-ci/cf-deployment-operations/enable-cef-security-event-logging.yml
       - capi-ci/cf-deployment-operations/temporary/bosh-dns-with-iso-seg.yml
       - cf-deployment/operations/experimental/use-bosh-dns-for-containers.yml
-      - capi-ci/cf-deployment-operations/temporary/use-syslog-addon.yml
   - task: download-vars-store
     output_mapping:
       destination-directory: mulan-deployment-vars
@@ -865,11 +865,11 @@ jobs:
       - capi-ci/cf-deployment-operations/add-prometheus-capi-homepage.yml
       - capi-ci/cf-deployment-operations/enable-perform-blob-cleanup.yml
       - capi-ci/cf-deployment-operations/log-all-sequel-activity.yml
+      - capi-ci/cf-deployment-operations/temporary/use-syslog-addon.yml
       - capi-ci/cf-deployment-operations/silence-noisy-logs.yml
       - capi-ci/cf-deployment-operations/temporary/disable-uaa-get-requests.yml
       - cf-deployment/operations/experimental/bits-service.yml
       - cf-deployment/operations/experimental/bits-service-webdav.yml
-      - capi-ci/cf-deployment-operations/temporary/use-syslog-addon.yml
   - task: download-vars-store
     output_mapping:
       destination-directory: buffy-deployment-vars
@@ -1020,6 +1020,7 @@ jobs:
       - capi-ci/cf-deployment-operations/add-prometheus-capi-homepage.yml
       - capi-ci/cf-deployment-operations/enable-perform-blob-cleanup.yml
       - capi-ci/cf-deployment-operations/log-all-sequel-activity.yml
+      - capi-ci/cf-deployment-operations/temporary/use-syslog-addon.yml
       - capi-ci/cf-deployment-operations/silence-noisy-logs.yml
       - capi-ci/cf-deployment-operations/use-latest-windows-stemcell.yml
       - capi-ci/cf-deployment-operations/temporary/disable-uaa-get-requests.yml
@@ -1028,7 +1029,6 @@ jobs:
       - capi-ci/cf-deployment-operations/seed-credhub-asg.yml
       - capi-ci/cf-deployment-operations/temporary/bosh-dns-with-iso-seg.yml
       - cf-deployment/operations/experimental/use-bosh-dns-for-containers.yml
-      - capi-ci/cf-deployment-operations/temporary/use-syslog-addon.yml
   - task: download-vars-store
     output_mapping:
       destination-directory: elsa-deployment-vars
@@ -1152,6 +1152,7 @@ jobs:
       - capi-ci/cf-deployment-operations/log-all-sequel-activity.yml
       - capi-ci/cf-deployment-operations/temporary/disable-uaa-get-requests.yml
       - capi-ci/cf-deployment-operations/temporary/use-syslog-addon.yml
+      - capi-ci/cf-deployment-operations/silence-noisy-logs.yml
   - task: apply-cc-migrations
     file: capi-ci/ci/migrations/apply_latest_migrations.yml
   - task: download-vars-store
