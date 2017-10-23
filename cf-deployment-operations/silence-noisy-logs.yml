@@ -4,7 +4,7 @@
   value: error
 
 - type: replace
-  path: /addons/name=syslog-forwarder/include?/jobs
+  path: /addons/name=syslog_forwarder/include?/jobs
   error: "The ops-file `use-syslog-addon.yml` must be included before `silence-noisy-logs.yml`"
   value:
     - name: cloud_controller_ng
