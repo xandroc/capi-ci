@@ -16,13 +16,13 @@
 
 # Enable for Blobstore
 - type: replace
-  path: /instance_groups/name=blobstore/jobs/-
+  path: /instance_groups/name=singleton-blobstore/jobs/-
   value:
     name: bpm
     release: bpm
 
 - type: replace
-  path: /instance_groups/name=blobstore/jobs/name=blobstore/properties/bpm?/enabled?
+  path: /instance_groups/name=singleton-blobstore/jobs/name=blobstore/properties/bpm?/enabled?
   value: true
 
 # Enable for CC Bridge
