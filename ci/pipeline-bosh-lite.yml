@@ -37,7 +37,7 @@ resources:
     source:
       branch: master
       uri: https://github.com/cloudfoundry/bosh-deployment.git
-  - name: pool
+  - name: create-pool
     type: pool
     source:
       branch: master
@@ -76,7 +76,7 @@ resources:
   - name: cf-deployment
     type: git
     source:
-      branch: release-candidate
+      branch: master
       uri: https://github.com/cloudfoundry/cf-deployment.git
   - name: cf-deploy
     type: bosh-deployment
@@ -96,7 +96,6 @@ resources:
 
 jobs:
   - name: create-bosh-lite
-    serial_groups: [add-to-pool]
     plan:
       - aggregate:
         - get: capi-ci
@@ -124,6 +123,9 @@ jobs:
           - do:
               - task: create-env-vars-file
                 file: capi-ci/ci/bosh-lite/create-env-vars-file.yml
+              - put: create-pool
+                params:
+                  add_claimed: bosh-lite-env-info/
               - task: upload-cf-assets
                 file: capi-ci/ci/bosh-lite/upload-cf-assets.yml
               - task: write-bosh-target-file
@@ -149,22 +151,29 @@ jobs:
                   GCP_JSON_KEY: ((bosh_lite_gcp_json_key))
                   GCP_BUCKET: ((bosh_lite_storage_bucket))
                   GCP_PATH: director-state
-                  USE_ENV_NAMED_SUBDIR: true
-              - put: pool
+              - put: create-pool
                 params:
-                  add: bosh-lite-env-info/
+                  release: bosh-lite-env-info/
             on_failure:
-              task: delete-bosh-lite
-              file: capi-ci/ci/bosh-lite/delete-bosh-lite.yml
+              aggregate:
+              - put: create-pool
+                params:
+                  remove: bosh-lite/env-info/
+              - task: delete-bosh-lite
+                file: capi-ci/ci/bosh-lite/delete-bosh-lite.yml
         on_failure:
-          put: terraform
-          params:
-            action: destroy
-            env_name_file: terraform/name
-            terraform_source: capi-ci/terraform/bosh-lite/
-            vars: *terraform-vars
-          get_params:
-            action: destroy
+          aggregate:
+          - put: create-pool
+            params:
+              remove: bosh-lite/env-info/
+          - put: terraform
+            params:
+              action: destroy
+              env_name_file: terraform/name
+              terraform_source: capi-ci/terraform/bosh-lite/
+              vars: *terraform-vars
+            get_params:
+              action: destroy
 
   - name: delete-bosh-lite
     plan:
@@ -212,7 +221,6 @@ jobs:
           remove: broken-pool/
 
   - name: check-pool-size
-    serial_groups: [add-to-pool]
     build_logs_to_retain: 100
     plan:
       - aggregate:
