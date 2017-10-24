@@ -22,3 +22,4 @@ params:
   BBR_BUILD_PATH: ""
   GOPATH: ""
   VARS_STORE_PATH: ""
+  SKIP_SUITE_NAME: ""

@@ -2134,8 +2134,6 @@ jobs:
       passed: [create-capi-release]
       trigger: true
     - get: drats
-      # TODO: remove pinned version once NFS is not required #152214917
-      version: {ref: 9bff4edcfb5d4915f3f6b80fae3efdeaacc7abfd}
   - task: stemcell-upload
     file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
     input_mapping:
@@ -2183,6 +2181,7 @@ jobs:
       vars-store: xena-mysql-deployment-vars
     params:
       CF_API_URL: https://api.xena-mysql.capi.land
+      SKIP_SUITE_NAME: "cf-nfsbroker"
     on_success:
       task: delete-deployment
       file: capi-ci/ci/bosh/run_bosh_cmd.yml
@@ -2205,8 +2204,6 @@ jobs:
       passed: [create-capi-release]
       trigger: true
     - get: drats
-      # TODO: remove pinned version once NFS is not required #152214917
-      version: {ref: 9bff4edcfb5d4915f3f6b80fae3efdeaacc7abfd}
   - task: stemcell-upload
     file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
     input_mapping:
@@ -2255,6 +2252,7 @@ jobs:
       vars-store: xena-postgres-deployment-vars
     params:
       CF_API_URL: https://api.xena-postgres.capi.land
+      SKIP_SUITE_NAME: "cf-nfsbroker"
     on_success:
       task: delete-deployment
       file: capi-ci/ci/bosh/run_bosh_cmd.yml

@@ -8,6 +8,7 @@ set -eu
 : "${GOPATH:=/go}"
 : "${VARS_STORE_PATH:=vars-store.yml}"
 : "${CF_ADMIN_USERNAME:=admin}"
+: "${SKIP_SUITE_NAME:=""}"
 
 # INPUTS
 script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
