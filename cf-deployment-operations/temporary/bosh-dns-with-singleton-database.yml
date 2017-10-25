@@ -83,6 +83,6 @@
   path: /releases/-
   value:
     name: bosh-dns
-    sha1: 0d55ec52b3a5c54a8284388d2400bf4c0172d7af
-    url: https://bosh.io/d/github.com/cloudfoundry/bosh-dns-release?v=0.0.8
-    version: 0.0.8
+    sha1: cbc91a2ab43f228ad00eb511c32f9c3d1a7e8d62
+    url: https://bosh.io/d/github.com/cloudfoundry/bosh-dns-release?v=0.0.9
+    version: 0.0.9
