@@ -28,7 +28,7 @@
     properties: *metron_agent_properties
 
 - type: replace
-  path: /instance_groups/name=mysql/jobs/-
+  path: /instance_groups/name=singleton-database/jobs/-
   value:
     name: metron_agent
     release: loggregator
@@ -49,7 +49,7 @@
     properties: *metron_agent_properties
 
 - type: replace
-  path: /instance_groups/name=blobstore/jobs/-
+  path: /instance_groups/name=singleton-blobstore/jobs/-
   value:
     name: metron_agent
     release: loggregator
