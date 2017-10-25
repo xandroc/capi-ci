@@ -11,9 +11,6 @@ inputs:
   - name: cloud_controller_ng
   - name: capi-ci
 
-params:
-  DB:
-
 run:
   path: capi-ci/ci/test-unit/run_cc_unit_tests
 
