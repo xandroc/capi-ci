@@ -20,6 +20,7 @@
           bbs.service.cf.internal:
           - '*.diego-api.default.cf.bosh'
           blobstore.service.cf.internal:
+          - '*.singleton-blobstore.default.cf.bosh'
           - '*.blobstore.default.cf.bosh'
           cc-uploader.service.cf.internal:
           - '*.api.default.cf.bosh'
