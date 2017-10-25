@@ -52,6 +52,7 @@
           silk-controller.service.cf.internal:
           - '*.diego-api.default.cf.bosh'
           sql-db.service.cf.internal:
+          - '*.singleton-database.default.cf.bosh'
           - '*.mysql.default.cf.bosh'
           - '*.postgres.default.cf.bosh'
           ssh-proxy.service.cf.internal:
