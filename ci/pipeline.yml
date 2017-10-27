@@ -79,6 +79,13 @@ resources:
     stop: 23:30
     days: [Sunday]
 
+- name: nightly
+  type: time
+  source:
+    location: America/Los_Angeles
+    start: 23:00
+    stop: 23:30
+
 - name: deliver-capi-stories
   type: tracker
   source:
@@ -1721,7 +1728,7 @@ jobs:
       - get: capi-ci
       - get: capi-ci-private
       - get: cf-deployment
-      - get: weekly-sunday
+      - get: nightly
         trigger: true
       - get: bosh-deployment
     - task: seed-capi-ci-private
@@ -1801,7 +1808,7 @@ jobs:
       - get: capi-ci
       - get: capi-ci-private
       - get: cf-deployment
-      - get: weekly-sunday
+      - get: nightly
         trigger: true
       - get: bosh-deployment
     - task: seed-capi-ci-private
