@@ -1029,7 +1029,6 @@ jobs:
       - capi-ci/cf-deployment-operations/log-all-sequel-activity.yml
       - capi-ci/cf-deployment-operations/temporary/use-syslog-addon.yml
       - capi-ci/cf-deployment-operations/silence-noisy-logs.yml
-      - capi-ci/cf-deployment-operations/use-latest-windows-stemcell.yml
       - capi-ci/cf-deployment-operations/temporary/disable-uaa-get-requests.yml
       - cf-deployment/operations/experimental/enable-instance-identity-credentials.yml
       - cf-deployment/operations/experimental/secure-service-credentials.yml
