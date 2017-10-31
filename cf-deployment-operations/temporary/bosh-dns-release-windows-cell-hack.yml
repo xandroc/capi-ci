@@ -1,9 +1,11 @@
 ---
 
 - type: replace
-  path: /releases/-
-  value:
-    name: bosh-dns
-    sha1: 25152a257792463c5bd1d352a764d8498ba235dc
-    url: https://storage.googleapis.com/elsa-bosh-releases/bosh-dns-release-0.0.10%2Bdev.1.tgz
-    version: 0.0.10+dev.1
+  path: /releases/name=bosh-dns?/sha1
+  value: 25152a257792463c5bd1d352a764d8498ba235dc
+- type: replace
+  path: /releases/name=bosh-dns?/url
+  value: https://storage.googleapis.com/elsa-bosh-releases/bosh-dns-release-0.0.10%2Bdev.1.tgz
+- type: replace
+  path: /releases/name=bosh-dns?/version
+  value: 0.0.10+dev.1
