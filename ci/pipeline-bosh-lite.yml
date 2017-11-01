@@ -114,7 +114,7 @@ jobs:
         file: capi-ci/ci/bosh-lite/generate-fake-env-for-building-pool.yml
       - put: building-pool
         params:
-          add: fake-placeholder-env/
+          add_claimed: fake-placeholder-env/
       - put: terraform
         params:
           generate_random_name: true
