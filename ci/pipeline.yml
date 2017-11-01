@@ -1036,6 +1036,7 @@ jobs:
       - capi-ci/cf-deployment-operations/temporary/bosh-dns-with-singleton-database-and-blobstore.yml
       - cf-deployment/operations/experimental/use-bosh-dns-for-containers.yml
       - cf-deployment/operations/experimental/enable-instance-identity-credentials-windows.yml
+      - capi-ci/cf-deployment-operations/temporary/add-credhub-ca-to-windows-cell.yml
       - capi-ci/cf-deployment-operations/temporary/bosh-dns-release-windows-cell-hack.yml
   - task: download-vars-store
     output_mapping:
