@@ -1,13 +1,14 @@
 groups:
 - name: concourse
   jobs:
+  - update-bosh-concourse
   - deploy-concourse
 
 resources:
-- name: aws-stemcell
+- name: gcp-stemcell
   type: bosh-io-stemcell
   source:
-    name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
+    name: bosh-google-kvm-ubuntu-trusty-go_agent
 
 - name: capi-ci-private
   type: git
@@ -16,29 +17,111 @@ resources:
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/capi-ci-private.git
 
+- name: capi-ci
+  type: git
+  source:
+    branch: master
+    private_key: ((private_key))
+    uri: git@github.com:cloudfoundry/capi-ci.git
+
 - name: concourse
   type: github-release
   source:
     access_token: ((github_access_token))
     repository: concourse
-    user: concourse
+    owner: concourse
+
+- name: postgres
+  type: github-release
+  source:
+    access_token: ((github_access_token))
+    repository: postgres-release
+    owner: cloudfoundry
+
+- name: cf-deployment-concourse-tasks
+  type: git
+  source:
+    branch: master
+    private_key: ((private_key))
+    uri: git@github.com:cloudfoundry/cf-deployment-concourse-tasks.git
 
 - name: concourse-deployment
   type: bosh-deployment
   source:
-    target: 34.192.151.213:25555
-    username: ((ci_bosh_user))
-    password: ((ci_bosh_password))
     deployment: concourse
     ignore_ssl: true
 
+# Duplicates of capi-ci-private
 - name: concourse-config
   type: git
   source:
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/capi-ci-private.git
 
+- name: concourse-bbl-state
+  type: git
+  source:
+    private_key: ((private_key))
+    uri: git@github.com:cloudfoundry/capi-ci-private.git
+
+# Scheduling
+- name: weekly-sunday
+  type: time
+  source:
+    location: America/Los_Angeles
+    start: 23:00
+    stop: 23:30
+    days: [Sunday]
+
 jobs:
+- name: update-bosh-concourse
+  serial: true
+  plan:
+    - aggregate:
+      - get: cf-deployment-concourse-tasks
+      - get: concourse-bbl-state
+      - get: capi-ci
+      - get: capi-ci-private
+      - get: weekly-sunday
+        trigger: true
+    - task: update-bosh-concourse
+      file: cf-deployment-concourse-tasks/bbl-up/task.yml
+      input_mapping:
+        bbl-state: concourse-bbl-state
+        ops-files: capi-ci-private
+      params:
+        BBL_STATE_DIR: "ci"
+        BBL_IAAS: "gcp"
+        BBL_LB_CERT: "certs/load-balancer/server.crt"
+        BBL_LB_KEY: "certs/load-balancer/server.key"
+        LB_DOMAIN: "gcp-ci.capi.land"
+        BBL_ENV_NAME: "ci"
+        BBL_GCP_SERVICE_ACCOUNT_KEY: ((ci_gcp_json_key))
+        BBL_GCP_PROJECT_ID: ((ci_gcp_project_id))
+        BBL_GCP_ZONE: ((ci_gcp_zone))
+        BBL_GCP_REGION: ((ci_gcp_region))
+      ensure:
+        put: concourse-bbl-state
+        params:
+          repository: concourse-bbl-state
+          rebase: true
+    - task: create-dns-record
+      file: capi-ci/ci/bbl-tasks/create-dns-record.yml
+      input_mapping:
+       bbl-state: updated-bbl-state
+      params:
+        BBL_STATE_DIR: "ci"
+        DNS_DOMAIN: "gcp-ci.capi.land"
+        GCP_DNS_SERVICE_ACCOUNT_KEY: ((dns_gcp_json_key))
+        GCP_PROJECT_ID: ((dns_gcp_project_id))
+        SHARED_DNS_ZONE_NAME: "capi-land"
+    - task: run-bosh-cleanup
+      file: capi-ci/ci/bbl-tasks/run-bosh-cleanup.yml
+      input_mapping:
+        bbl-state: concourse-bbl-state
+      params:
+        BBL_STATE_DIR: "ci"
+
 - name: deploy-concourse
   serial: true
   interruptible: true
@@ -49,14 +132,24 @@ jobs:
         globs:
         - concourse-*.tgz
         - garden-runc-*.tgz
+    - get: postgres
+      params:
+        globs:
+        - postgres-*.tgz
     - get: concourse-config
-    - get: aws-stemcell
+    - get: gcp-stemcell
     - get: capi-ci-private
+  - task: extract-bbl-environment
+    file: capi-ci/ci/bbl-tasks/extract_bbl_environment.yml
+    params:
+      ENV_NAME: ci
   - put: concourse-deployment
     params:
+      source_file: environment/metadata
       manifest: concourse-config/ci/concourse.yml
       releases:
         - concourse/concourse-*.tgz
         - concourse/garden-runc-*.tgz
+        - postgres/postgres-*.tgz
       stemcells:
-        - aws-stemcell/*.tgz
+        - gcp-stemcell/*.tgz
