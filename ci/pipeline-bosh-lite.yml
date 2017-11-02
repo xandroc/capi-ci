@@ -165,7 +165,6 @@ jobs:
               - put: ready-pool
                 params:
                   add: bosh-lite-env-info/
-              - get: building-pool
               - put: building-pool
                 params:
                   remove: fake-placeholder-env/
