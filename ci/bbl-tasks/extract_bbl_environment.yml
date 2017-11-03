@@ -18,3 +18,4 @@ run:
 
 params:
   ENV_NAME: ""
+  DEPLOYMENT_NAME: cf

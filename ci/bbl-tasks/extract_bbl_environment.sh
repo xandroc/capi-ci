@@ -11,6 +11,7 @@ read_with_escaped_newlines() {
 
 # ENV
 : ${ENV_NAME:?}
+: ${DEPLOYMENT_NAME:?}
 
 # INPUTS
 capi_ci_private="$( cd "${workspace_dir}/capi-ci-private" && pwd )"
@@ -29,7 +30,7 @@ pushd "${capi_ci_private}/${ENV_NAME}" > /dev/null
 
 cat <<- EOF > "${output_metadata_file}"
   {
-    "deployment": "cf",
+    "deployment": "${DEPLOYMENT_NAME}",
     "target": "$(bbl director-address)",
     "client": "$(bbl director-username)",
     "client_secret": "$(bbl director-password)",
