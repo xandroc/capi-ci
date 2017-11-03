@@ -4,10 +4,18 @@
 
 function print_env_info {
   # Colors
-  local red blue
-  red='\033[0;31m'
-  blue='\033[0;34m'
-  nc='\033[0m'
+  local red blue nc
+  tty -s
+  local is_interactive="$?"
+  if [ "${is_interactive}" == "0" ]; then
+    red='\033[0;31m'
+    blue='\033[0;34m'
+    nc='\033[0m'
+  else
+    red=''
+    blue=''
+    nc=''
+  fi
 
   echo -e "${blue}Rounding up claimed environments...${nc}"
 
