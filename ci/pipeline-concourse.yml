@@ -153,6 +153,5 @@ jobs:
       stemcells:
         - gcp-stemcell/*.tgz
       vars:
-        atc:
-          certificate: ((ci_atc_certificate))
-          private_key: ((ci_atc_private_key))
+        ci_atc_certificate: ((ci_atc_certificate))
+        ci_atc_private_key: ((ci_atc_private_key))
