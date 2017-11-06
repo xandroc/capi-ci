@@ -43,12 +43,14 @@ resources:
     access_token: ((github_access_token))
     repository: cloudfoundry/postgres-release
 
+# Using Dave McClure's fork to get load-balancers for concourse from bbl
+# We can switch back after this PR is merged: https://github.com/cloudfoundry/cf-deployment-concourse-tasks/pull/40/files
 - name: cf-deployment-concourse-tasks
   type: git
   source:
-    branch: master
+    branch: lb-type
     private_key: ((private_key))
-    uri: git@github.com:cloudfoundry/cf-deployment-concourse-tasks.git
+    uri: git@github.com:mcwumbly/cf-deployment-concourse-tasks.git
 
 - name: concourse-deployment
   type: bosh2-deployment
@@ -100,7 +102,7 @@ jobs:
         BBL_IAAS: "gcp"
         BBL_LB_CERT: "certs/ci.cf-app.com/certificate.crt"
         BBL_LB_KEY: "certs/ci.cf-app.com/certificate.key"
-        LB_DOMAIN: "gcp-ci.capi.land"
+        BBL_LB_TYPE: "concourse"
         BBL_ENV_NAME: "concourse"
         BBL_GCP_SERVICE_ACCOUNT_KEY: ((ci_gcp_json_key))
         BBL_GCP_PROJECT_ID: ((ci_gcp_project_id))
@@ -142,9 +144,15 @@ jobs:
     params:
       source_file: environment/metadata
       manifest: concourse-config/ci/concourse.yml
+      ops_files:
+      - capi-ci/concourse-deployment-operations/gcp.yml
       releases:
         - concourse/concourse-*.tgz
         - concourse/garden-runc-*.tgz
         - postgres/*.tgz
       stemcells:
         - gcp-stemcell/*.tgz
+      vars:
+        atc:
+          certificate: ((ci_atc_certificate))
+          private_key: ((ci_atc_private_key))
