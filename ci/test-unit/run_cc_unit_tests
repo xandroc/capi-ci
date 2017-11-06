@@ -41,6 +41,7 @@ stop_docker() {
 pushd cloud_controller_ng > /dev/null
   start_db
 
+  export BUNDLE_GEMFILE=Gemfile
   bundle install
 
   bundle exec rake rubocop
