@@ -55,7 +55,7 @@ fi
 
 echo "Running DRATs..."
 pushd "${drats_dir}" > /dev/null
-  ./scripts/run_acceptance_tests.sh
+  ./scripts/_run_acceptance_tests.sh
 popd > /dev/null
 
 echo "Successfully ran DRATs!"
