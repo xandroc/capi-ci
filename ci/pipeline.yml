@@ -628,6 +628,8 @@ jobs:
 - name: bridge-unit-tests
   plan:
   - aggregate:
+    - get: weekly-sunday
+      trigger: true
     - get: capi-release
       resource: capi-release-develop
     - get: cc-uploader
