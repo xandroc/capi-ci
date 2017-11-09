@@ -1501,7 +1501,7 @@ jobs:
       file: cf-deployment-concourse-tasks/bbl-up/task.yml
       input_mapping:
         bbl-state: updated-capi-ci-private
-        ops-files: capi-ci
+        ops-files: bosh-deployment
       params:
         BBL_STATE_DIR: "mulan"
         BBL_IAAS: "gcp"
@@ -1513,9 +1513,7 @@ jobs:
         BBL_GCP_PROJECT_ID: ((mulan_gcp_project_id))
         BBL_GCP_ZONE: ((mulan_gcp_zone))
         BBL_GCP_REGION: ((mulan_gcp_region))
-        # TODO: change this back once bosh-deployment includes Director 263.3 or higher
-#        OPS_FILES: "local-dns.yml"
-        OPS_FILES: "cf-deployment-operations/temporary/hack-enable-bosh-dns.yml"
+        OPS_FILES: "local-dns.yml"
       ensure:
         put: mulan-bbl-state
         params:
@@ -1621,7 +1619,7 @@ jobs:
       file: cf-deployment-concourse-tasks/bbl-up/task.yml
       input_mapping:
         bbl-state: updated-capi-ci-private
-        ops-files: capi-ci
+        ops-files: bosh-deployment
       params:
         BBL_STATE_DIR: "elsa"
         BBL_IAAS: "gcp"
@@ -1633,9 +1631,7 @@ jobs:
         BBL_GCP_PROJECT_ID: ((elsa_gcp_project_id))
         BBL_GCP_ZONE: ((elsa_gcp_zone))
         BBL_GCP_REGION: ((elsa_gcp_region))
-        # TODO: change this back once bosh-deployment includes Director 263.3 or higher
-#        OPS_FILES: "local-dns.yml"
-        OPS_FILES: "cf-deployment-operations/temporary/hack-enable-bosh-dns.yml"
+        OPS_FILES: "local-dns.yml"
       ensure:
         put: elsa-bbl-state
         params:
