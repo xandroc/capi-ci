@@ -758,7 +758,9 @@ jobs:
       - capi-ci/cf-deployment-operations/silence-noisy-logs.yml
       - capi-ci/cf-deployment-operations/temporary/disable-uaa-get-requests.yml
       - capi-ci/cf-deployment-operations/enable-cef-security-event-logging.yml
-      - cf-deployment/operations/experimental/use-bosh-dns.yml
+      # TODO: put back once PR is merged
+      # - cf-deployment/operations/experimental/use-bosh-dns.yml
+      - capi-ci/cf-deployment-operations/temporary/bosh-dns-with-stager.yml
       - cf-deployment/operations/experimental/use-bosh-dns-for-containers.yml
   - task: download-vars-store
     output_mapping:
