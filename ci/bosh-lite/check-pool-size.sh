@@ -20,10 +20,10 @@ output_dir="${workspace_dir}/updated-env-pool"
 git clone "${pool_dir}" "${output_dir}"
 
 pushd "${output_dir}" > /dev/null
-  unclaimed_count="$(find "${POOL_NAME}/unclaimed" -not -path '*/\.*' -type f | wc -l)"
-  unclaimed_count+="$(find "${BUILDING_POOL_NAME}/unclaimed" -not -path '*/\.*' -type f | wc -l)"
+  env_count="$(find "${POOL_NAME}/unclaimed" -not -path '*/\.*' -type f | wc -l)"
+  env_count+="$(find "${BUILDING_POOL_NAME}/claimed" -not -path '*/\.*' -type f | wc -l)"
 
-  if [ "${unclaimed_count}" -lt "${MIN_UNCLAIMED_COUNT}" ]; then
+  if [ "${env_count}" -lt "${MIN_UNCLAIMED_COUNT}" ]; then
     # The create-bosh-lite job watches this file for changes
     date +%s > .trigger-bosh-lites-create
 
