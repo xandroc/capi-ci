@@ -33,6 +33,18 @@
   path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/cc?/diego?/temporary_droplet_download_mtls?
   value: *temporary_droplet_download_mtls
 
+- type: replace
+  path: /instance_groups/name=api/jobs/name=stager?
+  value:
+    name: stager
+    release: capi
+    properties:
+      capi:
+        stager:
+          bbs: *diego_bbs_client_properties
+          cc:
+            basic_auth_password: "((cc_internal_api_password))"
+
 # cc-worker
 - type: replace
   path: /instance_groups/name=cc-worker/jobs/name=cloud_controller_worker/properties/cc?/diego?/temporary_local_staging?
@@ -83,18 +95,6 @@
 - type: replace
   path: /instance_groups/name=scheduler/jobs/name=tps/properties/capi/tps/listener_enabled?
   value: true
-
-- type: replace
-  path: /instance_groups/name=scheduler/jobs/name=stager?
-  value:
-    name: stager
-    release: capi
-    properties:
-      capi:
-        stager:
-          bbs: *diego_bbs_client_properties
-          cc:
-            basic_auth_password: "((cc_internal_api_password))"
 
 - type: replace
   path: /instance_groups/name=scheduler/jobs/name=nsync?
