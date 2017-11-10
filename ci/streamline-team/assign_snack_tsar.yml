@@ -7,6 +7,9 @@ image_resource:
     repository: cloudfoundry/capi
     tag: bosh-lite
 
+inputs:
+  - name: capi-ci-private
+
 run:
   path: capi-ci-private/scripts/assign_snack_tsar.sh
 
