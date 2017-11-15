@@ -1,3 +1,7 @@
+# PINNED VERSIONS
+version_pins:
+  - &BOSH_DEPLOYMENT_VERSION 8a138f343f6cb32a938c5c9567ba1236326fdd7c
+
 groups:
 - name: capi-release
   jobs:
@@ -344,6 +348,7 @@ resources:
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/wats.git
 
+# Pinned at job level with BOSH_DEPLOYMENT_VERSION
 - name: bosh-deployment
   type: git
   source:
@@ -1443,7 +1448,7 @@ jobs:
       file: cf-deployment-concourse-tasks/bbl-up/task.yml
       input_mapping:
         bbl-state: updated-capi-ci-private
-        ops-files: updated-capi-ci-private
+        ops-files: updated-capi-ci-private # no additional ops files needed
       params:
         BBL_STATE_DIR: "arya"
         BBL_IAAS: "gcp"
@@ -1501,7 +1506,7 @@ jobs:
       file: cf-deployment-concourse-tasks/bbl-up/task.yml
       input_mapping:
         bbl-state: updated-capi-ci-private
-        ops-files: bosh-deployment
+        ops-files: updated-capi-ci-private # no additional ops files needed
       params:
         BBL_STATE_DIR: "mulan"
         BBL_IAAS: "gcp"
@@ -1513,7 +1518,6 @@ jobs:
         BBL_GCP_PROJECT_ID: ((mulan_gcp_project_id))
         BBL_GCP_ZONE: ((mulan_gcp_zone))
         BBL_GCP_REGION: ((mulan_gcp_region))
-        OPS_FILES: "local-dns.yml"
       ensure:
         put: mulan-bbl-state
         params:
@@ -1561,6 +1565,7 @@ jobs:
       input_mapping:
         bbl-state: updated-capi-ci-private
         ops-files: updated-capi-ci-private
+        ops-files: updated-capi-ci-private # no additional ops files needed
       params:
         BBL_STATE_DIR: "buffy"
         BBL_IAAS: "gcp"
@@ -1604,6 +1609,7 @@ jobs:
       - get: capi-ci
       - get: capi-ci-private
       - get: bosh-deployment
+        version: { ref: *BOSH_DEPLOYMENT_VERSION }
       - get: weekly-sunday
         trigger: true
     - task: seed-capi-ci-private
@@ -1683,7 +1689,7 @@ jobs:
       file: cf-deployment-concourse-tasks/bbl-up/task.yml
       input_mapping:
         bbl-state: updated-capi-ci-private
-        ops-files: updated-capi-ci-private
+        ops-files: updated-capi-ci-private # no additional ops files needed
       params:
         BBL_STATE_DIR: "kiki"
         BBL_IAAS: "gcp"
@@ -1730,6 +1736,7 @@ jobs:
       - get: nightly
         trigger: true
       - get: bosh-deployment
+        version: { ref: *BOSH_DEPLOYMENT_VERSION }
     - task: seed-capi-ci-private
       file: capi-ci/ci/setup-environment/seed.yml
       params:
@@ -1810,6 +1817,7 @@ jobs:
       - get: nightly
         trigger: true
       - get: bosh-deployment
+        version: { ref: *BOSH_DEPLOYMENT_VERSION }
     - task: seed-capi-ci-private
       file: capi-ci/ci/setup-environment/seed.yml
       params:
@@ -1901,7 +1909,7 @@ jobs:
       file: cf-deployment-concourse-tasks/bbl-up/task.yml
       input_mapping:
         bbl-state: updated-capi-ci-private
-        ops-files: updated-capi-ci-private
+        ops-files: updated-capi-ci-private # no additional ops files needed
       params:
         BBL_STATE_DIR: "ripley"
         BBL_IAAS: "gcp"
