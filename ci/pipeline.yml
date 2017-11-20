@@ -1116,6 +1116,8 @@ jobs:
     - get: cats-concourse-task
     - get: cf-deployment
       resource: cf-deployment-master
+    - get: cf-deployment-temporary-workaround
+      resource: cf-deployment
     - get: kiki-bbl-state
     - get: kiki-integration-configs
     - get: sync-integration-tests
@@ -1169,7 +1171,7 @@ jobs:
       - capi-ci/cf-deployment-operations/temporary/disable-uaa-get-requests.yml
       - capi-ci/cf-deployment-operations/temporary/use-syslog-addon.yml
       - capi-ci/cf-deployment-operations/silence-noisy-logs.yml
-      - cf-deployment/operations/workaround/use-4-azs-for-router.yml
+      - cf-deployment-temporary-workaround/operations/workaround/use-4-azs-for-router.yml
   - task: apply-cc-migrations
     file: capi-ci/ci/migrations/apply_latest_migrations.yml
   - task: download-vars-store
