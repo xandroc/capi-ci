@@ -12,37 +12,39 @@ function print_env_info {
   echo -e "${blue}Rounding up claimed environments...${nc}"
 
   pushd "${pool_dir}/claimed" > /dev/null
-    stale_claimed_files="$(git log --reverse --name-only --pretty=format: --until="7 days ago" -- * | xargs)"
-    fresh_claimed_files="$(git log --reverse --name-only --pretty=format: --after="7 days ago" -- * | xargs)"
+    stale_claimed_files="$(git log --reverse --name-only --pretty=format: --until="7 days ago" -- * | sort | uniq | xargs)"
+    fresh_claimed_files="$(git log --reverse --name-only --pretty=format: --after="7 days ago" -- * | sort | uniq | xargs)"
 
 
     output="${blue}\n* ENV *\t* CLAIMED BY *\t* CLAIMED ON *\t* CLAIMED SINCE *\n"
 
     output="${output}${red}\n"
     for file in ${stale_claimed_files}; do
-      file="$( basename "${file}" )"
-      author="$(git log --pretty='format:%an' "${file}")"
-      committer="$(git log --pretty='format:%cn' "${file}")"
-      claimed_since="$(git log --pretty='format:%ar' "${file}")"
-      workstation="$(git log --pretty='format:%s' "${file}" | sed -E "s/^manually claim [^[:space:]]+ on ([^[:space:]]+).*$/\1/")"
+      if !$(echo $file | grep -q "${fresh_claimed_files}"); then
+        file="$( basename "${file}" )"
+        author="$(git log --max-count=1 --pretty='format:%an' "${file}")"
+        committer="$(git log --max-count=1 --pretty='format:%cn' "${file}")"
+        claimed_since="$(git log --max-count=1 --pretty='format:%ar' "${file}")"
+        workstation="$(git log --max-count=1 --pretty='format:%s' "${file}" | sed -E "s/^manually claim [^[:space:]]+ on ([^[:space:]]+).*$/\1/")"
 
-      if [ "${author}" != "${committer}" ]; then
-        claimed_by="${author}+${committer}"
-      else
-        claimed_by="${author}"
+        if [ "${author}" != "${committer}" ]; then
+          claimed_by="${author}+${committer}"
+        else
+          claimed_by="${author}"
+        fi
+
+          output="${output}${file}\t${claimed_by}\t${workstation}\t${claimed_since}\n"
       fi
-
-        output="${output}${file}\t${claimed_by}\t${workstation}\t${claimed_since}\n"
     done
 
     output="${output}${nc}\n"
 
     for file in ${fresh_claimed_files}; do
       file="$( basename "${file}" )"
-      author="$(git log --pretty='format:%an' "${file}")"
-      committer="$(git log --pretty='format:%cn' "${file}")"
-      claimed_since="$(git log --pretty='format:%ar' "${file}")"
-      workstation="$(git log --pretty='format:%s' "${file}" | sed -E "s/^manually claim [^[:space:]]+ on ([^[:space:]]+).*$/\1/")"
+      author="$(git log --max-count=1 --pretty='format:%an' "${file}")"
+      committer="$(git log --max-count=1 --pretty='format:%cn' "${file}")"
+      claimed_since="$(git log --max-count=1 --pretty='format:%ar' "${file}")"
+      workstation="$(git log --max-count=1 --pretty='format:%s' "${file}" | sed -E "s/^manually claim [^[:space:]]+ on ([^[:space:]]+).*$/\1/")"
 
       if [ "${author}" != "${committer}" ]; then
         claimed_by="${author}+${committer}"
