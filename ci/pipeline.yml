@@ -1051,6 +1051,7 @@ jobs:
 #      TODO: Use for [https://www.pivotaltracker.com/story/show/152531028]
 #      - cf-deployment/operations/experimental/enable-instance-identity-credentials-windows.yml
       - cf-deployment/operations/experimental/secure-service-credentials-windows-cell.yml
+      - cf-deployment/operations/workaround/use-4-azs-for-router.yml
   - task: download-vars-store
     output_mapping:
       destination-directory: elsa-deployment-vars
