@@ -20,7 +20,7 @@ function print_env_info {
 
     output="${output}${red}\n"
     for file in ${stale_claimed_files}; do
-      if !$(echo $file | grep -q "${fresh_claimed_files}"); then
+      if [[ !$(echo $file | grep -q "${fresh_claimed_files}") ]]; then
         file="$( basename "${file}" )"
         author="$(git log --max-count=1 --pretty='format:%an' "${file}")"
         committer="$(git log --max-count=1 --pretty='format:%cn' "${file}")"
