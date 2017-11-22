@@ -9,6 +9,7 @@ groups:
   - bridge-unit-tests
   - create-capi-release
   - bump-capi-release
+  - buffy-bits-postgres-webdav
   - mulan-postgres-webdav-bridge
   - elsa-mysql-s3-bypass
   - kiki-back-compat-migrations
@@ -39,10 +40,7 @@ groups:
   - update-bosh-kiki
   - update-bosh-xena-mysql
   - update-bosh-xena-postgres
-- name: bits
-  jobs:
   - update-bosh-buffy
-  - buffy-bits-postgres-webdav
 
 resource_types:
 - name: slack-notification
