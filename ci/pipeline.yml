@@ -43,11 +43,6 @@ groups:
   jobs:
   - update-bosh-buffy
   - buffy-bits-postgres-webdav
-- name: mssql
-  jobs:
-  - update-bosh-ripley
-  - mssql-unit-tests
-  - ripley-mssql
 
 resource_types:
 - name: slack-notification
@@ -96,11 +91,6 @@ resources:
     token: ((deliver_capi_tracker_token))
     project_id: '966314'
     tracker_url: https://www.pivotaltracker.com
-
-- name: gcp-stemcell
-  type: bosh-io-stemcell
-  source:
-    name: bosh-google-kvm-ubuntu-trusty-go_agent
 
 - name: capi-final-releases
   type: s3
@@ -177,16 +167,6 @@ resources:
     key: current-capi-release-version
     region_name: us-east-1
 
-- name: version-sql-server
-  type: semver
-  source:
-    access_key_id: ((wasabi_ci_artifacts_s3_access_key))
-    secret_access_key: ((wasabi_ci_artifacts_s3_secret_key))
-    initial_version: 1.25.0
-    bucket: capi-release-versions
-    key: temporary-capi-release-sql-server-version
-    region_name: us-east-1
-
 - name: cc-api-v3-version
   type: semver
   source:
@@ -240,13 +220,6 @@ resources:
   type: git
   source:
     branch: master
-    private_key: ((private_key))
-    uri: git@github.com:cloudfoundry/cloud_controller_ng.git
-
-- name: cloud_controller_ng_sql_server
-  type: git
-  source:
-    branch: pivotal-sqlserversupport
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/cloud_controller_ng.git
 
@@ -355,44 +328,6 @@ resources:
     branch: master
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/bosh-deployment.git
-
-# Ripley resources
-
-- name: ripley-integration-configs
-  type: git
-  source:
-    branch: master
-    private_key: ((private_key))
-    uri: git@github.com:cloudfoundry/capi-ci-private.git
-    paths: ["ripley/cats_integration_config.json"]
-
-- name: ripley-bbl-state
-  type: git
-  source:
-    branch: master
-    private_key: ((private_key))
-    uri: git@github.com:cloudfoundry/capi-ci-private.git
-    paths: ["ripley/bbl-state.json"]
-
-- name: azure-terraform
-  type: terraform
-  source:
-    storage:
-      bucket: capi-ripley-deployments
-      bucket_path: azure
-      access_key_id: ((gcp_storage_access_key))
-      secret_access_key: ((gcp_storage_secret_key))
-      endpoint: storage.googleapis.com
-
-- name: ripley-deployment
-  type: bosh2-deployment
-  source:
-    vars_store:
-      provider: gcs
-      config:
-        bucket: ((ripley_bosh_vars_bucket))
-        file_name: &ripley_vars_store_path bosh/vars-store.yml
-        json_key: ((ripley_gcp_json_key))
 
 # Mulan resources
 - name: mulan-bbl-state
@@ -1421,7 +1356,7 @@ jobs:
     - task: update-checkman
       file: capi-ci/ci/monitoring/update_checkman.yml
       params:
-        IGNORED_JOBS: "ripley-mssql buffy-bits-postgres-webdav"
+        IGNORED_JOBS: "buffy-bits-postgres-webdav"
       on_success:
         put: slack-alert
         params:
@@ -1897,64 +1832,6 @@ jobs:
       params:
         BBL_STATE_DIR: "xena-postgres"
 
-- name: update-bosh-ripley
-  serial: true
-  serial_groups: [deploy-ripley]
-  plan:
-    - aggregate:
-      - get: cf-deployment-concourse-tasks
-      - get: ripley-bbl-state
-      - get: capi-ci
-      - get: capi-ci-private
-      - get: weekly-sunday
-        trigger: true
-    - task: seed-capi-ci-private
-      file: capi-ci/ci/setup-environment/seed.yml
-      params:
-        ENVIRONMENT: ripley
-        DOMAIN: &ripley-domain "ripley.capi.land"
-    - put: capi-ci-private
-      params:
-        repository: updated-capi-ci-private
-        rebase: true
-    - task: update-bosh-ripley
-      file: cf-deployment-concourse-tasks/bbl-up/task.yml
-      input_mapping:
-        bbl-state: updated-capi-ci-private
-        ops-files: updated-capi-ci-private # no additional ops files needed
-      params:
-        BBL_STATE_DIR: "ripley"
-        BBL_IAAS: "gcp"
-        BBL_LB_CERT: "certs/load-balancer/server.crt"
-        BBL_LB_KEY: "certs/load-balancer/server.key"
-        LB_DOMAIN: *ripley-domain
-        BBL_ENV_NAME: "ripley"
-        BBL_GCP_SERVICE_ACCOUNT_KEY: ((ripley_gcp_json_key))
-        BBL_GCP_PROJECT_ID: ((ripley_gcp_project_id))
-        BBL_GCP_ZONE: ((ripley_gcp_zone))
-        BBL_GCP_REGION: ((ripley_gcp_region))
-      ensure:
-        put: ripley-bbl-state
-        params:
-          repository: updated-bbl-state
-          rebase: true
-    - task: create-dns-record
-      file: capi-ci/ci/bbl-tasks/create-dns-record.yml
-      input_mapping:
-        bbl-state: updated-bbl-state
-      params:
-        BBL_STATE_DIR: "ripley"
-        DNS_DOMAIN: *ripley-domain
-        GCP_DNS_SERVICE_ACCOUNT_KEY: ((dns_gcp_json_key))
-        GCP_PROJECT_ID: ((dns_gcp_project_id))
-        SHARED_DNS_ZONE_NAME: "capi-land"
-    - task: run-bosh-cleanup
-      file: capi-ci/ci/bbl-tasks/run-bosh-cleanup.yml
-      input_mapping:
-        bbl-state: ripley-bbl-state
-      params:
-        BBL_STATE_DIR: "ripley"
-
 - name: deliver-stories
   serial: true
   plan:
@@ -2016,124 +1893,6 @@ jobs:
   - put: capi-release-ci-passed
     params:
       repository: capi-release
-
-- name: mssql-unit-tests
-  plan:
-  - aggregate:
-    - get: cloud_controller_ng
-      resource: cloud_controller_ng_sql_server
-      trigger: true
-    - get: capi-ci
-  - task: run-cc-unit-tests-mssql
-    privileged: true # required to run mssql in nested docker container
-    file: capi-ci/ci/test-unit/run_cc_unit_tests.yml
-    params:
-      DB: mssql
-
-- name: ripley-mssql
-  serial: true
-  plan:
-  - aggregate:
-    - get: cloud_controller_ng
-      resource: cloud_controller_ng_sql_server
-      trigger: true
-      passed:
-      - mssql-unit-tests
-    - get: capi-ci
-    - get: capi-ci-private
-    - get: gcp-stemcell
-    - get: cf-deployment
-    - get: capi-release
-      resource: capi-release-develop
-    - get: version
-      resource: version-sql-server
-      params:
-        pre: rc
-    - get: ripley-integration-configs
-    - get: cf-deployment-concourse-tasks
-    - get: cats-concourse-task
-    - get: cf-acceptance-tests
-  - put: version
-    resource: version-sql-server
-    params:
-      file: version/version
-  - task: create-release-tarball
-    file: capi-ci/ci/bosh/create_capi_release.yml
-    params:
-      CC_BRANCH: pivotal-sqlserversupport
-  - put: azure-terraform
-    params:
-      env_name: leia
-      terraform_source: capi-ci/terraform/azure-ms-sql/
-      vars:
-        subscription_id: ((azure_subscription_id))
-        client_id: ((azure_client_id))
-        client_secret: ((azure_client_secret))
-        tenant_id: ((azure_tenant_id))
-        resource_group: ((azure_resource_group))
-        db_name: ((azure_db_name))
-        db_admin_user: ((azure_db_admin_user))
-        db_admin_password: ((azure_db_admin_password))
-  - task: extract-bbl-environment
-    file: capi-ci/ci/bbl-tasks/extract_bbl_environment.yml
-    params:
-      ENV_NAME: ripley
-  - put: ripley-deployment
-    params:
-      source_file: environment/metadata
-      manifest: cf-deployment/cf-deployment.yml
-      stemcells:
-      - gcp-stemcell/stemcell.tgz
-      releases:
-      - created-capi-release/*.tgz
-      vars:
-        system_domain: *ripley-domain
-      vars_files:
-      - azure-terraform/metadata
-      ops_files:
-      - cf-deployment/operations/scale-to-one-az.yml
-      - cf-deployment/operations/use-postgres.yml
-      - capi-ci/cf-deployment-operations/use-ms-sql-azure.yml
-      - capi-ci/cf-deployment-operations/skip-cert-verify.yml
-      - capi-ci/cf-deployment-operations/use-latest-capi.yml
-      - capi-ci/cf-deployment-operations/temporary/disable-uaa-get-requests.yml
-  - task: download-vars-store
-    output_mapping:
-      destination-directory: ripley-deployment-vars
-    file: capi-ci/ci/gcs/download-from-gcs.yml
-    params:
-      GCP_JSON_KEY: ((ripley_gcp_json_key))
-      GCP_BUCKET: ((ripley_bosh_vars_bucket))
-      GCP_PATH: bosh
-  - task: updated-integration-configs
-    file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
-    input_mapping:
-      vars-store: ripley-deployment-vars
-      integration-configs: ripley-integration-configs
-    params:
-      CATS_INTEGRATION_CONFIG_FILE: "ripley/cats_integration_config.json"
-      VARS_STORE_FILE: "vars-store.yml"
-      SYSTEM_DOMAIN: *ripley-domain
-    ensure:
-      put: ripley-integration-configs
-      params:
-        repository: updated-integration-configs
-        rebase: true
-  - task: enable-feature-flags
-    file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
-    input_mapping:
-      vars-store: ripley-deployment-vars
-    params:
-      SYSTEM_DOMAIN: *ripley-domain
-      VARS_STORE_FILE: "vars-store.yml"
-  - task: acceptance-tests
-    file: cats-concourse-task/task.yml
-    input_mapping:
-      integration-config: updated-integration-configs
-    params:
-      NODES: 6
-      CONFIG_FILE_PATH: "ripley/cats_integration_config.json"
-      CAPTURE_LOGS: true
 
 - name: xena-mysql-drats
   serial: true
