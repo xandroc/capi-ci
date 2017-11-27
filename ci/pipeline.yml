@@ -41,6 +41,7 @@ groups:
   - update-bosh-xena-mysql
   - update-bosh-xena-postgres
   - update-bosh-buffy
+  - update-bosh-ripley
 
 resource_types:
 - name: slack-notification
@@ -120,6 +121,13 @@ resources:
     uri: git@github.com:cloudfoundry/capi-ci-private.git
 
 - name: arya-bbl-state
+  type: git
+  source:
+    branch: master
+    private_key: ((private_key))
+    uri: git@github.com:cloudfoundry/capi-ci-private.git
+
+- name: ripley-bbl-state
   type: git
   source:
     branch: master
@@ -1509,7 +1517,6 @@ jobs:
       file: cf-deployment-concourse-tasks/bbl-up/task.yml
       input_mapping:
         bbl-state: updated-capi-ci-private
-        ops-files: updated-capi-ci-private
         ops-files: updated-capi-ci-private # no additional ops files needed
       params:
         BBL_STATE_DIR: "buffy"
@@ -1543,6 +1550,64 @@ jobs:
         bbl-state: updated-bbl-state
       params:
         BBL_STATE_DIR: "buffy"
+
+- name: update-bosh-ripley
+  serial: true
+  serial_groups: [deploy-ripley]
+  plan:
+    - aggregate:
+      - get: cf-deployment-concourse-tasks
+      - get: ripley-bbl-state
+      - get: capi-ci
+      - get: capi-ci-private
+      - get: weekly-sunday
+        trigger: true
+    - task: seed-capi-ci-private
+      file: capi-ci/ci/setup-environment/seed.yml
+      params:
+        ENVIRONMENT: ripley
+        DOMAIN: &ripley-domain "ripley.capi.land"
+    - put: capi-ci-private
+      params:
+        repository: updated-capi-ci-private
+        rebase: true
+    - task: update-bosh-ripley
+      file: cf-deployment-concourse-tasks/bbl-up/task.yml
+      input_mapping:
+        bbl-state: updated-capi-ci-private
+        ops-files: updated-capi-ci-private # no additional ops files needed
+      params:
+        BBL_STATE_DIR: "ripley"
+        BBL_IAAS: "gcp"
+        BBL_LB_CERT: "certs/load-balancer/server.crt"
+        BBL_LB_KEY: "certs/load-balancer/server.key"
+        LB_DOMAIN: *ripley-domain
+        BBL_ENV_NAME: "ripley"
+        BBL_GCP_SERVICE_ACCOUNT_KEY: ((ripley_gcp_json_key))
+        BBL_GCP_PROJECT_ID: ((ripley_gcp_project_id))
+        BBL_GCP_ZONE: ((ripley_gcp_zone))
+        BBL_GCP_REGION: ((ripley_gcp_region))
+      ensure:
+        put: ripley-bbl-state
+        params:
+          repository: updated-bbl-state
+          rebase: true
+    - task: create-dns-record
+      file: capi-ci/ci/bbl-tasks/create-dns-record.yml
+      input_mapping:
+       bbl-state: updated-bbl-state
+      params:
+        BBL_STATE_DIR: "ripley"
+        DNS_DOMAIN: *ripley-domain
+        GCP_DNS_SERVICE_ACCOUNT_KEY: ((dns_gcp_json_key))
+        GCP_PROJECT_ID: ((dns_gcp_project_id))
+        SHARED_DNS_ZONE_NAME: "capi-land"
+    - task: run-bosh-cleanup
+      file: capi-ci/ci/bbl-tasks/run-bosh-cleanup.yml
+      input_mapping:
+        bbl-state: updated-bbl-state
+      params:
+        BBL_STATE_DIR: "ripley"
 
 - name: update-bosh-elsa
   serial: true
