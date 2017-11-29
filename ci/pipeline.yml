@@ -986,9 +986,11 @@ jobs:
       # Add isolation segment diego cell for CATs
       - cf-deployment/operations/test/add-persistent-isolation-segment-diego-cell.yml
       # Add windows diego cell for WATs #142277823
-      - cf-deployment/operations/windows-cell.yml
-      - capi-ci/cf-deployment-operations/skip-cert-verify-on-windows-cell.yml
-      - capi-ci/cf-deployment-operations/windows-cell-consul-mutual-tls.yml
+      ### QQQQ Pull out windows
+      #- cf-deployment/operations/windows-cell.yml
+      #- capi-ci/cf-deployment-operations/skip-cert-verify-on-windows-cell.yml
+      #- capi-ci/cf-deployment-operations/windows-cell-consul-mutual-tls.yml
+
       # Turn on declarative healthchecks for Diego to decrease logging #146902681
       - cf-deployment/operations/experimental/enable-prefer-declarative-healthchecks.yml
       # Scale up cells to prevent apps piling onto one cell during rolling deploy.
@@ -997,13 +999,14 @@ jobs:
       # Use latest CAPI release
       - capi-ci/cf-deployment-operations/use-latest-capi.yml
       # Use NFS as blobstore
-      - capi-ci/cf-deployment-operations/use-nfs-blobstore.yml
+      # - capi-ci/cf-deployment-operations/use-nfs-blobstore.yml
       # Use clustered mysql
       - capi-ci/cf-deployment-operations/use-clustered-mysql.yml
       # Skip cert verification
       - capi-ci/cf-deployment-operations/skip-cert-verify.yml
       # Metrics
-      - capi-ci/cf-deployment-operations/add-datadog-firehose-nozzle-gcp.yml
+      ### QQQ Need a datadog_api_key
+      ### - capi-ci/cf-deployment-operations/add-datadog-firehose-nozzle-gcp.yml
       - capi-ci/cf-deployment-operations/add-new-relic.yml
       - capi-ci/cf-deployment-operations/add-prometheus.yml
       - capi-ci/cf-deployment-operations/add-prometheus-capi-homepage.yml
@@ -1012,14 +1015,16 @@ jobs:
       # Increase logging level to include all CCDB queries
       - capi-ci/cf-deployment-operations/log-all-sequel-activity.yml
       # Silence noisy logs to reduce volume on logit.io #152155581
-      - capi-ci/cf-deployment-operations/temporary/use-syslog-addon.yml
-      - capi-ci/cf-deployment-operations/silence-noisy-logs.yml
+      # Got error: Failed to fetch variable '/bosh-ripley/cf/syslog_remote_address' from config server: Director is not configured with a config server
+      ### QQQ: - capi-ci/cf-deployment-operations/temporary/use-syslog-addon.yml
+      ### QQQ: - capi-ci/cf-deployment-operations/silence-noisy-logs.yml
       # Disable GETs against UAA in anticipation of it being removed #148914087
       - capi-ci/cf-deployment-operations/temporary/disable-uaa-get-requests.yml
       # Use BOSH DNS
       - cf-deployment/operations/experimental/use-bosh-dns.yml
       - cf-deployment/operations/experimental/use-bosh-dns-for-containers.yml
-      - cf-deployment/operations/experimental/secure-service-credentials-windows-cell.yml
+        ### This requires defn of credhub_tls ??
+      ### - cf-deployment/operations/experimental/secure-service-credentials-windows-cell.yml
       # Workaround for GCP issue that causes 502s if there are empty LB instance groups #152766388
       - cf-deployment/operations/workaround/use-4-azs-for-router.yml
 #      TODO: Use for [https://www.pivotaltracker.com/story/show/152531028]
