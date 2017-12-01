@@ -295,12 +295,6 @@ resources:
     uri: git@github.com:cloudfoundry/cf-deployment-concourse-tasks.git
     tag_filter: v4.*
 
-- name: cf-deployment-concourse-tasks-pr-is-bosh-lite
-  type: git
-  source:
-    branch: PR-is-bosh-lite-to-bbl-up
-    uri: https://github.com/gerg/cf-deployment-concourse-tasks.git
-
 - name: cats-concourse-task
   type: git
   source:
@@ -1958,7 +1952,7 @@ jobs:
   plan:
     - aggregate:
       - get: cf-deployment-concourse-tasks
-        resource: cf-deployment-concourse-tasks-pr-is-bosh-lite
+        resource: cf-deployment-concourse-tasks
       - get: xena-mysql-bbl-state
       - get: capi-ci
       - get: capi-ci-private
@@ -2039,7 +2033,7 @@ jobs:
   plan:
     - aggregate:
       - get: cf-deployment-concourse-tasks
-        resource: cf-deployment-concourse-tasks-pr-is-bosh-lite
+        resource: cf-deployment-concourse-tasks
       - get: xena-postgres-bbl-state
       - get: capi-ci
       - get: capi-ci-private
