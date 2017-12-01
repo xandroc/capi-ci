@@ -293,6 +293,7 @@ resources:
     branch: master
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/cf-deployment-concourse-tasks.git
+    tag_filter: v4.*
 
 - name: cf-deployment-concourse-tasks-pr-is-bosh-lite
   type: git
