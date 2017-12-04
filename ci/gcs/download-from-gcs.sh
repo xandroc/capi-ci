@@ -20,7 +20,8 @@ environment="$( cat ${workspace_dir}/environment/name )"
 destination_dir="${workspace_dir}/destination-directory"
 
 # TASK
-gcloud auth activate-service-account --key-file=<( echo "${GCP_JSON_KEY}" )
+echo "${GCP_JSON_KEY}" > "${workspace_dir}/service_account_key.json"
+gcloud auth activate-service-account --key-file="${workspace_dir}/service_account_key.json"
 
 pushd "${destination_dir}" > /dev/null
   remote_path="gs://${GCP_BUCKET}/"
