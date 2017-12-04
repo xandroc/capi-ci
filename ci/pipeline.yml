@@ -2249,11 +2249,6 @@ jobs:
     params:
       CF_API_URL: https://api.xena-mysql.capi.land
       SKIP_SUITE_NAME: "cf-nfsbroker|cf-credhub"
-    on_success:
-      task: delete-deployment
-      file: capi-ci/ci/bosh/run_bosh_cmd.yml
-      params:
-        BOSH_ARGS: "delete-deployment -d cf"
 
 - name: xena-postgres-drats
   serial: true
@@ -2330,8 +2325,3 @@ jobs:
     params:
       CF_API_URL: https://api.xena-postgres.capi.land
       SKIP_SUITE_NAME: "cf-nfsbroker|cf-credhub"
-    on_success:
-      task: delete-deployment
-      file: capi-ci/ci/bosh/run_bosh_cmd.yml
-      params:
-        BOSH_ARGS: "delete-deployment -d cf"
