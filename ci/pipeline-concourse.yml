@@ -97,6 +97,11 @@ jobs:
       input_mapping:
         bbl-state: concourse-bbl-state
         ops-files: capi-ci-private
+        bbl-plan-patch: concourse-bbl-state
+        # - Per the comment on bbl-up task.yml...If no patch is necessary, we suggest you use
+        #   `input_mapping` to map your `bbl-state` resource
+        #   to `bbl-plan-patch` in order to satisfy this
+        #   required input.
       params:
         BBL_STATE_DIR: "ci"
         BBL_IAAS: "gcp"
