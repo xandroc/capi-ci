@@ -924,6 +924,7 @@ jobs:
         VARS_STORE_PATH: "vars-store.yml"
         USE_CF_DEPLOYMENT_VARS: "true"
 
+# change to ripley-nfs when we're willing to lose the build history
 - name: ripley-nfs-mysql
   serial: true
   serial_groups: [deploy-ripley]
@@ -985,50 +986,27 @@ jobs:
       ops_files:
       # Add isolation segment diego cell for CATs
       - cf-deployment/operations/test/add-persistent-isolation-segment-diego-cell.yml
-      # Add windows diego cell for WATs #142277823
-      ### QQQQ Pull out windows
-      #- cf-deployment/operations/windows-cell.yml
-      #- capi-ci/cf-deployment-operations/skip-cert-verify-on-windows-cell.yml
-      #- capi-ci/cf-deployment-operations/windows-cell-consul-mutual-tls.yml
-
       # Turn on declarative healthchecks for Diego to decrease logging #146902681
       - cf-deployment/operations/experimental/enable-prefer-declarative-healthchecks.yml
+      # Use minimum number of instances for deployment
+      - cf-deployment/operations/scale-to-one-az.yml
       # Scale up cells to prevent apps piling onto one cell during rolling deploy.
       # See https://github.com/cloudfoundry/capi-ci/commit/4f22dc4721aa5ed3917e84c4e0ce9f99d732a920 for details
       - capi-ci/cf-deployment-operations/scale-up-cells.yml
+      # Use compiled releases
+      - cf-deployment/operations/use-compiled-releases.yml
       # Use latest CAPI release
       - capi-ci/cf-deployment-operations/use-latest-capi.yml
       # Use NFS as blobstore
-      # - capi-ci/cf-deployment-operations/use-nfs-blobstore.yml
-      # Use clustered mysql
-      - capi-ci/cf-deployment-operations/use-clustered-mysql.yml
+      - capi-ci/cf-deployment-operations/use-nfs-blobstore.yml
       # Skip cert verification
       - capi-ci/cf-deployment-operations/skip-cert-verify.yml
-      # Metrics
-      ### QQQ Need a datadog_api_key
-      ### - capi-ci/cf-deployment-operations/add-datadog-firehose-nozzle-gcp.yml
-      - capi-ci/cf-deployment-operations/add-new-relic.yml
-      - capi-ci/cf-deployment-operations/add-prometheus.yml
-      - capi-ci/cf-deployment-operations/add-prometheus-capi-homepage.yml
-      # Remove orphaned blobs from blobstore #134220491
-      - capi-ci/cf-deployment-operations/enable-perform-blob-cleanup.yml
       # Increase logging level to include all CCDB queries
       - capi-ci/cf-deployment-operations/log-all-sequel-activity.yml
-      # Silence noisy logs to reduce volume on logit.io #152155581
-      # Got error: Failed to fetch variable '/bosh-ripley/cf/syslog_remote_address' from config server: Director is not configured with a config server
-      ### QQQ: - capi-ci/cf-deployment-operations/temporary/use-syslog-addon.yml
-      ### QQQ: - capi-ci/cf-deployment-operations/silence-noisy-logs.yml
       # Disable GETs against UAA in anticipation of it being removed #148914087
       - capi-ci/cf-deployment-operations/temporary/disable-uaa-get-requests.yml
-      # Use BOSH DNS
-      - cf-deployment/operations/experimental/use-bosh-dns.yml
-      - cf-deployment/operations/experimental/use-bosh-dns-for-containers.yml
-        ### This requires defn of credhub_tls ??
-      ### - cf-deployment/operations/experimental/secure-service-credentials-windows-cell.yml
       # Workaround for GCP issue that causes 502s if there are empty LB instance groups #152766388
       - cf-deployment/operations/workaround/use-4-azs-for-router.yml
-#      TODO: Use for [https://www.pivotaltracker.com/story/show/152531028]
-#      - cf-deployment/operations/experimental/enable-instance-identity-credentials-windows.yml
   - task: download-vars-store
     output_mapping:
       destination-directory: ripley-deployment-vars
