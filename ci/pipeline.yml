@@ -723,8 +723,6 @@ jobs:
       # Metrics
       - capi-ci/cf-deployment-operations/add-prometheus.yml
       - capi-ci/cf-deployment-operations/add-prometheus-capi-homepage.yml
-      # Remove orphaned blobs from blobstore #134220491
-      - capi-ci/cf-deployment-operations/enable-perform-blob-cleanup.yml
       # Increase logging level to include all CCDB queries
       - capi-ci/cf-deployment-operations/log-all-sequel-activity.yml
       # Silence noisy logs to reduce volume on logit.io #152155581
@@ -858,8 +856,6 @@ jobs:
       # Metrics
       - capi-ci/cf-deployment-operations/add-prometheus.yml
       - capi-ci/cf-deployment-operations/add-prometheus-capi-homepage.yml
-      # Remove orphaned blobs from blobstore #134220491
-      - capi-ci/cf-deployment-operations/enable-perform-blob-cleanup.yml
       # Increase logging level to include all CCDB queries
       - capi-ci/cf-deployment-operations/log-all-sequel-activity.yml
       # Silence noisy logs to reduce volume on logit.io #152155581
@@ -1160,8 +1156,6 @@ jobs:
       # Disable skip-cert-verify because this env has a real cert
       - capi-ci/cf-deployment-operations/disable-skip-cert-verify.yml
       - capi-ci/cf-deployment-operations/disable-skip-cert-verify-iso-seg.yml
-      # Remove orphaned blobs from blobstore #134220491
-      - capi-ci/cf-deployment-operations/enable-perform-blob-cleanup.yml
       # Increase logging level to include all CCDB queries
       - capi-ci/cf-deployment-operations/log-all-sequel-activity.yml
       # Silence noisy logs to reduce volume on logit.io #152155581
