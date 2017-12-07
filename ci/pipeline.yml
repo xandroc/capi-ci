@@ -969,6 +969,8 @@ jobs:
         system_domain: *ripley-domain
         datadog_metric_prefix: "datadog.nozzle."
         new_relic_license_key: ((new_relic_license_key))
+        syslog_remote_address: ((ripley_syslog_remote_address))
+        syslog_remote_port: ((ripley_syslog_remote_port))
         prometheus_password: ((prometheus_password))
       vars_files:
         - environment/metadata # used by prometheus bosh exporter
@@ -992,6 +994,9 @@ jobs:
       - capi-ci/cf-deployment-operations/skip-cert-verify.yml
       # Increase logging level to include all CCDB queries
       - capi-ci/cf-deployment-operations/log-all-sequel-activity.yml
+      # Silence noisy logs to reduce volume on logit.io #152155581
+      - capi-ci/cf-deployment-operations/temporary/use-syslog-addon.yml
+      - capi-ci/cf-deployment-operations/silence-noisy-logs.yml
       # Disable GETs against UAA in anticipation of it being removed #148914087
       - capi-ci/cf-deployment-operations/temporary/disable-uaa-get-requests.yml
       # Workaround for GCP issue that causes 502s if there are empty LB instance groups #152766388
