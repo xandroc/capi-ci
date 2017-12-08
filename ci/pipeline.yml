@@ -15,7 +15,7 @@ groups:
   - kiki-back-compat-migrations
   - xena-mysql-drats
   - xena-postgres-drats
-  - ripley-nfs-mysql
+  - ripley-nfs
   - bump-ci-passed
 - name: ship-it
   jobs:
@@ -921,8 +921,7 @@ jobs:
         VARS_STORE_PATH: "vars-store.yml"
         USE_CF_DEPLOYMENT_VARS: "true"
 
-# change to ripley-nfs when we're willing to lose the build history
-- name: ripley-nfs-mysql
+- name: ripley-nfs
   serial: true
   serial_groups: [deploy-ripley]
   plan:
