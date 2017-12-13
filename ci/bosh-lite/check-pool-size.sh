@@ -21,9 +21,14 @@ git clone "${pool_dir}" "${output_dir}"
 
 pushd "${output_dir}" > /dev/null
   echo "Searching for bosh-lites..."
-  env_count="$(find "${POOL_NAME}/unclaimed" -not -path '*/\.*' -type f | wc -l)"
-  env_count+="$(find "${BUILDING_POOL_NAME}/claimed" -not -path '*/\.*' -type f | wc -l)"
-  echo "ENV COUNT: ${env_count}"
+
+  ready_count="$(find "${POOL_NAME}/unclaimed" -not -path '*/\.*' -type f | wc -l)"
+  echo "Ready bosh-lites: ${ready_count}"
+  building_count="$(find "${BUILDING_POOL_NAME}/claimed" -not -path '*/\.*' -type f | wc -l)"
+  echo "Building bosh-lites: ${building_count}"
+
+  env_count=$((ready_count + building_count))
+  echo "Total count: ${env_count}"
 
   if [ "${env_count}" -lt "${MIN_UNCLAIMED_COUNT}" ]; then
     echo "Fewer than ${MIN_UNCLAIMED_COUNT} bosh-lites, going to trigger creation"
