@@ -1,0 +1,6 @@
+- type: replace
+  path: /instance_groups/name=singleton-blobstore/jobs/-
+  value:
+    name: metron_agent
+    release: loggregator
+    properties: *metron_agent_properties
