@@ -1179,8 +1179,8 @@ jobs:
       - cf-deployment/operations/experimental/secure-service-credentials-windows-cell.yml
       # Workaround for GCP issue that causes 502s if there are empty LB instance groups #152766388
       - cf-deployment/operations/workaround/use-4-azs-for-router.yml
-#      TODO: Use for [https://www.pivotaltracker.com/story/show/152531028]
-#      - cf-deployment/operations/experimental/enable-instance-identity-credentials-windows.yml
+      # Give diego credentials needed for running wats
+      - cf-deployment/operations/experimental/enable-instance-identity-credentials-windows.yml
   - task: download-vars-store
     output_mapping:
       destination-directory: elsa-deployment-vars
