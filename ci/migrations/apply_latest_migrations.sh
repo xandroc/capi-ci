@@ -101,7 +101,7 @@ run_migrations() {
   pushd "${cloud_controller_dir}" > /dev/null
     set +e
     for i in {1..3}; do
-      bundle install
+      bundle install --without development test
       exit_code="$?"
 
       if [ "${exit_code}" == "0" ]; then
