@@ -735,6 +735,9 @@ jobs:
       # Use BOSH DNS
       - cf-deployment/operations/experimental/use-bosh-dns.yml
       - cf-deployment/operations/experimental/use-bosh-dns-for-containers.yml
+      # Configure metron agents directly instead of using plugin (credhub incompatibility)
+      - capi-ci/cf-deployment-operations/temporary/disable-metron-addon.yml
+      - capi-ci/cf-deployment-operations/temporary/disable-metron-addon-for-singleton-blobstore.yml
   - task: download-vars-store
     output_mapping:
       destination-directory: mulan-deployment-vars
@@ -867,6 +870,9 @@ jobs:
       - cf-deployment/operations/experimental/bits-service.yml
       - cf-deployment/operations/experimental/enable-bits-service-consul.yml
       - cf-deployment/operations/experimental/bits-service-webdav.yml
+      # Configure metron agents directly instead of using plugin (credhub incompatibility)
+      - capi-ci/cf-deployment-operations/temporary/disable-metron-addon.yml
+      - capi-ci/cf-deployment-operations/temporary/disable-metron-addon-for-singleton-blobstore.yml
   - task: download-vars-store
     output_mapping:
       destination-directory: buffy-deployment-vars
@@ -1002,6 +1008,8 @@ jobs:
       - capi-ci/cf-deployment-operations/temporary/disable-uaa-get-requests.yml
       # Workaround for GCP issue that causes 502s if there are empty LB instance groups #152766388
       - cf-deployment/operations/workaround/use-4-azs-for-router.yml
+      # Configure metron agents directly instead of using plugin (credhub incompatibility)
+      - capi-ci/cf-deployment-operations/temporary/disable-metron-addon.yml
   - task: download-vars-store
     output_mapping:
       destination-directory: ripley-deployment-vars
@@ -1181,6 +1189,8 @@ jobs:
       - cf-deployment/operations/workaround/use-4-azs-for-router.yml
       # Give diego credentials needed for running wats
       - cf-deployment/operations/experimental/enable-instance-identity-credentials-windows.yml
+      # Configure metron agents directly instead of using plugin (credhub incompatibility)
+      - capi-ci/cf-deployment-operations/temporary/disable-metron-addon.yml
   - task: download-vars-store
     output_mapping:
       destination-directory: elsa-deployment-vars
