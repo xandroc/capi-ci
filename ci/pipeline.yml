@@ -1151,6 +1151,8 @@ jobs:
       - cf-deployment/operations/windows-cell.yml
       - capi-ci/cf-deployment-operations/skip-cert-verify-on-windows-cell.yml
       - capi-ci/cf-deployment-operations/windows-cell-consul-mutual-tls.yml
+      # Use rotatable database encryption keys
+      - capi-ci/cf-deployment-operations/add-database-encryption-keys.yml
       # Turn on declarative healthchecks for Diego to decrease logging #146902681
       - cf-deployment/operations/experimental/enable-prefer-declarative-healthchecks.yml
       # Scale up cells to prevent apps piling onto one cell during rolling deploy.
