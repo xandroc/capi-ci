@@ -870,6 +870,7 @@ jobs:
       - cf-deployment/operations/experimental/bits-service.yml
       - cf-deployment/operations/experimental/enable-bits-service-consul.yml
       - cf-deployment/operations/experimental/bits-service-webdav.yml
+      - cf-deployment/operations/experimental/enable-bits-service-https.yml
       # Configure metron agents directly instead of using plugin (credhub incompatibility)
       - capi-ci/cf-deployment-operations/temporary/disable-metron-addon.yml
       - capi-ci/cf-deployment-operations/temporary/disable-metron-addon-for-singleton-blobstore.yml
