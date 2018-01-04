@@ -1264,6 +1264,7 @@ jobs:
       passed: [create-capi-release]
     - get: cf-deployment-concourse-tasks
     - get: cats-concourse-task
+      version: { "ref": "bdc220fb869a75b4a5eec84ec3abf2c83ac8a4d8" }
     - get: cf-deployment
       resource: cf-deployment-master
     - get: cf-deployment-temporary-workaround
