@@ -1267,6 +1267,7 @@ jobs:
       version: { "ref": "bdc220fb869a75b4a5eec84ec3abf2c83ac8a4d8" }
     - get: cf-deployment
       resource: cf-deployment-master
+      version: { ref: "d5cd7e42131d0f00dade0166401fbce057fc8a77" }
     - get: cf-deployment-temporary-workaround
       resource: cf-deployment
     - get: kiki-bbl-state
@@ -1602,6 +1603,8 @@ jobs:
   plan:
     - aggregate:
       - get: cf-deployment-concourse-tasks
+        version:
+          ref: 325f64f359e3984016c9153afc870c2aaa204c1c
       - get: arya-bbl-state
       - get: capi-ci
       - get: capi-ci-private
@@ -1660,6 +1663,8 @@ jobs:
   plan:
     - aggregate:
       - get: cf-deployment-concourse-tasks
+        version:
+          ref: 325f64f359e3984016c9153afc870c2aaa204c1c
       - get: mulan-bbl-state
       - get: capi-ci
       - get: capi-ci-private
@@ -1718,6 +1723,8 @@ jobs:
   plan:
     - aggregate:
       - get: cf-deployment-concourse-tasks
+        version:
+          ref: 325f64f359e3984016c9153afc870c2aaa204c1c
       - get: buffy-bbl-state
       - get: capi-ci
       - get: capi-ci-private
@@ -1776,6 +1783,8 @@ jobs:
   plan:
     - aggregate:
       - get: cf-deployment-concourse-tasks
+        version:
+          ref: 325f64f359e3984016c9153afc870c2aaa204c1c
       - get: ripley-bbl-state
       - get: capi-ci
       - get: capi-ci-private
@@ -1834,6 +1843,7 @@ jobs:
   plan:
     - aggregate:
       - get: cf-deployment-concourse-tasks
+        version: { ref: 325f64f359e3984016c9153afc870c2aaa204c1c }
       - get: elsa-bbl-state
       - get: capi-ci
       - get: capi-ci-private
@@ -1901,6 +1911,8 @@ jobs:
   plan:
     - aggregate:
       - get: cf-deployment-concourse-tasks
+        version:
+          ref: 325f64f359e3984016c9153afc870c2aaa204c1c
       - get: capi-ci
       - get: capi-ci-private
       - get: weekly-sunday
@@ -1957,6 +1969,8 @@ jobs:
   plan:
     - aggregate:
       - get: cf-deployment-concourse-tasks
+        version:
+          ref: 325f64f359e3984016c9153afc870c2aaa204c1c
         resource: cf-deployment-concourse-tasks
       - get: xena-mysql-bbl-state
       - get: capi-ci
@@ -2039,6 +2053,8 @@ jobs:
     - aggregate:
       - get: cf-deployment-concourse-tasks
         resource: cf-deployment-concourse-tasks
+        version:
+          ref: 325f64f359e3984016c9153afc870c2aaa204c1c
       - get: xena-postgres-bbl-state
       - get: capi-ci
       - get: capi-ci-private
