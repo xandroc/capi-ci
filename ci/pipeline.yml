@@ -767,6 +767,7 @@ jobs:
     params:
       SYSTEM_DOMAIN: *mulan-domain
       VARS_STORE_FILE: "vars-store.yml"
+      ENABLED_FEATURE_FLAGS: "diego_docker"
   - aggregate:
     - task: acceptance-tests
       file: cats-concourse-task/task.yml
@@ -903,6 +904,7 @@ jobs:
     params:
       SYSTEM_DOMAIN: *buffy-domain
       VARS_STORE_FILE: "vars-store.yml"
+      ENABLED_FEATURE_FLAGS: "diego_docker"
   - aggregate:
     - task: acceptance-tests
       file: cats-concourse-task/task.yml
@@ -1041,6 +1043,7 @@ jobs:
     params:
       SYSTEM_DOMAIN: *ripley-domain
       VARS_STORE_FILE: "vars-store.yml"
+      ENABLED_FEATURE_FLAGS: "diego_docker"
   - aggregate:
     - task: acceptance-tests
       file: cats-concourse-task/task.yml
@@ -1224,6 +1227,7 @@ jobs:
     params:
       SYSTEM_DOMAIN: *elsa-domain
       VARS_STORE_FILE: "vars-store.yml"
+      ENABLED_FEATURE_FLAGS: "diego_docker"
   - aggregate:
     - task: acceptance-tests
       file: cats-concourse-task/task.yml
