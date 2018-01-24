@@ -33,11 +33,11 @@ create_dns_record() {
     record_count="$( echo "${gcp_name_servers_json}" | jq 'length' )"
     if [ "${record_count}" != "0" ]; then
       gcp_name_servers_raw="$( echo "${gcp_name_servers_json}" | jq -r '.[0].rrdatas | join(" ")' )"
-      gcloud dns record-sets transaction remove --name "${DNS_DOMAIN}" --type=NS --zone="${SHARED_DNS_ZONE_NAME}" --ttl=300 ${gcp_name_servers_raw}
+      gcloud dns record-sets transaction remove --name "${DNS_DOMAIN}" --type=NS --zone="${SHARED_DNS_ZONE_NAME}" --ttl=300 ${gcp_name_servers_raw} --verbosity=debug
     fi
 
-    gcloud dns record-sets transaction add --name "${DNS_DOMAIN}" --type=NS --zone="${SHARED_DNS_ZONE_NAME}" --ttl=300 ${bbl_name_servers_raw}
-    gcloud dns record-sets transaction execute --zone="${SHARED_DNS_ZONE_NAME}"
+    gcloud dns record-sets transaction add --name "${DNS_DOMAIN}" --type=NS --zone="${SHARED_DNS_ZONE_NAME}" --ttl=300 ${bbl_name_servers_raw} --verbosity=debug
+    gcloud dns record-sets transaction execute --zone="${SHARED_DNS_ZONE_NAME}" --verbosity=debug
   else
     gcloud dns record-sets transaction start --zone="${SHARED_DNS_ZONE_NAME}"
 
@@ -45,12 +45,12 @@ create_dns_record() {
     record_count="$( echo "${gcp_records_json}" | jq 'length' )"
     if [ "${record_count}" != "0" ]; then
       existing_record_ip="$( echo "${gcp_records_json}" | jq -r '.[0].rrdatas | join(" ")' )"
-      gcloud dns record-sets transaction remove --name "*.${DNS_DOMAIN}" --type=A --zone="${SHARED_DNS_ZONE_NAME}" --ttl=300 "${existing_record_ip}"
+      gcloud dns record-sets transaction remove --name "*.${DNS_DOMAIN}" --type=A --zone="${SHARED_DNS_ZONE_NAME}" --ttl=300 "${existing_record_ip}" --verbosity=debug
     fi
 
     director_external_ip="$(jq -r .tfState ./bbl-state.json | jq -r .modules[0].outputs.external_ip.value)"
-    gcloud dns record-sets transaction add --name "*.${DNS_DOMAIN}" --type=A --zone="${SHARED_DNS_ZONE_NAME}" --ttl=300 "${director_external_ip}"
-    gcloud dns record-sets transaction execute --zone="${SHARED_DNS_ZONE_NAME}"
+    gcloud dns record-sets transaction add --name "*.${DNS_DOMAIN}" --type=A --zone="${SHARED_DNS_ZONE_NAME}" --ttl=300 "${director_external_ip}" --verbosity=debug
+    gcloud dns record-sets transaction execute --zone="${SHARED_DNS_ZONE_NAME} --verbosity=debug"
   fi
 }
 
