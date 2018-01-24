@@ -50,7 +50,7 @@ create_dns_record() {
 
     director_external_ip="$(jq -r .tfState ./bbl-state.json | jq -r .modules[0].outputs.external_ip.value)"
     gcloud dns record-sets transaction add --name "*.${DNS_DOMAIN}" --type=A --zone="${SHARED_DNS_ZONE_NAME}" --ttl=300 "${director_external_ip}" --verbosity=debug
-    gcloud dns record-sets transaction execute --zone="${SHARED_DNS_ZONE_NAME} --verbosity=debug"
+    gcloud dns record-sets transaction execute --zone="${SHARED_DNS_ZONE_NAME}" --verbosity=debug
   fi
 }
 
