@@ -32,6 +32,7 @@ resources:
 
 - name: concourse
   type: github-release
+  version: { tag: 'v3.6.0' }
   source:
     access_token: ((github_access_token))
     repository: concourse
@@ -39,6 +40,7 @@ resources:
 
 - name: postgres
   type: bosh-io-release
+  version: '21'
   source:
     access_token: ((github_access_token))
     repository: cloudfoundry/postgres-release
