@@ -38,11 +38,9 @@ resources:
     owner: concourse
 
 - name: postgres
-  type: github-release
+  type: bosh-io-release
   source:
-    access_token: ((github_access_token))
-    repository: postgres-release
-    owner: cloudfoundry
+    repository: cloudfoundry/postgres-release
 
 # Using Dave McClure's fork to get load-balancers for concourse from bbl
 # We can switch back after this PR is merged: https://github.com/cloudfoundry/cf-deployment-concourse-tasks/pull/40/files
@@ -138,7 +136,7 @@ jobs:
         - concourse-*.tgz
         - garden-runc-*.tgz
     - get: postgres
-      version: { tag: 'v21' }
+      version: { version: '21' }
     - get: concourse-config
     - get: gcp-stemcell
     - get: capi-ci-private
