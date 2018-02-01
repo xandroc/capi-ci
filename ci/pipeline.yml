@@ -1844,6 +1844,7 @@ jobs:
 - name: update-bosh-elsa
   serial: true
   serial_groups: [deploy-elsa]
+  persistent_disk: 102400
   plan:
     - aggregate:
       - get: cf-deployment-concourse-tasks
