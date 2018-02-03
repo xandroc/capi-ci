@@ -1627,7 +1627,7 @@ jobs:
       file: cf-deployment-concourse-tasks/bbl-up/task.yml
       input_mapping:
         bbl-state: updated-capi-ci-private
-        ops-files: updated-capi-ci-private # no additional ops files needed
+        ops-files: capi-ci/bosh-director-operations/increase-persistent-disk.yml
       params:
         BBL_STATE_DIR: "arya"
         BBL_IAAS: "gcp"
@@ -1687,7 +1687,7 @@ jobs:
       file: cf-deployment-concourse-tasks/bbl-up/task.yml
       input_mapping:
         bbl-state: updated-capi-ci-private
-        ops-files: updated-capi-ci-private # no additional ops files needed
+        ops-files: capi-ci/bosh-director-operations/increase-persistent-disk.yml
       params:
         BBL_STATE_DIR: "mulan"
         BBL_IAAS: "gcp"
@@ -1747,7 +1747,7 @@ jobs:
       file: cf-deployment-concourse-tasks/bbl-up/task.yml
       input_mapping:
         bbl-state: updated-capi-ci-private
-        ops-files: updated-capi-ci-private # no additional ops files needed
+        ops-files: capi-ci/bosh-director-operations/increase-persistent-disk.yml
       params:
         BBL_STATE_DIR: "buffy"
         BBL_IAAS: "gcp"
@@ -1807,7 +1807,7 @@ jobs:
       file: cf-deployment-concourse-tasks/bbl-up/task.yml
       input_mapping:
         bbl-state: updated-capi-ci-private
-        ops-files: updated-capi-ci-private # no additional ops files needed
+        ops-files: capi-ci/bosh-director-operations/increase-persistent-disk.yml
       params:
         BBL_STATE_DIR: "ripley"
         BBL_IAAS: "gcp"
@@ -1934,7 +1934,7 @@ jobs:
       file: cf-deployment-concourse-tasks/bbl-up/task.yml
       input_mapping:
         bbl-state: updated-capi-ci-private
-        ops-files: updated-capi-ci-private # no additional ops files needed
+        ops-files: capi-ci/bosh-director-operations/increase-persistent-disk.yml
       params:
         BBL_STATE_DIR: "kiki"
         BBL_IAAS: "gcp"
@@ -1997,7 +1997,7 @@ jobs:
       file: cf-deployment-concourse-tasks/bbl-up/task.yml
       input_mapping:
         bbl-state: updated-capi-ci-private
-        ops-files: bosh-deployment
+        ops-files: capi-ci/bosh-director-operations/increase-persistent-disk.yml
       params:
         BBL_STATE_DIR: "xena-mysql"
         BBL_IAAS: "gcp"
@@ -2080,7 +2080,7 @@ jobs:
       file: cf-deployment-concourse-tasks/bbl-up/task.yml
       input_mapping:
         bbl-state: updated-capi-ci-private
-        ops-files: bosh-deployment
+        ops-files: capi-ci/bosh-director-operations/increase-persistent-disk.yml
       params:
         BBL_STATE_DIR: "xena-postgres"
         BBL_IAAS: "gcp"
