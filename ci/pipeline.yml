@@ -1633,7 +1633,7 @@ jobs:
       file: cf-deployment-concourse-tasks/bbl-up/task.yml
       input_mapping:
         bbl-state: updated-capi-ci-private
-        ops-files: capi-ci/bosh-director-operations/increase-persistent-disk.yml
+        ops-files: capi-ci
       params:
         BBL_STATE_DIR: "arya"
         BBL_IAAS: "gcp"
@@ -1645,6 +1645,8 @@ jobs:
         BBL_GCP_PROJECT_ID: ((arya_gcp_project_id))
         BBL_GCP_ZONE: ((arya_gcp_zone))
         BBL_GCP_REGION: ((arya_gcp_region))
+        OPS_FILES: |
+          bosh-director-operations/increase-persistent-disk.yml
       ensure:
         put: arya-bbl-state
         params:
@@ -1693,7 +1695,7 @@ jobs:
       file: cf-deployment-concourse-tasks/bbl-up/task.yml
       input_mapping:
         bbl-state: updated-capi-ci-private
-        ops-files: capi-ci/bosh-director-operations/increase-persistent-disk.yml
+        ops-files: capi-ci
       params:
         BBL_STATE_DIR: "mulan"
         BBL_IAAS: "gcp"
@@ -1705,6 +1707,8 @@ jobs:
         BBL_GCP_PROJECT_ID: ((mulan_gcp_project_id))
         BBL_GCP_ZONE: ((mulan_gcp_zone))
         BBL_GCP_REGION: ((mulan_gcp_region))
+        OPS_FILES: |
+          bosh-director-operations/increase-persistent-disk.yml
       ensure:
         put: mulan-bbl-state
         params:
@@ -1753,7 +1757,7 @@ jobs:
       file: cf-deployment-concourse-tasks/bbl-up/task.yml
       input_mapping:
         bbl-state: updated-capi-ci-private
-        ops-files: capi-ci/bosh-director-operations/increase-persistent-disk.yml
+        ops-files: capi-ci
       params:
         BBL_STATE_DIR: "buffy"
         BBL_IAAS: "gcp"
@@ -1765,6 +1769,8 @@ jobs:
         BBL_GCP_PROJECT_ID: ((buffy_gcp_project_id))
         BBL_GCP_ZONE: ((buffy_gcp_zone))
         BBL_GCP_REGION: ((buffy_gcp_region))
+        OPS_FILES: |
+          bosh-director-operations/increase-persistent-disk.yml
       ensure:
         put: buffy-bbl-state
         params:
@@ -1896,7 +1902,7 @@ jobs:
         BBL_GCP_ZONE: ((elsa_gcp_zone))
         BBL_GCP_REGION: ((elsa_gcp_region))
         OPS_FILES: |
-          local-dns.yml
+          base-ops-files/local-dns.yml
           bosh-director-operations/increase-persistent-disk.yml
       ensure:
         put: elsa-bbl-state
@@ -1951,7 +1957,7 @@ jobs:
       file: cf-deployment-concourse-tasks/bbl-up/task.yml
       input_mapping:
         bbl-state: updated-capi-ci-private
-        ops-files: capi-ci/bosh-director-operations/increase-persistent-disk.yml
+        ops-files: capi-ci
       params:
         BBL_STATE_DIR: "kiki"
         BBL_IAAS: "gcp"
@@ -1963,6 +1969,8 @@ jobs:
         BBL_GCP_PROJECT_ID: ((kiki_gcp_project_id))
         BBL_GCP_ZONE: ((kiki_gcp_zone))
         BBL_GCP_REGION: ((kiki_gcp_region))
+        OPS_FILES: |
+          bosh-director-operations/increase-persistent-disk.yml
       ensure:
         put: kiki-bbl-state
         params:
@@ -2010,11 +2018,18 @@ jobs:
       params:
         repository: updated-capi-ci-private
         rebase: true
+    - task: collect-ops-files
+      file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
+      input_mapping:
+        base-ops-files: bosh-deployment
+        new-ops-files: capi-ci
+      params:
+        NEW_OPS_FILES: bosh-director-operations/increase-persistent-disk.yml
     - task: update-bosh-xena-mysql
       file: cf-deployment-concourse-tasks/bbl-up/task.yml
       input_mapping:
         bbl-state: updated-capi-ci-private
-        ops-files: capi-ci/bosh-director-operations/increase-persistent-disk.yml
+        ops-files: collected-ops-files
       params:
         BBL_STATE_DIR: "xena-mysql"
         BBL_IAAS: "gcp"
@@ -2024,7 +2039,11 @@ jobs:
         BBL_GCP_ZONE: ((xena_gcp_zone))
         BBL_GCP_REGION: ((xena_gcp_region))
         IS_BOSH_LITE: true
-        OPS_FILES: bosh-lite.yml bosh-lite-runc.yml gcp/bosh-lite-vm-type.yml
+        OPS_FILES: |
+          base-ops-files/bosh-lite.yml
+          base-ops-files/bosh-lite-runc.yml
+          base-ops-files/gcp/bosh-lite-vm-type.yml
+          bosh-director-operations/increase-persistent-disk.yml
       ensure:
         put: xena-mysql-bbl-state
         params:
@@ -2093,11 +2112,18 @@ jobs:
       params:
         repository: updated-capi-ci-private
         rebase: true
+    - task: collect-ops-files
+      file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
+      input_mapping:
+        base-ops-files: bosh-deployment
+        new-ops-files: capi-ci
+      params:
+        NEW_OPS_FILES: bosh-director-operations/increase-persistent-disk.yml
     - task: update-bosh-xena-postgres
       file: cf-deployment-concourse-tasks/bbl-up/task.yml
       input_mapping:
         bbl-state: updated-capi-ci-private
-        ops-files: capi-ci/bosh-director-operations/increase-persistent-disk.yml
+        ops-files: collected-ops-files
       params:
         BBL_STATE_DIR: "xena-postgres"
         BBL_IAAS: "gcp"
@@ -2107,7 +2133,10 @@ jobs:
         BBL_GCP_ZONE: ((xena_gcp_zone))
         BBL_GCP_REGION: ((xena_gcp_region))
         IS_BOSH_LITE: true
-        OPS_FILES: bosh-lite.yml gcp/bosh-lite-vm-type.yml
+        OPS_FILES: |
+          base-ops-files/bosh-lite.yml
+          base-ops-files/gcp/bosh-lite-vm-type.yml
+          bosh-director-operations/increase-persistent-disk.yml
       ensure:
         put: xena-postgres-bbl-state
         params:
