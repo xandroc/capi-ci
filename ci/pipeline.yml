@@ -1903,7 +1903,7 @@ jobs:
         BBL_GCP_REGION: ((elsa_gcp_region))
         OPS_FILES: |
           base-ops-files/local-dns.yml
-          bosh-director-operations/increase-persistent-disk.yml
+          increase-persistent-disk.yml
       ensure:
         put: elsa-bbl-state
         params:
@@ -2043,7 +2043,7 @@ jobs:
           base-ops-files/bosh-lite.yml
           base-ops-files/bosh-lite-runc.yml
           base-ops-files/gcp/bosh-lite-vm-type.yml
-          bosh-director-operations/increase-persistent-disk.yml
+          increase-persistent-disk.yml
       ensure:
         put: xena-mysql-bbl-state
         params:
@@ -2136,7 +2136,7 @@ jobs:
         OPS_FILES: |
           base-ops-files/bosh-lite.yml
           base-ops-files/gcp/bosh-lite-vm-type.yml
-          bosh-director-operations/increase-persistent-disk.yml
+          increase-persistent-disk.yml
       ensure:
         put: xena-postgres-bbl-state
         params:
