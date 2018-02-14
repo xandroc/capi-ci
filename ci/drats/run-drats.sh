@@ -4,7 +4,6 @@ set -eu
 # ENV
 : "${CF_API_URL:?}"
 : "${CF_DEPLOYMENT_NAME:=cf}"
-: "${BBR_BUILD_PATH:=/usr/local/bin/bbr}"
 : "${GOPATH:=/go}"
 : "${VARS_STORE_PATH:=vars-store.yml}"
 : "${CF_ADMIN_USERNAME:=admin}"
@@ -16,6 +15,11 @@ workspace_dir="$( cd "${script_dir}/../../../" && pwd )"
 drats_src="${workspace_dir}/drats"
 environment_dir="${workspace_dir}/environment"
 vars_store_dir="${workspace_dir}/vars-store"
+
+pushd bbr-binary-release
+  tar xvf *.tar
+  export BBR_BUILD_PATH=`pwd`/releases/bbr
+popd
 
 drats_dir="${GOPATH}/src/github.com/cloudfoundry-incubator/disaster-recovery-acceptance-tests"
 mkdir -p "${drats_dir}"

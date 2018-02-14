@@ -3,14 +3,14 @@ platform: linux
 image_resource:
   type: docker-image
   source:
-    repository: cloudfoundry/capi
-    tag: bbr-run-drats
+    repository: cloudfoundrylondon/backup-and-restore
 
 inputs:
   - name: capi-ci
   - name: drats
   - name: environment
   - name: vars-store
+  - name: bbr-binary-release
 
 run:
   path: capi-ci/ci/drats/run-drats.sh
