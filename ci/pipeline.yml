@@ -2261,6 +2261,7 @@ jobs:
       passed: [create-capi-release]
       trigger: true
     - get: drats
+    - get: bbr-github-release
   - task: stemcell-upload
     file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
     input_mapping:
@@ -2313,6 +2314,7 @@ jobs:
     privileged: true # necessary for sshuttle util
     input_mapping:
       vars-store: xena-mysql-deployment-vars
+      bbr-binary-release: bbr-github-release
     params:
       CF_API_URL: https://api.xena-mysql.capi.land
       SKIP_SUITE_NAME: "cf-nfsbroker|cf-credhub"
