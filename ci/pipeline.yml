@@ -321,6 +321,7 @@ resources:
   source:
     owner: cloudfoundry-incubator
     repository: bosh-backup-and-restore
+    access_token: ((github_access_token))
 
 # Pinned at job level with BOSH_DEPLOYMENT_VERSION
 - name: bosh-deployment
