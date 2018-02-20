@@ -38,6 +38,9 @@ create_dns_record() {
 
     gcloud dns record-sets transaction add --name "${DNS_DOMAIN}" --type=NS --zone="${SHARED_DNS_ZONE_NAME}" --ttl=300 ${bbl_name_servers_raw} --verbosity=debug
     gcloud dns record-sets transaction execute --zone="${SHARED_DNS_ZONE_NAME}" --verbosity=debug
+
+    echo "Contents of transaction.yaml:"
+    cat transaction.yaml
   else
     gcloud dns record-sets transaction start --zone="${SHARED_DNS_ZONE_NAME}"
 
@@ -51,6 +54,9 @@ create_dns_record() {
     director_external_ip="$(jq -r .tfState ./bbl-state.json | jq -r .modules[0].outputs.external_ip.value)"
     gcloud dns record-sets transaction add --name "*.${DNS_DOMAIN}" --type=A --zone="${SHARED_DNS_ZONE_NAME}" --ttl=300 "${director_external_ip}" --verbosity=debug
     gcloud dns record-sets transaction execute --zone="${SHARED_DNS_ZONE_NAME}" --verbosity=debug
+
+    echo "Contents of transaction.yaml:"
+    cat transaction.yaml
   fi
 }
 
