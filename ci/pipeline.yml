@@ -1223,6 +1223,7 @@ jobs:
   - task: updated-integration-configs
     file: cf-deployment-concourse-tasks-latest/update-integration-configs/task.yml
     input_mapping:
+      cf-deployment-concourse-tasks: cf-deployment-concourse-tasks-latest
       vars-store: elsa-deployment-vars
       integration-configs: elsa-integration-configs
     params:
