@@ -1681,6 +1681,8 @@ jobs:
       - get: mulan-bbl-state
       - get: capi-ci
       - get: capi-ci-private
+      - get: bosh-deployment
+        version: { ref: *BOSH_DEPLOYMENT_VERSION }
       - get: weekly-sunday
         trigger: true
     - task: seed-capi-ci-private
@@ -1692,11 +1694,18 @@ jobs:
       params:
         repository: updated-capi-ci-private
         rebase: true
+    - task: collect-ops-files
+      file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
+      input_mapping:
+        base-ops-files: bosh-deployment
+        new-ops-files: capi-ci
+      params:
+        NEW_OPS_FILES: bosh-director-operations/increase-persistent-disk.yml
     - task: update-bosh-mulan
       file: cf-deployment-concourse-tasks/bbl-up/task.yml
       input_mapping:
         bbl-state: updated-capi-ci-private
-        ops-files: capi-ci
+        ops-files: collected-ops-files
       params:
         BBL_STATE_DIR: "mulan"
         BBL_IAAS: "gcp"
@@ -1709,7 +1718,8 @@ jobs:
         BBL_GCP_ZONE: ((mulan_gcp_zone))
         BBL_GCP_REGION: ((mulan_gcp_region))
         OPS_FILES: |
-          bosh-director-operations/increase-persistent-disk.yml
+          base-ops-files/local-dns.yml
+          increase-persistent-disk.yml
       ensure:
         put: mulan-bbl-state
         params:
