@@ -1,0 +1,17 @@
+# Create a CF Application Security Group to allow containers to reach UAA since Credhub now does auth via UAA
+# instead of mTLS.
+# Note: these groups are only created on the first deploy, groups must be created manually for existing envs
+- type: replace
+  path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/cc/security_group_definitions?/-
+  value:
+    name: uaa
+    rules:
+    - destination: 0.0.0.0/0
+      ports: '8443'
+      protocol: tcp
+- type: replace
+  path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/cc/default_running_security_groups?/-
+  value: uaa
+- type: replace
+  path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/cc/default_staging_security_groups?/-
+  value: uaa
