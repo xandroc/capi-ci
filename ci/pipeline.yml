@@ -295,6 +295,13 @@ resources:
     uri: git@github.com:cloudfoundry/cf-deployment-concourse-tasks.git
     tag_filter: v4.*
 
+- name: cf-deployment-concourse-tasks-latest
+  type: git
+  source:
+    branch: master
+    private_key: ((private_key))
+    uri: git@github.com:cloudfoundry/cf-deployment-concourse-tasks.git
+
 - name: cats-concourse-task
   type: git
   source:
@@ -1083,6 +1090,7 @@ jobs:
     - get: cloud_controller_ng
       passed: [create-capi-release]
     - get: cf-deployment-concourse-tasks
+    - get: cf-deployment-concourse-tasks-latest
     - get: cats-concourse-task
     - get: cf-deployment
       resource: cf-deployment
@@ -1213,7 +1221,7 @@ jobs:
       GCP_BUCKET: ((elsa_bosh_vars_bucket))
       GCP_PATH: bosh
   - task: updated-integration-configs
-    file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
+    file: cf-deployment-concourse-tasks-latest/update-integration-configs/task.yml
     input_mapping:
       vars-store: elsa-deployment-vars
       integration-configs: elsa-integration-configs
