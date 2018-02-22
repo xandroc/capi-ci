@@ -38,3 +38,6 @@ jobs:
     - get: capi-ci-private
   - task: assign-and-alert-snack-tsar
     file: capi-ci/ci/streamline-team/assign_snack_tsar.yml
+    params:
+      SLACK_API_TOKEN: ((slack_api_token))
+      SLACK_CHANNEL_WEBHOOK_FOR_SNACKS: ((slack_channel_webhook_for_snacks))
