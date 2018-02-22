@@ -5,13 +5,13 @@ groups:
 
 resources:
 
-- name: weekly-monday
+- name: weekly-wednesday
   type: time
   source:
     location: America/Los_Angeles
     start: 10:00
     stop: 10:30
-    days: [Monday]
+    days: [Wednesday]
 
 - name: capi-ci
   type: git
@@ -32,7 +32,7 @@ jobs:
 - name: assign-and-alert-snack-tsar
   plan:
   - aggregate:
-    - get: weekly-monday
+    - get: weekly-wednesday
       trigger: true
     - get: capi-ci
     - get: capi-ci-private

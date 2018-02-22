@@ -11,7 +11,7 @@ inputs:
   - name: capi-ci-private
 
 run:
-  path: capi-ci-private/scripts/assign_snack_tsar.sh
+  path: capi-ci-private/scripts/assign_snack_tsar.rb
 
 params:
   MESSAGE_PREFIX: ""
