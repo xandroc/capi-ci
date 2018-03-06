@@ -293,7 +293,9 @@ resources:
     branch: master
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/cf-deployment-concourse-tasks.git
-    tag_filter: v4.*
+    tag_filter: v5.*
+    # the tags of this repo are tested with the corresponding tag on the docker image relintdockerhubpushbot/cf-deployment-concourse-tasks
+    # if you bump this tag, then also bump the tags on image_resource to match
 
 - name: cf-deployment-concourse-tasks-latest
   type: git
