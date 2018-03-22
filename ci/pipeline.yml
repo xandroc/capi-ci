@@ -1014,7 +1014,7 @@ jobs:
       # Skip cert verification
       - capi-ci/cf-deployment-operations/skip-cert-verify.yml
       # Increase logging level to include all CCDB queries
-      - capi-ci/cf-deployment-operations/log-all-sequel-activity.yml
+      #- capi-ci/cf-deployment-operations/log-all-sequel-activity.yml
       # Silence noisy logs to reduce volume on logit.io #152155581
       - capi-ci/cf-deployment-operations/temporary/use-syslog-addon.yml
       - capi-ci/cf-deployment-operations/silence-noisy-logs.yml
