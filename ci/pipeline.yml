@@ -312,7 +312,7 @@ resources:
 - name: cf-acceptance-tests
   type: git
   source:
-    branch: master
+    branch: cf1.20
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/cf-acceptance-tests.git
 
