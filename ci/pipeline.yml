@@ -301,13 +301,6 @@ resources:
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/cf-acceptance-tests.git
 
-- name: windows-acceptance-tests
-  type: git
-  source:
-    branch: master
-    private_key: ((private_key))
-    uri: git@github.com:cloudfoundry/wats.git
-
 - name: bbr-github-release
   type: github-release
   source:
@@ -1085,7 +1078,6 @@ jobs:
     - get: elsa-bbl-state
     - get: elsa-integration-configs
     - get: cf-acceptance-tests
-    - get: windows-acceptance-tests
     - get: sync-integration-tests
     - get: capi-ci
     - get: capi-ci-private
@@ -1215,7 +1207,6 @@ jobs:
       integration-configs: elsa-integration-configs
     params:
       CATS_INTEGRATION_CONFIG_FILE: "elsa/cats_integration_config.json"
-      WATS_INTEGRATION_CONFIG_FILE: "elsa/wats_integration_config.json"
       VARS_STORE_FILE: "vars-store.yml"
       SYSTEM_DOMAIN: *elsa-domain
     ensure:
@@ -1254,13 +1245,6 @@ jobs:
         BBL_STATE_DIR: elsa
         VARS_STORE_PATH: "vars-store.yml"
         USE_CF_DEPLOYMENT_VARS: "true"
-  - task: run-wats
-    file: capi-ci/ci/wats/run-wats.yml
-    input_mapping:
-      integration-config: updated-integration-configs
-    params:
-      NODES: 2
-      CONFIG_FILE_PATH: "elsa/wats_integration_config.json"
 
 - name: kiki-back-compat-migrations
   serial: true
