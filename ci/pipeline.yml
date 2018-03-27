@@ -26,7 +26,6 @@ groups:
   - merge-capi-release-master
   - publish-docs
   - bump-v2-docs
-  - bump-cf-release
 - name: dependencies-docs
   jobs:
   - check-cc-dependencies
@@ -194,13 +193,6 @@ resources:
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/cc-uploader.git
 
-- name: cf-release-develop
-  type: git
-  source:
-    branch: develop
-    private_key: ((private_key))
-    uri: git@github.com:cloudfoundry/cf-release.git
-
 - name: github-release
   type: github-release
   source:
@@ -208,13 +200,6 @@ resources:
     repository: capi-release
     drafts: true
     access_token: ((github_access_token))
-
-- name: cf-release-master
-  type: git
-  source:
-    branch: master
-    private_key: ((private_key))
-    uri: git@github.com:cloudfoundry/cf-release.git
 
 - name: cloud_controller_ng
   type: git
@@ -1285,11 +1270,9 @@ jobs:
     - get: cloud_controller_ng
       passed: [create-capi-release]
     - get: cf-deployment-concourse-tasks
-    - get: cats-concourse-task
-      version: { "ref": "bdc220fb869a75b4a5eec84ec3abf2c83ac8a4d8" }
+    - get: cf-deployment-concourse-tasks-latest
     - get: cf-deployment
       resource: cf-deployment-master
-      version: { ref: "d5cd7e42131d0f00dade0166401fbce057fc8a77" }
     - get: cf-deployment-temporary-workaround
       resource: cf-deployment
     - get: kiki-bbl-state
@@ -1297,14 +1280,15 @@ jobs:
     - get: sync-integration-tests
     - get: capi-ci
     - get: capi-ci-private
-    - get: cf-release
-      resource: cf-release-master
     - get: capi-release
+      passed:
+      - create-capi-release
       resource: capi-release-develop
-      passed: [create-capi-release]
     - get: capi-release-tarball
-      passed: [create-capi-release]
+      passed:
+      - create-capi-release
       trigger: true
+    - get: cf-acceptance-tests
   - task: kiki-stemcell-upload
     file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
     input_mapping:
@@ -1319,8 +1303,6 @@ jobs:
     file: capi-ci/ci/bosh/run_bosh_cmd.yml
     params:
       BOSH_ARGS: "delete-deployment -d cf"
-  - task: create-capi-release
-    file: capi-ci/ci/bosh/create_capi_release_from_cf_release.yml
   - put: kiki-deployment
     params:
       source_file: environment/metadata
@@ -1337,8 +1319,6 @@ jobs:
       - cf-deployment/operations/test/add-persistent-isolation-segment-diego-cell.yml
       # Skip cert verification
       - capi-ci/cf-deployment-operations/skip-cert-verify.yml
-      # Use latest CAPI release
-      - capi-ci/cf-deployment-operations/use-latest-capi.yml
       # Use minimum number of instances for deployment
       - cf-deployment/operations/scale-to-one-az.yml
       # Scale up cells to prevent apps piling onto one cell during rolling deploy.
@@ -1390,12 +1370,11 @@ jobs:
       SYSTEM_DOMAIN: *kiki-domain
       VARS_STORE_FILE: "vars-store.yml"
       ENABLED_FEATURE_FLAGS: "diego_docker"
-  - task: cats-from-cf-release
-    file: cats-concourse-task/cats-from-cf-release/task.yml
   - aggregate:
-    - task: acceptance-tests
-      file: cats-concourse-task/task.yml
+    - task: run-cats
+      file: cf-deployment-concourse-tasks-latest/run-cats/task.yml
       input_mapping:
+        cf-deployment-concourse-tasks: cf-deployment-concourse-tasks-latest
         integration-config: updated-integration-configs
       params:
         NODES: 4
@@ -1480,27 +1459,6 @@ jobs:
       tag: generated-release/version
       globs:
       - generated-release/*.tgz
-
-- name: bump-cf-release
-  serial: true
-  plan:
-  - aggregate:
-    - get: capi-ci
-    - get: capi-release
-      resource: capi-release-master
-      trigger: true
-      passed: [ship-it]
-    - get: cf-release
-      resource: cf-release-develop
-      params:
-        submodules:
-        - src/capi-release
-  - task: bump-cf-release
-    file: capi-ci/ci/git/bump_cf_release.yml
-  - put: cf-release-develop
-    params:
-      repository: bumped/cf-release
-      rebase: true
 
 - name: rc-docs
   serial: true
