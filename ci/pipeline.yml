@@ -1025,7 +1025,6 @@ jobs:
       integration-configs: ripley-integration-configs
     params:
       CATS_INTEGRATION_CONFIG_FILE: "ripley/cats_integration_config.json"
-      WATS_INTEGRATION_CONFIG_FILE: "ripley/wats_integration_config.json"
       VARS_STORE_FILE: "vars-store.yml"
       SYSTEM_DOMAIN: *ripley-domain
     ensure:
@@ -1149,7 +1148,7 @@ jobs:
       ops_files:
       # Add isolation segment diego cell for CATs
       - cf-deployment/operations/test/add-persistent-isolation-segment-diego-cell.yml
-      # Add windows diego cell for WATs #142277823
+      # Add windows diego cell
       - cf-deployment/operations/windows-cell.yml
       - capi-ci/cf-deployment-operations/skip-cert-verify-on-windows-cell.yml
       - capi-ci/cf-deployment-operations/windows-cell-consul-mutual-tls.yml
