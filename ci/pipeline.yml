@@ -1232,7 +1232,7 @@ jobs:
       input_mapping:
         integration-config: updated-integration-configs
       params:
-        NODES: 6
+        NODES: 12
         CONFIG_FILE_PATH: "elsa/cats_integration_config.json"
         CAPTURE_LOGS: true
         CF_COLOR: false
