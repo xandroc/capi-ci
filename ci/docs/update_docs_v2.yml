@@ -14,7 +14,7 @@ inputs:
   - name: api-docs
 
 outputs:
-  - name: api-docs
+  - name: updated-api-docs
 
 run:
   path: capi-ci/ci/docs/update_docs_v2.rb

@@ -1490,7 +1490,7 @@ jobs:
     - get: cf-deployment
     - get: capi-ci
     - get: api-docs
-    - get: capi-release
+    - get: capi-release-master
       params:
         submodules:
           - src/cloud_controller_ng
@@ -1499,11 +1499,11 @@ jobs:
     params:
       CF_VERSIONS_FILE_PATH: api-docs/data/cf-deployment-api-versions.json
   - put: api-docs
-      resource: api-docs
-      params:
-        repository: api-docs
-        branch: testing-ci
-        file: data/cf-deployment-api-versions.json
+    resource: api-docs
+    params:
+      repository: updated-api-docs/api-docs
+      branch: testing-ci
+      file: data/cf-deployment-api-versions.json
 
 - name: bump-cc-v3-api
   serial: true
