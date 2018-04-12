@@ -1487,7 +1487,8 @@ jobs:
   serial: true
   plan:
   - aggregate:
-    - get: cf-deployment
+    - get: cf-deployment-master
+      trigger: true
     - get: capi-ci
     - get: api-docs
     - get: capi-release-master
@@ -1502,6 +1503,7 @@ jobs:
       GIT_COMMIT_EMAIL: "cf-capi-eng+ci@pivotal.io"
     input_mapping:
       capi-release: capi-release-master
+      cf-deployment: cf-deployment-master
   - put: api-docs
     resource: api-docs
     params:
