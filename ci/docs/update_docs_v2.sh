@@ -21,8 +21,10 @@ function copy_to_output_dir() {
 
 function commit_updated_versions() {
   pushd api-docs
-    git add -A
-    git commit -m "Update cf-deployment-api-versions"
+    if [[ -n $(git status --porcelain) ]]; then
+      git add -A
+      git commit -m "Update cf-deployment-api-versions"
+    fi
   popd
 }
 
