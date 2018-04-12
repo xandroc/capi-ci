@@ -29,6 +29,3 @@ versions_to_add.each do |cf_deployment_version|
 end
 
 File.write(data_file_path, JSON.pretty_generate(cf_deployment_api_versions_hash))
-
-# Copy to output directory
-`cp -ar api-docs updated-api-docs/`
