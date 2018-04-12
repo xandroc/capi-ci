@@ -24,12 +24,12 @@ groups:
   - bump-cc-v3-api
   - push-github-release
   - merge-capi-release-master
-  - publish-docs
-  - bump-v2-docs
+  - publish-docs-v3
+  - update-api-info-v2-docs
 - name: dependencies-docs
   jobs:
   - check-cc-dependencies
-  - rc-docs
+  - rc-docs-v3
   - update-checkman
   - deliver-stories
 - name: bosh
@@ -1451,7 +1451,7 @@ jobs:
       globs:
       - generated-release/*.tgz
 
-- name: rc-docs
+- name: rc-docs-v3
   serial: true
   plan:
   - aggregate:
@@ -1462,8 +1462,8 @@ jobs:
       params:
         submodules:
           - src/cloud_controller_ng
-  - task: push-rc-docs
-    file: capi-ci/ci/docs/push_rc_docs.yml
+  - task: push-rc-docs-v3
+    file: capi-ci/ci/docs/push_rc_docs_v3.yml
     params: &docs-aws-account
       AWS_DEFAULT_REGION: us-east-1
       AWS_ACCESS_KEY_ID: ((docs_s3_access_key))
@@ -1472,7 +1472,7 @@ jobs:
     on_failure:
       put: slack-alert
       params:
-        text: '[rc-docs] OH NO! Failed to update documentation https://capi.ci.cf-app.com/?groups=migrations-dependencies-docs'
+        text: '[rc-docs-v3] OH NO! Failed to update documentation https://capi.ci.cf-app.com/?groups=migrations-dependencies-docs'
         icon_emoji: ((slack_failure_emoji))
 
 - name: bump-cc-v3-api
@@ -1503,7 +1503,7 @@ jobs:
     params:
       bump: minor
 
-- name: bump-v2-docs
+- name: update-api-info-v2-docs
   serial: true
   plan:
   - aggregate:
@@ -1512,14 +1512,14 @@ jobs:
       trigger: true
       passed: [bump-cc-v2-api]
     - get: cloud_controller_ng
-  - task: bump-v2-docs
-    file: capi-ci/ci/docs/bump_v2_docs_api_version.yml
+  - task: update-api-info-v2-docs
+    file: capi-ci/ci/docs/update_v2_docs_info_api_version.yml
   - put: cloud_controller_ng
     params:
       repository: cloud_controller_ng_bumped_docs/cloud_controller_ng
       rebase: true
 
-- name: publish-docs
+- name: publish-docs-v3
   serial: true
   plan:
   - aggregate:
@@ -1531,14 +1531,14 @@ jobs:
       params:
         submodules:
           - src/cloud_controller_ng
-  - task: push-docs
-    file: capi-ci/ci/docs/push_docs.yml
+  - task: push-docs-v3
+    file: capi-ci/ci/docs/push_docs_v3.yml
     params:
       GITHUB_PUSH_KEY: ((private_key))
     on_failure:
       put: slack-alert
       params:
-        text: '[publish-docs] OH NO! Failed to update documentation https://capi.ci.cf-app.com/?groups=migrations-dependencies-docs'
+        text: '[publish-docs-v3] OH NO! Failed to update documentation https://capi.ci.cf-app.com/?groups=migrations-dependencies-docs'
         icon_emoji: ((slack_failure_emoji))
 
 - name: update-checkman
