@@ -32,6 +32,7 @@ groups:
   - rc-docs-v3
   - update-checkman
   - deliver-stories
+  - update-and-push-docs-v2
 - name: bosh
   jobs:
   - update-bosh-arya
@@ -147,6 +148,13 @@ resources:
     branch: develop
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/capi-release.git
+
+- name: api-docs
+  type: git
+  source:
+    branch: master
+    private_key: ((private_key))
+    uri: git@github.com:cloudfoundry/api-docs.git
 
 - name: capi-release-tarball
   type: s3
@@ -1474,6 +1482,28 @@ jobs:
       params:
         text: '[rc-docs-v3] OH NO! Failed to update documentation https://capi.ci.cf-app.com/?groups=migrations-dependencies-docs'
         icon_emoji: ((slack_failure_emoji))
+
+- name: update-and-push-docs-v2
+  serial: true
+  plan:
+  - aggregate:
+    - get: cf-deployment
+    - get: capi-ci
+    - get: api-docs
+    - get: capi-release
+      params:
+        submodules:
+          - src/cloud_controller_ng
+  - task: update-docs-v2
+    file: capi-ci/ci/docs/update_docs_v2.yml
+    params:
+      CF_VERSIONS_FILE_PATH: api-docs/data/cf-deployment-api-versions.json
+  - put: api-docs
+      resource: api-docs
+      params:
+        repository: api-docs
+        branch: testing-ci
+        file: data/cf-deployment-api-versions.json
 
 - name: bump-cc-v3-api
   serial: true
