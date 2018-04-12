@@ -1498,6 +1498,8 @@ jobs:
     file: capi-ci/ci/docs/update_docs_v2.yml
     params:
       CF_VERSIONS_FILE_PATH: api-docs/data/cf-deployment-api-versions.json
+    input_mapping:
+      capi-release: capi-release-master
   - put: api-docs
     resource: api-docs
     params:
