@@ -268,7 +268,6 @@ jobs:
           MESSAGE_PREFIX: ((slack_notification_prefix))
       - put: slack-alert
         params:
-          channel: ((slack_notification_channel))
           text_file: message/message.txt
           silent: true
           username: "BOSH Herder"
