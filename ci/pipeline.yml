@@ -276,6 +276,13 @@ resources:
     private_key: ((private_key))
     branch: master
 
+- name: cf-deployment-release
+  type: github-release
+  source:
+    owner: cloudfoundry
+    repository: cf-deployment
+    access_token: ((github_access_token))
+
 - name: cf-deployment-concourse-tasks
   type: git
   source:
@@ -1473,8 +1480,9 @@ jobs:
   serial: true
   plan:
   - aggregate:
-    - get: cf-deployment-master
+    - get: cf-deployment-release
       trigger: true
+    - get: cf-deployment-master
     - get: capi-ci
     - get: api-docs
     - get: capi-release-master
