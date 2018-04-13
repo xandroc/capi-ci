@@ -233,24 +233,10 @@ resources:
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/diego-release.git
 
-- name: nsync
-  type: git
-  source:
-    branch: master
-    private_key: ((private_key))
-    uri: git@github.com:cloudfoundry/nsync.git
-
 - name: slack-alert
   type: slack-notification
   source:
     url: ((slack_failure_hook_url))
-
-- name: stager
-  type: git
-  source:
-    branch: master
-    private_key: ((private_key))
-    uri: git@github.com:cloudfoundry/stager.git
 
 - name: sync-integration-tests
   type: git
@@ -569,12 +555,6 @@ jobs:
     - get: cc-uploader
       passed: [bridge-unit-tests]
       trigger: true
-    - get: nsync
-      passed: [bridge-unit-tests]
-      trigger: true
-    - get: stager
-      passed: [bridge-unit-tests]
-      trigger: true
     - get: tps
       passed: [bridge-unit-tests]
       trigger: true
@@ -593,10 +573,6 @@ jobs:
     - get: capi-release
       resource: capi-release-develop
     - get: cc-uploader
-      trigger: true
-    - get: nsync
-      trigger: true
-    - get: stager
       trigger: true
     - get: tps
       trigger: true
@@ -2198,8 +2174,6 @@ jobs:
         repos:
         - capi-release/src/cloud_controller_ng
         - capi-release/src/code.cloudfoundry.org/tps
-        - capi-release/src/code.cloudfoundry.org/nsync
-        - capi-release/src/code.cloudfoundry.org/stager
         - capi-release
 
 - name: merge-capi-release-master

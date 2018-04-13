@@ -16,14 +16,6 @@ pushd cc-uploader
   CC_UPLOADER_SHA=$(git rev-parse HEAD)
 popd
 
-pushd nsync
-  NSYNC_SHA=$(git rev-parse HEAD)
-popd
-
-pushd stager
-  STAGER_SHA=$(git rev-parse HEAD)
-popd
-
 pushd tps
   TPS_SHA=$(git rev-parse HEAD)
 popd
@@ -43,16 +35,6 @@ pushd capi-release
     pushd cc-uploader
       git fetch
       git checkout "${CC_UPLOADER_SHA}"
-    popd
-
-    pushd nsync
-      git fetch
-      git checkout "${NSYNC_SHA}"
-    popd
-
-    pushd stager
-      git fetch
-      git checkout "${STAGER_SHA}"
     popd
 
     pushd tps

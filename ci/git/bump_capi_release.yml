@@ -13,8 +13,6 @@ inputs:
   - name: capi-ci
   - name: diego-release
   - name: cc-uploader
-  - name: nsync
-  - name: stager
   - name: tps
 
 outputs:
