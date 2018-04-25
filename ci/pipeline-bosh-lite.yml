@@ -169,25 +169,17 @@ jobs:
                 params:
                   remove: fake-placeholder-env/
             on_failure:
-              aggregate:
-              - put: building-pool
-                params:
-                  remove: fake-placeholder-env/
-              - task: delete-bosh-lite
-                file: capi-ci/ci/bosh-lite/delete-bosh-lite.yml
+              task: delete-bosh-lite
+              file: capi-ci/ci/bosh-lite/delete-bosh-lite.yml
         on_failure:
-          aggregate:
-          - put: terraform
-            params:
-              action: destroy
-              env_name_file: terraform/name
-              terraform_source: capi-ci/terraform/bosh-lite/
-              vars: *terraform-vars
-            get_params:
-              action: destroy
-          - put: building-pool
-            params:
-              remove: fake-placeholder-env/
+          put: terraform
+          params:
+            action: destroy
+            env_name_file: terraform/name
+            terraform_source: capi-ci/terraform/bosh-lite/
+            vars: *terraform-vars
+          get_params:
+            action: destroy
 
   - name: delete-bosh-lite
     plan:
