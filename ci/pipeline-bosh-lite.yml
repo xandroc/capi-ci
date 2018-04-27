@@ -245,6 +245,19 @@ jobs:
           repository: updated-env-pool
           rebase: true
 
+  - name: check-broken-pool-size
+    build_logs_to_retain: 100
+    plan:
+      - aggregate:
+        - get: capi-ci
+        - get: pool-repo
+        - get: 5m
+          trigger: true
+      - task: check-broken-pool-size
+        file: capi-ci/ci/bosh-lite/check-broken-pool-size.yml
+        input_mapping:
+          env-pool: pool-repo
+
   - name: slack-claimed-envs
     plan:
       - aggregate:
