@@ -261,13 +261,13 @@ jobs:
         - get: 5m
           trigger: true
       - try:
-        - on_success:
-            put: broken-pool
-            params: { acquire: true }
-        - task: check-broken-pool-size
+          task: check-broken-pool-size
           file: capi-ci/ci/bosh-lite/check-broken-pool-size.yml
           input_mapping:
             env-pool: pool-repo
+          on_success:
+            put: broken-pool
+            params: { acquire: true }
 
   - name: slack-claimed-envs
     plan:
