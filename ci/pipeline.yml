@@ -2300,8 +2300,6 @@ jobs:
       - capi-ci/cf-deployment-operations/use-latest-capi.yml
       # Ensure that we support BBR with multiple CC instances
       - capi-ci/cf-deployment-operations/scale-up-cloud-controller.yml
-      # Temporarily scale up UAA to work around DRATs timing issue #152218506
-      - capi-ci/cf-deployment-operations/temporary/scale-up-uaa.yml
   - task: download-vars-store
     output_mapping:
       destination-directory: xena-mysql-deployment-vars
@@ -2378,8 +2376,6 @@ jobs:
       - cf-deployment/operations/use-postgres.yml
       # Ensure that we support BBR with multiple CC instances
       - capi-ci/cf-deployment-operations/scale-up-cloud-controller.yml
-      # Temporarily scale up UAA to work around DRATs timing issue #152218506
-      - capi-ci/cf-deployment-operations/temporary/scale-up-uaa.yml
   - task: download-vars-store
     output_mapping:
       destination-directory: xena-postgres-deployment-vars
