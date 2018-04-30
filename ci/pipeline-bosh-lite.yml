@@ -72,14 +72,6 @@ resources:
       private_key: ((bosh_lite_pool_deploy_key))
       paths:
         - .trigger-bosh-lites-create # updated by check-pool-size
-  - name: destroy-bosh-lite-trigger
-    type: git
-    source:
-      branch: master
-      uri: git@github.com:cloudfoundry/capi-env-pool.git
-      private_key: ((bosh_lite_pool_deploy_key))
-      paths:
-        - .trigger-bosh-lites-destroy # updated by unclaim_bosh_lite alias
   - name: cf-deployment
     type: git
     source:
@@ -191,14 +183,11 @@ jobs:
   - name: delete-bosh-lite
     plan:
       - aggregate:
-        - get: destroy-bosh-lite-trigger
-          version: every
-          trigger: true
         - get: capi-ci
         - get: bosh-deployment
-        - put: broken-pool
-          params:
-            acquire: true
+        - get: broken-pool
+          passed: [ check-broken-pool-size ]
+          trigger: true
       - task: download-from-gcs
         file: capi-ci/ci/gcs/download-from-gcs.yml
         input_mapping:
