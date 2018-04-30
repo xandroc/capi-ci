@@ -188,39 +188,44 @@ jobs:
         - get: broken-pool
           passed: [ check-broken-pool-size ]
           trigger: true
-      - task: download-from-gcs
-        file: capi-ci/ci/gcs/download-from-gcs.yml
-        input_mapping:
-          environment: broken-pool
-        output_mapping:
-          destination-directory: director-state
-        params:
-          GCP_JSON_KEY: ((bosh_lite_gcp_json_key))
-          GCP_BUCKET: ((bosh_lite_storage_bucket))
-          GCP_PATH: director-state
-          USE_ENV_NAMED_SUBDIR: true
-      - task: delete-bosh-lite
-        file: capi-ci/ci/bosh-lite/delete-bosh-lite.yml
-      - put: terraform
-        params:
-          action: destroy
-          env_name_file: broken-pool/name
-          terraform_source: capi-ci/terraform/bosh-lite/
-          vars: *terraform-vars
-        get_params:
-          action: destroy
-      - task: delete-from-gcs
-        file: capi-ci/ci/gcs/delete-from-gcs.yml
-        input_mapping:
-          environment: broken-pool
-        params:
-          GCP_JSON_KEY: ((bosh_lite_gcp_json_key))
-          GCP_BUCKET: ((bosh_lite_storage_bucket))
-          GCP_PATH: director-state
-          USE_ENV_NAMED_SUBDIR: true
-      - put: broken-pool
-        params:
-          remove: broken-pool/
+      - do:
+        - task: download-from-gcs
+          file: capi-ci/ci/gcs/download-from-gcs.yml
+          input_mapping:
+            environment: broken-pool
+          output_mapping:
+            destination-directory: director-state
+          params:
+            GCP_JSON_KEY: ((bosh_lite_gcp_json_key))
+            GCP_BUCKET: ((bosh_lite_storage_bucket))
+            GCP_PATH: director-state
+            USE_ENV_NAMED_SUBDIR: true
+        - task: delete-bosh-lite
+          file: capi-ci/ci/bosh-lite/delete-bosh-lite.yml
+        - put: terraform
+          params:
+            action: destroy
+            env_name_file: broken-pool/name
+            terraform_source: capi-ci/terraform/bosh-lite/
+            vars: *terraform-vars
+          get_params:
+            action: destroy
+        - task: delete-from-gcs
+          file: capi-ci/ci/gcs/delete-from-gcs.yml
+          input_mapping:
+            environment: broken-pool
+          params:
+            GCP_JSON_KEY: ((bosh_lite_gcp_json_key))
+            GCP_BUCKET: ((bosh_lite_storage_bucket))
+            GCP_PATH: director-state
+            USE_ENV_NAMED_SUBDIR: true
+        - put: broken-pool
+          params:
+            remove: broken-pool/
+        on_failure:
+          put: broken-pool
+          params:
+            release: broken-pool/
 
   - name: check-pool-size
     build_logs_to_retain: 100
