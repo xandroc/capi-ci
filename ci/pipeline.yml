@@ -709,7 +709,7 @@ jobs:
       - capi-ci/cf-deployment-operations/seed-credhub-asg.yml
       # Use postgres
       - cf-deployment/operations/use-postgres.yml
-      - capi-ci/cf-deployment-operations/use-ssl-postgres.yml
+      - cf-deployment/operations/experimental/enable-tls-cloud-controller-postgres.yml
       - cf-deployment/operations/experimental/secure-service-credentials-postgres.yml
       # Tell CC not to interpolate service binding refs from credhub. Used to test "non-assisted" credhub interactions.
       - capi-ci/cf-deployment-operations/disable-credhub-interpolate-service-bindings.yml
@@ -851,7 +851,7 @@ jobs:
       - capi-ci/cf-deployment-operations/scale-up-cells.yml
       # Use postgres
       - cf-deployment/operations/use-postgres.yml
-      - capi-ci/cf-deployment-operations/use-ssl-postgres.yml
+      - cf-deployment/operations/experimental/enable-tls-cloud-controller-postgres.yml
       # Metrics
       - capi-ci/cf-deployment-operations/add-prometheus.yml
       - capi-ci/cf-deployment-operations/add-prometheus-capi-homepage.yml
