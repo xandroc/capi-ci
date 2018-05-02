@@ -1566,6 +1566,7 @@ jobs:
           - src/cloud_controller_ng
   - task: push-docs-v3
     file: capi-ci/ci/docs/push_docs_v3.yml
+    privileged: true
     params:
       GITHUB_PUSH_KEY: ((private_key))
     on_failure:
