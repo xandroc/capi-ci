@@ -15,8 +15,7 @@ function print_env_info {
     stale_claimed_files="$(git log --reverse --name-only --pretty=format: --until="7 days ago" -- * | sort | uniq | xargs)"
     fresh_claimed_files="$(git log --reverse --name-only --pretty=format: --after="7 days ago" -- * | sort | uniq | xargs)"
 
-
-    output="${blue}\n* ENV *\t* CLAIMED BY *\t* CLAIMED ON *\t* CLAIMED SINCE *\n"
+    output="${blue}\n* ENV *\t* CLAIMED BY *\t* CLAIMED ON *\t* CLAIMED SINCE *\t* STORY *\n"
 
     output="${output}${red}\n"
     for file in ${stale_claimed_files}; do
@@ -26,6 +25,7 @@ function print_env_info {
         committer="$(git log --max-count=1 --pretty='format:%cn' "${file}")"
         claimed_since="$(git log --max-count=1 --pretty='format:%ar' "${file}")"
         workstation="$(git log --max-count=1 --pretty='format:%s' "${file}" | sed -E "s/^manually claim [^[:space:]]+ on ([^[:space:]]+).*$/\1/")"
+        story="$(git log --max-count=1 --pretty='format:%s' "${file}" | awk -F '[][]' '{print $2}')"
 
         if [ "${author}" != "${committer}" ]; then
           claimed_by="${author}+${committer}"
@@ -33,7 +33,7 @@ function print_env_info {
           claimed_by="${author}"
         fi
 
-          output="${output}${file}\t${claimed_by}\t${workstation}\t${claimed_since}\n"
+        output="${output}${file}\t${claimed_by}\t${workstation}\t${claimed_since}\t${story}\n"
       fi
     done
 
@@ -45,6 +45,7 @@ function print_env_info {
       committer="$(git log --max-count=1 --pretty='format:%cn' "${file}")"
       claimed_since="$(git log --max-count=1 --pretty='format:%ar' "${file}")"
       workstation="$(git log --max-count=1 --pretty='format:%s' "${file}" | sed -E "s/^manually claim [^[:space:]]+ on ([^[:space:]]+).*$/\1/")"
+      story="$(git log --max-count=1 --pretty='format:%s' "${file}" | awk -F '[][]' '{print $2}')"
 
       if [ "${author}" != "${committer}" ]; then
         claimed_by="${author}+${committer}"
@@ -52,7 +53,7 @@ function print_env_info {
         claimed_by="${author}"
       fi
 
-        output="${output}${file}\t${claimed_by}\t${workstation}\t${claimed_since}\n"
+      output="${output}${file}\t${claimed_by}\t${workstation}\t${claimed_since}\t${story}\n"
     done
 
   popd > /dev/null
