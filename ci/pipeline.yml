@@ -1648,6 +1648,7 @@ jobs:
           repository: updated-bbl-state
           rebase: true
     - task: create-dns-record
+      attempts: 3
       file: capi-ci/ci/bbl-tasks/create-dns-record.yml
       input_mapping:
        bbl-state: updated-bbl-state
@@ -1720,6 +1721,7 @@ jobs:
           repository: updated-bbl-state
           rebase: true
     - task: create-dns-record
+      attempts: 3
       file: capi-ci/ci/bbl-tasks/create-dns-record.yml
       input_mapping:
        bbl-state: updated-bbl-state
@@ -1782,6 +1784,7 @@ jobs:
           repository: updated-bbl-state
           rebase: true
     - task: create-dns-record
+      attempts: 3
       file: capi-ci/ci/bbl-tasks/create-dns-record.yml
       input_mapping:
        bbl-state: updated-bbl-state
@@ -1844,6 +1847,7 @@ jobs:
           repository: updated-bbl-state
           rebase: true
     - task: create-dns-record
+      attempts: 3
       file: capi-ci/ci/bbl-tasks/create-dns-record.yml
       input_mapping:
        bbl-state: updated-bbl-state
@@ -1915,6 +1919,7 @@ jobs:
           repository: updated-bbl-state
           rebase: true
     - task: create-dns-record
+      attempts: 3
       file: capi-ci/ci/bbl-tasks/create-dns-record.yml
       input_mapping:
        bbl-state: updated-bbl-state
@@ -1982,6 +1987,7 @@ jobs:
           repository: updated-bbl-state
           rebase: true
     - task: create-dns-record
+      attempts: 3
       file: capi-ci/ci/bbl-tasks/create-dns-record.yml
       input_mapping:
         bbl-state: updated-bbl-state
@@ -2075,6 +2081,7 @@ jobs:
         GCP_SERVICE_ACCOUNT_KEY: ((xena_gcp_json_key))
         GCP_PROJECT_ID: ((xena_gcp_project_id))
     - task: create-dns-record
+      attempts: 3
       file: capi-ci/ci/bbl-tasks/create-dns-record.yml
       input_mapping:
        bbl-state: updated-bbl-state
@@ -2168,6 +2175,7 @@ jobs:
         GCP_SERVICE_ACCOUNT_KEY: ((xena_gcp_json_key))
         GCP_PROJECT_ID: ((xena_gcp_project_id))
     - task: create-dns-record
+      attempts: 3
       file: capi-ci/ci/bbl-tasks/create-dns-record.yml
       input_mapping:
        bbl-state: updated-bbl-state
