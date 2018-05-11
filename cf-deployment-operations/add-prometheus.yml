@@ -68,9 +68,9 @@
           bosh_exporter:
             bosh:
               # re-use values from bosh-deployment-resource source file
-              url: ((target))
-              username: ((client))
-              password: ((client_secret))
+              url: ((bosh_target))
+              username: ((bosh_client))
+              password: ((bosh_client_secret))
               ca_cert: ((ca_cert))
             metrics:
               environment: ((system_domain))
@@ -188,12 +188,12 @@
 
 - type: replace
   path: /variables/-
-  value: client
+  value: bosh_client
 
 - type: replace
   path: /variables/-
-  value: client_secret
+  value: bosh_client_secret
 
 - type: replace
   path: /variables/-
-  value: target
+  value: bosh_target
