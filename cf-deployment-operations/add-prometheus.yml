@@ -185,3 +185,19 @@
     url: https://bosh.io/d/github.com/cloudfoundry-community/prometheus-boshrelease?v=18.0.0
     version: 18.0.0
     sha1: 1744232274d6dfe42b7d504977339c88c4022cfb
+
+- type: replace
+  path: /variables/-
+  value:
+    name: client
+
+- type: replace
+  path: /variables/-
+  value:
+    name: password
+    type: password
+
+- type: replace
+  path: /variables/-
+  value:
+    name: hostname
