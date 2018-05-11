@@ -68,9 +68,9 @@
           bosh_exporter:
             bosh:
               # re-use values from bosh-deployment-resource source file
-              url: ((bosh_target))
-              username: ((bosh_client))
-              password: ((bosh_client_secret))
+              url: ((target))
+              username: ((client))
+              password: ((client_secret))
               ca_cert: ((ca_cert))
             metrics:
               environment: ((system_domain))
@@ -185,15 +185,3 @@
     url: https://bosh.io/d/github.com/cloudfoundry-community/prometheus-boshrelease?v=18.0.0
     version: 18.0.0
     sha1: 1744232274d6dfe42b7d504977339c88c4022cfb
-
-- type: replace
-  path: /variables/-
-  value: bosh_client
-
-- type: replace
-  path: /variables/-
-  value: bosh_client_secret
-
-- type: replace
-  path: /variables/-
-  value: bosh_target
