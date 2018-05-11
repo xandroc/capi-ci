@@ -188,16 +188,12 @@
 
 - type: replace
   path: /variables/-
-  value:
-    name: client
+  value: client
 
 - type: replace
   path: /variables/-
-  value:
-    name: password
-    type: password
+  value: client_secret
 
 - type: replace
   path: /variables/-
-  value:
-    name: hostname
+  value: target
