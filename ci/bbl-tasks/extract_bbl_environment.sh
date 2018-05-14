@@ -42,7 +42,10 @@ cat <<- EOF > "${output_metadata_file}"
     "ca_cert": "$(read_with_escaped_newlines <(bbl director-ca-cert))",
     "gw_user": "jumpbox",
     "gw_host": "$(bbl director-address | cut -d'/' -f3 | cut -d':' -f1)",
-    "gw_private_key": "$(read_with_escaped_newlines <(bbl ssh-key))"
+    "gw_private_key": "$(read_with_escaped_newlines <(bbl ssh-key))",
+    "jumpbox_url": "$(bbl jumpbox-address)",
+    "jumpbox_ssh_key": "$(bbl ssh-key)",
+    "jumpbox_username": "jumpbox"
   }
 EOF
 
