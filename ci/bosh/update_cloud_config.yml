@@ -10,9 +10,11 @@ inputs:
   - name: capi-ci
   - name: environment
   - name: cloud-config
+  - name: bbl-state
 
 run:
   path: capi-ci/ci/bosh/update_cloud_config.sh
 
 params:
+  BBL_STATE_DIR:
   CLOUD_CONFIG_PATH:
