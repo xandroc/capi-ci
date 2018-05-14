@@ -19,8 +19,14 @@ BOSH_CA_CERT="$(jq -e -r .ca_cert "${bbl_vars_file}")"
 BOSH_GW_USER="$(jq -e -r .gw_user "${bbl_vars_file}")"
 BOSH_GW_HOST="$(jq -e -r .gw_host "${bbl_vars_file}")"
 BOSH_GW_PRIVATE_KEY_CONTENTS="$(jq -e -r .gw_private_key "${bbl_vars_file}")"
+
+JUMPBOX_URL="$(jq -e -r .jumpbox_url "${bbl_vars_file}")"
+JUMPBOX_SSH_KEY="$(jq -e -r .jumpbox_ssh_key "${bbl_vars_file}")"
+JUMPBOX_USERNAME="$(jq -e -r .jumpbox_username "${bbl_vars_file}")"
+
 export BOSH_ENVIRONMENT BOSH_CLIENT BOSH_CLIENT_SECRET BOSH_CA_CERT \
-  BOSH_GW_USER BOSH_GW_HOST BOSH_GW_PRIVATE_KEY_CONTENTS
+  BOSH_GW_USER BOSH_GW_HOST BOSH_GW_PRIVATE_KEY_CONTENTS \
+  JUMPBOX_URL JUMPBOX_SSH_KEY JUMPBOX_USERNAME
 
 green="$(tput -T xterm-256color setaf 2)"
 reset="$(tput -T xterm-256color sgr0)"
@@ -51,10 +57,9 @@ download_cloud_controller_config() {
 start_background_ssh_tunnel() {
   echo "${green}Starting background SSH tunnel as SOCKS Proxy...${reset}"
 
-  bosh ssh "${BOSH_API_INSTANCE}" \
-    -d "${BOSH_DEPLOYMENT_NAME}" \
-    --opts="-D ${tunnel_port}" \
-    --opts='-fN'
+  ssh "${JUMPBOX_USERNAME}@${JUMPBOX_URL}" \
+    -i "${JUMPBOX_SSH_KEY}" \
+    -D "${tunnel_port}"
 }
 
 write_proxychains_config() {
