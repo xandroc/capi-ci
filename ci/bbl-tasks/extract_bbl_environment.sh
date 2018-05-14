@@ -31,6 +31,7 @@ pushd "${capi_ci_private}/${ENV_NAME}" > /dev/null
 bblver="$(bbl -v | cut -d' ' -f2 | cut -d'.' -f1)"
 if [ $bblver -eq "6" ]; then
   eval "$(bbl print-env)"
+  jumpbox_address="$(bbl print-env | grep BOSH_ALL_PROXY | cut -d'@' -f2 | cut -d'?' -f1)"
 fi
 
 cat <<- EOF > "${output_metadata_file}"
@@ -43,7 +44,7 @@ cat <<- EOF > "${output_metadata_file}"
     "gw_user": "jumpbox",
     "gw_host": "$(bbl director-address | cut -d'/' -f3 | cut -d':' -f1)",
     "gw_private_key": "$(read_with_escaped_newlines <(bbl ssh-key))",
-    "jumpbox_url": "$(bbl jumpbox-address):22",
+    "jumpbox_url": "${jumpbox_address}",
     "jumpbox_ssh_key": "$(read_with_escaped_newlines <(bbl ssh-key))",
     "jumpbox_username": "jumpbox"
   }
