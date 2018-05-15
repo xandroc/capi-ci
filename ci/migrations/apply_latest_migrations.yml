@@ -11,6 +11,7 @@ inputs:
   - name: cloud_controller_ng
   - name: capi-ci
   - name: environment
+  - name: capi-ci-private
 
 run:
   path: capi-ci/ci/migrations/apply_latest_migrations.sh
@@ -18,3 +19,4 @@ run:
 params:
   BOSH_API_INSTANCE:
   BOSH_DEPLOYMENT_NAME:
+  BBL_STATE_DIR:

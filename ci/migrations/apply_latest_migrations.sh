@@ -56,10 +56,13 @@ download_cloud_controller_config() {
 
 start_background_ssh_tunnel() {
   echo "${green}Starting background SSH tunnel as SOCKS Proxy...${reset}"
-
-  ssh "${JUMPBOX_USERNAME}@${JUMPBOX_URL}" \
-    -i "${JUMPBOX_SSH_KEY}" \
-    -D "${tunnel_port}"
+  pushd "capi-ci-private/${BBL_STATE_DIR}"
+    eval "$(bbl print-env)"
+  popd
+  bosh ssh "${BOSH_API_INSTANCE}" \
+      -d "${BOSH_DEPLOYMENT_NAME}" \
+      --opts="-D ${tunnel_port}" \
+      --opts='-fN'
 }
 
 write_proxychains_config() {
