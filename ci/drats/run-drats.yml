@@ -12,6 +12,7 @@ inputs:
   - name: environment
   - name: vars-store
   - name: bbr-binary-release
+  - name: capi-ci-private
 
 run:
   path: capi-ci/ci/drats/run-drats.sh
@@ -24,3 +25,4 @@ params:
   GOPATH: ""
   VARS_STORE_PATH: ""
   SKIP_SUITE_NAME: ""
+  BBL_STATE_DIR:
