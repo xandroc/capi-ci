@@ -35,6 +35,12 @@ tmp_dir="$( mktemp -d /tmp/capi-migrations.XXXXXXXXXX )"
 tunnel_port="8080"
 proxychains_conf="${tmp_dir}/proxychains.conf"
 
+setup_bbl_environment() {
+  pushd "capi-ci-private/${BBL_STATE_DIR}"
+    eval "$(bbl print-env)"
+  popd
+}
+
 write_ssh_key() {
   echo "${green}Writing BOSH GW SSH key...${reset}"
 
@@ -56,9 +62,6 @@ download_cloud_controller_config() {
 
 start_background_ssh_tunnel() {
   echo "${green}Starting background SSH tunnel as SOCKS Proxy...${reset}"
-  pushd "capi-ci-private/${BBL_STATE_DIR}"
-    eval "$(bbl print-env)"
-  popd
   bosh ssh "${BOSH_API_INSTANCE}" \
       -d "${BOSH_DEPLOYMENT_NAME}" \
       --opts="-D ${tunnel_port}" \
@@ -137,6 +140,7 @@ cleanup() {
 }
 
 main() {
+  setup_bbl_environment
   write_ssh_key
   download_cloud_controller_config
   start_background_ssh_tunnel
