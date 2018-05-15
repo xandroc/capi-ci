@@ -647,7 +647,7 @@ jobs:
   - aggregate:
     - get: cloud_controller_ng
       passed: [create-capi-release]
-    - get: cf-deployment-concourse-tasks
+    - get: cf-deployment-concourse-tasks-latest
     - get: cats-concourse-task
     - get: cf-deployment
       resource: cf-deployment
@@ -671,9 +671,10 @@ jobs:
     params:
       BBL_STATE_DIR: "mulan"
   - task: mulan-stemcell-upload
-    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    file: cf-deployment-concourse-tasks-latest/bosh-upload-stemcell-from-cf-deployment/task.yml
     input_mapping:
       bbl-state: mulan-bbl-state
+      cf-deployment-concourse-tasks: cf-deployment-concourse-tasks-latest
     params:
       BBL_STATE_DIR: "mulan"
   - task: extract-bbl-environment
@@ -741,8 +742,9 @@ jobs:
       GCP_BUCKET: ((mulan_bosh_vars_bucket))
       GCP_PATH: bosh
   - task: updated-integration-configs
-    file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
+    file: cf-deployment-concourse-tasks-latest/update-integration-configs/task.yml
     input_mapping:
+      cf-deployment-concourse-tasks: cf-deployment-concourse-tasks-latest
       vars-store: mulan-deployment-vars
       integration-configs: mulan-integration-configs
     params:
@@ -755,8 +757,9 @@ jobs:
         repository: updated-integration-configs
         rebase: true
   - task: enable-feature-flags
-    file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
+    file: cf-deployment-concourse-tasks-latest/set-feature-flags/task.yml
     input_mapping:
+      cf-deployment-concourse-tasks: cf-deployment-concourse-tasks-latest
       vars-store: mulan-deployment-vars
     params:
       SYSTEM_DOMAIN: *mulan-domain
@@ -794,7 +797,7 @@ jobs:
   - aggregate:
     - get: cloud_controller_ng
       passed: [create-capi-release]
-    - get: cf-deployment-concourse-tasks
+    - get: cf-deployment-concourse-tasks-latest
     - get: cats-concourse-task
     - get: cf-deployment
       resource: cf-deployment
@@ -818,9 +821,10 @@ jobs:
     params:
       BBL_STATE_DIR: "buffy"
   - task: buffy-stemcell-upload
-    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    file: cf-deployment-concourse-tasks-latest/bosh-upload-stemcell-from-cf-deployment/task.yml
     input_mapping:
       bbl-state: buffy-bbl-state
+      cf-deployment-concourse-tasks: cf-deployment-concourse-tasks-latest
     params:
       BBL_STATE_DIR: "buffy"
   - task: extract-bbl-environment
@@ -880,10 +884,11 @@ jobs:
       GCP_BUCKET: ((buffy_bosh_vars_bucket))
       GCP_PATH: bosh
   - task: updated-integration-configs
-    file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
+    file: cf-deployment-concourse-tasks-latest/update-integration-configs/task.yml
     input_mapping:
       vars-store: buffy-deployment-vars
       integration-configs: buffy-integration-configs
+      cf-deployment-concourse-tasks: cf-deployment-concourse-tasks-latest
     params:
       CATS_INTEGRATION_CONFIG_FILE: "buffy/cats_integration_config.json"
       VARS_STORE_FILE: "vars-store.yml"
@@ -894,9 +899,10 @@ jobs:
         repository: updated-integration-configs
         rebase: true
   - task: enable-feature-flags
-    file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
+    file: cf-deployment-concourse-tasks-latest/set-feature-flags/task.yml
     input_mapping:
       vars-store: buffy-deployment-vars
+      cf-deployment-concourse-tasks: cf-deployment-concourse-tasks-latest
     params:
       SYSTEM_DOMAIN: *buffy-domain
       VARS_STORE_FILE: "vars-store.yml"
@@ -934,7 +940,7 @@ jobs:
   - aggregate:
     - get: cloud_controller_ng
       passed: [create-capi-release]
-    - get: cf-deployment-concourse-tasks
+    - get: cf-deployment-concourse-tasks-latest
     - get: cats-concourse-task
     - get: cf-deployment
       resource: cf-deployment
@@ -958,9 +964,10 @@ jobs:
     params:
       BBL_STATE_DIR: "ripley"
   - task: ripley-linux-stemcell-upload
-    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    file: cf-deployment-concourse-tasks-latest/bosh-upload-stemcell-from-cf-deployment/task.yml
     input_mapping:
       bbl-state: ripley-bbl-state
+      cf-deployment-concourse-tasks: cf-deployment-concourse-tasks-latest
     params:
       BBL_STATE_DIR: "ripley"
   - task: extract-bbl-environment
@@ -1020,10 +1027,11 @@ jobs:
       GCP_BUCKET: ((ripley_bosh_vars_bucket))
       GCP_PATH: bosh
   - task: updated-integration-configs
-    file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
+    file: cf-deployment-concourse-tasks-latest/update-integration-configs/task.yml
     input_mapping:
       vars-store: ripley-deployment-vars
       integration-configs: ripley-integration-configs
+      cf-deployment-concourse-tasks: cf-deployment-concourse-tasks-latest
     params:
       CATS_INTEGRATION_CONFIG_FILE: "ripley/cats_integration_config.json"
       VARS_STORE_FILE: "vars-store.yml"
@@ -1034,9 +1042,10 @@ jobs:
         repository: updated-integration-configs
         rebase: true
   - task: enable-feature-flags
-    file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
+    file: cf-deployment-concourse-tasks-latest/set-feature-flags/task.yml
     input_mapping:
       vars-store: ripley-deployment-vars
+      cf-deployment-concourse-tasks: cf-deployment-concourse-tasks-latest
     params:
       SYSTEM_DOMAIN: *ripley-domain
       VARS_STORE_FILE: "vars-store.yml"
@@ -1098,7 +1107,7 @@ jobs:
     params:
       BBL_STATE_DIR: "elsa"
   - task: elsa-linux-stemcell-upload
-    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    file: cf-deployment-concourse-tasks-latest/bosh-upload-stemcell-from-cf-deployment/task.yml
     input_mapping:
       bbl-state: elsa-bbl-state
     params:
@@ -1220,7 +1229,7 @@ jobs:
         repository: updated-integration-configs
         rebase: true
   - task: enable-feature-flags
-    file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
+    file: cf-deployment-concourse-tasks-latest/set-feature-flags/task.yml
     input_mapping:
       vars-store: elsa-deployment-vars
     params:
@@ -1280,7 +1289,7 @@ jobs:
       trigger: true
     - get: cf-acceptance-tests
   - task: kiki-stemcell-upload
-    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    file: cf-deployment-concourse-tasks-latest/bosh-upload-stemcell-from-cf-deployment/task.yml
     input_mapping:
       bbl-state: kiki-bbl-state
     params:
@@ -1289,10 +1298,12 @@ jobs:
     file: capi-ci/ci/bbl-tasks/extract_bbl_environment.yml
     params:
       ENV_NAME: kiki
-  - task: delete-deployment
-    file: capi-ci/ci/bosh/run_bosh_cmd.yml
+  - put: kiki-deployment # delete-deployment
     params:
-      BOSH_ARGS: "delete-deployment -d cf"
+      source_file: environment/metadata
+      delete:
+        enabled: true
+        force: true
   - put: kiki-deployment
     params:
       source_file: environment/metadata
@@ -1331,6 +1342,8 @@ jobs:
       - cf-deployment-temporary-workaround/operations/workaround/use-4-azs-for-router.yml
   - task: apply-cc-migrations
     file: capi-ci/ci/migrations/apply_latest_migrations.yml
+    params:
+      BBL_STATE_DIR: "kiki"
   - task: download-vars-store
     output_mapping:
       destination-directory: kiki-deployment-vars
@@ -1340,8 +1353,9 @@ jobs:
       GCP_BUCKET: ((kiki_bosh_vars_bucket))
       GCP_PATH: bosh
   - task: updated-integration-configs
-    file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
+    file: cf-deployment-concourse-tasks-latest/update-integration-configs/task.yml
     input_mapping:
+      cf-deployment-concourse-tasks: cf-deployment-concourse-tasks-latest
       vars-store: kiki-deployment-vars
       integration-configs: kiki-integration-configs
     params:
@@ -1354,8 +1368,9 @@ jobs:
         repository: updated-integration-configs
         rebase: true
   - task: enable-feature-flags
-    file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
+    file: cf-deployment-concourse-tasks-latest/set-feature-flags/task.yml
     input_mapping:
+      cf-deployment-concourse-tasks: cf-deployment-concourse-tasks-latest
       vars-store: kiki-deployment-vars
     params:
       SYSTEM_DOMAIN: *kiki-domain
@@ -1386,10 +1401,12 @@ jobs:
         BBL_STATE_DIR: kiki
         VARS_STORE_PATH: "vars-store.yml"
         USE_CF_DEPLOYMENT_VARS: "true"
-  - task: delete-deployment
-    file: capi-ci/ci/bosh/run_bosh_cmd.yml
+  - put: kiki-deployment # delete-deployment
     params:
-      BOSH_ARGS: "delete-deployment -d cf"
+      source_file: environment/metadata
+      delete:
+        enabled: true
+        force: true
 
 - name: ship-it
   serial_groups: [version]
@@ -1607,9 +1624,7 @@ jobs:
   serial: true
   plan:
     - aggregate:
-      - get: cf-deployment-concourse-tasks
-        version:
-          ref: 325f64f359e3984016c9153afc870c2aaa204c1c
+      - get: cf-deployment-concourse-tasks-latest
       - get: arya-bbl-state
       - get: capi-ci
       - get: capi-ci-private
@@ -1625,9 +1640,11 @@ jobs:
         repository: updated-capi-ci-private
         rebase: true
     - task: update-bosh-arya
-      file: cf-deployment-concourse-tasks/bbl-up/task.yml
+      file: cf-deployment-concourse-tasks-latest/bbl-up/task.yml
       input_mapping:
+        cf-deployment-concourse-tasks: cf-deployment-concourse-tasks-latest
         bbl-state: updated-capi-ci-private
+        bbl-config: updated-capi-ci-private
         ops-files: capi-ci
       params:
         BBL_STATE_DIR: "arya"
@@ -1670,9 +1687,7 @@ jobs:
   serial_groups: [deploy-mulan]
   plan:
     - aggregate:
-      - get: cf-deployment-concourse-tasks
-        version:
-          ref: 325f64f359e3984016c9153afc870c2aaa204c1c
+      - get: cf-deployment-concourse-tasks-latest
       - get: mulan-bbl-state
       - get: capi-ci
       - get: capi-ci-private
@@ -1690,16 +1705,19 @@ jobs:
         repository: updated-capi-ci-private
         rebase: true
     - task: collect-ops-files
-      file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
+      file: cf-deployment-concourse-tasks-latest/collect-ops-files/task.yml
       input_mapping:
+        cf-deployment-concourse-tasks: cf-deployment-concourse-tasks-latest
         base-ops-files: bosh-deployment
         new-ops-files: capi-ci
       params:
         NEW_OPS_FILES: bosh-director-operations/increase-persistent-disk.yml
     - task: update-bosh-mulan
-      file: cf-deployment-concourse-tasks/bbl-up/task.yml
+      file: cf-deployment-concourse-tasks-latest/bbl-up/task.yml
       input_mapping:
+        cf-deployment-concourse-tasks: cf-deployment-concourse-tasks-latest
         bbl-state: updated-capi-ci-private
+        bbl-config: updated-capi-ci-private
         ops-files: collected-ops-files
       params:
         BBL_STATE_DIR: "mulan"
@@ -1743,9 +1761,7 @@ jobs:
   serial_groups: [deploy-buffy]
   plan:
     - aggregate:
-      - get: cf-deployment-concourse-tasks
-        version:
-          ref: 325f64f359e3984016c9153afc870c2aaa204c1c
+      - get: cf-deployment-concourse-tasks-latest
       - get: buffy-bbl-state
       - get: capi-ci
       - get: capi-ci-private
@@ -1761,9 +1777,11 @@ jobs:
         repository: updated-capi-ci-private
         rebase: true
     - task: update-bosh-buffy
-      file: cf-deployment-concourse-tasks/bbl-up/task.yml
+      file: cf-deployment-concourse-tasks-latest/bbl-up/task.yml
       input_mapping:
+        cf-deployment-concourse-tasks: cf-deployment-concourse-tasks-latest
         bbl-state: updated-capi-ci-private
+        bbl-config: updated-capi-ci-private
         ops-files: capi-ci
       params:
         BBL_STATE_DIR: "buffy"
@@ -1806,9 +1824,7 @@ jobs:
   serial_groups: [deploy-ripley]
   plan:
     - aggregate:
-      - get: cf-deployment-concourse-tasks
-        version:
-          ref: 325f64f359e3984016c9153afc870c2aaa204c1c
+      - get: cf-deployment-concourse-tasks-latest
       - get: ripley-bbl-state
       - get: capi-ci
       - get: capi-ci-private
@@ -1824,9 +1840,11 @@ jobs:
         repository: updated-capi-ci-private
         rebase: true
     - task: update-bosh-ripley
-      file: cf-deployment-concourse-tasks/bbl-up/task.yml
+      file: cf-deployment-concourse-tasks-latest/bbl-up/task.yml
       input_mapping:
+        cf-deployment-concourse-tasks: cf-deployment-concourse-tasks-latest
         bbl-state: updated-capi-ci-private
+        bbl-config: updated-capi-ci-private
         ops-files: capi-ci
       params:
         BBL_STATE_DIR: "ripley"
@@ -1869,8 +1887,7 @@ jobs:
   serial_groups: [deploy-elsa]
   plan:
     - aggregate:
-      - get: cf-deployment-concourse-tasks
-        version: { ref: 325f64f359e3984016c9153afc870c2aaa204c1c }
+      - get: cf-deployment-concourse-tasks-latest
       - get: elsa-bbl-state
       - get: capi-ci
       - get: capi-ci-private
@@ -1888,16 +1905,19 @@ jobs:
         repository: updated-capi-ci-private
         rebase: true
     - task: collect-ops-files
-      file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
+      file: cf-deployment-concourse-tasks-latest/collect-ops-files/task.yml
       input_mapping:
+        cf-deployment-concourse-tasks: cf-deployment-concourse-tasks-latest
         base-ops-files: bosh-deployment
         new-ops-files: capi-ci
       params:
         NEW_OPS_FILES: bosh-director-operations/increase-persistent-disk.yml
     - task: update-bosh-elsa
-      file: cf-deployment-concourse-tasks/bbl-up/task.yml
+      file: cf-deployment-concourse-tasks-latest/bbl-up/task.yml
       input_mapping:
+        cf-deployment-concourse-tasks: cf-deployment-concourse-tasks-latest
         bbl-state: updated-capi-ci-private
+        bbl-config: updated-capi-ci-private
         ops-files: collected-ops-files
       params:
         BBL_STATE_DIR: "elsa"
@@ -1929,12 +1949,6 @@ jobs:
         GCP_DNS_SERVICE_ACCOUNT_KEY: ((dns_gcp_json_key))
         GCP_PROJECT_ID: ((dns_gcp_project_id))
         SHARED_DNS_ZONE_NAME: "capi-land"
-    - task: update-cloud-config
-      file: capi-ci/ci/bbl-tasks/update-cloud-config-with-credhub.yml
-      input_mapping:
-        bbl-state: updated-bbl-state
-      params:
-        BBL_STATE_DIR: "elsa"
     - task: run-bosh-cleanup
       file: capi-ci/ci/bbl-tasks/run-bosh-cleanup.yml
       input_mapping:
@@ -1947,9 +1961,7 @@ jobs:
   serial_groups: [deploy-kiki]
   plan:
     - aggregate:
-      - get: cf-deployment-concourse-tasks
-        version:
-          ref: 325f64f359e3984016c9153afc870c2aaa204c1c
+      - get: cf-deployment-concourse-tasks-latest
       - get: capi-ci
       - get: capi-ci-private
       - get: weekly-sunday
@@ -1964,9 +1976,11 @@ jobs:
         repository: updated-capi-ci-private
         rebase: true
     - task: update-bosh-kiki
-      file: cf-deployment-concourse-tasks/bbl-up/task.yml
+      file: cf-deployment-concourse-tasks-latest/bbl-up/task.yml
       input_mapping:
+        cf-deployment-concourse-tasks: cf-deployment-concourse-tasks-latest
         bbl-state: updated-capi-ci-private
+        bbl-config: updated-capi-ci-private
         ops-files: capi-ci
       params:
         BBL_STATE_DIR: "kiki"
@@ -2008,10 +2022,7 @@ jobs:
   serial: true
   plan:
     - aggregate:
-      - get: cf-deployment-concourse-tasks
-        version:
-          ref: 325f64f359e3984016c9153afc870c2aaa204c1c
-        resource: cf-deployment-concourse-tasks
+      - get: cf-deployment-concourse-tasks-latest
       - get: xena-mysql-bbl-state
       - get: capi-ci
       - get: capi-ci-private
@@ -2030,26 +2041,31 @@ jobs:
         repository: updated-capi-ci-private
         rebase: true
     - task: collect-ops-files
-      file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
+      file: cf-deployment-concourse-tasks-latest/collect-ops-files/task.yml
       input_mapping:
+        cf-deployment-concourse-tasks: cf-deployment-concourse-tasks-latest
         base-ops-files: bosh-deployment
         new-ops-files: capi-ci
       params:
         NEW_OPS_FILES: bosh-director-operations/increase-persistent-disk.yml
     - task: update-bosh-xena-mysql
-      file: cf-deployment-concourse-tasks/bbl-up/task.yml
+      file: cf-deployment-concourse-tasks-latest/bbl-up/task.yml
       input_mapping:
+        cf-deployment-concourse-tasks: cf-deployment-concourse-tasks-latest
         bbl-state: updated-capi-ci-private
+        bbl-config: updated-capi-ci-private
         ops-files: collected-ops-files
       params:
         BBL_STATE_DIR: "xena-mysql"
         BBL_IAAS: "gcp"
+        BBL_CONFIG_DIR: "xena-mysql/bosh-lite-plan-patch"
         BBL_ENV_NAME: "xena-mysql"
         BBL_GCP_SERVICE_ACCOUNT_KEY: ((xena_gcp_json_key))
         BBL_GCP_PROJECT_ID: ((xena_gcp_project_id))
         BBL_GCP_ZONE: ((xena_gcp_zone))
         BBL_GCP_REGION: ((xena_gcp_region))
         IS_BOSH_LITE: true
+        SKIP_LB_CREATION: true
         OPS_FILES: |
           base-ops-files/bosh-lite.yml
           base-ops-files/bosh-lite-runc.yml
@@ -2069,17 +2085,11 @@ jobs:
     - task: update-cloud-config
       file: capi-ci/ci/bosh/update_cloud_config.yml
       input_mapping:
+        bbl-state: updated-capi-ci-private
         cloud-config: cf-deployment
       params:
-        CLOUD_CONFIG_PATH: iaas-support/bosh-lite/cloud-config.yml
-    - task: open-bosh-lite-ports
-      file: capi-ci/ci/bbl-tasks/open-bosh-lite-ports.yml
-      input_mapping:
-        bbl-state: updated-bbl-state
-      params:
         BBL_STATE_DIR: "xena-mysql"
-        GCP_SERVICE_ACCOUNT_KEY: ((xena_gcp_json_key))
-        GCP_PROJECT_ID: ((xena_gcp_project_id))
+        CLOUD_CONFIG_PATH: iaas-support/bosh-lite/cloud-config.yml
     - task: create-dns-record
       attempts: 3
       file: capi-ci/ci/bbl-tasks/create-dns-record.yml
@@ -2103,10 +2113,7 @@ jobs:
   serial: true
   plan:
     - aggregate:
-      - get: cf-deployment-concourse-tasks
-        resource: cf-deployment-concourse-tasks
-        version:
-          ref: 325f64f359e3984016c9153afc870c2aaa204c1c
+      - get: cf-deployment-concourse-tasks-latest
       - get: xena-postgres-bbl-state
       - get: capi-ci
       - get: capi-ci-private
@@ -2125,26 +2132,31 @@ jobs:
         repository: updated-capi-ci-private
         rebase: true
     - task: collect-ops-files
-      file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
+      file: cf-deployment-concourse-tasks-latest/collect-ops-files/task.yml
       input_mapping:
+        cf-deployment-concourse-tasks: cf-deployment-concourse-tasks-latest
         base-ops-files: bosh-deployment
         new-ops-files: capi-ci
       params:
         NEW_OPS_FILES: bosh-director-operations/increase-persistent-disk.yml
     - task: update-bosh-xena-postgres
-      file: cf-deployment-concourse-tasks/bbl-up/task.yml
+      file: cf-deployment-concourse-tasks-latest/bbl-up/task.yml
       input_mapping:
+        cf-deployment-concourse-tasks: cf-deployment-concourse-tasks-latest
         bbl-state: updated-capi-ci-private
+        bbl-config: updated-capi-ci-private
         ops-files: collected-ops-files
       params:
         BBL_STATE_DIR: "xena-postgres"
         BBL_IAAS: "gcp"
+        BBL_CONFIG_DIR: "xena-postgres/bosh-lite-plan-patch"
         BBL_ENV_NAME: "xena-postgres"
         BBL_GCP_SERVICE_ACCOUNT_KEY: ((xena_gcp_json_key))
         BBL_GCP_PROJECT_ID: ((xena_gcp_project_id))
         BBL_GCP_ZONE: ((xena_gcp_zone))
         BBL_GCP_REGION: ((xena_gcp_region))
         IS_BOSH_LITE: true
+        SKIP_LB_CREATION: true
         OPS_FILES: |
           base-ops-files/bosh-lite.yml
           base-ops-files/gcp/bosh-lite-vm-type.yml
@@ -2163,17 +2175,11 @@ jobs:
     - task: update-cloud-config
       file: capi-ci/ci/bosh/update_cloud_config.yml
       input_mapping:
+        bbl-state: updated-capi-ci-private
         cloud-config: cf-deployment
       params:
-        CLOUD_CONFIG_PATH: iaas-support/bosh-lite/cloud-config.yml
-    - task: open-bosh-lite-ports
-      file: capi-ci/ci/bbl-tasks/open-bosh-lite-ports.yml
-      input_mapping:
-        bbl-state: updated-bbl-state
-      params:
         BBL_STATE_DIR: "xena-postgres"
-        GCP_SERVICE_ACCOUNT_KEY: ((xena_gcp_json_key))
-        GCP_PROJECT_ID: ((xena_gcp_project_id))
+        CLOUD_CONFIG_PATH: iaas-support/bosh-lite/cloud-config.yml
     - task: create-dns-record
       attempts: 3
       file: capi-ci/ci/bbl-tasks/create-dns-record.yml
@@ -2231,24 +2237,18 @@ jobs:
         - elsa-mysql-s3-bypass
         - mulan-postgres-webdav-bridge
         - kiki-back-compat-migrations
-        - xena-mysql-drats
-        - xena-postgres-drats
     - get: capi-release
       resource: capi-release-develop
       passed:
         - elsa-mysql-s3-bypass
         - mulan-postgres-webdav-bridge
         - kiki-back-compat-migrations
-        - xena-mysql-drats
-        - xena-postgres-drats
       trigger: true
     - get: capi-release-tarball
       passed:
         - elsa-mysql-s3-bypass
         - mulan-postgres-webdav-bridge
         - kiki-back-compat-migrations
-        - xena-mysql-drats
-        - xena-postgres-drats
   - put: capi-release-ci-passed
     params:
       repository: capi-release
@@ -2263,7 +2263,7 @@ jobs:
       resource: cf-deployment
     - get: capi-ci
     - get: capi-ci-private
-    - get: cf-deployment-concourse-tasks
+    - get: cf-deployment-concourse-tasks-latest
     - get: capi-release
       resource: capi-release-develop
       passed: [create-capi-release]
@@ -2273,8 +2273,9 @@ jobs:
     - get: drats
     - get: bbr-github-release
   - task: stemcell-upload
-    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    file: cf-deployment-concourse-tasks-latest/bosh-upload-stemcell-from-cf-deployment/task.yml
     input_mapping:
+      cf-deployment-concourse-tasks: cf-deployment-concourse-tasks-latest
       bbl-state: capi-ci-private
     params:
       BBL_STATE_DIR: xena-mysql
@@ -2283,10 +2284,12 @@ jobs:
     file: capi-ci/ci/bbl-tasks/extract_bbl_environment.yml
     params:
       ENV_NAME: xena-mysql
-  - task: delete-deployment
-    file: capi-ci/ci/bosh/run_bosh_cmd.yml
+  - put: xena-mysql-deployment # delete-deployment
     params:
-      BOSH_ARGS: "delete-deployment -d cf"
+      source_file: environment/metadata
+      delete:
+        enabled: true
+        force: true
   - put: xena-mysql-deployment
     params:
       source_file: environment/metadata
@@ -2337,7 +2340,7 @@ jobs:
       resource: cf-deployment
     - get: capi-ci
     - get: capi-ci-private
-    - get: cf-deployment-concourse-tasks
+    - get: cf-deployment-concourse-tasks-latest
     - get: capi-release
       resource: capi-release-develop
       passed: [create-capi-release]
@@ -2347,8 +2350,9 @@ jobs:
     - get: drats
     - get: bbr-github-release
   - task: stemcell-upload
-    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    file: cf-deployment-concourse-tasks-latest/bosh-upload-stemcell-from-cf-deployment/task.yml
     input_mapping:
+      cf-deployment-concourse-tasks: cf-deployment-concourse-tasks-latest
       bbl-state: capi-ci-private
     params:
       BBL_STATE_DIR: xena-postgres
@@ -2357,10 +2361,12 @@ jobs:
     file: capi-ci/ci/bbl-tasks/extract_bbl_environment.yml
     params:
       ENV_NAME: xena-postgres
-  - task: delete-deployment
-    file: capi-ci/ci/bosh/run_bosh_cmd.yml
+  - put: xena-postgres-deployment # delete-deployment
     params:
-      BOSH_ARGS: "delete-deployment -d cf"
+      source_file: environment/metadata
+      delete:
+        enabled: true
+        force: true
   - put: xena-postgres-deployment
     params:
       source_file: environment/metadata
@@ -2402,3 +2408,4 @@ jobs:
     params:
       CF_API_URL: https://api.xena-postgres.capi.land
       SKIP_SUITE_NAME: "cf-nfsbroker|cf-credhub"
+      BBL_STATE_DIR: "xena-postgres"
