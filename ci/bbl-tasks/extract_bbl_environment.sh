@@ -28,11 +28,8 @@ echo "Creating bbl vars file..."
 
 pushd "${capi_ci_private}/${ENV_NAME}" > /dev/null
 
-bblver="$(bbl -v | cut -d' ' -f2 | cut -d'.' -f1)"
-if [ $bblver -eq "6" ]; then
-  eval "$(bbl print-env)"
-  jumpbox_address="$(bbl print-env | grep BOSH_ALL_PROXY | cut -d'@' -f2 | cut -d'?' -f1)"
-fi
+eval "$(bbl print-env)"
+jumpbox_address="$(bbl print-env | grep BOSH_ALL_PROXY | cut -d'@' -f2 | cut -d'?' -f1)"
 
 cat <<- EOF > "${output_metadata_file}"
   {
