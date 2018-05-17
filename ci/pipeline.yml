@@ -2329,6 +2329,7 @@ jobs:
     params:
       CF_API_URL: https://api.xena-mysql.capi.land
       SKIP_SUITE_NAME: "cf-nfsbroker|cf-credhub"
+      BBL_STATE_DIR: "xena-mysql"
 
 - name: xena-postgres-drats
   serial: true
