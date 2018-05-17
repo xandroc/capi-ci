@@ -37,7 +37,13 @@ BOSH_CA_CERT="$(jq -e -r .ca_cert "${env_file}")"
 BOSH_GW_USER="$(jq -e -r .gw_user "${env_file}")"
 BOSH_GW_HOST="$(jq -e -r .gw_host "${env_file}")"
 BOSH_GW_PRIVATE_KEY_CONTENTS="$(jq -e -r .gw_private_key "${env_file}")"
-export BOSH_ENVIRONMENT BOSH_CLIENT BOSH_CLIENT_SECRET BOSH_CA_CERT
+
+JUMPBOX_URL="$(jq -e -r .jumpbox_url "${env_file}")"
+JUMPBOX_SSH_KEY="$(jq -e -r .jumpbox_ssh_key "${env_file}")"
+JUMPBOX_USERNAME="$(jq -e -r .jumpbox_username "${env_file}")"
+
+export BOSH_ENVIRONMENT BOSH_CLIENT BOSH_CLIENT_SECRET BOSH_CA_CERT \
+       JUMPBOX_URL JUMPBOX_SSH_KEY JUMPBOX_USERNAME
 
 CF_ADMIN_PASSWORD="$(bosh interpolate "${vars_store_dir}/${VARS_STORE_PATH}" --path=/cf_admin_password)"
 export CF_ADMIN_PASSWORD
@@ -47,7 +53,9 @@ tmpdir="$( mktemp -d /tmp/run-drats.XXXXXXXXXX )"
 ssh_key="${tmpdir}/bosh.pem"
 echo "${BOSH_GW_PRIVATE_KEY_CONTENTS}" > "${ssh_key}"
 chmod 600 "${ssh_key}"
-sshuttle -e "ssh -i "${ssh_key}" -o 'StrictHostKeyChecking no' -o 'UserKnownHostsFile /dev/null'" -r "${BOSH_GW_USER}@${BOSH_GW_HOST}" 10.0.0.0/8 &
+
+ssh_jumpbox_url=$(echo "${JUMPBOX_URL}" | cut -d':' -f1)
+sshuttle -e "ssh -i "${JUMPBOX_PRIVATE_KEY}" -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ServerAliveInterval=600" -r "${JUMPBOX_USERNAME}@${ssh_jumpbox_url}" 10.0.0.0/8 &
 tunnel_pid="$!"
 
 cleanup() {
