@@ -1987,6 +1987,7 @@ jobs:
         BBL_IAAS: "gcp"
         BBL_LB_CERT: "certs/load-balancer/server.crt"
         BBL_LB_KEY: "certs/load-balancer/server.key"
+        BBL_CONFIG_DIR: "kiki/plan-patch"
         LB_DOMAIN: *kiki-domain
         BBL_ENV_NAME: "kiki"
         BBL_GCP_SERVICE_ACCOUNT_KEY: ((kiki_gcp_json_key))
