@@ -2204,18 +2204,24 @@ jobs:
         - elsa-mysql-s3-bypass
         - mulan-postgres-webdav-bridge
         - kiki-back-compat-migrations
+        - xena-mysql-drats
+        - xena-postgres-drats
     - get: capi-release
       resource: capi-release-develop
       passed:
         - elsa-mysql-s3-bypass
         - mulan-postgres-webdav-bridge
         - kiki-back-compat-migrations
+        - xena-mysql-drats
+        - xena-postgres-drats
       trigger: true
     - get: capi-release-tarball
       passed:
         - elsa-mysql-s3-bypass
         - mulan-postgres-webdav-bridge
         - kiki-back-compat-migrations
+        - xena-mysql-drats
+        - xena-postgres-drats
   - put: capi-release-ci-passed
     params:
       repository: capi-release
