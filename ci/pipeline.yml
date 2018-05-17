@@ -312,6 +312,15 @@ resources:
     repository: bosh-backup-and-restore
     access_token: ((github_access_token))
 
+- name: runtime-ci
+  type: git
+  source:
+    branch: master
+    paths:
+    - tasks/ensure-api-healthy
+    private_key: ((private_key))
+    uri: git@github.com:cloudfoundry/runtime-ci.git
+
 # Pinned at job level with BOSH_DEPLOYMENT_VERSION
 - name: bosh-deployment
   type: git
@@ -1269,6 +1278,7 @@ jobs:
       - create-capi-release
       trigger: true
     - get: cf-acceptance-tests
+    - get: runtime-ci
   - task: kiki-stemcell-upload
     file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
     input_mapping:
@@ -1321,6 +1331,10 @@ jobs:
       - capi-ci/cf-deployment-operations/silence-noisy-logs-isolated-diego-cell.yml
       # Workaround for GCP issue that causes 502s if there are empty LB instance groups #152766388
       - cf-deployment-temporary-workaround/operations/workaround/use-4-azs-for-router.yml
+  - task: ensure-api-healthy
+    file: runtime-ci/tasks/ensure-api-healthy/task.yml
+    params:
+      SYSTEM_DOMAIN: *kiki-domain
   - task: apply-cc-migrations
     file: capi-ci/ci/migrations/apply_latest_migrations.yml
     params:
