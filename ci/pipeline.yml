@@ -1018,7 +1018,7 @@ jobs:
       - capi-ci/cf-deployment-operations/temporary/disable-metron-addon.yml
       # Enable BPM
       - cf-deployment/operations/experimental/enable-bpm.yml
-      - capi-ci/cf-deployment-operations/temporary/enable-bpm-capi.yml
+      - capi-ci/cf-deployment-operations/temporary/enable-bpm-capi-nfs.yml
   - task: download-vars-store
     output_mapping:
       destination-directory: ripley-deployment-vars
