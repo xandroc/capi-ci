@@ -1,0 +1,22 @@
+# Enable bpm for capi-release jobs
+
+# Must be used in conjunction with:
+# https://github.com/cloudfoundry/cf-deployment/blob/master/operations/experimental/enable-bpm.yml
+- type: replace
+  path: /instance_groups/name=singleton-blobstore/jobs/name=blobstore/properties?/bpm?/enabled?
+  value: true
+- type: replace
+  path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties?/bpm?/enabled?
+  value: true
+- type: replace
+  path: /instance_groups/name=api/jobs/name=cc_uploader/properties?/bpm?/enabled?
+  value: true
+- type: replace
+  path: /instance_groups/name=cc-worker/jobs/name=cloud_controller_worker/properties?/bpm?/enabled?
+  value: true
+- type: replace
+  path: /instance_groups/name=scheduler/jobs/name=cloud_controller_clock/properties?/bpm?/enabled?
+  value: true
+- type: replace
+  path: /instance_groups/name=scheduler/jobs/name=tps/properties?/bpm?/enabled?
+  value: true
