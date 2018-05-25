@@ -737,6 +737,8 @@ jobs:
       # Enable BPM
       - cf-deployment/operations/experimental/enable-bpm.yml
       - capi-ci/cf-deployment-operations/temporary/enable-bpm-capi.yml
+      # Deployment Updater for ZDT
+      - capi-ci/cf-deployment-operations/temporary/add-deployment-updater.yml
   - task: download-vars-store
     output_mapping:
       destination-directory: mulan-deployment-vars
@@ -876,6 +878,8 @@ jobs:
       # Configure metron agents directly instead of using plugin (credhub incompatibility)
       - capi-ci/cf-deployment-operations/temporary/disable-metron-addon.yml
       - capi-ci/cf-deployment-operations/temporary/disable-metron-addon-for-singleton-blobstore.yml
+      # Deployment Updater for ZDT
+      - capi-ci/cf-deployment-operations/temporary/add-deployment-updater.yml
   - task: download-vars-store
     output_mapping:
       destination-directory: buffy-deployment-vars
@@ -1016,6 +1020,8 @@ jobs:
       - cf-deployment/operations/workaround/use-4-azs-for-router.yml
       # Configure metron agents directly instead of using plugin (credhub incompatibility)
       - capi-ci/cf-deployment-operations/temporary/disable-metron-addon.yml
+      # Deployment Updater for ZDT
+      - capi-ci/cf-deployment-operations/temporary/add-deployment-updater.yml
   - task: download-vars-store
     output_mapping:
       destination-directory: ripley-deployment-vars
@@ -1200,6 +1206,8 @@ jobs:
       - cf-deployment/operations/workaround/use-4-azs-for-router.yml
       # Configure metron agents directly instead of using plugin (credhub incompatibility)
       - capi-ci/cf-deployment-operations/temporary/disable-metron-addon.yml
+      # Deployment Updater for ZDT
+      - capi-ci/cf-deployment-operations/temporary/add-deployment-updater.yml
   - task: download-vars-store
     output_mapping:
       destination-directory: elsa-deployment-vars
