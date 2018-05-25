@@ -1,29 +1,23 @@
 ---
 - type: replace
-  path: /instance_groups/name=cc-deployment-updater?
+  path: /instance_groups/name=scheduler/jobs/name=cc_deployment_updater?
   value:
-   name: cc-deployment-updater
-   networks:
-   - name: default
-   stemcell: default
-   vm_type: small
-   azs:
-   - z1
-   - z2
-   instances: 1
-   jobs:
-   - name: cc_deployment_updater
-     release: capi
-     properties:
-       cc:
-         db_encryption_key: ((cc_db_encryption_key))
-       ccdb:
-         databases:
-         - name: cloud_controller
-           tag: cc
-         db_scheme: mysql
-         port: 3306
-         roles:
-         - name: cloud_controller
-           password: ((cc_database_password))
-           tag: admin
+   name: cc_deployment_updater
+   release: capi
+   properties:
+     cc:
+       db_encryption_key: ((cc_db_encryption_key))
+       mutual_tls:
+         ca_cert: "((service_cf_internal_ca.certificate))"
+         private_key: "((cc_tls.private_key))"
+         public_cert: "((cc_tls.certificate))"
+     ccdb:
+       databases:
+       - name: cloud_controller
+         tag: cc
+       db_scheme: mysql
+       port: 3306
+       roles:
+       - name: cloud_controller
+         password: ((cc_database_password))
+         tag: admin
