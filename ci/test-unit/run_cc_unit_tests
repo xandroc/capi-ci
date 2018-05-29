@@ -9,8 +9,10 @@ start_db() {
     # Context: https://github.com/moby/moby/issues/34390
     find /var/lib/mysql/mysql -exec touch -c -a {} +
     service mysql restart
+    trap stop_mysql EXIT
   elif [ "${DB}" = "postgres" ]; then
     service postgresql restart
+    trap stop_postgres EXIT
   elif [ "${DB}" = "mssql" ]; then
     service docker start
     sleep 5
@@ -23,9 +25,17 @@ start_db() {
 
     LOG_FILE="/tmp/mssql.log" ./scripts/run-ms-sql-background.sh
   else
-    echo "Uknown DB type '${DB}', this script only supports 'mysql', 'postgres', and 'mssql'"
+    echo "Unknown DB type '${DB}', this script only supports 'mysql', 'postgres', and 'mssql'"
     exit 1
   fi
+}
+
+stop_mysql() {
+  service mysql stop
+}
+
+stop_postgres() {
+  service postgresql stop
 }
 
 stop_docker() {
