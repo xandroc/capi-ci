@@ -28,7 +28,6 @@ groups:
   - update-api-info-v2-docs
 - name: dependencies-docs
   jobs:
-  - check-cc-dependencies
   - rc-docs-v3
   - update-checkman
   - deliver-stories
@@ -516,20 +515,6 @@ resources:
     uri: https://github.com/cloudfoundry-incubator/disaster-recovery-acceptance-tests
 
 jobs:
-
-- name: check-cc-dependencies
-  serial: true
-  plan:
-  - aggregate:
-    - get: cloud_controller_ng
-      trigger: true
-    - get: concourse-config
-    - get: capi-ci
-  - task: check-dependencies
-    file: capi-ci/ci/monitoring/cloud_controller_ng_dependencies.yml
-    params:
-      GEMNASIUM_API_KEY: ((gemnasium_api_key))
-
 - name: cc-unit-tests
   plan:
   - aggregate:
