@@ -225,16 +225,6 @@ resources:
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/cloud_controller_ng.git
 
-- name: concourse-config
-  type: git
-  source:
-    paths:
-    - wasabi
-    ignore_paths:
-    - wasabi/deployments/pipeline.yml
-    private_key: ((private_key))
-    uri: git@github.com:cloudfoundry/capi-ci-private.git
-
 - name: diego-release
   type: git
   source:
