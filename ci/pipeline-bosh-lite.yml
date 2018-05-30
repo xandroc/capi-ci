@@ -144,7 +144,6 @@ jobs:
                   - cf-deployment/operations/use-compiled-releases.yml
                   - capi-ci/cf-deployment-operations/seed-credhub-asg.yml
                   - capi-ci/cf-deployment-operations/temporary/disable-metron-addon.yml
-                  - capi-ci/cf-deployment-operations/temporary/add-deployment-updater.yml
               - task: upload-to-gcs
                 file: capi-ci/ci/gcs/upload-to-gcs.yml
                 input_mapping:
