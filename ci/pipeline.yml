@@ -1184,7 +1184,7 @@ jobs:
       # Deployment Updater for ZDT
       - capi-ci/cf-deployment-operations/temporary/add-deployment-updater.yml
       # Perm!
-      - cf-deployment/operations/experimental/perm-service.yml
+      - capi-ci/cf-deployment-operations/temporary/perm-service.yml
   - task: download-vars-store
     output_mapping:
       destination-directory: elsa-deployment-vars
