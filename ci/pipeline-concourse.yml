@@ -136,7 +136,7 @@ jobs:
         - concourse-*.tgz
         - garden-runc-*.tgz
     - get: postgres
-      version: { version: '25' }
+      version: { version: '28' }
     - get: concourse-config
     - get: gcp-stemcell
     - get: capi-ci-private
