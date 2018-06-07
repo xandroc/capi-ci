@@ -56,6 +56,12 @@ resources:
   source:
     deployment: concourse
     ignore_ssl: true
+    vars_store:
+      provider: gcs
+      config:
+        bucket: ((ci_bosh_vars_bucket))
+        file_name: &ci_vars_store_path "bosh/vars-store.yml"
+        json_key: ((ci_gcp_json_key))
 
 # Duplicates of capi-ci-private
 - name: concourse-config
