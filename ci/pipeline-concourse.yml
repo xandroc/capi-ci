@@ -130,7 +130,7 @@ jobs:
   plan:
   - aggregate:
     - get: concourse
-      version: { tag: 'v3.6.0' }
+      version: { tag: 'v3.9.2' }
       params:
         globs:
         - concourse-*.tgz
