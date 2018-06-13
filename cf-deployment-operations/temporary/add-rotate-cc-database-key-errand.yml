@@ -1,7 +1,7 @@
 - type: replace
   path: /instance_groups/-
   value:
-    name: database-key-rotator
+    name: rotate-cc-database-key
     instances: 1
     azs: [z1]
     lifecycle: errand
@@ -10,7 +10,7 @@
     networks:
     - name: default
     jobs:
-    - name: database_key_rotator
+    - name: rotate_cc_database_key
       release: capi
       properties:
        cc:
