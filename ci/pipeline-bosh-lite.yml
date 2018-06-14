@@ -144,22 +144,23 @@ jobs:
                   - cf-deployment/operations/use-compiled-releases.yml
                   - capi-ci/cf-deployment-operations/seed-credhub-asg.yml
                   - capi-ci/cf-deployment-operations/temporary/disable-metron-addon.yml
-              - task: upload-to-gcs
-                file: capi-ci/ci/gcs/upload-to-gcs.yml
-                input_mapping:
-                  environment: terraform
-                  source-directory: director-state
-                params:
-                  GCP_JSON_KEY: ((bosh_lite_gcp_json_key))
-                  GCP_BUCKET: ((bosh_lite_storage_bucket))
-                  GCP_PATH: director-state
-                  USE_ENV_NAMED_SUBDIR: true
               - put: ready-pool
                 params:
                   add: bosh-lite-env-info/
               - put: building-pool
                 params:
                   remove: fake-placeholder-env/
+            ensure:
+              task: upload-to-gcs
+              file: capi-ci/ci/gcs/upload-to-gcs.yml
+              input_mapping:
+                environment: terraform
+                source-directory: director-state
+              params:
+                GCP_JSON_KEY: ((bosh_lite_gcp_json_key))
+                GCP_BUCKET: ((bosh_lite_storage_bucket))
+                GCP_PATH: director-state
+                USE_ENV_NAMED_SUBDIR: true
             on_failure:
               put: slack-alert
               params:
