@@ -1,12 +1,12 @@
 - type: replace
   path: /instance_groups/name=singleton-blobstore/jobs/-
   value:
-    name: metron_agent
-    release: loggregator
+    name: loggregator_agent
+    release: loggregator-agent
     properties:
       loggregator:
         tls:
           ca_cert: "((loggregator_ca.certificate))"
-          metron:
-            cert: "((loggregator_tls_metron.certificate))"
-            key: "((loggregator_tls_metron.private_key))"
+          agent:
+            cert: "((loggregator_tls_agent.certificate))"
+            key: "((loggregator_tls_agent.private_key))"
