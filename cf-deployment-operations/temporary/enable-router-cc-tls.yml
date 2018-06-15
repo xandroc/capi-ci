@@ -1,0 +1,46 @@
+#TODO: Maybe use the cc.tls_port
+- type: replace
+  path: /instance_groups/name=api/jobs/name=route_registrar/properties/route_registrar/routes/name=api?/tls_port
+  value: 9122
+
+- type: replace
+  path: /instance_groups/name=api/jobs/name=route_registrar/properties/route_registrar/routes/name=api?/server_cert_domain_san
+  value: https://api.((system_domain))
+
+- type: replace
+  path: /instance_groups/name=router/jobs/name=gorouter/properties/router/ca_certs?
+  value: ((service_cf_internal_ca.certificate))
+
+- type: replace
+  path: /instance_groups/name=router/jobs/name=gorouter/properties/router/backends?/enable_tls
+  value: true
+
+- type: replace
+  path: /instance_groups/name=router/jobs/name=gorouter/properties/router/backends?/cert_chain?
+  value: ((cc_tls.certificate))
+
+- type: replace
+  path: /instance_groups/name=router/jobs/name=gorouter/properties/router/backends?/private_key?
+  value: ((cc_tls.private_key))
+
+
+# server_cert_domain_san is used by router job
+# cloud-controller-ng.service.cf.internal is used by cc_uploader
+# can we delete some of the other alternative_names?
+- type: replace
+  path: /variables/name=cc_tls?
+  value:
+    name: cc_tls
+    type: certificate
+    options:
+      ca: service_cf_internal_ca
+      common_name: cloud-controller-ng.service.cf.internal
+      alternative_names:
+      - cloud-controller-ng.service.cf.internal
+      - api.service.cf.internal
+      - api.((system_domain))
+      - "((system_domain))"
+      - "*.((system_domain))"
+      extended_key_usage:
+      - client_auth
+      - server_auth
