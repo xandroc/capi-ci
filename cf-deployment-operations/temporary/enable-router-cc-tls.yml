@@ -1,11 +1,22 @@
-  #TODO: Maybe use the cc.tls_port
 - type: replace
   path: /instance_groups/name=api/jobs/name=route_registrar/properties/route_registrar/routes/name=api?/tls_port
-  value: 9023
+  value: 9024
+
+- type: replace
+  path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/cc/cc_gorouter_tls?/private_key
+  value: "((cc_gorouter_tls.private_key))"
+
+- type: replace
+  path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/cc/cc_gorouter_tls?/public_cert
+  value: "((cc_gorouter_tls.certificate))"
+
+- type: replace
+  path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/cc/cc_gorouter_tls?/ca_cert
+  value: "((cc_gorouter_tls.ca))"
 
 - type: replace
   path: /instance_groups/name=api/jobs/name=route_registrar/properties/route_registrar/routes/name=api?/server_cert_domain_san
-  value: https://api.((system_domain))
+  value: "https://api.((system_domain))"
 
 - type: replace
   path: /instance_groups/name=router/jobs/name=gorouter/properties/router/ca_certs?
@@ -16,17 +27,27 @@
   value: true
 
 - type: replace
-  path: /instance_groups/name=router/jobs/name=gorouter/properties/router/backends?/cert_chain?
-  value: "((cc_gorouter_tls.certificate))"
+  path: /instance_groups/name=router/jobs/name=gorouter/properties/router/backends?/cert_chain
+  value: "((gorouter_cc_tls.certificate))"
 
 - type: replace
-  path: /instance_groups/name=router/jobs/name=gorouter/properties/router/backends?/private_key?
-  value: "((cc_gorouter_tls.private_key))"
+  path: /instance_groups/name=router/jobs/name=gorouter/properties/router/backends?/private_key
+  value: "((gorouter_cc_tls.private_key))"
 
+- type: replace
+  path: /variables/name=gorouter_cc_tls?
+  value:
+    name: gorouter_cc_tls
+    type: certificate
+    options:
+      ca: service_cf_internal_ca
+      common_name: "*.((system_domain))" # api.((system_domain)) doesn't work, neither does https://api.((system_domain))
+      alternative_names:
+      - "*.((system_domain))"
+      extended_key_usage:
+      - client_auth
+      - server_auth # when this is not here you get "http: proxy error: x509: certificate specifies an incompatible key usage" on router
 
-# server_cert_domain_san is used by router job
-# cloud-controller-ng.service.cf.internal is used by cc_uploader
-# can we delete some of the other alternative_names?
 - type: replace
   path: /variables/name=cc_gorouter_tls?
   value:
@@ -34,30 +55,8 @@
     type: certificate
     options:
       ca: service_cf_internal_ca
-      common_name: cloud-controller-ng.service.cf.internal
+      common_name: "*.((system_domain))"
       alternative_names:
-      - cloud-controller-ng.service.cf.internal
-      - api.service.cf.internal
-      - api.((system_domain))
-      - "((system_domain))"
-      - "*.((system_domain))"
-      extended_key_usage:
-      - client_auth
-      - server_auth
-
-- type: replace
-  path: /variables/name=cc_tls?
-  value:
-    name: cc_tls
-    type: certificate
-    options:
-      ca: service_cf_internal_ca
-      common_name: cloud-controller-ng.service.cf.internal
-      alternative_names:
-      - cloud-controller-ng.service.cf.internal
-      - api.service.cf.internal
-      - api.((system_domain))
-      - "((system_domain))"
       - "*.((system_domain))"
       extended_key_usage:
       - client_auth
