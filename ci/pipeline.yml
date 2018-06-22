@@ -1259,7 +1259,6 @@ jobs:
       source_file: environment/metadata
       delete:
         enabled: true
-        force: true
   - put: kiki-deployment
     params:
       source_file: environment/metadata
@@ -1363,7 +1362,6 @@ jobs:
       source_file: environment/metadata
       delete:
         enabled: true
-        force: true
 
 - name: ship-it
   serial_groups: [version]
