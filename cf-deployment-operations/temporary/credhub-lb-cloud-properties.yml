@@ -1,8 +1,0 @@
-- type: replace
-  path: /vm_extensions/name=credhub-lb?
-  value:
-    cloud_properties:
-      tags:
-      - cf-capi-elsa-credhub
-      target_pool:  cf-capi-elsa-credhub
-    name: credhub-lb
