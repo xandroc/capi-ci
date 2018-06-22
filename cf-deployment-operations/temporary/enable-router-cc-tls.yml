@@ -34,6 +34,11 @@
   path: /instance_groups/name=router/jobs/name=gorouter/properties/router/backends?/private_key
   value: "((gorouter_cc_tls.private_key))"
 
+# TODO
+# the thought is: we can probably restrict the alternative names so that they're not wildcards
+# and we probably don't need extended key usage to be both client and server auth for these certificate blocks (?)
+# ---> we do not yet know the minimal combination of properties that work together
+
 - type: replace
   path: /variables/name=gorouter_cc_tls?
   value:
@@ -41,12 +46,12 @@
     type: certificate
     options:
       ca: service_cf_internal_ca
-      common_name: "*.((system_domain))" # api.((system_domain)) doesn't work, neither does https://api.((system_domain))
+      common_name: "*.((system_domain))" # older comment: api.((system_domain)) doesn't work, neither does https://api.((system_domain))
       alternative_names:
-      - "*.((system_domain))"
+      - "api.((system_domain))" # "*.((system_domain))" --> "api.((system_domain))" this worked!!!
       extended_key_usage:
       - client_auth
-      - server_auth # when this is not here you get "http: proxy error: x509: certificate specifies an incompatible key usage" on router
+      - server_auth # older comment: when this is not here you get "http: proxy error: x509: certificate specifies an incompatible key usage" on router
 
 - type: replace
   path: /variables/name=cc_gorouter_tls?
@@ -55,7 +60,7 @@
     type: certificate
     options:
       ca: service_cf_internal_ca
-      common_name: "*.((system_domain))"
+      common_name: "api.((system_domain))"
       alternative_names:
       - "*.((system_domain))"
       extended_key_usage:
