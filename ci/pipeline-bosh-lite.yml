@@ -100,6 +100,7 @@ jobs:
         - get: capi-ci
         - get: bosh-deployment
         - get: cf-deployment
+          version: { ref: 62faaeb8eb6044cc025bd58929e4af815a5d5bce } # Before cf-networking 2.6.0
         - get: create-bosh-lite-trigger
           trigger: true
       - task: generate-fake-env-for-building-pool
