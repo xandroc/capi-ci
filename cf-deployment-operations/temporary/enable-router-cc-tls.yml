@@ -16,7 +16,7 @@
 
 - type: replace
   path: /instance_groups/name=api/jobs/name=route_registrar/properties/route_registrar/routes/name=api?/server_cert_domain_san
-  value: "https://api.((system_domain))"
+  value: "api.((system_domain))"
 
 - type: replace
   path: /instance_groups/name=router/jobs/name=gorouter/properties/router/ca_certs?
@@ -33,9 +33,7 @@
     type: certificate
     options:
       ca: service_cf_internal_ca
-      common_name: "*.((system_domain))"
+      common_name: "api.((system_domain))"
       alternative_names:
-      - "*.((system_domain))"
-      extended_key_usage:
-      - client_auth
-      - server_auth
+      - "api.((system_domain))"
+      - cloud-controller-ng.service.cf.internal
