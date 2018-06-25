@@ -3,16 +3,16 @@
   value: 9024
 
 - type: replace
-  path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/cc/cc_gorouter_tls?/private_key
-  value: "((cc_gorouter_tls.private_key))"
+  path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/cc/public_tls?/private_key
+  value: "((cc_public_tls.private_key))"
 
 - type: replace
-  path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/cc/cc_gorouter_tls?/public_cert
-  value: "((cc_gorouter_tls.certificate))"
+  path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/cc/public_tls?/certificate
+  value: "((cc_public_tls.certificate))"
 
 - type: replace
-  path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/cc/cc_gorouter_tls?/ca_cert
-  value: "((cc_gorouter_tls.ca))"
+  path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/cc/public_tls?/ca_cert
+  value: "((cc_public_tls.ca))"
 
 - type: replace
   path: /instance_groups/name=api/jobs/name=route_registrar/properties/route_registrar/routes/name=api?/server_cert_domain_san
@@ -27,9 +27,9 @@
   value: true
 
 - type: replace
-  path: /variables/name=cc_gorouter_tls?
+  path: /variables/name=cc_public_tls?
   value:
-    name: cc_gorouter_tls
+    name: cc_public_tls
     type: certificate
     options:
       ca: service_cf_internal_ca
