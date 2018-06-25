@@ -161,30 +161,24 @@ jobs:
                 params:
                   remove: fake-placeholder-env/
             on_failure:
-              put: slack-alert
-              params:
-                text: "create-bosh-lite has failed - No longer cleaned up automatically!!! Check the logs and then move this to the broken-bosh-lites pool for cleanup."
-                silent: true
-                username: "BOSH Herder"
-                icon_emoji: ":bosh:"
-              # task: delete-bosh-lite
-              # file: capi-ci/ci/bosh-lite/delete-bosh-lite.yml
-        # on_failure:
-          # aggregate:
-          # - put: terraform
-            # params:
-              # action: destroy
-              # env_name_file: terraform/name
-              # terraform_source: capi-ci/terraform/bosh-lite/
-              # vars: *terraform-vars
-            # get_params:
-              # action: destroy
-          # - put: slack-alert
-            # params:
-              # text: "create-bosh-lite has failed - make sure that the resources were cleaned up and then manually remove the entry from the building-bosh-lites pool"
-              # silent: true
-              # username: "BOSH Herder"
-              # icon_emoji: ":bosh:"
+              task: delete-bosh-lite
+              file: capi-ci/ci/bosh-lite/delete-bosh-lite.yml
+        on_failure:
+          aggregate:
+          - put: terraform
+            params:
+              action: destroy
+              env_name_file: terraform/name
+              terraform_source: capi-ci/terraform/bosh-lite/
+              vars: *terraform-vars
+            get_params:
+              action: destroy
+          - put: slack-alert
+            params:
+              text: "create-bosh-lite has failed - make sure that the resources were cleaned up and then manually remove the entry from the building-bosh-lites pool"
+              silent: true
+              username: "BOSH Herder"
+              icon_emoji: ":bosh:"
 
   - name: delete-bosh-lite
     plan:
