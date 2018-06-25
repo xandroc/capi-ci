@@ -27,28 +27,6 @@
   value: true
 
 - type: replace
-  path: /instance_groups/name=router/jobs/name=gorouter/properties/router/backends?/cert_chain
-  value: "((gorouter_cc_tls.certificate))"
-
-- type: replace
-  path: /instance_groups/name=router/jobs/name=gorouter/properties/router/backends?/private_key
-  value: "((gorouter_cc_tls.private_key))"
-
-- type: replace
-  path: /variables/name=gorouter_cc_tls?
-  value:
-    name: gorouter_cc_tls
-    type: certificate
-    options:
-      ca: service_cf_internal_ca
-      common_name: "*.((system_domain))" # api.((system_domain)) doesn't work, neither does https://api.((system_domain))
-      alternative_names:
-      - "*.((system_domain))"
-      extended_key_usage:
-      - client_auth
-      - server_auth # when this is not here you get "http: proxy error: x509: certificate specifies an incompatible key usage" on router
-
-- type: replace
   path: /variables/name=cc_gorouter_tls?
   value:
     name: cc_gorouter_tls
