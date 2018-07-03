@@ -958,8 +958,10 @@ jobs:
       # Scale up cells to prevent apps piling onto one cell during rolling deploy.
       # See https://github.com/cloudfoundry/capi-ci/commit/4f22dc4721aa5ed3917e84c4e0ce9f99d732a920 for details
       - capi-ci/cf-deployment-operations/scale-up-cells.yml
+      # Use Xenial to test nfs dependency installation
+      - cf-deployment/operations/experimental/use-xenial-stemcell.yml
       # Use compiled releases
-      - cf-deployment/operations/use-compiled-releases.yml
+      - cf-deployment/operations/experimental/use-compiled-releases-xenial-stemcell.yml
       # Use latest CAPI release
       - capi-ci/cf-deployment-operations/use-latest-capi.yml
       # Use NFS as blobstore
