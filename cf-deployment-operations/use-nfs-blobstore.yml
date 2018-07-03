@@ -30,9 +30,9 @@
   path: /releases/-
   value:
     name: nfs-volume
-    version: 1.0.6
-    url: https://bosh.io/d/github.com/cloudfoundry-incubator/nfs-volume-release?v=1.0.6
-    sha1: 3ea1110e862ce27ee53bd0b2c482fe53af36ed06
+    version: 1.4.0
+    url: "https://bosh.io/d/github.com/cloudfoundry/nfs-volume-release?v=1.4.0"
+    sha1: "84c39ded90aed61d38dc52d10b2ff59d3248f621"
 
 ## set nfs properties
 # cloud_controller_ng
