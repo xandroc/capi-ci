@@ -1,14 +1,38 @@
 #!/usr/bin/env bash
 
 set -eu
-
+GITHUB_DIR=github
 pushd capi-release
-  (git rev-parse HEAD ) > ../capi-final-releases/commitish
+  SHA_CAPI=$(git rev-parse HEAD )
+  echo $SHA_CAPI > ../$GITHUB_DIR/commitish
+  pushd src/cloud_controller_ng
+    SHA_CC=$(git rev-parse HEAD)
+    pushd config
+      VERSION_V2=$(cat version_v2)
+      VERSION_V3=$(cat version)
+    popd
+  popd
 popd
 
-VERSION=$(cat capi-final-releases/version)
+VERSION_CAPI=$(cat $GITHUB_DIR/version)
 
-echo "CAPI ${VERSION}" > capi-final-releases/name
-echo "${VERSION}" > capi-final-releases/version
+echo "CAPI ${VERSION_CAPI}" > $GITHUB_DIR/name
+echo "${VERSION_CAPI}" > $GITHUB_DIR/version
 
-cp -R capi-final-releases/* generated-release/
+# body == release notes
+VERSION_BROKER_API="36.4"
+cat <<EOF > $GITHUB_DIR/body
+**Highlights**
+
+**CC API Version: $VERSION_V2 and [$VERSION_V3](http://v3-apidocs.cloudfoundry.org/version/$VERSION_V3/)**
+
+**Service Broker API Version: [$VERSION_BROKER_API](https://github.com/openservicebrokerapi/servicebroker/blob/v$VERSION_BROKER_API/spec.md)**
+
+### [CAPI Release](https://github.com/cloudfoundry/capi-release/tree/$SHA_CAPI)
+
+### [Cloud Controller](https://github.com/cloudfoundry/cloud_controller_ng/tree/$SHA_CC)
+
+#### Pull Requests and Issues
+EOF
+
+#cp -R capi-final-releases/* generated-release/
