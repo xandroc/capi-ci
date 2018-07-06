@@ -2247,7 +2247,6 @@ jobs:
       source_file: environment/metadata
       delete:
         enabled: true
-        force: true
   - put: xena-mysql-deployment
     params:
       source_file: environment/metadata
@@ -2324,7 +2323,6 @@ jobs:
       source_file: environment/metadata
       delete:
         enabled: true
-        force: true
   - put: xena-postgres-deployment
     params:
       source_file: environment/metadata
