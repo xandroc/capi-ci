@@ -305,10 +305,13 @@ resources:
   type: git
   source:
     branch: master
-    paths:
-    - tasks/ensure-api-healthy
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/runtime-ci.git
+
+- name: gcp-xenial-stemcell
+  type: bosh-io-stemcell
+  source:
+    name: bosh-google-kvm-ubuntu-xenial-go_agent
 
 # Pinned at job level with BOSH_DEPLOYMENT_VERSION
 - name: bosh-deployment
@@ -917,6 +920,8 @@ jobs:
     - get: ripley-integration-configs
     - get: cf-acceptance-tests
     - get: sync-integration-tests
+    - get: gcp-xenial-stemcell
+    - get: runtime-ci
     - get: capi-ci
     - get: capi-ci-private
     - get: capi-release-tarball
@@ -930,10 +935,12 @@ jobs:
     params:
       BBL_STATE_DIR: "ripley"
   - task: ripley-linux-stemcell-upload
-    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    file: runtime-ci/tasks/bosh-upload-stemcell/task.yml
     input_mapping:
+      stemcell: gcp-xenial-stemcell
       bbl-state: ripley-bbl-state
     params:
+      STEMCELL_NAME: '*.tgz'
       BBL_STATE_DIR: "ripley"
   - task: extract-bbl-environment
     file: capi-ci/ci/bbl-tasks/extract_bbl_environment.yml
