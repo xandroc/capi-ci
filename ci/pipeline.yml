@@ -218,6 +218,14 @@ resources:
     drafts: true
     access_token: ((github_access_token))
 
+- name: github-published-release
+  type: github-release
+  source:
+    user: cloudfoundry
+    repository: capi-release
+    drafts: false
+    access_token: ((github_access_token))
+
 - name: cloud_controller_ng
   type: git
   source:
@@ -1413,6 +1421,9 @@ jobs:
     - get: capi-final-releases
       passed: [ship-it]
       trigger: true
+    - get: github-published-release
+      params:
+        globs: []
   - task: generate-github-release
     file: capi-ci/ci/git/generate_github_release.yml
   - put: github-release

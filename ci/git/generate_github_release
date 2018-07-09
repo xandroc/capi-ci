@@ -1,12 +1,16 @@
 #!/usr/bin/env bash
 
 set -eu
-GITHUB_DIR=capi-final-releases/
+
+FINAL_RELEASE_DIR=capi-final-releases/
+PREVIOUS_RELEASE_TAG=$(cat github-published-release/tag)
 pushd capi-release
   SHA_CAPI=$(git rev-parse HEAD )
-  echo $SHA_CAPI > ../$GITHUB_DIR/commitish
+  echo $SHA_CAPI > ../$FINAL_RELEASE_DIR/commitish
+  PREVIOUS_SHA_CC=$(git rev-parse $PREVIOUS_RELEASE_TAG:./src/cloud_controller_ng)
   pushd src/cloud_controller_ng
     SHA_CC=$(git rev-parse HEAD)
+    MIGRATIONS=($(git diff --name-only $PREVIOUS_SHA_CC db/migrations))
     pushd config
       VERSION_V2=$(cat version_v2)
       VERSION_V3=$(cat version)
@@ -14,14 +18,25 @@ pushd capi-release
   popd
 popd
 
-VERSION_CAPI=$(cat $GITHUB_DIR/version)
+VERSION_CAPI=$(cat $FINAL_RELEASE_DIR/version)
 
-echo "CAPI ${VERSION_CAPI}" > $GITHUB_DIR/name
-echo "${VERSION_CAPI}" > $GITHUB_DIR/version
+echo "CAPI ${VERSION_CAPI}" > $FINAL_RELEASE_DIR/name
+echo "${VERSION_CAPI}" > $FINAL_RELEASE_DIR/version
+
+VERSION_BROKER_API="36.4"
+
+MIGRATIONS_FORMATTED=()
+if [ ${#MIGRATIONS[@]} -eq '0' ]; then
+  MIGRATIONS_FORMATTED+=("None")
+else
+  for i in "${MIGRATIONS[@]}"
+  do
+    MIGRATIONS_FORMATTED+=("- [$(basename $i)](https://github.com/cloudfoundry/cloud_controller_ng/blob/$SHA_CC/$i)")
+  done
+fi
 
 # body == release notes
-VERSION_BROKER_API="36.4"
-cat <<EOF > $GITHUB_DIR/body
+cat <<EOF > $FINAL_RELEASE_DIR/body
 **Highlights**
 
 **CC API Version: $VERSION_V2 and [$VERSION_V3](http://v3-apidocs.cloudfoundry.org/version/$VERSION_V3/)**
@@ -31,6 +46,10 @@ cat <<EOF > $GITHUB_DIR/body
 ### [CAPI Release](https://github.com/cloudfoundry/capi-release/tree/$SHA_CAPI)
 
 ### [Cloud Controller](https://github.com/cloudfoundry/cloud_controller_ng/tree/$SHA_CC)
+
+#### Cloud Controller Database Migrations
+
+$( IFS=$'\n'; echo "${MIGRATIONS_FORMATTED[*]}" )
 
 #### Pull Requests and Issues
 EOF
