@@ -1417,6 +1417,7 @@ jobs:
     file: capi-ci/ci/git/generate_github_release.yml
   - put: github-release
     params:
+      body: generated-release/body
       commitish: generated-release/commitish
       name: generated-release/name
       tag: generated-release/version
