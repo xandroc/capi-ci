@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 set -eu
-GITHUB_DIR=github
+GITHUB_DIR=capi-final-releases/
 pushd capi-release
   SHA_CAPI=$(git rev-parse HEAD )
   echo $SHA_CAPI > ../$GITHUB_DIR/commitish
@@ -35,4 +35,4 @@ cat <<EOF > $GITHUB_DIR/body
 #### Pull Requests and Issues
 EOF
 
-#cp -R capi-final-releases/* generated-release/
+cp -R capi-final-releases/* generated-release/
