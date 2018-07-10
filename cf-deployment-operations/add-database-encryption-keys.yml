@@ -2,25 +2,28 @@
   path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/cc/database_encryption?
   value:
     keys:
-      encryption_key_0: '((cc_db_encryption_key_0))'
+      encryption_key_0: '((cc_db_encryption_key))'
     current_key_label: 'encryption_key_0'
+
+- type: remove
+  path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/cc/db_encryption_key?
 
 - type: replace
   path: /instance_groups/name=cc-worker/jobs/name=cloud_controller_worker/properties/cc/database_encryption?
   value:
     keys:
-      encryption_key_0: '((cc_db_encryption_key_0))'
+      encryption_key_0: '((cc_db_encryption_key))'
     current_key_label: 'encryption_key_0'
+
+- type: remove
+  path: /instance_groups/name=cc-worker/jobs/name=cloud_controller_worker/properties/cc/db_encryption_key?
 
 - type: replace
   path: /instance_groups/name=scheduler/jobs/name=cloud_controller_clock/properties/cc/database_encryption?
   value:
     keys:
-      encryption_key_0: '((cc_db_encryption_key_0))'
+      encryption_key_0: '((cc_db_encryption_key))'
     current_key_label: 'encryption_key_0'
 
-- type: replace
-  path: /variables?/name=cc_db_encryption_key_0?
-  value:
-    name: cc_db_encryption_key_0
-    type: password
+- type: remove
+  path: /instance_groups/name=scheduler/jobs/name=cloud_controller_clock/properties/cc/db_encryption_key?
