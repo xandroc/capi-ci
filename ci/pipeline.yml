@@ -567,6 +567,7 @@ jobs:
       trigger: true
     - get: capi-release
       resource: capi-release-develop
+      trigger: true
     - get: cc-uploader
       trigger: true
     - get: tps
