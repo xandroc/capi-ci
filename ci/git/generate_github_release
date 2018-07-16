@@ -14,6 +14,7 @@ pushd capi-release
     pushd config
       VERSION_V2=$(cat version_v2)
       VERSION_V3=$(cat version)
+      VERSION_BROKER_API=$(cat osbapi_version)
     popd
   popd
 popd
@@ -22,8 +23,6 @@ VERSION_CAPI=$(cat $FINAL_RELEASE_DIR/version)
 
 echo "CAPI ${VERSION_CAPI}" > $FINAL_RELEASE_DIR/name
 echo "${VERSION_CAPI}" > $FINAL_RELEASE_DIR/version
-
-VERSION_BROKER_API="2.13"
 
 MIGRATIONS_FORMATTED=()
 if [ ${#MIGRATIONS[@]} -eq '0' ]; then
