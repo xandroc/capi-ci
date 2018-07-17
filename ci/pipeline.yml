@@ -203,6 +203,15 @@ resources:
     git_user: 'CAPI CI <cf-capi-eng+ci@pivotal.io>'
     private_key: ((private_key))
 
+- name: staticfile-app
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/cf-acceptance-tests.git
+    private_key: ((private_key))
+    paths:
+    - assets/staticfile/**
+
 - name: cc-uploader
   type: git
   source:
@@ -2272,6 +2281,9 @@ jobs:
       - capi-ci/cf-deployment-operations/use-latest-capi.yml
       # Ensure that we support BBR with multiple CC instances
       - capi-ci/cf-deployment-operations/scale-up-cloud-controller.yml
+      # Add rotate-cc-database-key errand
+      - capi-ci/cf-deployment-operations/add-database-encryption-keys.yml
+      - capi-ci/cf-deployment-operations/temporary/add-rotate-cc-database-key-errand.yml
   - task: download-vars-store
     output_mapping:
       destination-directory: xena-mysql-deployment-vars
@@ -2368,3 +2380,61 @@ jobs:
       CF_API_URL: https://api.xena-postgres.capi.land
       SKIP_SUITE_NAME: "cf-nfsbroker|cf-credhub"
       BBL_STATE_DIR: "xena-postgres"
+
+- name: xena-mysql-rotate-cc-database-key
+  serial: true
+  plan:
+  - aggregate:
+    - get: capi-ci
+    - get: capi-ci-private
+    - get: staticfile-app
+  - task: download-vars-store
+    output_mapping:
+      destination-directory: xena-mysql-deployment-vars
+    file: capi-ci/ci/gcs/download-from-gcs.yml
+    params:
+      GCP_JSON_KEY: ((xena_gcp_json_key))
+      GCP_BUCKET: ((xena_bosh_vars_bucket))
+      GCP_PATH: bosh-mysql
+  - task: seed-app-data
+    file: capi-ci/cf/push-app.yml
+    input_mapping:
+      vars-store: xena-mysql-deployment-vars
+    params:
+      CF_API_URL: https://api.xena-mysql.capi.land
+      APP_ENV_VAR_NAME:
+      APP_ENV_VAR_VALUE:
+#   TODO: deploy with a new key
+  - task: deploy-with-updated-encryption-key
+    file:
+    params:
+      ENCRYPTION_KEY: "updated-encryption-key"
+#   TODO: set that label to the current one
+  - task: set-encryption-key-label
+    file:
+    params:
+#   TODO: push an app and set some other env variables
+  - task: seed-app-data
+    file:
+    params:
+      APP_ENV_VAR_NAME:
+      APP_ENV_VAR_VALUE:
+#   TODO: run the errand
+  - task: rotate-db-encryption-key
+    file: cf-deployment-concourse-tasks/run-errand/task.yml
+    params:
+      ERRAND_NAME: "rotate-cc-database-key"
+#      necessary?
+#      BBL_STATE_DIR: bbl-state
+#      DEPLOYMENT_NAME: cf
+#   TODO: remove the old keys from the manifest
+  - task: remove-old-encryption-key
+    file:
+#   TODO: make sure you can read both env variables from apps
+  - task: test-env-var-readability
+    file:
+#   TODO: maybe delete the apps (could just use 2 and go back and forth?)
+  - task: cleanup-apps
+    file:
+    params:
+      ORG_NAME:
