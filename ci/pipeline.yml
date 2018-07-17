@@ -1136,7 +1136,7 @@ jobs:
       # Use S3 as blobstore
       - capi-ci/cf-deployment-operations/use-s3-and-cdn-storage.yml
       # Use clustered mysql
-      - capi-ci/cf-deployment-operations/use-clustered-mysql.yml
+      - cf-deployment/operations/scale-database-cluster.yml
       # Metrics
       - capi-ci/cf-deployment-operations/add-datadog-firehose-nozzle-gcp.yml
       - capi-ci/cf-deployment-operations/add-new-relic.yml
