@@ -1,0 +1,21 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: cloudfoundry/capi
+    tag: bbr-run-drats
+
+inputs:
+  - name: capi-ci
+  - name: vars-store
+
+run:
+  path: capi-ci/ci/cf/verify-env-vars.sh
+
+params:
+  CF_API_URL:
+  APP_NAME:
+  APP_ENV_VAR_NAME:
+  APP_ENV_VAR_VALUE:

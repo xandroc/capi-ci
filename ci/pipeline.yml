@@ -14,6 +14,7 @@ groups:
   - elsa-mysql-s3-bypass
   - kiki-back-compat-migrations
   - xena-mysql-drats
+  - xena-mysql-rotate-ccdb-key
   - xena-postgres-drats
   - ripley-nfs
   - bump-ci-passed
@@ -202,6 +203,15 @@ resources:
     file: config/version_v2
     git_user: 'CAPI CI <cf-capi-eng+ci@pivotal.io>'
     private_key: ((private_key))
+
+- name: staticfile-app
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:cloudfoundry/cf-acceptance-tests.git
+    private_key: ((private_key))
+    paths:
+    - assets/staticfile/**
 
 - name: cc-uploader
   type: git
@@ -2272,6 +2282,8 @@ jobs:
       - capi-ci/cf-deployment-operations/use-latest-capi.yml
       # Ensure that we support BBR with multiple CC instances
       - capi-ci/cf-deployment-operations/scale-up-cloud-controller.yml
+      # Add rotate-cc-database-key errand
+      - capi-ci/cf-deployment-operations/rotate-cc-database-key/add-rotate-cc-database-key-errand.yml
   - task: download-vars-store
     output_mapping:
       destination-directory: xena-mysql-deployment-vars
@@ -2290,6 +2302,173 @@ jobs:
       CF_API_URL: https://api.xena-mysql.capi.land
       SKIP_SUITE_NAME: "cf-nfsbroker|cf-credhub"
       BBL_STATE_DIR: "xena-mysql"
+
+- name: xena-mysql-rotate-ccdb-key
+  serial: true
+  plan:
+  - aggregate:
+    - get: cloud_controller_ng
+      passed: [xena-mysql-drats]
+    - get: capi-ci
+    - get: capi-ci-private
+    - get: cf-deployment-concourse-tasks
+    - get: capi-release
+      resource: capi-release-develop
+      passed: [xena-mysql-drats]
+    - get: capi-release-tarball
+      passed: [xena-mysql-drats]
+      trigger: true
+    - get: staticfile-app
+  - task: download-vars-store
+    output_mapping:
+      destination-directory: xena-mysql-deployment-vars
+    file: capi-ci/ci/gcs/download-from-gcs.yml
+    params:
+      GCP_JSON_KEY: ((xena_gcp_json_key))
+      GCP_BUCKET: ((xena_bosh_vars_bucket))
+      GCP_PATH: bosh-mysql
+  - task: seed-app-data # encrypt app env vars with db_encryption_key
+    file: capi-ci/cf/push-app.yml
+    input_mapping:
+      vars-store: xena-mysql-deployment-vars
+    params:
+      CF_API_URL: https://api.xena-mysql.capi.land
+      APP_NAME: baby
+      APP_ENV_VAR_NAME: larva
+      APP_ENV_VAR_VALUE: caterpillar
+  - put: xena-mysql-deployment # add database_encryption block and set current key label
+    params:
+      source_file: environment/metadata
+      manifest: cf-deployment/cf-deployment.yml
+      vars:
+        system_domain: *xena-mysql-domain
+      releases:
+      - capi-release-tarball/*.tgz
+      ops_files:
+      # Skip cert verification
+      - capi-ci/cf-deployment-operations/skip-cert-verify.yml
+      # Bosh-lite deployment, minimal instances and resources for VMs/network
+      - cf-deployment/operations/bosh-lite.yml
+      # Deploy BBR
+      - cf-deployment/operations/backup-and-restore/enable-backup-restore.yml
+      - capi-ci/cf-deployment-operations/temporary/deploy-capi-backup-restore.yml
+      # Use compiled releases
+      - cf-deployment/operations/use-compiled-releases.yml
+      # Use latest CAPI release
+      - capi-ci/cf-deployment-operations/use-latest-capi.yml
+      # Ensure that we support BBR with multiple CC instances
+      - capi-ci/cf-deployment-operations/scale-up-cloud-controller.yml
+      # Add rotate-cc-database-key errand
+      - capi-ci/cf-deployment-operations/rotate-cc-database-key/add-database-encryption-keys.yml
+      - capi-ci/cf-deployment-operations/rotate-cc-database-key/add-rotate-cc-database-key-errand.yml
+  - task: seed-app-data # encrypt app env vars with initial database_encryption key/current_key_label
+    file: capi-ci/cf/push-app.yml
+    input_mapping:
+      vars-store: xena-mysql-deployment-vars
+    params:
+      CF_API_URL: https://api.xena-mysql.capi.land
+      APP_NAME: teenager
+      APP_ENV_VAR_NAME: pupa
+      APP_ENV_VAR_VALUE: chrysalis
+  - put: xena-mysql-deployment # change current database encryption key
+    params:
+      source_file: environment/metadata
+      manifest: cf-deployment/cf-deployment.yml
+      vars:
+        system_domain: *xena-mysql-domain
+      releases:
+      - capi-release-tarball/*.tgz
+      ops_files:
+      # Skip cert verification
+      - capi-ci/cf-deployment-operations/skip-cert-verify.yml
+      # Bosh-lite deployment, minimal instances and resources for VMs/network
+      - cf-deployment/operations/bosh-lite.yml
+      # Deploy BBR
+      - cf-deployment/operations/backup-and-restore/enable-backup-restore.yml
+      - capi-ci/cf-deployment-operations/temporary/deploy-capi-backup-restore.yml
+      # Use compiled releases
+      - cf-deployment/operations/use-compiled-releases.yml
+      # Use latest CAPI release
+      - capi-ci/cf-deployment-operations/use-latest-capi.yml
+      # Ensure that we support BBR with multiple CC instances
+      - capi-ci/cf-deployment-operations/scale-up-cloud-controller.yml
+      # Add rotate-cc-database-key errand
+      - capi-ci/cf-deployment-operations/rotate-cc-database-key/add-database-encryption-keys.yml
+      - capi-ci/cf-deployment-operations/rotate-cc-database-key/add-rotate-cc-database-key-errand.yml
+      # Add new key and make it the current key
+      - capi-ci/cf-deployment-operations/rotate-cc-database-key/change-current-database-encryption-key.yml
+  - task: seed-app-data # encrypt app env vars with changed database_encryption key/current_key_label
+    file: capi-ci/cf/push-app.yml
+    input_mapping:
+      vars-store: xena-mysql-deployment-vars
+    params:
+      CF_API_URL: https://api.xena-mysql.capi.land
+      APP_NAME: mature
+      APP_ENV_VAR_NAME: transcendant
+      APP_ENV_VAR_VALUE: butterfly
+  - task: rotate-db-encryption-key
+    file: cf-deployment-concourse-tasks/run-errand/task.yml
+    input_mapping:
+      bbl-state: capi-ci-private
+    params:
+      ERRAND_NAME: "rotate-cc-database-key"
+      BBL_STATE_DIR: xena-mysql
+  - put: xena-mysql-deployment # remove unused initial key and old db_encryption_key
+    params:
+      source_file: environment/metadata
+      manifest: cf-deployment/cf-deployment.yml
+      vars:
+        system_domain: *xena-mysql-domain
+      releases:
+      - capi-release-tarball/*.tgz
+      ops_files:
+      # Skip cert verification
+      - capi-ci/cf-deployment-operations/skip-cert-verify.yml
+      # Bosh-lite deployment, minimal instances and resources for VMs/network
+      - cf-deployment/operations/bosh-lite.yml
+      # Deploy BBR
+      - cf-deployment/operations/backup-and-restore/enable-backup-restore.yml
+      - capi-ci/cf-deployment-operations/temporary/deploy-capi-backup-restore.yml
+      # Use compiled releases
+      - cf-deployment/operations/use-compiled-releases.yml
+      # Use latest CAPI release
+      - capi-ci/cf-deployment-operations/use-latest-capi.yml
+      # Ensure that we support BBR with multiple CC instances
+      - capi-ci/cf-deployment-operations/scale-up-cloud-controller.yml
+      # Add rotate-cc-database-key errand
+      - capi-ci/cf-deployment-operations/rotate-cc-database-key/add-database-encryption-keys.yml
+      - capi-ci/cf-deployment-operations/rotate-cc-database-key/add-rotate-cc-database-key-errand.yml
+      # Add new key and make it the current key
+      - capi-ci/cf-deployment-operations/rotate-cc-database-key/change-current-database-encryption-key.yml
+      # Remove the old encryption key
+      - capi-ci/cf-deployment-operations/rotate-cc-database-key/remove-old-key.yml
+  - task: verify-env-vars
+    file: capi-ci/cf/verify-env-vars.yml
+    input_mapping:
+      vars-store: xena-mysql-deployment-vars
+    params:
+      CF_API_URL: https://api.xena-mysql.capi.land
+      APP_NAME: baby
+      APP_ENV_VAR_NAME: larva
+      APP_ENV_VAR_VALUE: caterpillar
+  - task: verify-env-vars
+    file: capi-ci/cf/verify-env-vars.yml
+    input_mapping:
+      vars-store: xena-mysql-deployment-vars
+    params:
+      CF_API_URL: https://api.xena-mysql.capi.land
+      APP_NAME: teenager
+      APP_ENV_VAR_NAME: pupa
+      APP_ENV_VAR_VALUE: chrysalis
+  - task: verify-env-vars
+    file: capi-ci/cf/verify-env-vars.yml
+    input_mapping:
+      vars-store: xena-mysql-deployment-vars
+    params:
+      CF_API_URL: https://api.xena-mysql.capi.land
+      APP_NAME: mature
+      APP_ENV_VAR_NAME: transcendant
+      APP_ENV_VAR_VALUE: butterfly
 
 - name: xena-postgres-drats
   serial: true
