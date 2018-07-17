@@ -22,15 +22,14 @@ CF_ADMIN_PASSWORD="$(bosh interpolate "${vars_store_dir}/${VARS_STORE_PATH}" --p
 
 echo "Logging in and setting up..."
 cf login -a $CF_API_URL -u admin -p "$CF_ADMIN_PASSWORD" --skip-ssl-validation
-cf create-org $ORG_NAME && cf target -o $ORG_NAME
-cf create-space $SPACE_NAME && cf target -s $SPACE_NAME
+cf target -o $ORG_NAME -s $SPACE_NAME
 
-echo "Pushing an app..."
-pushd "${staticfile_app_dir}" > /dev/null
-  cf push $APP_NAME --no-start
-popd > /dev/null
+echo "Getting env variables for app..."
+value=$(cf env $APP_NAME | grep $APP_ENV_VAR_NAME | cut -d' ' -f2)
 
-echo "Setting environment variable..."
-cf set-env $APP_NAME $APP_ENV_VAR_NAME $APP_ENV_VAR_VALUE
-
-echo "Success!"
+if [ $value = $APP_ENV_VAR_VALUE ]; then
+  echo "Success!"
+else
+  echo "Set env $APP_ENV_VAR_NAME to $APP_ENV_VAR_VALUE, but got $value"
+  exit 1
+fi

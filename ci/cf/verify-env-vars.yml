@@ -9,11 +9,10 @@ image_resource:
 
 inputs:
   - name: capi-ci
-  - name: staticfile-app
   - name: vars-store
 
 run:
-  path: capi-ci/ci/cf/push-app.sh
+  path: capi-ci/ci/cf/verify-env-vars.sh
 
 params:
   CF_API_URL:
