@@ -1137,7 +1137,7 @@ jobs:
       - capi-ci/cf-deployment-operations/skip-cert-verify-on-windows-cell.yml
       - capi-ci/cf-deployment-operations/windows-cell-consul-mutual-tls.yml
       # Use rotatable database encryption keys
-      - capi-ci/cf-deployment-operations/add-database-encryption-keys.yml
+      - capi-ci/cf-deployment-operations/rotate-cc-database-key/add-database-encryption-keys.yml
       # Scale up cells to prevent apps piling onto one cell during rolling deploy.
       # See https://github.com/cloudfoundry/capi-ci/commit/4f22dc4721aa5ed3917e84c4e0ce9f99d732a920 for details
       - capi-ci/cf-deployment-operations/scale-up-cells.yml
