@@ -2449,16 +2449,16 @@ jobs:
       - capi-ci/cf-deployment-operations/rotate-cc-database-key/change-current-database-encryption-key.yml
       # Remove the old encryption key
       - capi-ci/cf-deployment-operations/rotate-cc-database-key/remove-old-key.yml
-  - task: verify-env-vars
-    file: capi-ci/ci/cf/verify-env-vars.yml
-    input_mapping:
-      vars-store: xena-mysql-deployment-vars
-    params:
-      CF_API_URL: https://api.xena-mysql.capi.land
-      APP_NAME: baby
-      APP_ENV_VAR_NAME: larva
-      APP_ENV_VAR_VALUE: caterpillar
   - aggregate:
+    - task: verify-env-vars
+      file: capi-ci/ci/cf/verify-env-vars.yml
+      input_mapping:
+        vars-store: xena-mysql-deployment-vars
+      params:
+        CF_API_URL: https://api.xena-mysql.capi.land
+        APP_NAME: baby
+        APP_ENV_VAR_NAME: larva
+        APP_ENV_VAR_VALUE: caterpillar
     - task: verify-env-vars
       file: capi-ci/ci/cf/verify-env-vars.yml
       input_mapping:
