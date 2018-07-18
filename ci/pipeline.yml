@@ -2311,6 +2311,7 @@ jobs:
       passed: [xena-mysql-drats]
     - get: capi-ci
     - get: capi-ci-private
+    - get: cf-deployment
     - get: cf-deployment-concourse-tasks
     - get: capi-release
       resource: capi-release-develop
@@ -2319,6 +2320,10 @@ jobs:
       passed: [xena-mysql-drats]
       trigger: true
     - get: staticfile-app
+  - task: extract-bbl-environment
+    file: capi-ci/ci/bbl-tasks/extract_bbl_environment.yml
+    params:
+      ENV_NAME: xena-mysql
   - task: download-vars-store
     output_mapping:
       destination-directory: xena-mysql-deployment-vars
@@ -2328,7 +2333,7 @@ jobs:
       GCP_BUCKET: ((xena_bosh_vars_bucket))
       GCP_PATH: bosh-mysql
   - task: seed-app-data # encrypt app env vars with db_encryption_key
-    file: capi-ci/cf/push-app.yml
+    file: capi-ci/ci/cf/push-app.yml
     input_mapping:
       vars-store: xena-mysql-deployment-vars
     params:
@@ -2362,7 +2367,7 @@ jobs:
       - capi-ci/cf-deployment-operations/rotate-cc-database-key/add-database-encryption-keys.yml
       - capi-ci/cf-deployment-operations/rotate-cc-database-key/add-rotate-cc-database-key-errand.yml
   - task: seed-app-data # encrypt app env vars with initial database_encryption key/current_key_label
-    file: capi-ci/cf/push-app.yml
+    file: capi-ci/ci/cf/push-app.yml
     input_mapping:
       vars-store: xena-mysql-deployment-vars
     params:
@@ -2398,7 +2403,7 @@ jobs:
       # Add new key and make it the current key
       - capi-ci/cf-deployment-operations/rotate-cc-database-key/change-current-database-encryption-key.yml
   - task: seed-app-data # encrypt app env vars with changed database_encryption key/current_key_label
-    file: capi-ci/cf/push-app.yml
+    file: capi-ci/ci/cf/push-app.yml
     input_mapping:
       vars-store: xena-mysql-deployment-vars
     params:
@@ -2443,7 +2448,7 @@ jobs:
       # Remove the old encryption key
       - capi-ci/cf-deployment-operations/rotate-cc-database-key/remove-old-key.yml
   - task: verify-env-vars
-    file: capi-ci/cf/verify-env-vars.yml
+    file: capi-ci/ci/cf/verify-env-vars.yml
     input_mapping:
       vars-store: xena-mysql-deployment-vars
     params:
@@ -2452,7 +2457,7 @@ jobs:
       APP_ENV_VAR_NAME: larva
       APP_ENV_VAR_VALUE: caterpillar
   - task: verify-env-vars
-    file: capi-ci/cf/verify-env-vars.yml
+    file: capi-ci/ci/cf/verify-env-vars.yml
     input_mapping:
       vars-store: xena-mysql-deployment-vars
     params:
@@ -2461,7 +2466,7 @@ jobs:
       APP_ENV_VAR_NAME: pupa
       APP_ENV_VAR_VALUE: chrysalis
   - task: verify-env-vars
-    file: capi-ci/cf/verify-env-vars.yml
+    file: capi-ci/ci/cf/verify-env-vars.yml
     input_mapping:
       vars-store: xena-mysql-deployment-vars
     params:

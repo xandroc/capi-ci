@@ -21,7 +21,8 @@ staticfile_app_dir="${workspace_dir}/staticfile-app"
 CF_ADMIN_PASSWORD="$(bosh interpolate "${vars_store_dir}/${VARS_STORE_PATH}" --path=/cf_admin_password)"
 
 echo "Logging in and setting up..."
-cf login -a $CF_API_URL -u admin -p "$CF_ADMIN_PASSWORD" --skip-ssl-validation
+cf api $CF_API_URL --skip-ssl-validation
+cf auth admin "$CF_ADMIN_PASSWORD"
 cf create-org $ORG_NAME && cf target -o $ORG_NAME
 cf create-space $SPACE_NAME && cf target -s $SPACE_NAME
 
