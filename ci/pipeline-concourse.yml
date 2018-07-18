@@ -31,11 +31,14 @@ resources:
     uri: git@github.com:cloudfoundry/capi-ci.git
 
 - name: concourse
-  type: github-release
+  type: bosh-io-release
   source:
-    access_token: ((github_access_token))
-    repository: concourse
-    owner: concourse
+    repository: concourse/concourse
+
+- name: garden-runc
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/garden-runc-release
 
 - name: postgres
   type: bosh-io-release
@@ -136,11 +139,11 @@ jobs:
   plan:
   - aggregate:
     - get: concourse
-      version: { tag: 'v3.9.2' }
-      params:
-        globs:
-        - concourse-*.tgz
-        - garden-runc-*.tgz
+      version:
+        version: 3.14.1
+    - get: garden-runc
+      version:
+        version: 1.14.0
     - get: postgres
       version: { version: '28' }
     - get: concourse-config
@@ -159,8 +162,8 @@ jobs:
       ops_files:
       - capi-ci/concourse-deployment-operations/gcp.yml
       releases:
-        - concourse/concourse-*.tgz
-        - concourse/garden-runc-*.tgz
+        - concourse/release.tgz
+        - garden-runc/release.tgz
         - postgres/*.tgz
       stemcells:
         - gcp-stemcell/*.tgz
