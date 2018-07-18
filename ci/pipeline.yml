@@ -2203,7 +2203,7 @@ jobs:
         - elsa-mysql-s3-bypass
         - mulan-postgres-webdav-bridge
         - kiki-back-compat-migrations
-        - xena-mysql-drats
+        - xena-mysql-rotate-ccdb-key
         - xena-postgres-drats
     - get: capi-release
       resource: capi-release-develop
@@ -2211,7 +2211,7 @@ jobs:
         - elsa-mysql-s3-bypass
         - mulan-postgres-webdav-bridge
         - kiki-back-compat-migrations
-        - xena-mysql-drats
+        - xena-mysql-rotate-ccdb-key
         - xena-postgres-drats
       trigger: true
     - get: capi-release-tarball
@@ -2219,7 +2219,7 @@ jobs:
         - elsa-mysql-s3-bypass
         - mulan-postgres-webdav-bridge
         - kiki-back-compat-migrations
-        - xena-mysql-drats
+        - xena-mysql-rotate-ccdb-key
         - xena-postgres-drats
   - put: capi-release-ci-passed
     params:
@@ -2227,6 +2227,7 @@ jobs:
 
 - name: xena-mysql-drats
   serial: true
+  serial_groups: [xena-mysql]
   plan:
   - aggregate:
     - get: cloud_controller_ng
@@ -2305,6 +2306,7 @@ jobs:
 
 - name: xena-mysql-rotate-ccdb-key
   serial: true
+  serial_groups: [xena-mysql]
   plan:
   - aggregate:
     - get: cloud_controller_ng
@@ -2456,24 +2458,25 @@ jobs:
       APP_NAME: baby
       APP_ENV_VAR_NAME: larva
       APP_ENV_VAR_VALUE: caterpillar
-  - task: verify-env-vars
-    file: capi-ci/ci/cf/verify-env-vars.yml
-    input_mapping:
-      vars-store: xena-mysql-deployment-vars
-    params:
-      CF_API_URL: https://api.xena-mysql.capi.land
-      APP_NAME: teenager
-      APP_ENV_VAR_NAME: pupa
-      APP_ENV_VAR_VALUE: chrysalis
-  - task: verify-env-vars
-    file: capi-ci/ci/cf/verify-env-vars.yml
-    input_mapping:
-      vars-store: xena-mysql-deployment-vars
-    params:
-      CF_API_URL: https://api.xena-mysql.capi.land
-      APP_NAME: mature
-      APP_ENV_VAR_NAME: transcendant
-      APP_ENV_VAR_VALUE: butterfly
+  - aggregate:
+    - task: verify-env-vars
+      file: capi-ci/ci/cf/verify-env-vars.yml
+      input_mapping:
+        vars-store: xena-mysql-deployment-vars
+      params:
+        CF_API_URL: https://api.xena-mysql.capi.land
+        APP_NAME: teenager
+        APP_ENV_VAR_NAME: pupa
+        APP_ENV_VAR_VALUE: chrysalis
+    - task: verify-env-vars
+      file: capi-ci/ci/cf/verify-env-vars.yml
+      input_mapping:
+        vars-store: xena-mysql-deployment-vars
+      params:
+        CF_API_URL: https://api.xena-mysql.capi.land
+        APP_NAME: mature
+        APP_ENV_VAR_NAME: transcendant
+        APP_ENV_VAR_VALUE: butterfly
 
 - name: xena-postgres-drats
   serial: true
