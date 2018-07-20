@@ -166,22 +166,6 @@ resources:
     password: ((dockerhub_pass))
     email: ((dockerhub_email))
 
-- name: capi-dockerfiles-spiff
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/capi-dockerfiles.git
-    paths: [spiff/Dockerfile]
-
-- name: docker-image-spiff
-  type: docker-image
-  source:
-    repository: cloudfoundry/capi
-    tag: spiff
-    username: ((dockerhub_user))
-    password: ((dockerhub_pass))
-    email: ((dockerhub_email))
-
 jobs:
 - name: rc-docs-docker
   serial: true
@@ -282,17 +266,6 @@ jobs:
   - put: docker-image-migration-compatibility
     params:
       build: capi-dockerfiles-migration-compatibility/capi-migration-compatibility
-- name: spiff-docker
-  serial: true
-  plan:
-  - aggregate:
-    - get: weekly
-      trigger: true
-    - get: capi-dockerfiles-spiff
-      trigger: true
-  - put: docker-image-spiff
-    params:
-      build: capi-dockerfiles-spiff/spiff
 - name: sits-docker
   serial: true
   plan:
