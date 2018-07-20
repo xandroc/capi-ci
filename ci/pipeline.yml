@@ -984,6 +984,9 @@ jobs:
       - cf-deployment/operations/experimental/use-compiled-releases-xenial-stemcell.yml
       # Use latest CAPI release
       - capi-ci/cf-deployment-operations/use-latest-capi.yml
+      # Enable BPM
+      - cf-deployment/operations/experimental/enable-bpm.yml
+      - capi-ci/cf-deployment-operations/temporary/enable-bpm-capi.yml
       # Use NFS as blobstore
       - capi-ci/cf-deployment-operations/use-nfs-blobstore.yml
       # Skip cert verification
