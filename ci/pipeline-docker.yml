@@ -102,13 +102,6 @@ resources:
     password: ((dockerhub_pass))
     email: ((dockerhub_email))
 
-- name: capi-dockerfiles-bosh
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/cloudfoundry/capi-dockerfiles.git
-    paths: [bosh/Dockerfile]
-
 - name: capi-dockerfiles-bosh-lite
   type: git
   source:
@@ -121,15 +114,6 @@ resources:
   source:
     repository: cloudfoundry/capi
     tag: bosh-lite
-    username: ((dockerhub_user))
-    password: ((dockerhub_pass))
-    email: ((dockerhub_email))
-
-- name: docker-image-bosh
-  type: docker-image
-  source:
-    repository: cloudfoundry/capi
-    tag: bosh
     username: ((dockerhub_user))
     password: ((dockerhub_pass))
     email: ((dockerhub_email))
@@ -233,17 +217,6 @@ jobs:
   - put: docker-image-bosh-lite
     params:
       build: capi-dockerfiles-bosh-lite/bosh-lite
-- name: bosh-docker
-  serial: true
-  plan:
-  - aggregate:
-    - get: weekly
-      trigger: true
-    - get: capi-dockerfiles-bosh
-      trigger: true
-  - put: docker-image-bosh
-    params:
-      build: capi-dockerfiles-bosh/bosh
 - name: capi-dockerfiles-bbr-run-drats
   serial: true
   plan:
