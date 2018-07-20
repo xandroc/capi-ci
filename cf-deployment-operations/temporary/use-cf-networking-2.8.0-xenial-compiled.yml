@@ -1,0 +1,10 @@
+---
+- path: /releases/name=cf-networking/url
+  type: replace
+  value: https://storage.googleapis.com/cf-deployment-compiled-releases/cf-networking-2.8.0-ubuntu-xenial-87.3-20180712-220501-261165812.tgz
+- path: /releases/name=cf-networking/version
+  type: replace
+  value: 2.8.0
+- path: /releases/name=cf-networking/sha1
+  type: replace
+  value: fe2513821207eb4f492f5f0b9f4729a8555e0a26

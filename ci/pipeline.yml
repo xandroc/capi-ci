@@ -1004,7 +1004,7 @@ jobs:
       # Deployment Updater for ZDT
       - capi-ci/cf-deployment-operations/temporary/add-deployment-updater.yml
       # Pin to cf-networking 2.8.0 until 2.10.0 gets to cf-d rc
-      - capi-ci/cf-deployment-operations/temporary/use-cf-networking-2.8.0.yml
+      - capi-ci/cf-deployment-operations/temporary/use-cf-networking-2.8.0-xenial-compiled.yml
   - task: download-vars-store
     output_mapping:
       destination-directory: ripley-deployment-vars
