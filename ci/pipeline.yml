@@ -1004,8 +1004,6 @@ jobs:
       - cf-deployment/operations/workaround/use-4-azs-for-router.yml
       # Deployment Updater for ZDT
       - capi-ci/cf-deployment-operations/temporary/add-deployment-updater.yml
-      # Pin to cf-networking to 2.10.0 (this will eventually get to cf-d rc)
-      - capi-ci/cf-deployment-operations/temporary/use-cf-networking-2.10.0-xenial-compiled.yml
   - task: download-vars-store
     output_mapping:
       destination-directory: ripley-deployment-vars
