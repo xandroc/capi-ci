@@ -714,9 +714,6 @@ jobs:
       - capi-ci/cf-deployment-operations/temporary/disable-uaa-get-requests.yml
       # Enable CEF logging #151811590
       - capi-ci/cf-deployment-operations/enable-cef-security-event-logging.yml
-      # Use BOSH DNS
-      - cf-deployment/operations/experimental/use-bosh-dns.yml
-      - cf-deployment/operations/experimental/use-bosh-dns-for-containers.yml
       # Enable BPM
       - cf-deployment/operations/experimental/enable-bpm.yml
       - capi-ci/cf-deployment-operations/temporary/enable-bpm-capi.yml
@@ -1168,9 +1165,7 @@ jobs:
       - capi-ci/cf-deployment-operations/seed-credhub-asg.yml
       # Credhub requires UAA auth so we must allow containers to talk to UAA
       - capi-ci/cf-deployment-operations/seed-uaa-asg.yml
-      # Use BOSH DNS
-      - cf-deployment/operations/experimental/use-bosh-dns.yml
-      - cf-deployment/operations/experimental/use-bosh-dns-for-containers.yml
+      # Add certs for Windows cells.
       - cf-deployment/operations/experimental/secure-service-credentials-windows-cell.yml
       # Workaround for GCP issue that causes 502s if there are empty LB instance groups #152766388
       - cf-deployment/operations/workaround/use-4-azs-for-router.yml
@@ -1179,7 +1174,7 @@ jobs:
       # Perm!
       - cf-deployment/operations/experimental/enable-bpm.yml
       - cf-deployment/operations/experimental/enable-mysql-tls.yml
-      - capi-ci/cf-deployment-operations/temporary/perm-service.yml
+      - cf-deployment/operations/experimental/perm-service.yml
   - task: download-vars-store
     output_mapping:
       destination-directory: elsa-deployment-vars
