@@ -1,3 +1,4 @@
+---
 - type: replace
   path: /instance_groups/2:before
   value:
@@ -26,6 +27,18 @@
       release: nfs-volume
       properties:
         nfstestserver: {}
+
+- type: replace
+  path: /addons/name=bosh-dns-aliases/jobs/name=bosh-dns-aliases/properties/aliases/domain=nfstestserver.service.cf.internal?
+  value:
+    domain: nfstestserver.service.cf.internal
+    targets:
+    - query: '*'
+      instance_group: nfstestserver
+      deployment: cf
+      network: default
+      domain: bosh
+
 - type: replace
   path: /releases/-
   value:
