@@ -50,6 +50,11 @@ pushd "${state_dir}" > /dev/null
        --vars-store ./creds.yml \
       ./director.yml
 
+    export BOSH_ENVIRONMENT=$(bosh int director.yml --path=/instance_groups/name=bosh/networks/name=public/static_ips/0)
+    export BOSH_CA_CERT="$(bosh interpolate --path /default_ca/ca creds.yml)"
+    export BOSH_CLIENT="admin"
+    export BOSH_CLIENT_SECRET=$(bosh int creds.yml --path=/admin_password)
+
     echo -e "\nAdding bosh-dns via runtime config..."
     bosh update-runtime-config \
       "${deployment_repo}/runtime-configs/dns.yml" \
