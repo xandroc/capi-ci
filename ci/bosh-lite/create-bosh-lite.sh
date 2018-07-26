@@ -49,4 +49,9 @@ pushd "${state_dir}" > /dev/null
        --state ./state.json \
        --vars-store ./creds.yml \
       ./director.yml
+
+    echo -e "\nAdding bosh-dns via runtime config..."
+    bosh update-runtime-config \
+      "${deployment_repo}/runtime-configs/dns.yml" \
+      --name=dns
 popd > /dev/null
