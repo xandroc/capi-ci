@@ -1239,8 +1239,6 @@ jobs:
     - get: cf-deployment-concourse-tasks
     - get: cf-deployment
       resource: cf-deployment-master
-    - get: cf-deployment-temporary-workaround
-      resource: cf-deployment
     - get: kiki-bbl-state
     - get: kiki-integration-configs
     - get: sync-integration-tests
@@ -1306,7 +1304,7 @@ jobs:
       - capi-ci/cf-deployment-operations/silence-noisy-logs.yml
       - capi-ci/cf-deployment-operations/silence-noisy-logs-isolated-diego-cell.yml
       # Workaround for GCP issue that causes 502s if there are empty LB instance groups #152766388
-      - cf-deployment-temporary-workaround/operations/workaround/use-4-azs-for-router.yml
+      - cf-deployment/operations/workaround/use-4-azs-for-router.yml
   - task: ensure-api-healthy
     file: runtime-ci/tasks/ensure-api-healthy/task.yml
     params:
