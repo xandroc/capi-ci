@@ -1,3 +1,4 @@
+---
 platform: linux
 
 image_resource:
@@ -19,3 +20,10 @@ params:
   # - Path to the directory containing the `bbl-state.json` file
   # - The path is relative to root of the `bbl-state` input
   # - If unspecified, uses the root of the `bbl-state` input
+  RUNTIME_CONFIG_PATH:
+  # - Required
+  # - Path to the runtime config file
+  # - relative to the BBL_STATE_DIR
+  RUNTIME_CONFIG_NAME:
+  # - Required
+  # - Name for the runtime config

@@ -1,6 +1,10 @@
 #!/bin/bash
 set -eu
 
+# ENV
+: "${RUNTIME_CONFIG_NAME:?}"
+: "${RUNTIME_CONFIG_PATH:?}"
+
 function setup_bosh_env_vars() {
   echo "Setting env vars..."
   pushd "bbl-state/${BBL_STATE_DIR}"
@@ -9,9 +13,11 @@ function setup_bosh_env_vars() {
 }
 
 function update_bosh_runtime_config() {
-  echo "Updating bosh cloud-config on ${BOSH_ENVIRONMENT}..."
+  echo "Updating bosh runtime config on ${BOSH_ENVIRONMENT}..."
   pushd "bbl-state/${BBL_STATE_DIR}"
-    bosh -n update-runtime-config ../../capi-ci/bosh-deployment-files/bosh-dns-runtime-config.yml
+    bosh -n update-runtime-config \
+    ${RUNTIME_CONFIG_PATH} \
+    --name=${RUNTIME_CONFIG_NAME}
   popd
 }
 
