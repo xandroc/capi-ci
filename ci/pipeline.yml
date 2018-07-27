@@ -7,6 +7,7 @@ groups:
   jobs:
   - cc-unit-tests
   - bridge-unit-tests
+  - capi-release-template-tests
   - create-capi-release
   - bump-capi-release
   - buffy-bits-postgres-webdav
@@ -542,6 +543,17 @@ jobs:
           text: '[cc-unit-tests] OH NO! Failed when running with postgres'
           icon_emoji: ((slack_failure_emoji))
 
+- name: capi-release-template-tests
+  plan:
+  - aggregate:
+    - get: capi-ci
+    - get: capi-release
+      resource: capi-release-develop
+      trigger: true
+  - aggregate:
+    - task: run-config-template-tests
+      file: capi-ci/ci/test-unit/run_capi_release_config_template_tests.yml
+
 - name: bump-capi-release
   plan:
   - aggregate:
@@ -597,7 +609,7 @@ jobs:
   - aggregate:
     - get: capi-release
       resource: capi-release-develop
-      passed: [bump-capi-release]
+      passed: [bump-capi-release, capi-release-template-tests]
       trigger: true
     - get: capi-ci
     - get: version

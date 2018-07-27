@@ -1,0 +1,15 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: cloudfoundry/capi
+    tag: ruby-units
+
+inputs:
+  - name: capi-ci
+  - name: capi-release
+
+run:
+  path: capi-ci/ci/test-unit/run_capi_release_config_template_tests
