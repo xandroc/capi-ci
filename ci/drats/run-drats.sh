@@ -16,6 +16,11 @@ drats_src="${workspace_dir}/drats"
 environment_dir="${workspace_dir}/environment"
 vars_store_dir="${workspace_dir}/vars-store"
 
+pushd "capi-ci-private/${BBL_STATE_DIR}"
+  eval "$(bbl print-env)"
+  unset BOSH_ALL_PROXY
+popd
+
 pushd bbr-binary-release
   tar xvf *.tar
   export BBR_BUILD_PATH=`pwd`/releases/bbr
