@@ -1281,6 +1281,14 @@ jobs:
       source_file: environment/metadata
       delete:
         enabled: true
+  - task: add-bosh-dns-runtime-config
+    file: capi-ci/ci/bbl-tasks/update-runtime-config.yml
+    input_mapping:
+      bbl-state: capi-ci-private
+    params:
+      BBL_STATE_DIR: "kiki"
+      RUNTIME_CONFIG_PATH: "bosh-deployment/runtime-configs/dns.yml"
+      RUNTIME_CONFIG_NAME: "dns"
   - put: kiki-deployment
     params:
       source_file: environment/metadata
@@ -2013,14 +2021,6 @@ jobs:
         params:
           repository: updated-bbl-state
           rebase: true
-    - task: add-bosh-dns-runtime-config
-      file: capi-ci/ci/bbl-tasks/update-runtime-config.yml
-      input_mapping:
-        bbl-state: updated-capi-ci-private
-      params:
-        BBL_STATE_DIR: "kiki"
-        RUNTIME_CONFIG_PATH: "bosh-deployment/runtime-configs/dns.yml"
-        RUNTIME_CONFIG_NAME: "dns"
     - task: create-dns-record
       attempts: 3
       file: capi-ci/ci/bbl-tasks/create-dns-record.yml
