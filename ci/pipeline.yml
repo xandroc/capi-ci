@@ -2348,6 +2348,9 @@ jobs:
       - cf-deployment/operations/use-compiled-releases.yml
       # Use latest CAPI release
       - capi-ci/cf-deployment-operations/use-latest-capi.yml
+      # Enable TLS between CC and MySQL
+      - cf-deployment/operations/experimental/enable-mysql-tls.yml
+      - capi-ci/cf-deployment-operations/temporary/enable-mysql-tls-cc.yml
       # Ensure that we support BBR with multiple CC instances
       - capi-ci/cf-deployment-operations/scale-up-cloud-controller.yml
       # Add rotate-cc-database-key errand
@@ -2432,6 +2435,9 @@ jobs:
       - cf-deployment/operations/use-compiled-releases.yml
       # Use latest CAPI release
       - capi-ci/cf-deployment-operations/use-latest-capi.yml
+      # Enable TLS between CC and MySQL
+      - cf-deployment/operations/experimental/enable-mysql-tls.yml
+      - capi-ci/cf-deployment-operations/temporary/enable-mysql-tls-cc.yml
       # Ensure that we support BBR with multiple CC instances
       - capi-ci/cf-deployment-operations/scale-up-cloud-controller.yml
       # Add rotate-cc-database-key errand
@@ -2466,6 +2472,9 @@ jobs:
       - cf-deployment/operations/use-compiled-releases.yml
       # Use latest CAPI release
       - capi-ci/cf-deployment-operations/use-latest-capi.yml
+      # Enable TLS between CC and MySQL
+      - cf-deployment/operations/experimental/enable-mysql-tls.yml
+      - capi-ci/cf-deployment-operations/temporary/enable-mysql-tls-cc.yml
       # Ensure that we support BBR with multiple CC instances
       - capi-ci/cf-deployment-operations/scale-up-cloud-controller.yml
       # Add rotate-cc-database-key errand
@@ -2509,6 +2518,9 @@ jobs:
       - cf-deployment/operations/use-compiled-releases.yml
       # Use latest CAPI release
       - capi-ci/cf-deployment-operations/use-latest-capi.yml
+      # Enable TLS between CC and MySQL
+      - cf-deployment/operations/experimental/enable-mysql-tls.yml
+      - capi-ci/cf-deployment-operations/temporary/enable-mysql-tls-cc.yml
       # Ensure that we support BBR with multiple CC instances
       - capi-ci/cf-deployment-operations/scale-up-cloud-controller.yml
       # Add rotate-cc-database-key errand
@@ -2604,6 +2616,8 @@ jobs:
       - capi-ci/cf-deployment-operations/use-latest-capi.yml
       # Use postgres
       - cf-deployment/operations/use-postgres.yml
+      # Enable TLS between CC and Postgres
+      - cf-deployment/operations/experimental/enable-tls-cloud-controller-postgres.yml
       # Ensure that we support BBR with multiple CC instances
       - capi-ci/cf-deployment-operations/scale-up-cloud-controller.yml
   - task: download-vars-store
