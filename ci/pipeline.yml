@@ -2353,8 +2353,6 @@ jobs:
       - capi-ci/cf-deployment-operations/temporary/enable-mysql-tls-cc.yml
       # Ensure that we support BBR with multiple CC instances
       - capi-ci/cf-deployment-operations/scale-up-cloud-controller.yml
-      # Add rotate-cc-database-key errand
-      - capi-ci/cf-deployment-operations/rotate-cc-database-key/add-rotate-cc-database-key-errand.yml
   - task: download-vars-store
     output_mapping:
       destination-directory: xena-mysql-deployment-vars
@@ -2440,9 +2438,8 @@ jobs:
       - capi-ci/cf-deployment-operations/temporary/enable-mysql-tls-cc.yml
       # Ensure that we support BBR with multiple CC instances
       - capi-ci/cf-deployment-operations/scale-up-cloud-controller.yml
-      # Add rotate-cc-database-key errand
+      # Add custom database encryption keys
       - capi-ci/cf-deployment-operations/rotate-cc-database-key/add-database-encryption-keys.yml
-      - capi-ci/cf-deployment-operations/rotate-cc-database-key/add-rotate-cc-database-key-errand.yml
   - task: seed-app-data # encrypt app env vars with initial database_encryption key/current_key_label
     file: capi-ci/ci/cf/push-app.yml
     input_mapping:
@@ -2477,9 +2474,8 @@ jobs:
       - capi-ci/cf-deployment-operations/temporary/enable-mysql-tls-cc.yml
       # Ensure that we support BBR with multiple CC instances
       - capi-ci/cf-deployment-operations/scale-up-cloud-controller.yml
-      # Add rotate-cc-database-key errand
+      # Add custom database encryption keys
       - capi-ci/cf-deployment-operations/rotate-cc-database-key/add-database-encryption-keys.yml
-      - capi-ci/cf-deployment-operations/rotate-cc-database-key/add-rotate-cc-database-key-errand.yml
       # Add new key and make it the current key
       - capi-ci/cf-deployment-operations/rotate-cc-database-key/change-current-database-encryption-key.yml
   - task: seed-app-data # encrypt app env vars with changed database_encryption key/current_key_label
@@ -2523,9 +2519,8 @@ jobs:
       - capi-ci/cf-deployment-operations/temporary/enable-mysql-tls-cc.yml
       # Ensure that we support BBR with multiple CC instances
       - capi-ci/cf-deployment-operations/scale-up-cloud-controller.yml
-      # Add rotate-cc-database-key errand
+      # Add custom database encryption keys
       - capi-ci/cf-deployment-operations/rotate-cc-database-key/add-database-encryption-keys.yml
-      - capi-ci/cf-deployment-operations/rotate-cc-database-key/add-rotate-cc-database-key-errand.yml
       # Add new key and make it the current key
       - capi-ci/cf-deployment-operations/rotate-cc-database-key/change-current-database-encryption-key.yml
       # Remove the old encryption key
