@@ -181,7 +181,7 @@ jobs:
     - get: capi-dockerfiles
     - get: capi-ci
   - task: update-dockerfile-bosh-version
-    file: capi-ci/dockerfiles/bump_bosh_version.yml
+    file: capi-ci/ci/dockerfiles/bump_bosh_version.yml
   - put: capi-dockerfiles
     params:
       repository: capi-dockerfiles-updated
