@@ -10,8 +10,8 @@ resources:
   type: git
   source:
     branch: master
-    uri: https://github.com/cloudfoundry/capi-dockerfiles.git
-    access_token: ((github_access_token))
+    uri: git@github.com:cloudfoundry/capi-dockerfiles.git
+    private_key: ((capi_dockerfiles_private_key))
 
 - name: capi-dockerfiles-rc-docs
   type: git
