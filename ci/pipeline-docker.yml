@@ -6,6 +6,13 @@ resources:
     stop: 23:30 -0700
     days: [Sunday]
 
+- name: capi-dockerfiles
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/capi-dockerfiles.git
+    access_token: ((github_access_token))
+
 - name: capi-dockerfiles-rc-docs
   type: git
   source:
@@ -150,7 +157,36 @@ resources:
     password: ((dockerhub_pass))
     email: ((dockerhub_email))
 
+- name: bosh-cli-github-release
+  type: github-release
+  source:
+    user: cloudfoundry
+    repository: bosh-cli
+    access_token: ((github_access_token))
+
+- name: capi-ci
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/capi-ci.git
+    access_token: ((github_access_token))
+
 jobs:
+- name: bump-bosh-cli-version
+  serial: true
+  plan:
+  - aggregate:
+    - get: bosh-cli-github-release
+      trigger: true
+    - get: capi-dockerfiles
+    - get: capi-ci
+  - task: update-dockerfile-bosh-version
+    file: capi-ci/dockerfiles/bump_bosh_version.yml
+  - put: capi-dockerfiles
+    params:
+      repository: capi-dockerfiles-updated
+      rebase: true
+
 - name: rc-docs-docker
   serial: true
   plan:

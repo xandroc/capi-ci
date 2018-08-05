@@ -1,0 +1,19 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: cloudfoundry/capi
+    tag: runtime-ci
+
+inputs:
+  - name: capi-ci
+  - name: capi-dockerfiles
+  - name: bosh-cli-github-release
+
+outputs:
+  - name: capi-dockerfiles-updated
+
+run:
+  path: capi-ci/ci/dockerfiles/bump_bosh_version.sh
