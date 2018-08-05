@@ -33,8 +33,8 @@ resources:
   type: git
   source:
     branch: master
-    uri: https://github.com/cloudfoundry/sync-integration-tests.git
-    paths: [concourse/Dockerfile]
+    uri: https://github.com/cloudfoundry/capi-dockerfiles.git
+    paths: [sits/Dockerfile]
 
 - name: docker-image-sits
   type: docker-image
@@ -249,4 +249,4 @@ jobs:
       trigger: true
   - put: docker-image-sits
     params:
-      build: capi-dockerfiles-sits/concourse
+      build: capi-dockerfiles-sits/sits
