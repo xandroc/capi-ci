@@ -2272,6 +2272,8 @@ jobs:
         - kiki-back-compat-migrations
         - xena-mysql-rotate-ccdb-key
         - xena-postgres-drats
+        - ripley-nfs
+        - buffy-bits-postgres-webdav
     - get: capi-release
       resource: capi-release-develop
       passed:
@@ -2280,6 +2282,8 @@ jobs:
         - kiki-back-compat-migrations
         - xena-mysql-rotate-ccdb-key
         - xena-postgres-drats
+        - ripley-nfs
+        - buffy-bits-postgres-webdav
       trigger: true
     - get: capi-release-tarball
       passed:
@@ -2288,6 +2292,8 @@ jobs:
         - kiki-back-compat-migrations
         - xena-mysql-rotate-ccdb-key
         - xena-postgres-drats
+        - ripley-nfs
+        - buffy-bits-postgres-webdav
   - put: capi-release-ci-passed
     params:
       repository: capi-release
