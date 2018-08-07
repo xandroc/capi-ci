@@ -15,7 +15,7 @@ trusty_stemcell_version=$(bosh interpolate --path /stemcells/alias=default/versi
 bosh -n upload-stemcell \
   "https://bosh.io/d/stemcells/bosh-warden-boshlite-ubuntu-trusty-go_agent?v=${trusty_stemcell_version}"
 
-xenial_stemcell_version=$(bosh interpolate --path /stemcells/alias=default/version "${cf_deployment_repo}/operations/experimental/use-xenial-stemcell.yml")
+xenial_stemcell_version=$(bosh interpolate --path /path=~1stemcells~1alias=default~1version/value "${cf_deployment_repo}/operations/experimental/use-xenial-stemcell.yml")
 bosh -n upload-stemcell \
   "https://bosh.io/d/stemcells/bosh-warden-boshlite-ubuntu-xenial-go_agent?v=${xenial_stemcell_version}"
 
