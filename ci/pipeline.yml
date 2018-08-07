@@ -2832,7 +2832,7 @@ jobs:
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
     input_mapping:
       bbl-state: capi-ci-private
-      integration-configs: mulan-integration-configs
+      integration-configs: leia-azure-storage-integration-configs
     params:
       BBL_STATE_DIR: leia-azure-storage
       CATS_INTEGRATION_CONFIG_FILE: "leia-azure-storage/cats_integration_config.json"
