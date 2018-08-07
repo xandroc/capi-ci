@@ -44,6 +44,7 @@ groups:
   - update-bosh-xena-postgres
   - update-bosh-buffy
   - update-bosh-ripley
+  - update-bosh-leia-azure-storage
 
 resource_types:
 - name: slack-notification
@@ -509,6 +510,14 @@ resources:
         bucket: ((xena_bosh_vars_bucket))
         file_name: &xena_postgres_vars_store_path "bosh-postgres/vars-store.yml"
         json_key: ((xena_gcp_json_key))
+
+# Leia resources
+- name: leia-azure-storage-bbl-state
+  type: git
+  source:
+    branch: master
+    private_key: ((private_key))
+    uri: git@github.com:cloudfoundry/capi-ci-private.git
 
 - name: drats
   type: git
@@ -2231,6 +2240,103 @@ jobs:
         BBL_STATE_DIR: "xena-postgres"
         RUNTIME_CONFIG_PATH: "bosh-deployment/runtime-configs/dns.yml"
         RUNTIME_CONFIG_NAME: "dns"
+
+- name: update-bosh-leia-azure-storage
+  serial: true
+  plan:
+    - aggregate:
+      - get: cf-deployment-concourse-tasks
+      - get: leia-azure-storage-bbl-state
+      - get: capi-ci
+      - get: capi-ci-private
+      - get: cf-deployment
+      - get: nightly
+        trigger: true
+      - get: bosh-deployment
+        version: { ref: *BOSH_DEPLOYMENT_VERSION }
+    - task: seed-capi-ci-private
+      file: capi-ci/ci/setup-environment/seed.yml
+      params:
+        ENVIRONMENT: leia-azure-storage
+        DOMAIN: &leia-azure-storage-domain "leia-azure-storage.capi.land"
+    - put: capi-ci-private
+      params:
+        repository: updated-capi-ci-private
+        rebase: true
+    - task: collect-ops-files
+      file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
+      input_mapping:
+        base-ops-files: bosh-deployment
+        new-ops-files: capi-ci
+      params:
+        NEW_OPS_FILES: bosh-director-operations/increase-persistent-disk.yml
+    - task: update-bosh-leia-azure-storage
+      file: cf-deployment-concourse-tasks/bbl-up/task.yml
+      input_mapping:
+        bbl-state: updated-capi-ci-private
+        bbl-config: updated-capi-ci-private
+        ops-files: collected-ops-files
+      params:
+        BBL_STATE_DIR: "leia-azure-storage"
+        BBL_IAAS: "gcp"
+        BBL_CONFIG_DIR: "leia-azure-storage/bosh-lite-plan-patch"
+        BBL_ENV_NAME: "leia-azure-storage"
+        BBL_GCP_SERVICE_ACCOUNT_KEY: ((leia_gcp_json_key))
+        BBL_GCP_PROJECT_ID: ((leia_gcp_project_id))
+        BBL_GCP_ZONE: ((leia_gcp_zone))
+        BBL_GCP_REGION: ((leia_gcp_region))
+        IS_BOSH_LITE: true
+        SKIP_LB_CREATION: true
+        OPS_FILES: |
+          base-ops-files/bosh-lite.yml
+          base-ops-files/bosh-lite-runc.yml
+          base-ops-files/gcp/bosh-lite-vm-type.yml
+          increase-persistent-disk.yml
+      ensure:
+        put: leia-azure-storage-bbl-state
+        params:
+          repository: updated-bbl-state
+          rebase: true
+    - task: extract-bbl-environment
+      file: capi-ci/ci/bbl-tasks/extract_bbl_environment.yml
+      input_mapping:
+        capi-ci-private: updated-bbl-state
+      params:
+        ENV_NAME: leia-azure-storage
+    - task: update-cloud-config
+      file: capi-ci/ci/bosh/update_cloud_config.yml
+      input_mapping:
+        bbl-state: updated-capi-ci-private
+        cloud-config: cf-deployment
+      params:
+        BBL_STATE_DIR: "leia-azure-storage"
+        CLOUD_CONFIG_PATH: iaas-support/bosh-lite/cloud-config.yml
+    - task: add-bosh-dns-runtime-config
+      file: capi-ci/ci/bbl-tasks/update-runtime-config.yml
+      input_mapping:
+        bbl-state: updated-capi-ci-private
+      params:
+        BBL_STATE_DIR: "leia-azure-storage"
+        RUNTIME_CONFIG_PATH: "bosh-deployment/runtime-configs/dns.yml"
+        RUNTIME_CONFIG_NAME: "dns"
+    - task: create-dns-record
+      attempts: 3
+      file: capi-ci/ci/bbl-tasks/create-dns-record.yml
+      input_mapping:
+       bbl-state: updated-bbl-state
+      params:
+        BBL_STATE_DIR: "leia-azure-storage"
+        DNS_DOMAIN: *leia-azure-storage-domain
+        GCP_DNS_SERVICE_ACCOUNT_KEY: ((dns_gcp_json_key))
+        GCP_PROJECT_ID: ((dns_gcp_project_id))
+        SHARED_DNS_ZONE_NAME: "capi-land"
+        IS_BOSH_LITE: true
+    - task: run-bosh-cleanup
+      file: capi-ci/ci/bbl-tasks/run-bosh-cleanup.yml
+      input_mapping:
+        bbl-state: updated-bbl-state
+      params:
+        BBL_STATE_DIR: "leia-azure-storage"
 
 - name: deliver-stories
   serial: true
