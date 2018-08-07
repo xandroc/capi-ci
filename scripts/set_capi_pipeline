@@ -1,5 +1,8 @@
 #!/bin/bash
 
+set -e
+
+echo "Pulling 'capi-ci-private'..."
 pushd ~/workspace/capi-ci-private > /dev/null
   git pull -r
 popd > /dev/null
