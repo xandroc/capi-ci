@@ -300,6 +300,14 @@ resources:
     uri: git@github.com:cloudfoundry/cf-deployment-concourse-tasks.git
     tag_filter: v6.*
 
+- name: cf-deployment-concourse-tasks-v7
+  type: git
+  source:
+    branch: master
+    private_key: ((private_key))
+    uri: git@github.com:cloudfoundry/cf-deployment-concourse-tasks.git
+    tag_filter: v7.*
+
 - name: cats-concourse-task
   type: git
   source:
@@ -2246,6 +2254,7 @@ jobs:
   plan:
     - aggregate:
       - get: cf-deployment-concourse-tasks
+        resource: cf-deployment-concourse-tasks-v7
       - get: leia-azure-storage-bbl-state
       - get: capi-ci
       - get: capi-ci-private
