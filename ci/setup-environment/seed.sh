@@ -65,20 +65,10 @@ function write_load_balancer_certs() {
 }
 
 function write_envrc() {
-  if [ ! -f "${envrc_output_path}" ]; then
-    cat <<- 'EOF' > "${envrc_output_path}"
-export BOSH_CA_CERT=$(bbl director-ca-cert)
-export BOSH_CLIENT=$(bbl director-username)
-export BOSH_CLIENT_SECRET=$(bbl director-password)
-export BOSH_ENVIRONMENT=$(bbl director-address)
-export BOSH_GW_USER=jumpbox
-export BOSH_GW_HOST=$(bbl director-address | cut -d'/' -f3 | cut -d':' -f1)
-export BOSH_GW_PRIVATE_KEY=keypair/bosh.pem
-mkdir -p keypair
-bbl ssh-key > "$BOSH_GW_PRIVATE_KEY"
-chmod 600 "$BOSH_GW_PRIVATE_KEY"
+  cat <<- 'EOF' > "${envrc_output_path}"
+eval "$(bbl print-env)"
+export BOSH_DEPLOYMENT=cf
 EOF
-  fi
 }
 
 function commit_capi_ci_private() {
