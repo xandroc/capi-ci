@@ -2821,12 +2821,9 @@ jobs:
       BBL_STATE_DIR: leia-azure-storage
       SYSTEM_DOMAIN: *leia-azure-storage-domain
       OPS_FILES: |
-        # Skip cert verification
         skip-cert-verify.yml
-        # Bosh-lite deployment, minimal instances and resources for VMs/network
         operations/bosh-lite.yml
         operations/use-compiled-releases.yml
-        # Use latest CAPI release
         use-latest-capi.yml
   - task: updated-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
