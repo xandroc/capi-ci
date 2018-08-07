@@ -11,9 +11,13 @@ env_info="${workspace_dir}/bosh-lite-env-info"
 source "${env_info}/metadata"
 
 echo "Uploading stemcell..."
-stemcell_version=$(bosh interpolate --path /stemcells/alias=default/version "${cf_deployment_repo}/cf-deployment.yml")
+trusty_stemcell_version=$(bosh interpolate --path /stemcells/alias=default/version "${cf_deployment_repo}/cf-deployment.yml")
 bosh -n upload-stemcell \
-  "https://bosh.io/d/stemcells/bosh-warden-boshlite-ubuntu-trusty-go_agent?v=${stemcell_version}"
+  "https://bosh.io/d/stemcells/bosh-warden-boshlite-ubuntu-trusty-go_agent?v=${trusty_stemcell_version}"
+
+xenial_stemcell_version=$(bosh interpolate --path /stemcells/alias=default/version "${cf_deployment_repo}/operations/experimental/use-xenial-stemcell.yml")
+bosh -n upload-stemcell \
+  "https://bosh.io/d/stemcells/bosh-warden-boshlite-ubuntu-xenial-go_agent?v=${xenial_stemcell_version}"
 
 echo "Uploading cloud-config..."
 bosh -n update-cloud-config "${cf_deployment_repo}/iaas-support/bosh-lite/cloud-config.yml"
