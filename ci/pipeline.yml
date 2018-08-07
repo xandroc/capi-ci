@@ -2306,7 +2306,7 @@ jobs:
     - task: update-cloud-config
       file: capi-ci/ci/bosh/update_cloud_config.yml
       input_mapping:
-        bbl-state: updated-capi-ci-private
+        bbl-state: updated-bbl-state
         cloud-config: cf-deployment
       params:
         BBL_STATE_DIR: "leia-azure-storage"
