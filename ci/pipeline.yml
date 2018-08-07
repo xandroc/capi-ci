@@ -17,6 +17,7 @@ groups:
   - xena-mysql-drats
   - xena-mysql-rotate-ccdb-key
   - xena-postgres-drats
+  - leia-azure-storage
   - ripley-nfs
   - bump-ci-passed
 - name: ship-it
@@ -521,6 +522,13 @@ resources:
 
 # Leia resources
 - name: leia-azure-storage-bbl-state
+  type: git
+  source:
+    branch: master
+    private_key: ((private_key))
+    uri: git@github.com:cloudfoundry/capi-ci-private.git
+
+- name: leia-azure-storage-integration-configs
   type: git
   source:
     branch: master
@@ -2754,3 +2762,83 @@ jobs:
       CF_API_URL: https://api.xena-postgres.capi.land
       SKIP_SUITE_NAME: "cf-nfsbroker|cf-credhub"
       BBL_STATE_DIR: "xena-postgres"
+
+- name: leia-azure-storage
+  serial: true
+  serial_groups: [leia-azure-storage]
+  plan:
+  - aggregate:
+    - get: cloud_controller_ng
+      passed: [create-capi-release]
+    - get: cf-deployment
+      resource: cf-deployment
+    - get: capi-ci
+    - get: capi-ci-private
+    - get: cf-deployment-concourse-tasks
+      resource: cf-deployment-concourse-tasks-v7
+    - get: capi-release
+      resource: capi-release-develop
+      passed: [create-capi-release]
+    - get: capi-release-tarball
+      passed: [create-capi-release]
+      trigger: true
+  - task: delete-deployment
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    input_mapping:
+      bbl-state: capi-ci-private
+    params:
+      BBL_STATE_DIR: leia-azure-storage
+  - task: stemcell-upload
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    input_mapping:
+      bbl-state: capi-ci-private
+    params:
+      BBL_STATE_DIR: leia-azure-storage
+      INFRASTRUCTURE: bosh-lite
+  - task: release-upload
+    file: capi-ci/ci/bosh/upload-release.yml
+    input_mapping:
+      bbl-state: capi-ci-private
+      release-tarball: capi-release-tarball
+    params:
+      BBL_STATE_DIR: leia-azure-storage
+  - task: collect-ops-files
+    file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
+    input_mapping:
+      base-ops-files: cf-deployment
+      new-ops-files: capi-ci
+    params:
+      NEW_OPS_FILES: |
+        cf-deployment-operations/skip-cert-verify.yml
+        cf-deployment-operations/use-latest-capi.yml
+  - task: deploy
+    file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
+    input_mapping:
+      bbl-state: capi-ci-private
+      ops-files: collected-ops-files
+      vars-files: capi-ci-private
+    params:
+      BBL_STATE_DIR: leia-azure-storage
+      SYSTEM_DOMAIN: *leia-azure-storage-domain
+      OPS_FILES: |
+        # Skip cert verification
+        skip-cert-verify.yml
+        # Bosh-lite deployment, minimal instances and resources for VMs/network
+        operations/bosh-lite.yml
+        operations/use-compiled-releases.yml
+        # Use latest CAPI release
+        use-latest-capi.yml
+  - task: updated-integration-configs
+    file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
+    input_mapping:
+      bbl-state: capi-ci-private
+      integration-configs: mulan-integration-configs
+    params:
+      BBL_STATE_DIR: leia-azure-storage
+      CATS_INTEGRATION_CONFIG_FILE: "leia-azure-storage/cats_integration_config.json"
+      SYSTEM_DOMAIN: *leia-azure-storage-domain
+    ensure:
+      put: leia-azure-storage-integration-configs
+      params:
+        repository: updated-integration-configs
+        rebase: true
