@@ -2823,8 +2823,11 @@ jobs:
       OPS_FILES: |
         base-ops-files/operations/bosh-lite.yml
         base-ops-files/operations/use-compiled-releases.yml
+        base-ops-files/operations/use-external-blobstore.yml
+        base-ops-files/operations/use-azure-storage-blobstore.yml
         use-latest-capi.yml
         skip-cert-verify.yml
+      VARS_FILES: leia-azure-storage/azure-storage-vars.yml
   - task: updated-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
     input_mapping:
