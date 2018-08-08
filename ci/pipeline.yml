@@ -2328,14 +2328,6 @@ jobs:
       params:
         BBL_STATE_DIR: "leia-azure-storage"
         CLOUD_CONFIG_PATH: iaas-support/bosh-lite/cloud-config.yml
-    - task: add-bosh-dns-runtime-config
-      file: capi-ci/ci/bbl-tasks/update-runtime-config.yml
-      input_mapping:
-        bbl-state: updated-capi-ci-private
-      params:
-        BBL_STATE_DIR: "leia-azure-storage"
-        RUNTIME_CONFIG_PATH: "bosh-deployment/runtime-configs/dns.yml"
-        RUNTIME_CONFIG_NAME: "dns"
     - task: create-dns-record
       attempts: 3
       file: capi-ci/ci/bbl-tasks/create-dns-record.yml
