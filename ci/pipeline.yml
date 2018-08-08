@@ -2805,6 +2805,7 @@ jobs:
       NEW_OPS_FILES: |
         cf-deployment-operations/skip-cert-verify.yml
         cf-deployment-operations/use-latest-capi.yml
+        cf-deployment-operations/temporary/add-deployment-updater.yml
   - task: deploy
     file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
     input_mapping:
@@ -2820,7 +2821,7 @@ jobs:
         base-ops-files/operations/use-external-blobstore.yml
         base-ops-files/operations/use-azure-storage-blobstore.yml
         use-latest-capi.yml
-        temporary/add-deployment-updater.yml
+        add-deployment-updater.yml
         skip-cert-verify.yml
       VARS_FILES: leia-azure-storage/azure-storage-vars.yml
   - task: updated-integration-configs
