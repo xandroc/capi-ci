@@ -2782,6 +2782,8 @@ jobs:
     - get: capi-release-tarball
       passed: [create-capi-release]
       trigger: true
+    - get: leia-azure-storage-integration-configs
+    - get: cf-acceptance-tests
   - task: delete-deployment
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
@@ -2842,3 +2844,12 @@ jobs:
       params:
         repository: updated-integration-configs
         rebase: true
+  - aggregate:
+    - task: acceptance-tests
+      file: cf-deployment-concourse-tasks/run-cats/task.yml
+      input_mapping:
+        integration-config: updated-integration-configs
+      params:
+        NODES: 4
+        CONFIG_FILE_PATH: "leia-azure-storage/cats_integration_config.json"
+        CAPTURE_LOGS: true
