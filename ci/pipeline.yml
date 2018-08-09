@@ -2389,6 +2389,7 @@ jobs:
         - xena-postgres-drats
         - ripley-nfs
         - buffy-bits-postgres-webdav
+        - leia-azure-storage
     - get: capi-release
       resource: capi-release-develop
       passed:
@@ -2399,6 +2400,7 @@ jobs:
         - xena-postgres-drats
         - ripley-nfs
         - buffy-bits-postgres-webdav
+        - leia-azure-storage
       trigger: true
     - get: capi-release-tarball
       passed:
@@ -2409,6 +2411,7 @@ jobs:
         - xena-postgres-drats
         - ripley-nfs
         - buffy-bits-postgres-webdav
+        - leia-azure-storage
   - put: capi-release-ci-passed
     params:
       repository: capi-release
@@ -2773,16 +2776,16 @@ jobs:
       passed: [create-capi-release]
     - get: capi-release-tarball
       passed: [create-capi-release]
-#      trigger: true
+      trigger: true
     - get: leia-azure-storage-integration-configs
     - get: cf-acceptance-tests
     - get: sync-integration-tests
-  # - task: delete-deployment
-  #   file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
-  #   input_mapping:
-  #     bbl-state: capi-ci-private
-  #   params:
-  #     BBL_STATE_DIR: leia-azure-storage
+  - task: delete-deployment
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    input_mapping:
+      bbl-state: capi-ci-private
+    params:
+      BBL_STATE_DIR: leia-azure-storage
   - task: stemcell-upload
     file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
     input_mapping:
