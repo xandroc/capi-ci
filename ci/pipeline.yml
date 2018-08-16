@@ -2780,12 +2780,6 @@ jobs:
     - get: leia-azure-storage-integration-configs
     - get: cf-acceptance-tests
     - get: sync-integration-tests
-  - task: delete-deployment
-    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
-    input_mapping:
-      bbl-state: capi-ci-private
-    params:
-      BBL_STATE_DIR: leia-azure-storage
   - task: stemcell-upload
     file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
     input_mapping:
