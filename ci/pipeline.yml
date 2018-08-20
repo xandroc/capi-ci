@@ -1038,6 +1038,7 @@ jobs:
       - cf-deployment/operations/workaround/use-4-azs-for-router.yml
       # Deployment Updater for ZDT
       - capi-ci/cf-deployment-operations/temporary/add-deployment-updater.yml
+      - cf-deployment/operations/experimental/use-pxc.yml
   - task: download-vars-store
     output_mapping:
       destination-directory: ripley-deployment-vars
@@ -1210,8 +1211,8 @@ jobs:
       - capi-ci/cf-deployment-operations/temporary/add-deployment-updater.yml
       # Perm!
       - cf-deployment/operations/experimental/enable-bpm.yml
-      - cf-deployment/operations/experimental/enable-mysql-tls.yml
       - cf-deployment/operations/experimental/perm-service.yml
+      - cf-deployment/operations/experimental/use-pxc.yml
   - task: download-vars-store
     output_mapping:
       destination-directory: elsa-deployment-vars
@@ -2821,6 +2822,7 @@ jobs:
         use-latest-capi.yml
         add-deployment-updater.yml
         skip-cert-verify.yml
+        base-ops-files/operations/experimental/use-pxc.yml
       VARS_FILES: leia-azure-storage/azure-storage-vars.yml
   - task: updated-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
