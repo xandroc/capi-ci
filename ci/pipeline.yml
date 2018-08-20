@@ -1,3 +1,7 @@
+# PINNED VERSIONS
+version_pins:
+  - &BOSH_DEPLOYMENT_VERSION 8a138f343f6cb32a938c5c9567ba1236326fdd7c
+
 groups:
 - name: capi-release
   jobs:
@@ -338,6 +342,7 @@ resources:
   source:
     name: bosh-google-kvm-ubuntu-xenial-go_agent
 
+# Pinned at job level with BOSH_DEPLOYMENT_VERSION
 - name: bosh-deployment
   type: git
   source:
@@ -1707,6 +1712,7 @@ jobs:
       - get: capi-ci
       - get: capi-ci-private
       - get: bosh-deployment
+        version: { ref: *BOSH_DEPLOYMENT_VERSION }
       - get: weekly-sunday
         trigger: true
     - task: seed-capi-ci-private
@@ -1926,6 +1932,7 @@ jobs:
       - get: capi-ci
       - get: capi-ci-private
       - get: bosh-deployment
+        version: { ref: *BOSH_DEPLOYMENT_VERSION }
       - get: weekly-sunday
         trigger: true
     - task: seed-capi-ci-private
@@ -2069,6 +2076,7 @@ jobs:
       - get: nightly
         trigger: true
       - get: bosh-deployment
+        version: { ref: *BOSH_DEPLOYMENT_VERSION }
     - task: seed-capi-ci-private
       file: capi-ci/ci/setup-environment/seed.yml
       params:
@@ -2165,6 +2173,7 @@ jobs:
       - get: nightly
         trigger: true
       - get: bosh-deployment
+        version: { ref: *BOSH_DEPLOYMENT_VERSION }
     - task: seed-capi-ci-private
       file: capi-ci/ci/setup-environment/seed.yml
       params:
@@ -2261,6 +2270,7 @@ jobs:
       - get: nightly
         trigger: true
       - get: bosh-deployment
+        version: { ref: *BOSH_DEPLOYMENT_VERSION }
     - task: seed-capi-ci-private
       file: capi-ci/ci/setup-environment/seed.yml
       params:
