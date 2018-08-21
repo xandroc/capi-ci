@@ -1212,6 +1212,8 @@ jobs:
       # Perm!
       - cf-deployment/operations/experimental/enable-bpm.yml
       - cf-deployment/operations/experimental/perm-service.yml
+      # Move to pxc
+      - capi-ci/cf-deployment-operations/temporary/use-single-database-instance-group.yml
       - cf-deployment/operations/experimental/use-pxc.yml
   - task: download-vars-store
     output_mapping:
