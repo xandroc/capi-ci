@@ -3,3 +3,7 @@
 - type: replace
   path: /instance_groups/name=database/instances
   value: 1
+
+- type: replace
+  path: /instance_groups/name=database/azs?
+  value: [z1]
