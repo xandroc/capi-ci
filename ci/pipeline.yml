@@ -1211,10 +1211,13 @@ jobs:
       - capi-ci/cf-deployment-operations/temporary/add-deployment-updater.yml
       # Perm!
       - cf-deployment/operations/experimental/enable-bpm.yml
-      - cf-deployment/operations/experimental/perm-service.yml
-      # Move to pxc
+#      - cf-deployment/operations/experimental/perm-service.yml
+      # scale to one db instance (TEMPORARY)
+      # - cf-deployment/operations/experimental/enable-mysql-tls.yml
       - capi-ci/cf-deployment-operations/temporary/use-single-database-instance-group.yml
-      - cf-deployment/operations/experimental/use-pxc.yml
+      # Move to pxc
+      # But don't use this file, use the migrate one.  
+      #- cf-deployment/operations/experimental/use-pxc.yml
   - task: download-vars-store
     output_mapping:
       destination-directory: elsa-deployment-vars
