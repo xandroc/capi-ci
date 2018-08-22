@@ -1180,8 +1180,6 @@ jobs:
       - capi-ci/cf-deployment-operations/use-latest-capi.yml
       # Use S3 as blobstore
       - capi-ci/cf-deployment-operations/use-s3-and-cdn-storage.yml
-      # Use clustered mysql
-      - cf-deployment/operations/scale-database-cluster.yml
       # Metrics
       - capi-ci/cf-deployment-operations/add-datadog-firehose-nozzle-gcp.yml
       - capi-ci/cf-deployment-operations/add-new-relic.yml
@@ -1201,6 +1199,10 @@ jobs:
       # Use Credhub
       - cf-deployment/operations/experimental/secure-service-credentials.yml
       - capi-ci/cf-deployment-operations/seed-credhub-asg.yml
+      # Use clustered PXC MySQL as our Database
+      - cf-deployment/operations/scale-database-cluster.yml
+      - cf-deployment/operations/experimental/use-pxc.yml
+      - cf-deployment/operations/experimental/secure-service-credentials-with-pxc-release.yml
       # Credhub requires UAA auth so we must allow containers to talk to UAA
       - capi-ci/cf-deployment-operations/seed-uaa-asg.yml
       # Add certs for Windows cells.
@@ -1209,12 +1211,6 @@ jobs:
       - cf-deployment/operations/workaround/use-4-azs-for-router.yml
       # Deployment Updater for ZDT
       - capi-ci/cf-deployment-operations/temporary/add-deployment-updater.yml
-      # Perm!
-      - cf-deployment/operations/experimental/enable-bpm.yml
-      - cf-deployment/operations/experimental/perm-service.yml
-      # Move to pxc
-      - capi-ci/cf-deployment-operations/temporary/use-single-database-instance-group.yml
-      - cf-deployment/operations/experimental/use-pxc.yml
   - task: download-vars-store
     output_mapping:
       destination-directory: elsa-deployment-vars
@@ -2475,11 +2471,10 @@ jobs:
       - cf-deployment/operations/use-compiled-releases.yml
       # Use latest CAPI release
       - capi-ci/cf-deployment-operations/use-latest-capi.yml
-      # Enable TLS between CC and MySQL
-      - cf-deployment/operations/experimental/enable-mysql-tls.yml
-      - capi-ci/cf-deployment-operations/temporary/enable-mysql-tls-cc.yml
       # Ensure that we support BBR with multiple CC instances
       - capi-ci/cf-deployment-operations/scale-up-cloud-controller.yml
+      # Use single-node PXC MySQL as our Database
+      - cf-deployment/operations/experimental/use-pxc.yml
   - task: download-vars-store
     output_mapping:
       destination-directory: xena-mysql-deployment-vars
@@ -2560,13 +2555,12 @@ jobs:
       - cf-deployment/operations/use-compiled-releases.yml
       # Use latest CAPI release
       - capi-ci/cf-deployment-operations/use-latest-capi.yml
-      # Enable TLS between CC and MySQL
-      - cf-deployment/operations/experimental/enable-mysql-tls.yml
-      - capi-ci/cf-deployment-operations/temporary/enable-mysql-tls-cc.yml
       # Ensure that we support BBR with multiple CC instances
       - capi-ci/cf-deployment-operations/scale-up-cloud-controller.yml
       # Add custom database encryption keys
       - capi-ci/cf-deployment-operations/rotate-cc-database-key/add-database-encryption-keys.yml
+      # Use single-node PXC MySQL as our Database
+      - cf-deployment/operations/experimental/use-pxc.yml
   - task: seed-app-data # encrypt app env vars with initial database_encryption key/current_key_label
     file: capi-ci/ci/cf/push-app.yml
     input_mapping:
@@ -2596,15 +2590,14 @@ jobs:
       - cf-deployment/operations/use-compiled-releases.yml
       # Use latest CAPI release
       - capi-ci/cf-deployment-operations/use-latest-capi.yml
-      # Enable TLS between CC and MySQL
-      - cf-deployment/operations/experimental/enable-mysql-tls.yml
-      - capi-ci/cf-deployment-operations/temporary/enable-mysql-tls-cc.yml
       # Ensure that we support BBR with multiple CC instances
       - capi-ci/cf-deployment-operations/scale-up-cloud-controller.yml
       # Add custom database encryption keys
       - capi-ci/cf-deployment-operations/rotate-cc-database-key/add-database-encryption-keys.yml
       # Add new key and make it the current key
       - capi-ci/cf-deployment-operations/rotate-cc-database-key/change-current-database-encryption-key.yml
+      # Use single-node PXC MySQL as our Database
+      - cf-deployment/operations/experimental/use-pxc.yml
   - task: seed-app-data # encrypt app env vars with changed database_encryption key/current_key_label
     file: capi-ci/ci/cf/push-app.yml
     input_mapping:
@@ -2641,9 +2634,6 @@ jobs:
       - cf-deployment/operations/use-compiled-releases.yml
       # Use latest CAPI release
       - capi-ci/cf-deployment-operations/use-latest-capi.yml
-      # Enable TLS between CC and MySQL
-      - cf-deployment/operations/experimental/enable-mysql-tls.yml
-      - capi-ci/cf-deployment-operations/temporary/enable-mysql-tls-cc.yml
       # Ensure that we support BBR with multiple CC instances
       - capi-ci/cf-deployment-operations/scale-up-cloud-controller.yml
       # Add custom database encryption keys
@@ -2652,6 +2642,8 @@ jobs:
       - capi-ci/cf-deployment-operations/rotate-cc-database-key/change-current-database-encryption-key.yml
       # Remove the old encryption key
       - capi-ci/cf-deployment-operations/rotate-cc-database-key/remove-old-key.yml
+      # Use single-node PXC MySQL as our Database
+      - cf-deployment/operations/experimental/use-pxc.yml
   - aggregate:
     - task: verify-env-vars
       file: capi-ci/ci/cf/verify-env-vars.yml
