@@ -10,7 +10,7 @@ pushd capi-release
   PREVIOUS_SHA_CC=$(git rev-parse $PREVIOUS_RELEASE_TAG:./src/cloud_controller_ng)
   pushd src/cloud_controller_ng
     SHA_CC=$(git rev-parse HEAD)
-    MIGRATIONS=($(git diff --name-only $PREVIOUS_SHA_CC db/migrations))
+    MIGRATIONS=($(git diff --diff-filter=A --name-only $PREVIOUS_SHA_CC db/migrations))
     pushd config
       VERSION_V2=$(cat version_v2)
       VERSION_V3=$(cat version)
