@@ -293,7 +293,7 @@ resources:
     repository: cf-deployment
     access_token: ((github_access_token))
 
-- name: cf-deployment-concourse-tasks
+- name: cf-deployment-concourse-tasks-v6
   type: git
   source:
     branch: master
@@ -674,6 +674,7 @@ jobs:
     - get: cloud_controller_ng
       passed: [create-capi-release]
     - get: cf-deployment-concourse-tasks
+      resource: cf-deployment-concourse-tasks-v6
     - get: cats-concourse-task
     - get: cf-deployment
       resource: cf-deployment
@@ -788,7 +789,7 @@ jobs:
       ENABLED_FEATURE_FLAGS: "diego_docker"
   - aggregate:
     - task: acceptance-tests
-      file: cats-concourse-task/task.yml
+      file: cf-deployment-concourse-tasks/run-cats/task.yml
       input_mapping:
         integration-config: updated-integration-configs
       params:
@@ -818,6 +819,7 @@ jobs:
     - get: cloud_controller_ng
       passed: [create-capi-release]
     - get: cf-deployment-concourse-tasks
+      resource: cf-deployment-concourse-tasks-v6
     - get: cats-concourse-task
     - get: cf-deployment
       resource: cf-deployment
@@ -924,7 +926,7 @@ jobs:
       ENABLED_FEATURE_FLAGS: "diego_docker"
   - aggregate:
     - task: acceptance-tests
-      file: cats-concourse-task/task.yml
+      file: cf-deployment-concourse-tasks/run-cats/task.yml
       input_mapping:
         integration-config: updated-integration-configs
       params:
@@ -955,6 +957,7 @@ jobs:
     - get: cloud_controller_ng
       passed: [create-capi-release]
     - get: cf-deployment-concourse-tasks
+      resource: cf-deployment-concourse-tasks-v6
     - get: cats-concourse-task
     - get: cf-deployment
       resource: cf-deployment
@@ -1071,7 +1074,7 @@ jobs:
       ENABLED_FEATURE_FLAGS: "diego_docker"
   - aggregate:
     - task: acceptance-tests
-      file: cats-concourse-task/task.yml
+      file: cf-deployment-concourse-tasks/run-cats/task.yml
       input_mapping:
         integration-config: updated-integration-configs
       params:
@@ -1101,6 +1104,7 @@ jobs:
     - get: cloud_controller_ng
       passed: [create-capi-release]
     - get: cf-deployment-concourse-tasks
+      resource: cf-deployment-concourse-tasks-v6
     - get: cats-concourse-task
     - get: cf-deployment
       resource: cf-deployment
@@ -1243,7 +1247,7 @@ jobs:
       ENABLED_FEATURE_FLAGS: "diego_docker"
   - aggregate:
     - task: acceptance-tests
-      file: cats-concourse-task/task.yml
+      file: cf-deployment-concourse-tasks/run-cats/task.yml
       input_mapping:
         integration-config: updated-integration-configs
       params:
@@ -1273,6 +1277,7 @@ jobs:
     - get: cloud_controller_ng
       passed: [create-capi-release]
     - get: cf-deployment-concourse-tasks
+      resource: cf-deployment-concourse-tasks-v6
     - get: cf-deployment
       resource: cf-deployment-master
     - get: kiki-bbl-state
@@ -1637,6 +1642,7 @@ jobs:
   plan:
   - aggregate:
     - get: cf-deployment-concourse-tasks
+      resource: cf-deployment-concourse-tasks-v6
     - get: arya-bbl-state
     - get: capi-ci
     - get: capi-ci-private
@@ -1707,6 +1713,7 @@ jobs:
   plan:
   - aggregate:
     - get: cf-deployment-concourse-tasks
+      resource: cf-deployment-concourse-tasks-v6
     - get: mulan-bbl-state
     - get: capi-ci
     - get: capi-ci-private
@@ -1787,6 +1794,7 @@ jobs:
   plan:
   - aggregate:
     - get: cf-deployment-concourse-tasks
+      resource: cf-deployment-concourse-tasks-v6
     - get: buffy-bbl-state
     - get: capi-ci
     - get: capi-ci-private
@@ -1857,6 +1865,7 @@ jobs:
   plan:
   - aggregate:
     - get: cf-deployment-concourse-tasks
+      resource: cf-deployment-concourse-tasks-v6
     - get: ripley-bbl-state
     - get: capi-ci
     - get: capi-ci-private
@@ -1927,6 +1936,7 @@ jobs:
   plan:
   - aggregate:
     - get: cf-deployment-concourse-tasks
+      resource: cf-deployment-concourse-tasks-v6
     - get: elsa-bbl-state
     - get: capi-ci
     - get: capi-ci-private
@@ -2007,6 +2017,7 @@ jobs:
   plan:
   - aggregate:
     - get: cf-deployment-concourse-tasks
+      resource: cf-deployment-concourse-tasks-v6
     - get: capi-ci
     - get: capi-ci-private
     - get: weekly-sunday
@@ -2068,6 +2079,7 @@ jobs:
   plan:
   - aggregate:
     - get: cf-deployment-concourse-tasks
+      resource: cf-deployment-concourse-tasks-v6
     - get: xena-mysql-bbl-state
     - get: capi-ci
     - get: capi-ci-private
@@ -2165,6 +2177,7 @@ jobs:
   plan:
   - aggregate:
     - get: cf-deployment-concourse-tasks
+      resource: cf-deployment-concourse-tasks-v6
     - get: xena-postgres-bbl-state
     - get: capi-ci
     - get: capi-ci-private
@@ -2427,6 +2440,7 @@ jobs:
     - get: capi-ci
     - get: capi-ci-private
     - get: cf-deployment-concourse-tasks
+      resource: cf-deployment-concourse-tasks-v6
     - get: capi-release
       resource: capi-release-develop
       passed: [create-capi-release]
@@ -2506,6 +2520,7 @@ jobs:
     - get: capi-ci-private
     - get: cf-deployment
     - get: cf-deployment-concourse-tasks
+      resource: cf-deployment-concourse-tasks-v6
     - get: capi-release
       resource: capi-release-develop
       passed: [xena-mysql-drats]
@@ -2684,6 +2699,7 @@ jobs:
     - get: capi-ci
     - get: capi-ci-private
     - get: cf-deployment-concourse-tasks
+      resource: cf-deployment-concourse-tasks-v6
     - get: capi-release
       resource: capi-release-develop
       passed: [create-capi-release]
