@@ -309,13 +309,6 @@ resources:
     uri: git@github.com:cloudfoundry/cf-deployment-concourse-tasks.git
     tag_filter: v7.*
 
-- name: cats-concourse-task
-  type: git
-  source:
-    branch: master
-    private_key: ((private_key))
-    uri: git@github.com:cloudfoundry/cats-concourse-task.git
-
 - name: cf-acceptance-tests
   type: git
   source:
@@ -675,7 +668,6 @@ jobs:
       passed: [create-capi-release]
     - get: cf-deployment-concourse-tasks
       resource: cf-deployment-concourse-tasks-v6
-    - get: cats-concourse-task
     - get: cf-deployment
       resource: cf-deployment
     - get: capi-release
@@ -820,7 +812,6 @@ jobs:
       passed: [create-capi-release]
     - get: cf-deployment-concourse-tasks
       resource: cf-deployment-concourse-tasks-v6
-    - get: cats-concourse-task
     - get: cf-deployment
       resource: cf-deployment
     - get: capi-release
@@ -958,7 +949,6 @@ jobs:
       passed: [create-capi-release]
     - get: cf-deployment-concourse-tasks
       resource: cf-deployment-concourse-tasks-v6
-    - get: cats-concourse-task
     - get: cf-deployment
       resource: cf-deployment
     - get: capi-release
@@ -1105,7 +1095,6 @@ jobs:
       passed: [create-capi-release]
     - get: cf-deployment-concourse-tasks
       resource: cf-deployment-concourse-tasks-v6
-    - get: cats-concourse-task
     - get: cf-deployment
       resource: cf-deployment
     - get: capi-release
