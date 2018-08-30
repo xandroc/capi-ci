@@ -1,6 +1,14 @@
 # PINNED VERSIONS
-version_pins:
-- &BOSH_DEPLOYMENT_VERSION 3f4466a51a74dadbff6612e7d2b79d2802668469
+# To pin a version of a git resource, include the commit hash in the list here:
+#
+# version_pins:
+# - &BOSH_DEPLOYMENT_VERSION 3f4466a51a74dadbff6612e7d2b79d2802668469
+#
+# And then reference it whenever you `get` that resource:
+#
+#      - get: bosh-deployment
+#        version: { ref: *BOSH_DEPLOYMENT_VERSION }
+##
 
 groups:
 - name: capi-release
@@ -335,7 +343,6 @@ resources:
   source:
     name: bosh-google-kvm-ubuntu-xenial-go_agent
 
-# Pinned at job level with BOSH_DEPLOYMENT_VERSION
 - name: bosh-deployment
   type: git
   source:
@@ -1707,7 +1714,6 @@ jobs:
     - get: capi-ci
     - get: capi-ci-private
     - get: bosh-deployment
-      version: { ref: *BOSH_DEPLOYMENT_VERSION }
     - get: weekly-sunday
       trigger: true
   - task: seed-capi-ci-private
@@ -1930,7 +1936,6 @@ jobs:
     - get: capi-ci
     - get: capi-ci-private
     - get: bosh-deployment
-      version: { ref: *BOSH_DEPLOYMENT_VERSION }
     - get: weekly-sunday
       trigger: true
   - task: seed-capi-ci-private
@@ -2076,7 +2081,6 @@ jobs:
     - get: nightly
       trigger: true
     - get: bosh-deployment
-      version: { ref: *BOSH_DEPLOYMENT_VERSION }
   - task: seed-capi-ci-private
     file: capi-ci/ci/setup-environment/seed.yml
     params:
@@ -2174,7 +2178,6 @@ jobs:
     - get: nightly
       trigger: true
     - get: bosh-deployment
-      version: { ref: *BOSH_DEPLOYMENT_VERSION }
   - task: seed-capi-ci-private
     file: capi-ci/ci/setup-environment/seed.yml
     params:
@@ -2271,7 +2274,6 @@ jobs:
     - get: nightly
       trigger: true
     - get: bosh-deployment
-      version: { ref: *BOSH_DEPLOYMENT_VERSION }
   - task: seed-capi-ci-private
     file: capi-ci/ci/setup-environment/seed.yml
     params:
