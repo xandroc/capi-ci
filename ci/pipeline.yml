@@ -54,6 +54,7 @@ groups:
   - update-bosh-buffy
   - update-bosh-ripley
   - update-bosh-leia-azure-storage
+  - update-bosh-rey-gcs-storage
 
 resource_types:
 - name: slack-notification
@@ -534,6 +535,21 @@ resources:
     branch: master
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/capi-ci-private.git
+
+# Rey resources (aka "reysources") WINK
+- name: rey-gcs-storage-bbl-state
+  type: git
+  source:
+    branch: master
+    private_key: ((private_key))
+    uri: git@github.com:cloudfoundry/capi-ci-private.git
+
+# - name: rey-gcs-storage-integration-configs
+#   type: git
+#   source:
+#     branch: master
+#     private_key: ((private_key))
+#     uri: git@github.com:cloudfoundry/capi-ci-private.git
 
 - name: drats
   type: git
@@ -2343,6 +2359,95 @@ jobs:
       bbl-state: updated-bbl-state
     params:
       BBL_STATE_DIR: "leia-azure-storage"
+
+- name: update-bosh-rey-gcs-storage
+  serial: true
+  plan:
+  - aggregate:
+    - get: cf-deployment-concourse-tasks
+      resource: cf-deployment-concourse-tasks-v7
+    - get: rey-gcs-storage-bbl-state
+    - get: capi-ci
+    - get: capi-ci-private
+    - get: cf-deployment
+    - get: nightly
+      trigger: true
+    - get: bosh-deployment
+  - task: seed-capi-ci-private
+    file: capi-ci/ci/setup-environment/seed.yml
+    params:
+      ENVIRONMENT: rey-gcs-storage
+      DOMAIN: &rey-gcs-storage-domain "rey-gcs-storage.capi.land"
+  - put: capi-ci-private
+    params:
+      repository: updated-capi-ci-private
+      rebase: true
+  - task: collect-ops-files
+    file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
+    input_mapping:
+      base-ops-files: bosh-deployment
+      new-ops-files: capi-ci
+    params:
+      NEW_OPS_FILES: bosh-director-operations/increase-persistent-disk.yml
+  - task: update-bosh-rey-gcs-storage
+    file: cf-deployment-concourse-tasks/bbl-up/task.yml
+    input_mapping:
+      bbl-state: updated-capi-ci-private
+      bbl-config: updated-capi-ci-private
+      ops-files: collected-ops-files
+    params:
+      BBL_STATE_DIR: "rey-gcs-storage"
+      BBL_IAAS: "gcp"
+      BBL_CONFIG_DIR: "rey-gcs-storage/bosh-lite-plan-patch"
+      BBL_ENV_NAME: "rey-gcs-storage"
+      BBL_GCP_SERVICE_ACCOUNT_KEY: ((rey_gcp_json_key))
+      BBL_GCP_PROJECT_ID: ((rey_gcp_project_id))
+      BBL_GCP_ZONE: ((rey_gcp_zone))
+      BBL_GCP_REGION: ((rey_gcp_region))
+      IS_BOSH_LITE: true
+      SKIP_LB_CREATION: true
+      OPS_FILES: |
+        base-ops-files/bosh-lite.yml
+        base-ops-files/bosh-lite-runc.yml
+        base-ops-files/gcp/bosh-lite-vm-type.yml
+        increase-persistent-disk.yml
+    ensure:
+      put: rey-gcs-storage-bbl-state
+      params:
+        repository: updated-bbl-state
+        rebase: true
+  - task: extract-bbl-environment
+    file: capi-ci/ci/bbl-tasks/extract_bbl_environment.yml
+    input_mapping:
+      capi-ci-private: updated-bbl-state
+    params:
+      ENV_NAME: rey-gcs-storage
+  - task: update-cloud-config
+    file: capi-ci/ci/bosh/update_cloud_config.yml
+    input_mapping:
+      bbl-state: updated-bbl-state
+      cloud-config: cf-deployment
+    params:
+      BBL_STATE_DIR: "rey-gcs-storage"
+      CLOUD_CONFIG_PATH: iaas-support/bosh-lite/cloud-config.yml
+  - task: create-dns-record
+    attempts: 3
+    file: capi-ci/ci/bbl-tasks/create-dns-record.yml
+    input_mapping:
+      bbl-state: updated-bbl-state
+    params:
+      BBL_STATE_DIR: "rey-gcs-storage"
+      DNS_DOMAIN: *rey-gcs-storage-domain
+      GCP_DNS_SERVICE_ACCOUNT_KEY: ((dns_gcp_json_key))
+      GCP_PROJECT_ID: ((dns_gcp_project_id))
+      SHARED_DNS_ZONE_NAME: "capi-land"
+      IS_BOSH_LITE: true
+  - task: run-bosh-cleanup
+    file: capi-ci/ci/bbl-tasks/run-bosh-cleanup.yml
+    input_mapping:
+      bbl-state: updated-bbl-state
+    params:
+      BBL_STATE_DIR: "rey-gcs-storage"
 
 - name: deliver-stories
   serial: true
