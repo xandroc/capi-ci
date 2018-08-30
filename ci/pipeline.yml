@@ -729,13 +729,11 @@ jobs:
       # Scale up cells to prevent apps piling onto one cell during rolling deploy.
       # See https://github.com/cloudfoundry/capi-ci/commit/4f22dc4721aa5ed3917e84c4e0ce9f99d732a920 for details
       - capi-ci/cf-deployment-operations/scale-up-cells.yml
-      # Use Credhub
-      - cf-deployment/operations/experimental/secure-service-credentials.yml
+      # Open ASGS for apps to use Credhub
       - capi-ci/cf-deployment-operations/seed-credhub-asg.yml
       # Use postgres
       - cf-deployment/operations/use-postgres.yml
       - cf-deployment/operations/experimental/enable-tls-cloud-controller-postgres.yml
-      - cf-deployment/operations/experimental/secure-service-credentials-postgres.yml
       # Tell CC not to interpolate service binding refs from credhub. Used to test "non-assisted" credhub interactions.
       - capi-ci/cf-deployment-operations/disable-credhub-interpolate-service-bindings.yml
       # Metrics
@@ -1196,17 +1194,13 @@ jobs:
       - capi-ci/cf-deployment-operations/silence-noisy-logs-isolated-diego-cell.yml
       # Disable GETs against UAA in anticipation of it being removed #148914087
       - capi-ci/cf-deployment-operations/temporary/disable-uaa-get-requests.yml
-      # Use Credhub
-      - cf-deployment/operations/experimental/secure-service-credentials.yml
+      # Open ASGS for apps to use Credhub
       - capi-ci/cf-deployment-operations/seed-credhub-asg.yml
       # Use clustered PXC MySQL as our Database
       - cf-deployment/operations/scale-database-cluster.yml
       - cf-deployment/operations/experimental/use-pxc.yml
-      - cf-deployment/operations/experimental/secure-service-credentials-with-pxc-release.yml
       # Credhub requires UAA auth so we must allow containers to talk to UAA
       - capi-ci/cf-deployment-operations/seed-uaa-asg.yml
-      # Add certs for Windows cells.
-      - cf-deployment/operations/experimental/secure-service-credentials-windows-cell.yml
       # Workaround for GCP issue that causes 502s if there are empty LB instance groups #152766388
       - cf-deployment/operations/workaround/use-4-azs-for-router.yml
       # Deployment Updater for ZDT
