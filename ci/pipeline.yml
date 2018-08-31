@@ -2493,6 +2493,7 @@ jobs:
       - ripley-nfs
       - buffy-bits-postgres-webdav
       - leia-azure-storage
+      - rey-gcs-storage
     - get: capi-release
       resource: capi-release-develop
       passed:
