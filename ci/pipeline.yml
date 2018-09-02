@@ -2505,6 +2505,7 @@ jobs:
       - ripley-nfs
       - buffy-bits-postgres-webdav
       - leia-azure-storage
+      - rey-gcs-storage
       trigger: true
     - get: capi-release-tarball
       passed:
@@ -2516,6 +2517,7 @@ jobs:
       - ripley-nfs
       - buffy-bits-postgres-webdav
       - leia-azure-storage
+      - rey-gcs-storage
   - put: capi-release-ci-passed
     params:
       repository: capi-release
