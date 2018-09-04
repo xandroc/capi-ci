@@ -2586,7 +2586,6 @@ jobs:
       - cf-deployment/operations/bosh-lite.yml
       # Deploy BBR
       - cf-deployment/operations/backup-and-restore/enable-backup-restore.yml
-      - capi-ci/cf-deployment-operations/temporary/deploy-capi-backup-restore.yml
       # Use compiled releases
       - cf-deployment/operations/use-compiled-releases.yml
       # Use latest CAPI release
@@ -2671,7 +2670,6 @@ jobs:
       - cf-deployment/operations/bosh-lite.yml
       # Deploy BBR
       - cf-deployment/operations/backup-and-restore/enable-backup-restore.yml
-      - capi-ci/cf-deployment-operations/temporary/deploy-capi-backup-restore.yml
       # Use compiled releases
       - cf-deployment/operations/use-compiled-releases.yml
       # Use latest CAPI release
@@ -2706,7 +2704,6 @@ jobs:
       - cf-deployment/operations/bosh-lite.yml
       # Deploy BBR
       - cf-deployment/operations/backup-and-restore/enable-backup-restore.yml
-      - capi-ci/cf-deployment-operations/temporary/deploy-capi-backup-restore.yml
       # Use compiled releases
       - cf-deployment/operations/use-compiled-releases.yml
       # Use latest CAPI release
@@ -2750,7 +2747,6 @@ jobs:
       - cf-deployment/operations/bosh-lite.yml
       # Deploy BBR
       - cf-deployment/operations/backup-and-restore/enable-backup-restore.yml
-      - capi-ci/cf-deployment-operations/temporary/deploy-capi-backup-restore.yml
       # Use compiled releases
       - cf-deployment/operations/use-compiled-releases.yml
       # Use latest CAPI release
@@ -2845,7 +2841,6 @@ jobs:
       - cf-deployment/operations/bosh-lite.yml
       # Deploy BBR
       - cf-deployment/operations/backup-and-restore/enable-backup-restore.yml
-      - capi-ci/cf-deployment-operations/temporary/deploy-capi-backup-restore.yml
       # Use compiled releases
       - cf-deployment/operations/use-compiled-releases.yml
       # Use latest CAPI release
