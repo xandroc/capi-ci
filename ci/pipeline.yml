@@ -29,6 +29,7 @@ groups:
   - rey-gcs-storage
   - ripley-nfs
   - bump-ci-passed
+  - snyk-test
 - name: ship-it
   jobs:
   - ship-it
@@ -585,16 +586,16 @@ jobs:
           text: '[cc-unit-tests] OH NO! Failed when running with postgres'
           icon_emoji: ((slack_failure_emoji))
 
-- name: snyk
+- name: snyk-test
   plan:
   - aggregate:
     - get: cloud_controller_ng
       trigger: true
     - get: capi-ci
   - task: snyk-test
-      file: capi-ci/ci/snyk-test/run-snyk-test.yml
-      params:
-        SNYK_TOKEN: ((snyk_token))
+    file: capi-ci/ci/snyk-test/run-snyk-test.yml
+    params:
+      SNYK_TOKEN: ((snyk_token))
 
 - name: capi-release-template-tests
   plan:
