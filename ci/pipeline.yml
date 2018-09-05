@@ -742,8 +742,11 @@ jobs:
       vars:
         system_domain: *mulan-domain
         prometheus_password: ((prometheus_password))
-        syslog_remote_address: ((mulan_syslog_remote_address))
-        syslog_remote_port: ((mulan_syslog_remote_port))
+        syslog_address: ((mulan_syslog_remote_address))
+        syslog_port: ((mulan_syslog_remote_port))
+        syslog_custom_rule: ""
+        syslog_fallback_servers: []
+        syslog_permitted_peer: ((mulan_syslog_remote_address))
       vars_files:
       - environment/metadata # used by prometheus bosh exporter
       ops_files:
@@ -771,7 +774,7 @@ jobs:
       # Increase logging level to include all CCDB queries
       - capi-ci/cf-deployment-operations/log-all-sequel-activity.yml
       # Silence noisy logs to reduce volume on logit.io #152155581
-      - capi-ci/cf-deployment-operations/temporary/use-syslog-addon.yml
+      - cf-deployment/operations/addons/enable-component-syslog.yml
       - capi-ci/cf-deployment-operations/silence-noisy-logs.yml
       - capi-ci/cf-deployment-operations/silence-noisy-logs-isolated-diego-cell.yml
       # Disable GETs against UAA in anticipation of it being removed #148914087
