@@ -742,12 +742,6 @@ jobs:
       vars:
         system_domain: *mulan-domain
         prometheus_password: ((prometheus_password))
-        syslog_address: ((mulan_syslog_remote_address))
-        syslog_port: ((mulan_syslog_remote_port))
-        syslog_custom_rule: ""
-        syslog_fallback_servers: []
-        syslog_permitted_peer: "*.logit.io"
-        syslog_ca_cert: ((logit_syslog_ca_cert))
       vars_files:
       - environment/metadata # used by prometheus bosh exporter
       ops_files:
@@ -774,11 +768,6 @@ jobs:
       - capi-ci/cf-deployment-operations/add-prometheus-capi-homepage.yml
       # Increase logging level to include all CCDB queries
       - capi-ci/cf-deployment-operations/log-all-sequel-activity.yml
-      # Silence noisy logs to reduce volume on logit.io #152155581
-      - cf-deployment/operations/addons/enable-component-syslog.yml
-      - cf-deployment/operations/addons/component-syslog-custom-ca.yml
-      - capi-ci/cf-deployment-operations/silence-noisy-logs.yml
-      - capi-ci/cf-deployment-operations/silence-noisy-logs-isolated-diego-cell.yml
       # Disable GETs against UAA in anticipation of it being removed #148914087
       - capi-ci/cf-deployment-operations/temporary/disable-uaa-get-requests.yml
       # Enable CEF logging #151811590
@@ -889,8 +878,6 @@ jobs:
       vars:
         system_domain: *buffy-domain
         prometheus_password: ((prometheus_password))
-        syslog_remote_address: ((buffy_syslog_remote_address))
-        syslog_remote_port: ((buffy_syslog_remote_port))
       vars_files:
       - environment/metadata # used by prometheus bosh exporter
       ops_files:
@@ -912,10 +899,6 @@ jobs:
       - capi-ci/cf-deployment-operations/add-prometheus-capi-homepage.yml
       # Increase logging level to include all CCDB queries
       - capi-ci/cf-deployment-operations/log-all-sequel-activity.yml
-      # Silence noisy logs to reduce volume on logit.io #152155581
-      - capi-ci/cf-deployment-operations/temporary/use-syslog-addon.yml
-      - capi-ci/cf-deployment-operations/silence-noisy-logs.yml
-      - capi-ci/cf-deployment-operations/silence-noisy-logs-isolated-diego-cell.yml
       # Disable GETs against UAA in anticipation of it being removed #148914087
       - capi-ci/cf-deployment-operations/temporary/disable-uaa-get-requests.yml
       # Use bits service
@@ -1029,8 +1012,6 @@ jobs:
       manifest: cf-deployment/cf-deployment.yml
       vars:
         system_domain: *ripley-domain
-        syslog_remote_address: ((ripley_syslog_remote_address))
-        syslog_remote_port: ((ripley_syslog_remote_port))
         prometheus_password: ((prometheus_password))
       vars_files:
       - environment/metadata # used by prometheus bosh exporter
@@ -1057,10 +1038,6 @@ jobs:
       - capi-ci/cf-deployment-operations/skip-cert-verify.yml
       # Increase logging level to include all CCDB queries
       #- capi-ci/cf-deployment-operations/log-all-sequel-activity.yml
-      # Silence noisy logs to reduce volume on logit.io #152155581
-      - capi-ci/cf-deployment-operations/temporary/use-syslog-addon.yml
-      - capi-ci/cf-deployment-operations/silence-noisy-logs.yml
-      - capi-ci/cf-deployment-operations/silence-noisy-logs-isolated-diego-cell.yml
       # Metrics
       - capi-ci/cf-deployment-operations/add-prometheus.yml
       - capi-ci/cf-deployment-operations/add-prometheus-capi-homepage.yml
@@ -1354,8 +1331,6 @@ jobs:
       vars:
         system_domain: *kiki-domain
         prometheus_password: ((prometheus_password))
-        syslog_remote_address: ((kiki_syslog_remote_address))
-        syslog_remote_port: ((kiki_syslog_remote_port))
       vars_files:
       - environment/metadata # used by prometheus bosh exporter
       ops_files:
@@ -1377,10 +1352,6 @@ jobs:
       - capi-ci/cf-deployment-operations/log-all-sequel-activity.yml
       # Disable GETs against UAA in anticipation of it being removed #148914087
       - capi-ci/cf-deployment-operations/temporary/disable-uaa-get-requests.yml
-      # Silence noisy logs to reduce volume on logit.io #152155581
-      - capi-ci/cf-deployment-operations/temporary/use-syslog-addon.yml
-      - capi-ci/cf-deployment-operations/silence-noisy-logs.yml
-      - capi-ci/cf-deployment-operations/silence-noisy-logs-isolated-diego-cell.yml
       # Workaround for GCP issue that causes 502s if there are empty LB instance groups #152766388
       - cf-deployment/operations/workaround/use-4-azs-for-router.yml
   - task: ensure-api-healthy
