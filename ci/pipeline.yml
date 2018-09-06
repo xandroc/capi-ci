@@ -2656,40 +2656,6 @@ jobs:
       GCP_JSON_KEY: ((xena_gcp_json_key))
       GCP_BUCKET: ((xena_bosh_vars_bucket))
       GCP_PATH: bosh-mysql
-  - task: seed-app-data # encrypt app env vars with db_encryption_key
-    file: capi-ci/ci/cf/push-app.yml
-    input_mapping:
-      vars-store: xena-mysql-deployment-vars
-    params:
-      CF_API_URL: https://api.xena-mysql.capi.land
-      APP_NAME: baby
-      APP_ENV_VAR_NAME: larva
-      APP_ENV_VAR_VALUE: caterpillar
-  - put: xena-mysql-deployment # add database_encryption block and set current key label
-    params:
-      source_file: environment/metadata
-      manifest: cf-deployment/cf-deployment.yml
-      vars:
-        system_domain: *xena-mysql-domain
-      releases:
-      - capi-release-tarball/*.tgz
-      ops_files:
-      # Skip cert verification
-      - capi-ci/cf-deployment-operations/skip-cert-verify.yml
-      # Bosh-lite deployment, minimal instances and resources for VMs/network
-      - cf-deployment/operations/bosh-lite.yml
-      # Deploy BBR
-      - cf-deployment/operations/backup-and-restore/enable-backup-restore.yml
-      # Use compiled releases
-      - cf-deployment/operations/use-compiled-releases.yml
-      # Use latest CAPI release
-      - capi-ci/cf-deployment-operations/use-latest-capi.yml
-      # Ensure that we support BBR with multiple CC instances
-      - capi-ci/cf-deployment-operations/scale-up-cloud-controller.yml
-      # Add custom database encryption keys
-      - capi-ci/cf-deployment-operations/rotate-cc-database-key/add-database-encryption-keys.yml
-      # Use single-node PXC MySQL as our Database
-      - cf-deployment/operations/experimental/use-pxc.yml
   - task: seed-app-data # encrypt app env vars with initial database_encryption key/current_key_label
     file: capi-ci/ci/cf/push-app.yml
     input_mapping:
@@ -2772,15 +2738,6 @@ jobs:
       # Use single-node PXC MySQL as our Database
       - cf-deployment/operations/experimental/use-pxc.yml
   - aggregate:
-    - task: verify-env-vars
-      file: capi-ci/ci/cf/verify-env-vars.yml
-      input_mapping:
-        vars-store: xena-mysql-deployment-vars
-      params:
-        CF_API_URL: https://api.xena-mysql.capi.land
-        APP_NAME: baby
-        APP_ENV_VAR_NAME: larva
-        APP_ENV_VAR_VALUE: caterpillar
     - task: verify-env-vars
       file: capi-ci/ci/cf/verify-env-vars.yml
       input_mapping:
