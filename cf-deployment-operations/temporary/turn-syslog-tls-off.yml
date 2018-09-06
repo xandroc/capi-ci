@@ -1,0 +1,4 @@
+---
+- type: replace
+  path: /addons/jobs/name=syslog_forwarder/properties/syslog/tls_enabled?
+  value: false
