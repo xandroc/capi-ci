@@ -2575,19 +2575,10 @@ jobs:
       - capi-ci/cf-deployment-operations/scale-up-cloud-controller.yml
       # Use single-node PXC MySQL as our Database
       - cf-deployment/operations/experimental/use-pxc.yml
-  - task: download-vars-store
-    output_mapping:
-      destination-directory: xena-mysql-deployment-vars
-    file: capi-ci/ci/gcs/download-from-gcs.yml
-    params:
-      GCP_JSON_KEY: ((xena_gcp_json_key))
-      GCP_BUCKET: ((xena_bosh_vars_bucket))
-      GCP_PATH: bosh-mysql
   - task: run-drats
     file: capi-ci/ci/drats/run-drats.yml
     privileged: true # necessary for sshuttle util
     input_mapping:
-      vars-store: xena-mysql-deployment-vars
       bbr-binary-release: bbr-github-release
     params:
       CF_API_URL: https://api.xena-mysql.capi.land
@@ -2789,19 +2780,10 @@ jobs:
       - cf-deployment/operations/experimental/enable-tls-cloud-controller-postgres.yml
       # Ensure that we support BBR with multiple CC instances
       - capi-ci/cf-deployment-operations/scale-up-cloud-controller.yml
-  - task: download-vars-store
-    output_mapping:
-      destination-directory: xena-postgres-deployment-vars
-    file: capi-ci/ci/gcs/download-from-gcs.yml
-    params:
-      GCP_JSON_KEY: ((xena_gcp_json_key))
-      GCP_BUCKET: ((xena_bosh_vars_bucket))
-      GCP_PATH: bosh-postgres
   - task: run-drats
     file: capi-ci/ci/drats/run-drats.yml
     privileged: true # necessary for sshuttle util
     input_mapping:
-      vars-store: xena-postgres-deployment-vars
       bbr-binary-release: bbr-github-release
     params:
       CF_API_URL: https://api.xena-postgres.capi.land

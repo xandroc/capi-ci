@@ -5,7 +5,6 @@ set -eu
 : "${CF_API_URL:?}"
 : "${CF_DEPLOYMENT_NAME:=cf}"
 : "${GOPATH:=/go}"
-: "${VARS_STORE_PATH:=vars-store.yml}"
 : "${CF_ADMIN_USERNAME:=admin}"
 : "${SKIP_SUITE_NAME:=""}"
 
@@ -14,10 +13,10 @@ script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 workspace_dir="$( cd "${script_dir}/../../../" && pwd )"
 drats_src="${workspace_dir}/drats"
 environment_dir="${workspace_dir}/environment"
-vars_store_dir="${workspace_dir}/vars-store"
 
 pushd "capi-ci-private/${BBL_STATE_DIR}"
   eval "$(bbl print-env)"
+  export DIRECTOR_NAME="$(jq -e -r .bosh.directorName bbl-state.json)"
   unset BOSH_ALL_PROXY
 popd
 
@@ -46,7 +45,7 @@ JUMPBOX_USERNAME="$(jq -e -r .jumpbox_username "${env_file}")"
 export BOSH_ENVIRONMENT BOSH_CLIENT BOSH_CLIENT_SECRET BOSH_CA_CERT \
        JUMPBOX_URL JUMPBOX_SSH_KEY JUMPBOX_USERNAME
 
-CF_ADMIN_PASSWORD="$(bosh interpolate "${vars_store_dir}/${VARS_STORE_PATH}" --path=/cf_admin_password)"
+CF_ADMIN_PASSWORD="$(credhub get --path=/${DIRECTOR_NAME}/${CF_DEPLOYMENT_NAME}/cf_admin_password)"
 export CF_ADMIN_PASSWORD
 
 tmpdir="$( mktemp -d /tmp/run-drats.XXXXXXXXXX )"

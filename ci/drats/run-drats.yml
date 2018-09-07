@@ -10,7 +10,6 @@ inputs:
   - name: capi-ci
   - name: drats
   - name: environment
-  - name: vars-store
   - name: bbr-binary-release
   - name: capi-ci-private
 
@@ -23,6 +22,5 @@ params:
   CF_ADMIN_USERNAME: ""
   BBR_BUILD_PATH: ""
   GOPATH: ""
-  VARS_STORE_PATH: ""
   SKIP_SUITE_NAME: ""
   BBL_STATE_DIR:
