@@ -23,7 +23,7 @@ script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 workspace_dir="$( cd "${script_dir}/../../../" && pwd )"
 staticfile_app_dir="${workspace_dir}/staticfile-app"
 
-CF_ADMIN_PASSWORD="$(credhub get --name=/${DIRECTOR_NAME}/${CF_DEPLOYMENT_NAME}/cf_admin_password)"
+CF_ADMIN_PASSWORD="$(credhub get --name=/${DIRECTOR_NAME}/${CF_DEPLOYMENT_NAME}/cf_admin_password -j | jq .value -r)"
 
 echo "Logging in and setting up..."
 cf api $CF_API_URL --skip-ssl-validation

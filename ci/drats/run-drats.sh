@@ -45,7 +45,7 @@ JUMPBOX_USERNAME="$(jq -e -r .jumpbox_username "${env_file}")"
 export BOSH_ENVIRONMENT BOSH_CLIENT BOSH_CLIENT_SECRET BOSH_CA_CERT \
        JUMPBOX_URL JUMPBOX_SSH_KEY JUMPBOX_USERNAME
 
-CF_ADMIN_PASSWORD="$(credhub get --name=/${DIRECTOR_NAME}/${CF_DEPLOYMENT_NAME}/cf_admin_password)"
+CF_ADMIN_PASSWORD="$(credhub get --name=/${DIRECTOR_NAME}/${CF_DEPLOYMENT_NAME}/cf_admin_password -j | jq .value -r)"
 export CF_ADMIN_PASSWORD
 
 tmpdir="$( mktemp -d /tmp/run-drats.XXXXXXXXXX )"
