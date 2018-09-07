@@ -9,7 +9,7 @@ image_resource:
 
 inputs:
   - name: capi-ci
-  - name: vars-store
+  - name: capi-ci-private
 
 run:
   path: capi-ci/ci/cf/verify-env-vars.sh
@@ -19,3 +19,4 @@ params:
   APP_NAME:
   APP_ENV_VAR_NAME:
   APP_ENV_VAR_VALUE:
+  BBL_STATE_DIR:

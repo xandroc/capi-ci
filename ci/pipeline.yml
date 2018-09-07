@@ -2610,23 +2610,14 @@ jobs:
     file: capi-ci/ci/bbl-tasks/extract_bbl_environment.yml
     params:
       ENV_NAME: xena-mysql
-  - task: download-vars-store
-    output_mapping:
-      destination-directory: xena-mysql-deployment-vars
-    file: capi-ci/ci/gcs/download-from-gcs.yml
-    params:
-      GCP_JSON_KEY: ((xena_gcp_json_key))
-      GCP_BUCKET: ((xena_bosh_vars_bucket))
-      GCP_PATH: bosh-mysql
   - task: seed-app-data # encrypt app env vars with initial database_encryption key/current_key_label
     file: capi-ci/ci/cf/push-app.yml
-    input_mapping:
-      vars-store: xena-mysql-deployment-vars
     params:
       CF_API_URL: https://api.xena-mysql.capi.land
       APP_NAME: teenager
       APP_ENV_VAR_NAME: pupa
       APP_ENV_VAR_VALUE: chrysalis
+      BBL_STATE_DIR: xena-mysql
   - put: xena-mysql-deployment # change current database encryption key
     params:
       source_file: environment/metadata
@@ -2656,13 +2647,12 @@ jobs:
       - cf-deployment/operations/experimental/use-pxc.yml
   - task: seed-app-data # encrypt app env vars with changed database_encryption key/current_key_label
     file: capi-ci/ci/cf/push-app.yml
-    input_mapping:
-      vars-store: xena-mysql-deployment-vars
     params:
       CF_API_URL: https://api.xena-mysql.capi.land
       APP_NAME: mature
       APP_ENV_VAR_NAME: transcendant
       APP_ENV_VAR_VALUE: butterfly
+      BBL_STATE_DIR: xena-mysql
   - task: rotate-db-encryption-key
     file: cf-deployment-concourse-tasks/run-errand/task.yml
     input_mapping:
@@ -2702,22 +2692,20 @@ jobs:
   - aggregate:
     - task: verify-env-vars
       file: capi-ci/ci/cf/verify-env-vars.yml
-      input_mapping:
-        vars-store: xena-mysql-deployment-vars
       params:
         CF_API_URL: https://api.xena-mysql.capi.land
         APP_NAME: teenager
         APP_ENV_VAR_NAME: pupa
         APP_ENV_VAR_VALUE: chrysalis
+        BBL_STATE_DIR: xena-mysql
     - task: verify-env-vars
       file: capi-ci/ci/cf/verify-env-vars.yml
-      input_mapping:
-        vars-store: xena-mysql-deployment-vars
       params:
         CF_API_URL: https://api.xena-mysql.capi.land
         APP_NAME: mature
         APP_ENV_VAR_NAME: transcendant
         APP_ENV_VAR_VALUE: butterfly
+        BBL_STATE_DIR: xena-mysql
 
 - name: xena-postgres-drats
   serial: true

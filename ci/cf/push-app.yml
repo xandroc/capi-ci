@@ -9,8 +9,8 @@ image_resource:
 
 inputs:
   - name: capi-ci
+  - name: capi-ci-private
   - name: staticfile-app
-  - name: vars-store
 
 run:
   path: capi-ci/ci/cf/push-app.sh
@@ -20,3 +20,4 @@ params:
   APP_NAME:
   APP_ENV_VAR_NAME:
   APP_ENV_VAR_VALUE:
+  BBL_STATE_DIR:
