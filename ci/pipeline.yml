@@ -439,12 +439,6 @@ resources:
 - name: elsa-deployment
   type: bosh2-deployment
   source:
-    vars_store:
-      provider: gcs
-      config:
-        bucket: ((elsa_bosh_vars_bucket))
-        file_name: &elsa_vars_store_path "bosh/vars-store.yml"
-        json_key: ((elsa_gcp_json_key))
 
 - name: elsa-aws-storage-terraform
   type: terraform
@@ -1070,7 +1064,7 @@ jobs:
     - get: cloud_controller_ng
       passed: [create-capi-release]
     - get: cf-deployment-concourse-tasks
-      resource: cf-deployment-concourse-tasks-v6
+      resource: cf-deployment-concourse-tasks-v7
     - get: cf-deployment
       resource: cf-deployment
     - get: capi-release
@@ -1181,22 +1175,14 @@ jobs:
       - cf-deployment/operations/workaround/use-4-azs-for-router.yml
       # Deployment Updater for ZDT
       - capi-ci/cf-deployment-operations/temporary/add-deployment-updater.yml
-  - task: download-vars-store
-    output_mapping:
-      destination-directory: elsa-deployment-vars
-    file: capi-ci/ci/gcs/download-from-gcs.yml
-    params:
-      GCP_JSON_KEY: ((elsa_gcp_json_key))
-      GCP_BUCKET: ((elsa_bosh_vars_bucket))
-      GCP_PATH: bosh
   - task: updated-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
     input_mapping:
-      vars-store: elsa-deployment-vars
+      bbl-state: elsa-bbl-state
       integration-configs: elsa-integration-configs
     params:
       CATS_INTEGRATION_CONFIG_FILE: "elsa/cats_integration_config.json"
-      VARS_STORE_FILE: "vars-store.yml"
+      BBL_STATE_DIR: elsa
       SYSTEM_DOMAIN: *elsa-domain
     ensure:
       put: elsa-integration-configs
@@ -1206,10 +1192,10 @@ jobs:
   - task: enable-feature-flags
     file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
     input_mapping:
-      vars-store: elsa-deployment-vars
+      bbl-state: elsa-bbl-state
     params:
       SYSTEM_DOMAIN: *elsa-domain
-      VARS_STORE_FILE: "vars-store.yml"
+      BBL_STATE_DIR: elsa
       ENABLED_FEATURE_FLAGS: "diego_docker"
   - aggregate:
     - task: acceptance-tests
@@ -1221,10 +1207,9 @@ jobs:
         CONFIG_FILE_PATH: "elsa/cats_integration_config.json"
         CAPTURE_LOGS: true
     - task: sync-integration-tests
-      file: sync-integration-tests/concourse/task_with_vars_store.yml
+      file: sync-integration-tests/concourse/task_with_credhub.yml
       input_mapping:
         environment: capi-ci-private
-        vars-store: elsa-deployment-vars
       params:
         BOSH_DEPLOYMENT_NAME: cf
         BOSH_API_INSTANCE: api/0
@@ -1232,8 +1217,7 @@ jobs:
         CF_SKIP_SSL_VALIDATION: false
         CF_APPS_DOMAIN: *elsa-domain
         BBL_STATE_DIR: elsa
-        VARS_STORE_PATH: "vars-store.yml"
-        USE_CF_DEPLOYMENT_VARS: "true"
+        USE_CREDHUB: true
 
 - name: kiki-back-compat-migrations
   serial: true
