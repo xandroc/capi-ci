@@ -388,13 +388,6 @@ resources:
 
 - name: ripley-deployment
   type: bosh2-deployment
-  source:
-    vars_store:
-      provider: gcs
-      config:
-        bucket: ((ripley_bosh_vars_bucket))
-        file_name: &ripley_vars_store_path "bosh/vars-store.yml"
-        json_key: ((ripley_gcp_json_key))
 
 # Buffy resources
 - name: buffy-bbl-state
@@ -1004,14 +997,6 @@ jobs:
       # Deployment Updater for ZDT
       - capi-ci/cf-deployment-operations/temporary/add-deployment-updater.yml
       - cf-deployment/operations/experimental/use-pxc.yml
-  - task: download-vars-store
-    output_mapping:
-      destination-directory: ripley-deployment-vars
-    file: capi-ci/ci/gcs/download-from-gcs.yml
-    params:
-      GCP_JSON_KEY: ((ripley_gcp_json_key))
-      GCP_BUCKET: ((ripley_bosh_vars_bucket))
-      GCP_PATH: bosh
   - task: updated-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
     input_mapping:
