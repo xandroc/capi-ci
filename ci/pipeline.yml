@@ -770,7 +770,6 @@ jobs:
     params:
       BBL_STATE_DIR: "mulan"
       SYSTEM_DOMAIN: *mulan-domain
-      VARS_STORE_FILE: "vars-store.yml"
       ENABLED_FEATURE_FLAGS: "diego_docker"
   - aggregate:
     - task: acceptance-tests
@@ -792,7 +791,7 @@ jobs:
         CF_SKIP_SSL_VALIDATION: true
         CF_APPS_DOMAIN: *mulan-domain
         BBL_STATE_DIR: mulan
-        USE_CF_DEPLOYMENT_VARS: "true"
+        USE_CREDHUB: true
 
 - name: buffy-bits-postgres-webdav
   serial: true
@@ -933,7 +932,7 @@ jobs:
     - get: cloud_controller_ng
       passed: [create-capi-release]
     - get: cf-deployment-concourse-tasks
-      resource: cf-deployment-concourse-tasks-v6
+      resource: cf-deployment-concourse-tasks-v7
     - get: cf-deployment
       resource: cf-deployment
     - get: capi-release
@@ -1022,12 +1021,12 @@ jobs:
   - task: updated-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
     input_mapping:
-      vars-store: ripley-deployment-vars
       integration-configs: ripley-integration-configs
+      bbl-state: ripley-bbl-state
     params:
       CATS_INTEGRATION_CONFIG_FILE: "ripley/cats_integration_config.json"
-      VARS_STORE_FILE: "vars-store.yml"
       SYSTEM_DOMAIN: *ripley-domain
+      BBL_STATE_DIR: "ripley"
     ensure:
       put: ripley-integration-configs
       params:
@@ -1036,11 +1035,11 @@ jobs:
   - task: enable-feature-flags
     file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
     input_mapping:
-      vars-store: ripley-deployment-vars
+      bbl-state: ripley-bbl-state
     params:
       SYSTEM_DOMAIN: *ripley-domain
-      VARS_STORE_FILE: "vars-store.yml"
       ENABLED_FEATURE_FLAGS: "diego_docker"
+      BBL_STATE_DIR: "ripley"
   - aggregate:
     - task: acceptance-tests
       file: cf-deployment-concourse-tasks/run-cats/task.yml
@@ -1051,10 +1050,9 @@ jobs:
         CONFIG_FILE_PATH: "ripley/cats_integration_config.json"
         CAPTURE_LOGS: true
     - task: sync-integration-tests
-      file: sync-integration-tests/concourse/task_with_vars_store.yml
+      file: sync-integration-tests/concourse/task_with_credhub.yml
       input_mapping:
         environment: capi-ci-private
-        vars-store: ripley-deployment-vars
       params:
         BOSH_DEPLOYMENT_NAME: cf
         BOSH_API_INSTANCE: api/0
@@ -1062,8 +1060,7 @@ jobs:
         CF_SKIP_SSL_VALIDATION: true
         CF_APPS_DOMAIN: *ripley-domain
         BBL_STATE_DIR: ripley
-        VARS_STORE_PATH: "vars-store.yml"
-        USE_CF_DEPLOYMENT_VARS: "true"
+        USE_CREDHUB: true
 
 - name: elsa-mysql-s3-bypass
   serial: true
@@ -1370,6 +1367,7 @@ jobs:
         CF_SKIP_SSL_VALIDATION: true
         CF_APPS_DOMAIN: *kiki-domain
         BBL_STATE_DIR: kiki
+        USE_CREDHUB: true
   - put: kiki-deployment # delete-deployment
     params:
       source_file: environment/metadata
