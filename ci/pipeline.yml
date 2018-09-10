@@ -1283,7 +1283,6 @@ jobs:
       BBL_STATE_DIR: "kiki"
       CATS_INTEGRATION_CONFIG_FILE: "kiki/cats_integration_config.json"
       SYSTEM_DOMAIN: *kiki-domain
-      VARS_STORE_FILE: "vars-store.yml"
     ensure:
       put: kiki-integration-configs
       params:
