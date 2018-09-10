@@ -2499,7 +2499,7 @@ jobs:
     - get: capi-ci-private
     - get: cf-deployment
     - get: cf-deployment-concourse-tasks
-      resource: cf-deployment-concourse-tasks-v6
+      resource: cf-deployment-concourse-tasks-v7
     - get: capi-release
       resource: capi-release-develop
       passed: [xena-mysql-drats]
