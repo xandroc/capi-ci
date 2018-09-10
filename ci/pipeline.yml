@@ -1837,7 +1837,7 @@ jobs:
   plan:
   - aggregate:
     - get: cf-deployment-concourse-tasks
-      resource: cf-deployment-concourse-tasks-v6
+      resource: cf-deployment-concourse-tasks-v7
     - get: elsa-bbl-state
     - get: capi-ci
     - get: capi-ci-private
@@ -1885,14 +1885,6 @@ jobs:
       params:
         repository: updated-bbl-state
         rebase: true
-  - task: add-bosh-dns-runtime-config
-    file: capi-ci/ci/bbl-tasks/update-runtime-config.yml
-    input_mapping:
-      bbl-state: updated-capi-ci-private
-    params:
-      BBL_STATE_DIR: "elsa"
-      RUNTIME_CONFIG_PATH: "bosh-deployment/runtime-configs/dns.yml"
-      RUNTIME_CONFIG_NAME: "dns"
   - task: create-dns-record
     attempts: 3
     file: capi-ci/ci/bbl-tasks/create-dns-record.yml
