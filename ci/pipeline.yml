@@ -2429,7 +2429,7 @@ jobs:
     - get: capi-ci
     - get: capi-ci-private
     - get: cf-deployment-concourse-tasks
-      resource: cf-deployment-concourse-tasks-v6
+      resource: cf-deployment-concourse-tasks-v7
     - get: capi-release
       resource: capi-release-develop
       passed: [create-capi-release]
@@ -2620,7 +2620,7 @@ jobs:
     - get: capi-ci
     - get: capi-ci-private
     - get: cf-deployment-concourse-tasks
-      resource: cf-deployment-concourse-tasks-v6
+      resource: cf-deployment-concourse-tasks-v7
     - get: capi-release
       resource: capi-release-develop
       passed: [create-capi-release]
