@@ -1319,9 +1319,7 @@ jobs:
       file: cf-deployment-concourse-tasks/run-cats/task.yml
       input_mapping:
         integration-config: updated-integration-configs
-        bbl-state: kiki-bbl-state
       params:
-        BBL_STATE_DIR: "kiki"
         NODES: 4
         CONFIG_FILE_PATH: "kiki/cats_integration_config.json"
         CAPTURE_LOGS: true
