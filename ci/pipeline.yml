@@ -949,22 +949,22 @@ jobs:
       BBL_STATE_DIR: "ripley"
       SYSTEM_DOMAIN: *ripley-domain
       OPS_FILES: |
-        base-ops-files/test/add-persistent-isolation-segment-diego-cell.yml
-        base-ops-files/scale-to-one-az.yml
+        base-ops-files/operations/test/add-persistent-isolation-segment-diego-cell.yml
+        base-ops-files/operations/scale-to-one-az.yml
         scale-up-cells.yml
-        base-ops-files/experimental/use-xenial-stemcell.yml
-        base-ops-files/experimental/use-compiled-releases-xenial-stemcell.yml
+        base-ops-files/operations/experimental/use-xenial-stemcell.yml
+        base-ops-files/operations/experimental/use-compiled-releases-xenial-stemcell.yml
         use-latest-capi.yml
-        base-ops-files/experimental/enable-bpm.yml
+        base-ops-files/operations/experimental/enable-bpm.yml
         enable-bpm-capi.yml
         use-nfs-blobstore.yml
         skip-cert-verify.yml
         add-prometheus.yml
         add-prometheus-capi-homepage.yml
         disable-uaa-get-requests.yml
-        base-ops-files/workaround/use-4-azs-for-router.yml
+        base-ops-files/operations/workaround/use-4-azs-for-router.yml
         add-deployment-updater.yml
-        base-ops-files/experimental/use-pxc.yml
+        base-ops-files/operations/experimental/use-pxc.yml
       VARS_FILES: ripley/prometheus-vars.yml
   - task: updated-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
