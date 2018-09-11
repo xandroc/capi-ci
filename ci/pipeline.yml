@@ -1791,14 +1791,6 @@ jobs:
       params:
         repository: updated-bbl-state
         rebase: true
-  - task: add-bosh-dns-runtime-config
-    file: capi-ci/ci/bbl-tasks/update-runtime-config.yml
-    input_mapping:
-      bbl-state: updated-capi-ci-private
-    params:
-      BBL_STATE_DIR: "ripley"
-      RUNTIME_CONFIG_PATH: "bosh-deployment/runtime-configs/dns.yml"
-      RUNTIME_CONFIG_NAME: "dns"
   - task: create-dns-record
     attempts: 3
     file: capi-ci/ci/bbl-tasks/create-dns-record.yml
