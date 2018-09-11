@@ -378,9 +378,6 @@ resources:
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/capi-ci-private.git
 
-- name: ripley-deployment
-  type: bosh2-deployment
-
 # Buffy resources
 - name: buffy-bbl-state
   type: git
@@ -926,52 +923,49 @@ jobs:
     params:
       STEMCELL_NAME: '*.tgz'
       BBL_STATE_DIR: "ripley"
-  - task: extract-bbl-environment
-    file: capi-ci/ci/bbl-tasks/extract_bbl_environment.yml
+  - task: collect-ops-files
+    file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
+    input_mapping:
+      base-ops-files: cf-deployment
+      new-ops-files: capi-ci
     params:
-      ENV_NAME: ripley
-  - put: ripley-deployment
+      NEW_OPS_FILES: |
+        cf-deployment-operations/scale-up-cells.yml
+        cf-deployment-operations/use-latest-capi.yml
+        cf-deployment-operations/temporary/enable-bpm-capi.yml
+        cf-deployment-operations/use-nfs-blobstore.yml
+        cf-deployment-operations/skip-cert-verify.yml
+        cf-deployment-operations/add-prometheus.yml
+        cf-deployment-operations/add-prometheus-capi-homepage.yml
+        cf-deployment-operations/temporary/disable-uaa-get-requests.yml
+        cf-deployment-operations/temporary/add-deployment-updater.yml
+  - task: deploy
+    file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
+    input_mapping:
+      bbl-state: capi-ci-private
+      ops-files: collected-ops-files
+      vars-files: capi-ci-private
     params:
-      source_file: environment/metadata
-      manifest: cf-deployment/cf-deployment.yml
-      vars:
-        system_domain: *ripley-domain
-        prometheus_password: ((prometheus_password))
-      vars_files:
-      - environment/metadata # used by prometheus bosh exporter
-      ops_files:
-      # Add isolation segment diego cell for CATs
-      - cf-deployment/operations/test/add-persistent-isolation-segment-diego-cell.yml
-      # Use minimum number of instances for deployment
-      - cf-deployment/operations/scale-to-one-az.yml
-      # Scale up cells to prevent apps piling onto one cell during rolling deploy.
-      # See https://github.com/cloudfoundry/capi-ci/commit/4f22dc4721aa5ed3917e84c4e0ce9f99d732a920 for details
-      - capi-ci/cf-deployment-operations/scale-up-cells.yml
-      # Use Xenial to test nfs dependency installation
-      - cf-deployment/operations/experimental/use-xenial-stemcell.yml
-      # Use compiled releases
-      - cf-deployment/operations/experimental/use-compiled-releases-xenial-stemcell.yml
-      # Use latest CAPI release
-      - capi-ci/cf-deployment-operations/use-latest-capi.yml
-      # Enable BPM
-      - cf-deployment/operations/experimental/enable-bpm.yml
-      - capi-ci/cf-deployment-operations/temporary/enable-bpm-capi.yml
-      # Use NFS as blobstore
-      - capi-ci/cf-deployment-operations/use-nfs-blobstore.yml
-      # Skip cert verification
-      - capi-ci/cf-deployment-operations/skip-cert-verify.yml
-      # Increase logging level to include all CCDB queries
-      #- capi-ci/cf-deployment-operations/log-all-sequel-activity.yml
-      # Metrics
-      - capi-ci/cf-deployment-operations/add-prometheus.yml
-      - capi-ci/cf-deployment-operations/add-prometheus-capi-homepage.yml
-      # Disable GETs against UAA in anticipation of it being removed #148914087
-      - capi-ci/cf-deployment-operations/temporary/disable-uaa-get-requests.yml
-      # Workaround for GCP issue that causes 502s if there are empty LB instance groups #152766388
-      - cf-deployment/operations/workaround/use-4-azs-for-router.yml
-      # Deployment Updater for ZDT
-      - capi-ci/cf-deployment-operations/temporary/add-deployment-updater.yml
-      - cf-deployment/operations/experimental/use-pxc.yml
+      BBL_STATE_DIR: "ripley"
+      SYSTEM_DOMAIN: *ripley-domain
+      OPS_FILES: |
+        base-ops-files/test/add-persistent-isolation-segment-diego-cell.yml
+        base-ops-files/scale-to-one-az.yml
+        scale-up-cells.yml
+        base-ops-files/experimental/use-xenial-stemcell.yml
+        base-ops-files/experimental/use-compiled-releases-xenial-stemcell.yml
+        use-latest-capi.yml
+        base-ops-files/experimental/enable-bpm.yml
+        enable-bpm-capi.yml
+        use-nfs-blobstore.yml
+        skip-cert-verify.yml
+        add-prometheus.yml
+        add-prometheus-capi-homepage.yml
+        disable-uaa-get-requests.yml
+        base-ops-files/workaround/use-4-azs-for-router.yml
+        add-deployment-updater.yml
+        base-ops-files/experimental/use-pxc.yml
+      VARS_FILES: ripley/prometheus-vars.yml
   - task: updated-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
     input_mapping:
