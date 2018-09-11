@@ -935,8 +935,6 @@ jobs:
         cf-deployment-operations/temporary/enable-bpm-capi.yml
         cf-deployment-operations/use-nfs-blobstore.yml
         cf-deployment-operations/skip-cert-verify.yml
-        cf-deployment-operations/add-prometheus.yml
-        cf-deployment-operations/add-prometheus-capi-homepage.yml
         cf-deployment-operations/temporary/disable-uaa-get-requests.yml
         cf-deployment-operations/temporary/add-deployment-updater.yml
   - task: deploy
@@ -959,13 +957,10 @@ jobs:
         enable-bpm-capi.yml
         use-nfs-blobstore.yml
         skip-cert-verify.yml
-        add-prometheus.yml
-        add-prometheus-capi-homepage.yml
         disable-uaa-get-requests.yml
         base-ops-files/operations/workaround/use-4-azs-for-router.yml
         add-deployment-updater.yml
         base-ops-files/operations/experimental/use-pxc.yml
-      VARS_FILES: ripley/prometheus-vars.yml
   - task: updated-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
     input_mapping:
