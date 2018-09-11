@@ -390,9 +390,6 @@ resources:
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/capi-ci-private.git
 
-- name: buffy-deployment
-  type: bosh2-deployment
-
 # Elsa resources
 - name: elsa-bbl-state
   type: git
@@ -791,46 +788,42 @@ jobs:
       bbl-state: buffy-bbl-state
     params:
       BBL_STATE_DIR: "buffy"
-  - task: extract-bbl-environment
-    file: capi-ci/ci/bbl-tasks/extract_bbl_environment.yml
+  - task: collect-ops-files
+    file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
+    input_mapping:
+      base-ops-files: cf-deployment
+      new-ops-files: capi-ci
     params:
-      ENV_NAME: buffy
-  - put: buffy-deployment
+      NEW_OPS_FILES: |
+        cf-deployment-operations/skip-cert-verify.yml
+        cf-deployment-operations/use-latest-capi.yml
+        cf-deployment-operations/scale-up-cells.yml
+        cf-deployment-operations/log-all-sequel-activity.yml
+        cf-deployment-operations/temporary/disable-uaa-get-requests.yml
+        cf-deployment-operations/temporary/add-deployment-updater-postgres.yml
+  - task: deploy
+    file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
+    input_mapping:
+      bbl-state: capi-ci-private
+      ops-files: collected-ops-files
+      vars-files: capi-ci-private
     params:
-      source_file: environment/metadata
-      manifest: cf-deployment/cf-deployment.yml
-      vars:
-        system_domain: *buffy-domain
-        prometheus_password: ((prometheus_password))
-      vars_files:
-      - environment/metadata # used by prometheus bosh exporter
-      ops_files:
-      # Add isolation segment diego cell for CATs
-      - cf-deployment/operations/test/add-persistent-isolation-segment-diego-cell.yml
-      # Skip cert verification
-      - capi-ci/cf-deployment-operations/skip-cert-verify.yml
-      # Use latest CAPI release
-      - capi-ci/cf-deployment-operations/use-latest-capi.yml
-      - cf-deployment/operations/scale-to-one-az.yml
-      # Scale up cells to prevent apps piling onto one cell during rolling deploy.
-      # See https://github.com/cloudfoundry/capi-ci/commit/4f22dc4721aa5ed3917e84c4e0ce9f99d732a920 for details
-      - capi-ci/cf-deployment-operations/scale-up-cells.yml
-      # Use postgres
-      - cf-deployment/operations/use-postgres.yml
-      - cf-deployment/operations/experimental/enable-tls-cloud-controller-postgres.yml
-      # Metrics
-      - capi-ci/cf-deployment-operations/add-prometheus.yml
-      - capi-ci/cf-deployment-operations/add-prometheus-capi-homepage.yml
-      # Increase logging level to include all CCDB queries
-      - capi-ci/cf-deployment-operations/log-all-sequel-activity.yml
-      # Disable GETs against UAA in anticipation of it being removed #148914087
-      - capi-ci/cf-deployment-operations/temporary/disable-uaa-get-requests.yml
-      # Use bits service
-      - cf-deployment/operations/experimental/bits-service.yml
-      - cf-deployment/operations/experimental/enable-bits-service-consul.yml
-      - cf-deployment/operations/experimental/bits-service-webdav.yml
-      # Deployment Updater for ZDT
-      - capi-ci/cf-deployment-operations/temporary/add-deployment-updater-postgres.yml
+      BBL_STATE_DIR: "buffy"
+      SYSTEM_DOMAIN: *buffy-domain
+      OPS_FILES: |
+        base-ops-files/operations/test/add-persistent-isolation-segment-diego-cell.yml
+        skip-cert-verify.yml
+        use-latest-capi.yml
+        base-ops-files/operations/scale-to-one-az.yml
+        scale-up-cells.yml
+        base-ops-files/operations/use-postgres.yml
+        base-ops-files/operations/experimental/enable-tls-cloud-controller-postgres.yml
+        log-all-sequel-activity.yml
+        disable-uaa-get-requests.yml
+        base-ops-files/operations/experimental/bits-service.yml
+        base-ops-files/operations/experimental/enable-bits-service-consul.yml
+        base-ops-files/operations/experimental/bits-service-webdav.yml
+        add-deployment-updater-postgres.yml
   - task: updated-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
     input_mapping:
@@ -1700,14 +1693,6 @@ jobs:
       params:
         repository: updated-bbl-state
         rebase: true
-  - task: add-bosh-dns-runtime-config
-    file: capi-ci/ci/bbl-tasks/update-runtime-config.yml
-    input_mapping:
-      bbl-state: updated-capi-ci-private
-    params:
-      BBL_STATE_DIR: "buffy"
-      RUNTIME_CONFIG_PATH: "bosh-deployment/runtime-configs/dns.yml"
-      RUNTIME_CONFIG_NAME: "dns"
   - task: create-dns-record
     attempts: 3
     file: capi-ci/ci/bbl-tasks/create-dns-record.yml
