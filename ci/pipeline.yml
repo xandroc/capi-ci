@@ -304,14 +304,6 @@ resources:
     repository: cf-deployment
     access_token: ((github_access_token))
 
-- name: cf-deployment-concourse-tasks-v6
-  type: git
-  source:
-    branch: master
-    private_key: ((private_key))
-    uri: git@github.com:cloudfoundry/cf-deployment-concourse-tasks.git
-    tag_filter: v6.*
-
 - name: cf-deployment-concourse-tasks-v7
   type: git
   source:
@@ -1544,7 +1536,7 @@ jobs:
   plan:
   - aggregate:
     - get: cf-deployment-concourse-tasks
-      resource: cf-deployment-concourse-tasks-v6
+      resource: cf-deployment-concourse-tasks-v7
     - get: arya-bbl-state
     - get: capi-ci
     - get: capi-ci-private
@@ -1615,7 +1607,7 @@ jobs:
   plan:
   - aggregate:
     - get: cf-deployment-concourse-tasks
-      resource: cf-deployment-concourse-tasks-v6
+      resource: cf-deployment-concourse-tasks-v7
     - get: mulan-bbl-state
     - get: capi-ci
     - get: capi-ci-private
@@ -1695,7 +1687,7 @@ jobs:
   plan:
   - aggregate:
     - get: cf-deployment-concourse-tasks
-      resource: cf-deployment-concourse-tasks-v6
+      resource: cf-deployment-concourse-tasks-v7
     - get: buffy-bbl-state
     - get: capi-ci
     - get: capi-ci-private
@@ -1766,7 +1758,7 @@ jobs:
   plan:
   - aggregate:
     - get: cf-deployment-concourse-tasks
-      resource: cf-deployment-concourse-tasks-v6
+      resource: cf-deployment-concourse-tasks-v7
     - get: ripley-bbl-state
     - get: capi-ci
     - get: capi-ci-private
@@ -1917,7 +1909,7 @@ jobs:
   plan:
   - aggregate:
     - get: cf-deployment-concourse-tasks
-      resource: cf-deployment-concourse-tasks-v6
+      resource: cf-deployment-concourse-tasks-v7
     - get: capi-ci
     - get: capi-ci-private
     - get: weekly-sunday
@@ -1979,7 +1971,7 @@ jobs:
   plan:
   - aggregate:
     - get: cf-deployment-concourse-tasks
-      resource: cf-deployment-concourse-tasks-v6
+      resource: cf-deployment-concourse-tasks-v7
     - get: xena-mysql-bbl-state
     - get: capi-ci
     - get: capi-ci-private
@@ -2076,7 +2068,7 @@ jobs:
   plan:
   - aggregate:
     - get: cf-deployment-concourse-tasks
-      resource: cf-deployment-concourse-tasks-v6
+      resource: cf-deployment-concourse-tasks-v7
     - get: xena-postgres-bbl-state
     - get: capi-ci
     - get: capi-ci-private
