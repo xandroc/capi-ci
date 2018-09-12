@@ -8,7 +8,6 @@ image_resource:
 
 inputs:
   - name: capi-ci
-  - name: environment
   - name: cloud-config
   - name: bbl-state
 
