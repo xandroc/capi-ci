@@ -1191,6 +1191,13 @@ jobs:
       bbl-state: kiki-bbl-state
     params:
       BBL_STATE_DIR: "kiki"
+  - task: upload-capi-release-tarball
+    file: capi-ci/ci/bosh/upload-release.yml
+    input_mapping:
+      bbl-state: kiki-bbl-state
+      release-tarball: capi-release-tarball
+    params:
+      BBL_STATE_DIR: "kiki"
   - task: delete-deployment
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
