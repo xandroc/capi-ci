@@ -445,8 +445,12 @@ resources:
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/capi-ci-private.git
 
-- name: xena-mysql-deployment
-  type: bosh2-deployment
+- name: xena-mysql-integration-configs
+  type: git
+  source:
+    branch: master
+    private_key: ((private_key))
+    uri: git@github.com:cloudfoundry/capi-ci-private.git
 
 - name: xena-postgres-bbl-state
   type: git
@@ -455,8 +459,12 @@ resources:
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/capi-ci-private.git
 
-- name: xena-postgres-deployment
-  type: bosh2-deployment
+- name: xena-postgres-integration-configs
+  type: git
+  source:
+    branch: master
+    private_key: ((private_key))
+    uri: git@github.com:cloudfoundry/capi-ci-private.git
 
 # Leia resources
 - name: leia-azure-storage-bbl-state
@@ -2388,47 +2396,68 @@ jobs:
     params:
       BBL_STATE_DIR: xena-mysql
       INFRASTRUCTURE: bosh-lite
-  - task: extract-bbl-environment
-    file: capi-ci/ci/bbl-tasks/extract_bbl_environment.yml
+  - task: upload-capi-release-tarball
+    file: capi-ci/ci/bosh/upload-release.yml
+    input_mapping:
+      bbl-state: xena-mysql-bbl-state
+      release-tarball: capi-release-tarball
     params:
-      ENV_NAME: xena-mysql
-  - put: xena-mysql-deployment # delete-deployment
+      BBL_STATE_DIR: "xena-mysql"
+  - task: delete-deployment
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    input_mapping:
+      bbl-state: xena-mysql-bbl-state
     params:
-      source_file: environment/metadata
-      delete:
-        enabled: true
-  - put: xena-mysql-deployment
+      BBL_STATE_DIR: xena-mysql
+  - task: collect-ops-files
+    file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
+    input_mapping:
+      base-ops-files: cf-deployment
+      new-ops-files: capi-ci
     params:
-      source_file: environment/metadata
-      manifest: cf-deployment/cf-deployment.yml
-      vars:
-        system_domain: *xena-mysql-domain
-      releases:
-      - capi-release-tarball/*.tgz
-      ops_files:
-      # Skip cert verification
-      - capi-ci/cf-deployment-operations/skip-cert-verify.yml
-      # Bosh-lite deployment, minimal instances and resources for VMs/network
-      - cf-deployment/operations/bosh-lite.yml
-      # Deploy BBR
-      - cf-deployment/operations/backup-and-restore/enable-backup-restore.yml
-      # Use compiled releases
-      - cf-deployment/operations/use-compiled-releases.yml
-      # Use latest CAPI release
-      - capi-ci/cf-deployment-operations/use-latest-capi.yml
-      # Ensure that we support BBR with multiple CC instances
-      - capi-ci/cf-deployment-operations/scale-up-cloud-controller.yml
-      # Use single-node PXC MySQL as our Database
-      - cf-deployment/operations/experimental/use-pxc.yml
+      NEW_OPS_FILES: |
+        cf-deployment-operations/skip-cert-verify.yml
+        cf-deployment-operations/use-latest-capi.yml
+        cf-deployment-operations/scale-up-cloud-controller.yml
+  - task: deploy
+    file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
+    input_mapping:
+      bbl-state: capi-ci-private
+      ops-files: collected-ops-files
+      vars-files: capi-ci-private
+    params:
+      BBL_STATE_DIR: xena-mysql
+      SYSTEM_DOMAIN: *xena-mysql-domain
+      OPS_FILES: |
+        skip-cert-verify.yml
+        base-ops-files/operations/bosh-lite.yml
+        base-ops-files/operations/backup-and-restore/enable-backup-restore.yml
+        base-ops-files/operations/use-compiled-releases.yml
+        use-latest-capi.yml
+        scale-up-cloud-controller.yml
+        base-ops-files/operations/experimental/use-pxc.yml
+  - task: update-drats-config
+    file: drats/ci/credhub-compatible/update-integration-config/task.yml
+    input_mapping:
+      disaster-recovery-acceptance-tests: drats
+      bbl-state: xena-mysql-bbl-state
+      integration-configs: xena-mysql-integration-configs
+    params:
+      BBL_STATE_DIR: "xena-mysql"
+      SYSTEM_DOMAIN: *xena-mysql-domain
+      INTEGRATION_CONFIG_FILE_PATH: "xena-mysql/drats_integration_config.json"
+    ensure:
+      put: xena-mysql-integration-configs
+      params:
+        repository: updated-integration-configs
+        rebase: true
   - task: run-drats
-    file: capi-ci/ci/drats/run-drats.yml
+    file: drats/ci/drats-with-integration-config/task.yml
     privileged: true # necessary for sshuttle util
     input_mapping:
+      disaster-recovery-acceptance-tests: drats
       bbr-binary-release: bbr-github-release
-    params:
-      CF_API_URL: https://api.xena-mysql.capi.land
-      SKIP_SUITE_NAME: "cf-nfsbroker|cf-credhub"
-      BBL_STATE_DIR: "xena-mysql"
+      drats-integration-config: xena-mysql-integration-configs
 
 - name: xena-mysql-rotate-ccdb-key
   serial: true
@@ -2451,10 +2480,6 @@ jobs:
       passed: [xena-mysql-drats]
       trigger: true
     - get: staticfile-app
-  - task: extract-bbl-environment
-    file: capi-ci/ci/bbl-tasks/extract_bbl_environment.yml
-    params:
-      ENV_NAME: xena-mysql
   - task: seed-app-data # encrypt app env vars with initial database_encryption key/current_key_label
     file: capi-ci/ci/cf/push-app.yml
     params:
@@ -2463,33 +2488,38 @@ jobs:
       APP_ENV_VAR_NAME: pupa
       APP_ENV_VAR_VALUE: chrysalis
       BBL_STATE_DIR: xena-mysql
-  - put: xena-mysql-deployment # change current database encryption key
+  - task: collect-ops-files
+    file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
+    input_mapping:
+      base-ops-files: cf-deployment
+      new-ops-files: capi-ci
     params:
-      source_file: environment/metadata
-      manifest: cf-deployment/cf-deployment.yml
-      vars:
-        system_domain: *xena-mysql-domain
-      releases:
-      - capi-release-tarball/*.tgz
-      ops_files:
-      # Skip cert verification
-      - capi-ci/cf-deployment-operations/skip-cert-verify.yml
-      # Bosh-lite deployment, minimal instances and resources for VMs/network
-      - cf-deployment/operations/bosh-lite.yml
-      # Deploy BBR
-      - cf-deployment/operations/backup-and-restore/enable-backup-restore.yml
-      # Use compiled releases
-      - cf-deployment/operations/use-compiled-releases.yml
-      # Use latest CAPI release
-      - capi-ci/cf-deployment-operations/use-latest-capi.yml
-      # Ensure that we support BBR with multiple CC instances
-      - capi-ci/cf-deployment-operations/scale-up-cloud-controller.yml
-      # Add custom database encryption keys
-      - capi-ci/cf-deployment-operations/rotate-cc-database-key/add-database-encryption-keys.yml
-      # Add new key and make it the current key
-      - capi-ci/cf-deployment-operations/rotate-cc-database-key/change-current-database-encryption-key.yml
-      # Use single-node PXC MySQL as our Database
-      - cf-deployment/operations/experimental/use-pxc.yml
+      NEW_OPS_FILES: |
+        cf-deployment-operations/skip-cert-verify.yml
+        cf-deployment-operations/use-latest-capi.yml
+        cf-deployment-operations/scale-up-cloud-controller.yml
+        cf-deployment-operations/rotate-cc-database-key/add-database-encryption-keys.yml
+        cf-deployment-operations/rotate-cc-database-key/change-current-database-encryption-key.yml
+        cf-deployment-operations/rotate-cc-database-key/remove-old-key.yml
+  - task: deploy
+    file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
+    input_mapping:
+      bbl-state: capi-ci-private
+      ops-files: collected-ops-files
+      vars-files: capi-ci-private
+    params:
+      BBL_STATE_DIR: xena-mysql
+      SYSTEM_DOMAIN: *xena-mysql-domain
+      OPS_FILES: |
+        skip-cert-verify.yml
+        base-ops-files/operations/bosh-lite.yml
+        base-ops-files/operations/backup-and-restore/enable-backup-restore.yml
+        base-ops-files/operations/use-compiled-releases.yml
+        use-latest-capi.yml
+        scale-up-cloud-controller.yml
+        add-database-encryption-keys.yml
+        change-current-database-encryption-key.yml
+        base-ops-files/operations/experimental/use-pxc.yml
   - task: seed-app-data # encrypt app env vars with changed database_encryption key/current_key_label
     file: capi-ci/ci/cf/push-app.yml
     params:
@@ -2505,35 +2535,26 @@ jobs:
     params:
       ERRAND_NAME: "rotate-cc-database-key"
       BBL_STATE_DIR: xena-mysql
-  - put: xena-mysql-deployment # remove unused initial key and old db_encryption_key
+  - task: deploy
+    file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
+    input_mapping:
+      bbl-state: capi-ci-private
+      ops-files: collected-ops-files
+      vars-files: capi-ci-private
     params:
-      source_file: environment/metadata
-      manifest: cf-deployment/cf-deployment.yml
-      vars:
-        system_domain: *xena-mysql-domain
-      releases:
-      - capi-release-tarball/*.tgz
-      ops_files:
-      # Skip cert verification
-      - capi-ci/cf-deployment-operations/skip-cert-verify.yml
-      # Bosh-lite deployment, minimal instances and resources for VMs/network
-      - cf-deployment/operations/bosh-lite.yml
-      # Deploy BBR
-      - cf-deployment/operations/backup-and-restore/enable-backup-restore.yml
-      # Use compiled releases
-      - cf-deployment/operations/use-compiled-releases.yml
-      # Use latest CAPI release
-      - capi-ci/cf-deployment-operations/use-latest-capi.yml
-      # Ensure that we support BBR with multiple CC instances
-      - capi-ci/cf-deployment-operations/scale-up-cloud-controller.yml
-      # Add custom database encryption keys
-      - capi-ci/cf-deployment-operations/rotate-cc-database-key/add-database-encryption-keys.yml
-      # Add new key and make it the current key
-      - capi-ci/cf-deployment-operations/rotate-cc-database-key/change-current-database-encryption-key.yml
-      # Remove the old encryption key
-      - capi-ci/cf-deployment-operations/rotate-cc-database-key/remove-old-key.yml
-      # Use single-node PXC MySQL as our Database
-      - cf-deployment/operations/experimental/use-pxc.yml
+      BBL_STATE_DIR: xena-mysql
+      SYSTEM_DOMAIN: *xena-mysql-domain
+      OPS_FILES: |
+        skip-cert-verify.yml
+        base-ops-files/operations/bosh-lite.yml
+        base-ops-files/operations/backup-and-restore/enable-backup-restore.yml
+        base-ops-files/operations/use-compiled-releases.yml
+        use-latest-capi.yml
+        scale-up-cloud-controller.yml
+        add-database-encryption-keys.yml
+        change-current-database-encryption-key.yml
+        remove-old-key.yml
+        base-ops-files/operations/experimental/use-pxc.yml
   - aggregate:
     - task: verify-env-vars
       file: capi-ci/ci/cf/verify-env-vars.yml
@@ -2579,49 +2600,69 @@ jobs:
     params:
       BBL_STATE_DIR: xena-postgres
       INFRASTRUCTURE: bosh-lite
-  - task: extract-bbl-environment
-    file: capi-ci/ci/bbl-tasks/extract_bbl_environment.yml
+  - task: upload-capi-release-tarball
+    file: capi-ci/ci/bosh/upload-release.yml
+    input_mapping:
+      bbl-state: xena-postgres-bbl-state
+      release-tarball: capi-release-tarball
     params:
-      ENV_NAME: xena-postgres
-  - put: xena-postgres-deployment # delete-deployment
+      BBL_STATE_DIR: "xena-postgres"
+  - task: delete-deployment
+    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
+    input_mapping:
+      bbl-state: xena-postgres-bbl-state
     params:
-      source_file: environment/metadata
-      delete:
-        enabled: true
-  - put: xena-postgres-deployment
+      BBL_STATE_DIR: xena-postgres
+  - task: collect-ops-files
+    file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
+    input_mapping:
+      base-ops-files: cf-deployment
+      new-ops-files: capi-ci
     params:
-      source_file: environment/metadata
-      manifest: cf-deployment/cf-deployment.yml
-      vars:
-        system_domain: *xena-postgres-domain
-      releases:
-      - capi-release-tarball/*.tgz
-      ops_files:
-      # Skip cert verification
-      - capi-ci/cf-deployment-operations/skip-cert-verify.yml
-      # Bosh-lite deployment, minimal instances and resources for VMs/network
-      - cf-deployment/operations/bosh-lite.yml
-      # Deploy BBR
-      - cf-deployment/operations/backup-and-restore/enable-backup-restore.yml
-      # Use compiled releases
-      - cf-deployment/operations/use-compiled-releases.yml
-      # Use latest CAPI release
-      - capi-ci/cf-deployment-operations/use-latest-capi.yml
-      # Use postgres
-      - cf-deployment/operations/use-postgres.yml
-      # Enable TLS between CC and Postgres
-      - cf-deployment/operations/experimental/enable-tls-cloud-controller-postgres.yml
-      # Ensure that we support BBR with multiple CC instances
-      - capi-ci/cf-deployment-operations/scale-up-cloud-controller.yml
+      NEW_OPS_FILES: |
+        cf-deployment-operations/skip-cert-verify.yml
+        cf-deployment-operations/use-latest-capi.yml
+        cf-deployment-operations/scale-up-cloud-controller.yml
+  - task: deploy
+    file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
+    input_mapping:
+      bbl-state: capi-ci-private
+      ops-files: collected-ops-files
+      vars-files: capi-ci-private
+    params:
+      BBL_STATE_DIR: xena-postgres
+      SYSTEM_DOMAIN: *xena-postgres-domain
+      OPS_FILES: |
+        skip-cert-verify.yml
+        base-ops-files/operations/bosh-lite.yml
+        base-ops-files/operations/backup-and-restore/enable-backup-restore.yml
+        base-ops-files/operations/use-compiled-releases.yml
+        use-latest-capi.yml
+        base-ops-files/operations/use-postgres.yml
+        base-ops-files/operations/experimental/enable-tls-cloud-controller-postgres.yml
+        scale-up-cloud-controller.yml
+  - task: update-drats-config
+    file: drats/ci/credhub-compatible/update-integration-config/task.yml
+    input_mapping:
+      disaster-recovery-acceptance-tests: drats
+      bbl-state: xena-postgres-bbl-state
+      integration-configs: xena-postgres-integration-configs
+    params:
+      BBL_STATE_DIR: "xena-postgres"
+      SYSTEM_DOMAIN: *xena-postgres-domain
+      INTEGRATION_CONFIG_FILE_PATH: "xena-postgres/drats_integration_config.json"
+    ensure:
+      put: xena-postgres-integration-configs
+      params:
+        repository: updated-integration-configs
+        rebase: true
   - task: run-drats
-    file: capi-ci/ci/drats/run-drats.yml
+    file: drats/ci/drats-with-integration-config/task.yml
     privileged: true # necessary for sshuttle util
     input_mapping:
+      disaster-recovery-acceptance-tests: drats
       bbr-binary-release: bbr-github-release
-    params:
-      CF_API_URL: https://api.xena-postgres.capi.land
-      SKIP_SUITE_NAME: "cf-nfsbroker|cf-credhub"
-      BBL_STATE_DIR: "xena-postgres"
+      drats-integration-config: xena-postgres-integration-configs
 
 - name: leia-azure-storage
   serial: true
