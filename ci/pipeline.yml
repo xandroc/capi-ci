@@ -2379,6 +2379,7 @@ jobs:
       resource: cf-deployment
     - get: capi-ci
     - get: capi-ci-private
+    - get: xena-mysql-bbl-state
     - get: cf-deployment-concourse-tasks
       resource: cf-deployment-concourse-tasks-v7
     - get: capi-release
@@ -2399,7 +2400,7 @@ jobs:
   - task: upload-capi-release-tarball
     file: capi-ci/ci/bosh/upload-release.yml
     input_mapping:
-      bbl-state: capi-ci-private
+      bbl-state: xena-mysql-bbl-state
       release-tarball: capi-release-tarball
     params:
       BBL_STATE_DIR: "xena-mysql"
@@ -2583,6 +2584,7 @@ jobs:
       resource: cf-deployment
     - get: capi-ci
     - get: capi-ci-private
+    - get: xena-postgres-bbl-state
     - get: cf-deployment-concourse-tasks
       resource: cf-deployment-concourse-tasks-v7
     - get: capi-release
@@ -2603,7 +2605,7 @@ jobs:
   - task: upload-capi-release-tarball
     file: capi-ci/ci/bosh/upload-release.yml
     input_mapping:
-      bbl-state: capi-ci-private
+      bbl-state: xena-postgres-bbl-state
       release-tarball: capi-release-tarball
     params:
       BBL_STATE_DIR: "xena-postgres"
