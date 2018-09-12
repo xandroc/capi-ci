@@ -2010,14 +2010,6 @@ jobs:
       bbl-state: updated-bbl-state
     params:
       BBL_STATE_DIR: "xena-mysql"
-  - task: add-bosh-dns-runtime-config
-    file: capi-ci/ci/bbl-tasks/update-runtime-config.yml
-    input_mapping:
-      bbl-state: updated-capi-ci-private
-    params:
-      BBL_STATE_DIR: "xena-mysql"
-      RUNTIME_CONFIG_PATH: "bosh-deployment/runtime-configs/dns.yml"
-      RUNTIME_CONFIG_NAME: "dns"
 
 - name: update-bosh-xena-postgres
   serial: true
@@ -2106,14 +2098,6 @@ jobs:
       bbl-state: updated-bbl-state
     params:
       BBL_STATE_DIR: "xena-postgres"
-  - task: add-bosh-dns-runtime-config
-    file: capi-ci/ci/bbl-tasks/update-runtime-config.yml
-    input_mapping:
-      bbl-state: updated-capi-ci-private
-    params:
-      BBL_STATE_DIR: "xena-postgres"
-      RUNTIME_CONFIG_PATH: "bosh-deployment/runtime-configs/dns.yml"
-      RUNTIME_CONFIG_NAME: "dns"
 
 - name: update-bosh-leia-azure-storage
   serial: true
