@@ -2399,7 +2399,7 @@ jobs:
   - task: upload-capi-release-tarball
     file: capi-ci/ci/bosh/upload-release.yml
     input_mapping:
-      bbl-state: xena-mysql-bbl-state
+      bbl-state: capi-ci-private
       release-tarball: capi-release-tarball
     params:
       BBL_STATE_DIR: "xena-mysql"
@@ -2603,7 +2603,7 @@ jobs:
   - task: upload-capi-release-tarball
     file: capi-ci/ci/bosh/upload-release.yml
     input_mapping:
-      bbl-state: xena-postgres-bbl-state
+      bbl-state: capi-ci-private
       release-tarball: capi-release-tarball
     params:
       BBL_STATE_DIR: "xena-postgres"
