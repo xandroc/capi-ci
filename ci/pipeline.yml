@@ -442,21 +442,7 @@ resources:
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/capi-ci-private.git
 
-- name: xena-mysql-integration-configs
-  type: git
-  source:
-    branch: master
-    private_key: ((private_key))
-    uri: git@github.com:cloudfoundry/capi-ci-private.git
-
 - name: xena-postgres-bbl-state
-  type: git
-  source:
-    branch: master
-    private_key: ((private_key))
-    uri: git@github.com:cloudfoundry/capi-ci-private.git
-
-- name: xena-postgres-integration-configs
   type: git
   source:
     branch: master
@@ -2361,7 +2347,6 @@ jobs:
     - get: capi-ci
     - get: capi-ci-private
     - get: xena-mysql-bbl-state
-    - get: xena-mysql-integration-configs
     - get: cf-deployment-concourse-tasks
       resource: cf-deployment-concourse-tasks-v7
     - get: capi-release
@@ -2419,30 +2404,19 @@ jobs:
         use-latest-capi.yml
         scale-up-cloud-controller.yml
         base-ops-files/operations/experimental/use-pxc.yml
-  - task: update-drats-config
-    file: drats/ci/credhub-compatible/update-integration-config/task.yml
-    input_mapping:
-      disaster-recovery-acceptance-tests: drats
-      bbl-state: xena-mysql-bbl-state
-      integration-configs: xena-mysql-integration-configs
+  - task: extract-bbl-environment
+    file: capi-ci/ci/bbl-tasks/extract_bbl_environment.yml
     params:
-      BBL_STATE_DIR: "xena-mysql"
-      SYSTEM_DOMAIN: *xena-mysql-domain
-      INTEGRATION_CONFIG_FILE_PATH: "xena-mysql/drats_integration_config.json"
-    # ensure:
-    #   put: xena-mysql-integration-configs
-    #   params:
-    #     repository: updated-integration-configs
-    #     rebase: true
+      ENV_NAME: xena-postgres
   - task: run-drats
-    file: drats/ci/drats-with-integration-config/task.yml
+    file: capi-ci/ci/drats/run-drats.yml
     privileged: true # necessary for sshuttle util
     input_mapping:
-      disaster-recovery-acceptance-tests: drats
       bbr-binary-release: bbr-github-release
-      drats-integration-config: updated-integration-configs
     params:
-      CONFIG_FILE_PATH: "xena-mysql/drats_integration_config.json"
+      CF_API_URL: https://api.xena-postgres.capi.land
+      SKIP_SUITE_NAME: "cf-nfsbroker|cf-credhub"
+      BBL_STATE_DIR: "xena-postgres"
 
 - name: xena-mysql-rotate-ccdb-key
   serial: true
@@ -2569,7 +2543,6 @@ jobs:
     - get: capi-ci
     - get: capi-ci-private
     - get: xena-postgres-bbl-state
-    - get: xena-postgres-integration-configs
     - get: cf-deployment-concourse-tasks
       resource: cf-deployment-concourse-tasks-v7
     - get: capi-release
@@ -2628,30 +2601,19 @@ jobs:
         base-ops-files/operations/use-postgres.yml
         base-ops-files/operations/experimental/enable-tls-cloud-controller-postgres.yml
         scale-up-cloud-controller.yml
-  - task: update-drats-config
-    file: drats/ci/credhub-compatible/update-integration-config/task.yml
-    input_mapping:
-      disaster-recovery-acceptance-tests: drats
-      bbl-state: xena-postgres-bbl-state
-      integration-configs: xena-postgres-integration-configs
+  - task: extract-bbl-environment
+    file: capi-ci/ci/bbl-tasks/extract_bbl_environment.yml
     params:
-      BBL_STATE_DIR: "xena-postgres"
-      SYSTEM_DOMAIN: *xena-postgres-domain
-      INTEGRATION_CONFIG_FILE_PATH: "xena-postgres/drats_integration_config.json"
-    # ensure:
-    #   put: xena-postgres-integration-configs
-    #   params:
-    #     repository: updated-integration-configs
-    #     rebase: true
+      ENV_NAME: xena-postgres
   - task: run-drats
-    file: drats/ci/drats-with-integration-config/task.yml
+    file: capi-ci/ci/drats/run-drats.yml
     privileged: true # necessary for sshuttle util
     input_mapping:
-      disaster-recovery-acceptance-tests: drats
       bbr-binary-release: bbr-github-release
-      drats-integration-config: updated-integration-configs
     params:
-      CONFIG_FILE_PATH: "xena-postgres/drats_integration_config.json"
+      CF_API_URL: https://api.xena-postgres.capi.land
+      SKIP_SUITE_NAME: "cf-nfsbroker|cf-credhub"
+      BBL_STATE_DIR: "xena-postgres"
 
 - name: leia-azure-storage
   serial: true
