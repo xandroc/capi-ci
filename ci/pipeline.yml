@@ -2440,7 +2440,9 @@ jobs:
     input_mapping:
       disaster-recovery-acceptance-tests: drats
       bbr-binary-release: bbr-github-release
-      drats-integration-config: xena-mysql-integration-configs
+      drats-integration-config: updated-integration-configs
+    params:
+      CONFIG_FILE_PATH: "xena-mysql/drats_integration_config.json"
 
 - name: xena-mysql-rotate-ccdb-key
   serial: true
@@ -2647,7 +2649,9 @@ jobs:
     input_mapping:
       disaster-recovery-acceptance-tests: drats
       bbr-binary-release: bbr-github-release
-      drats-integration-config: xena-postgres-integration-configs
+      drats-integration-config: updated-integration-configs
+    params:
+      CONFIG_FILE_PATH: "xena-postgres/drats_integration_config.json"
 
 - name: leia-azure-storage
   serial: true
