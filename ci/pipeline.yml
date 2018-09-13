@@ -2361,6 +2361,7 @@ jobs:
     - get: capi-ci
     - get: capi-ci-private
     - get: xena-mysql-bbl-state
+    - get: xena-mysql-integration-configs
     - get: cf-deployment-concourse-tasks
       resource: cf-deployment-concourse-tasks-v7
     - get: capi-release
@@ -2566,6 +2567,7 @@ jobs:
     - get: capi-ci
     - get: capi-ci-private
     - get: xena-postgres-bbl-state
+    - get: xena-postgres-integration-configs
     - get: cf-deployment-concourse-tasks
       resource: cf-deployment-concourse-tasks-v7
     - get: capi-release
