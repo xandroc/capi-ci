@@ -2429,11 +2429,11 @@ jobs:
       BBL_STATE_DIR: "xena-mysql"
       SYSTEM_DOMAIN: *xena-mysql-domain
       INTEGRATION_CONFIG_FILE_PATH: "xena-mysql/drats_integration_config.json"
-    ensure:
-      put: xena-mysql-integration-configs
-      params:
-        repository: updated-integration-configs
-        rebase: true
+    # ensure:
+    #   put: xena-mysql-integration-configs
+    #   params:
+    #     repository: updated-integration-configs
+    #     rebase: true
   - task: run-drats
     file: drats/ci/drats-with-integration-config/task.yml
     privileged: true # necessary for sshuttle util
@@ -2636,11 +2636,11 @@ jobs:
       BBL_STATE_DIR: "xena-postgres"
       SYSTEM_DOMAIN: *xena-postgres-domain
       INTEGRATION_CONFIG_FILE_PATH: "xena-postgres/drats_integration_config.json"
-    ensure:
-      put: xena-postgres-integration-configs
-      params:
-        repository: updated-integration-configs
-        rebase: true
+    # ensure:
+    #   put: xena-postgres-integration-configs
+    #   params:
+    #     repository: updated-integration-configs
+    #     rebase: true
   - task: run-drats
     file: drats/ci/drats-with-integration-config/task.yml
     privileged: true # necessary for sshuttle util
