@@ -1541,14 +1541,6 @@ jobs:
       params:
         repository: updated-bbl-state
         rebase: true
-  - task: add-bosh-dns-runtime-config
-    file: capi-ci/ci/bbl-tasks/update-runtime-config.yml
-    input_mapping:
-      bbl-state: updated-capi-ci-private
-    params:
-      BBL_STATE_DIR: "arya"
-      RUNTIME_CONFIG_PATH: "bosh-deployment/runtime-configs/dns.yml"
-      RUNTIME_CONFIG_NAME: "dns"
   - task: create-dns-record
     attempts: 3
     file: capi-ci/ci/bbl-tasks/create-dns-record.yml
@@ -1566,6 +1558,14 @@ jobs:
       bbl-state: updated-bbl-state
     params:
       BBL_STATE_DIR: "arya"
+  - task: add-bosh-dns-runtime-config
+    file: capi-ci/ci/bbl-tasks/update-runtime-config.yml
+    input_mapping:
+      bbl-state: updated-capi-ci-private
+    params:
+      BBL_STATE_DIR: "arya"
+      RUNTIME_CONFIG_PATH: "bosh-deployment/runtime-configs/dns.yml"
+      RUNTIME_CONFIG_NAME: "dns"
 
 - name: update-bosh-mulan
   serial: true
@@ -1819,14 +1819,6 @@ jobs:
       params:
         repository: updated-bbl-state
         rebase: true
-  - task: add-bosh-dns-runtime-config
-    file: capi-ci/ci/bbl-tasks/update-runtime-config.yml
-    input_mapping:
-      bbl-state: updated-capi-ci-private
-    params:
-      BBL_STATE_DIR: "elsa"
-      RUNTIME_CONFIG_PATH: "bosh-deployment/runtime-configs/dns.yml"
-      RUNTIME_CONFIG_NAME: "dns"
   - task: create-dns-record
     attempts: 3
     file: capi-ci/ci/bbl-tasks/create-dns-record.yml
@@ -1844,6 +1836,14 @@ jobs:
       bbl-state: updated-bbl-state
     params:
       BBL_STATE_DIR: "elsa"
+  - task: add-bosh-dns-runtime-config
+    file: capi-ci/ci/bbl-tasks/update-runtime-config.yml
+    input_mapping:
+      bbl-state: updated-capi-ci-private
+    params:
+      BBL_STATE_DIR: "elsa"
+      RUNTIME_CONFIG_PATH: "bosh-deployment/runtime-configs/dns.yml"
+      RUNTIME_CONFIG_NAME: "dns"
 
 - name: update-bosh-kiki
   serial: true
