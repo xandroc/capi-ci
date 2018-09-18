@@ -2407,16 +2407,16 @@ jobs:
   - task: extract-bbl-environment
     file: capi-ci/ci/bbl-tasks/extract_bbl_environment.yml
     params:
-      ENV_NAME: xena-postgres
+      ENV_NAME: xena-mysql
   - task: run-drats
     file: capi-ci/ci/drats/run-drats.yml
     privileged: true # necessary for sshuttle util
     input_mapping:
       bbr-binary-release: bbr-github-release
     params:
-      CF_API_URL: https://api.xena-postgres.capi.land
+      CF_API_URL: https://api.xena-mysql.capi.land
       SKIP_SUITE_NAME: "cf-nfsbroker|cf-credhub"
-      BBL_STATE_DIR: "xena-postgres"
+      BBL_STATE_DIR: "xena-mysql"
 
 - name: xena-mysql-rotate-ccdb-key
   serial: true
