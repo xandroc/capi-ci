@@ -7,7 +7,7 @@ image_resource:
 
 inputs:
 - name: bbl-state
-- name: runtime-ci
+- name: capi-ci
 - name: stemcell
 - name: cf-deployment-concourse-tasks
 
