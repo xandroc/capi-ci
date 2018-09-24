@@ -900,7 +900,7 @@ jobs:
     params:
       BBL_STATE_DIR: "ripley"
   - task: ripley-linux-stemcell-upload
-    file: runtime-ci/tasks/bosh-upload-stemcell/task.yml
+    file: capi-ci/ci/bosh/bosh-upload-stemcell.yml
     input_mapping:
       stemcell: gcp-xenial-stemcell
       bbl-state: ripley-bbl-state
