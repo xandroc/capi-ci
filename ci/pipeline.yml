@@ -24,7 +24,7 @@ groups:
   - kiki-back-compat-migrations
   - xena-mysql-drats
   - xena-mysql-rotate-ccdb-key
-  - xena-postgres-drats
+  - gabrielle-postgres-drats
   - leia-azure-storage
   - rey-gcs-storage
   - ripley-nfs
@@ -52,7 +52,7 @@ groups:
   - update-bosh-elsa
   - update-bosh-kiki
   - update-bosh-xena-mysql
-  - update-bosh-xena-postgres
+  - update-bosh-gabrielle-postgres
   - update-bosh-buffy
   - update-bosh-ripley
   - update-bosh-leia-azure-storage
@@ -449,7 +449,7 @@ resources:
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/capi-ci-private.git
 
-- name: xena-postgres-bbl-state
+- name: gabrielle-postgres-bbl-state
   type: git
   source:
     branch: master
@@ -1569,7 +1569,7 @@ jobs:
   - task: add-bosh-dns-runtime-config
     file: capi-ci/ci/bbl-tasks/update-runtime-config.yml
     input_mapping:
-      bbl-state: updated-capi-ci-private
+      bbl-state: updated-bbl-state
     params:
       BBL_STATE_DIR: "arya"
       RUNTIME_CONFIG_PATH: "bosh-deployment/runtime-configs/dns.yml"
@@ -1981,7 +1981,7 @@ jobs:
   - task: update-cloud-config
     file: capi-ci/ci/bosh/update_cloud_config.yml
     input_mapping:
-      bbl-state: updated-capi-ci-private
+      bbl-state: updated-bbl-state
       cloud-config: cf-deployment
     params:
       BBL_STATE_DIR: "xena-mysql"
@@ -2005,13 +2005,13 @@ jobs:
     params:
       BBL_STATE_DIR: "xena-mysql"
 
-- name: update-bosh-xena-postgres
+- name: update-bosh-gabrielle-postgres
   serial: true
   plan:
   - aggregate:
     - get: cf-deployment-concourse-tasks
       resource: cf-deployment-concourse-tasks-v7
-    - get: xena-postgres-bbl-state
+    - get: gabrielle-postgres-bbl-state
     - get: capi-ci
     - get: capi-ci-private
     - get: cf-deployment
@@ -2021,8 +2021,8 @@ jobs:
   - task: seed-capi-ci-private
     file: capi-ci/ci/setup-environment/seed.yml
     params:
-      ENVIRONMENT: xena-postgres
-      DOMAIN: &xena-postgres-domain "xena-postgres.capi.land"
+      ENVIRONMENT: gabrielle-postgres
+      DOMAIN: &gabrielle-postgres-domain "gabrielle-postgres.capi.land"
   - put: capi-ci-private
     params:
       repository: updated-capi-ci-private
@@ -2034,17 +2034,17 @@ jobs:
       new-ops-files: capi-ci
     params:
       NEW_OPS_FILES: bosh-director-operations/increase-persistent-disk.yml
-  - task: update-bosh-xena-postgres
+  - task: update-bosh-gabrielle-postgres
     file: cf-deployment-concourse-tasks/bbl-up/task.yml
     input_mapping:
       bbl-state: updated-capi-ci-private
       bbl-config: updated-capi-ci-private
       ops-files: collected-ops-files
     params:
-      BBL_STATE_DIR: "xena-postgres"
+      BBL_STATE_DIR: "gabrielle-postgres"
       BBL_IAAS: "gcp"
-      BBL_CONFIG_DIR: "xena-postgres/bosh-lite-plan-patch"
-      BBL_ENV_NAME: "xena-postgres"
+      BBL_CONFIG_DIR: "gabrielle-postgres/bosh-lite-plan-patch"
+      BBL_ENV_NAME: "gabrielle-postgres"
       BBL_GCP_SERVICE_ACCOUNT_KEY: ((xena_gcp_json_key))
       BBL_GCP_PROJECT_ID: ((xena_gcp_project_id))
       BBL_GCP_ZONE: ((xena_gcp_zone))
@@ -2056,7 +2056,7 @@ jobs:
         base-ops-files/gcp/bosh-lite-vm-type.yml
         increase-persistent-disk.yml
     ensure:
-      put: xena-postgres-bbl-state
+      put: gabrielle-postgres-bbl-state
       params:
         repository: updated-bbl-state
         rebase: true
@@ -2065,14 +2065,14 @@ jobs:
     input_mapping:
       capi-ci-private: updated-bbl-state
     params:
-      ENV_NAME: xena-postgres
+      ENV_NAME: gabrielle-postgres
   - task: update-cloud-config
     file: capi-ci/ci/bosh/update_cloud_config.yml
     input_mapping:
-      bbl-state: updated-capi-ci-private
+      bbl-state: updated-bbl-state
       cloud-config: cf-deployment
     params:
-      BBL_STATE_DIR: "xena-postgres"
+      BBL_STATE_DIR: "gabrielle-postgres"
       CLOUD_CONFIG_PATH: iaas-support/bosh-lite/cloud-config.yml
   - task: create-dns-record
     attempts: 3
@@ -2080,8 +2080,8 @@ jobs:
     input_mapping:
       bbl-state: updated-bbl-state
     params:
-      BBL_STATE_DIR: "xena-postgres"
-      DNS_DOMAIN: *xena-postgres-domain
+      BBL_STATE_DIR: "gabrielle-postgres"
+      DNS_DOMAIN: *gabrielle-postgres-domain
       GCP_DNS_SERVICE_ACCOUNT_KEY: ((dns_gcp_json_key))
       GCP_PROJECT_ID: ((dns_gcp_project_id))
       SHARED_DNS_ZONE_NAME: "capi-land"
@@ -2091,7 +2091,7 @@ jobs:
     input_mapping:
       bbl-state: updated-bbl-state
     params:
-      BBL_STATE_DIR: "xena-postgres"
+      BBL_STATE_DIR: "gabrielle-postgres"
 
 - name: update-bosh-leia-azure-storage
   serial: true
@@ -2310,7 +2310,7 @@ jobs:
       - mulan-postgres-webdav-bridge
       - kiki-back-compat-migrations
       - xena-mysql-rotate-ccdb-key
-      - xena-postgres-drats
+      - gabrielle-postgres-drats
       - ripley-nfs
       - buffy-bits-postgres-webdav
       - leia-azure-storage
@@ -2322,7 +2322,7 @@ jobs:
       - mulan-postgres-webdav-bridge
       - kiki-back-compat-migrations
       - xena-mysql-rotate-ccdb-key
-      - xena-postgres-drats
+      - gabrielle-postgres-drats
       - ripley-nfs
       - buffy-bits-postgres-webdav
       - leia-azure-storage
@@ -2334,7 +2334,7 @@ jobs:
       - mulan-postgres-webdav-bridge
       - kiki-back-compat-migrations
       - xena-mysql-rotate-ccdb-key
-      - xena-postgres-drats
+      - gabrielle-postgres-drats
       - ripley-nfs
       - buffy-bits-postgres-webdav
       - leia-azure-storage
@@ -2540,7 +2540,7 @@ jobs:
         APP_ENV_VAR_VALUE: butterfly
         BBL_STATE_DIR: xena-mysql
 
-- name: xena-postgres-drats
+- name: gabrielle-postgres-drats
   serial: true
   plan:
   - aggregate:
@@ -2550,7 +2550,7 @@ jobs:
       resource: cf-deployment
     - get: capi-ci
     - get: capi-ci-private
-    - get: xena-postgres-bbl-state
+    - get: gabrielle-postgres-bbl-state
     - get: cf-deployment-concourse-tasks
       resource: cf-deployment-concourse-tasks-v7
     - get: capi-release
@@ -2566,21 +2566,21 @@ jobs:
     input_mapping:
       bbl-state: capi-ci-private
     params:
-      BBL_STATE_DIR: xena-postgres
+      BBL_STATE_DIR: gabrielle-postgres
       INFRASTRUCTURE: bosh-lite
   - task: upload-capi-release-tarball
     file: capi-ci/ci/bosh/upload-release.yml
     input_mapping:
-      bbl-state: xena-postgres-bbl-state
+      bbl-state: gabrielle-postgres-bbl-state
       release-tarball: capi-release-tarball
     params:
-      BBL_STATE_DIR: "xena-postgres"
+      BBL_STATE_DIR: "gabrielle-postgres"
   - task: delete-deployment
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
-      bbl-state: xena-postgres-bbl-state
+      bbl-state: gabrielle-postgres-bbl-state
     params:
-      BBL_STATE_DIR: xena-postgres
+      BBL_STATE_DIR: gabrielle-postgres
   - task: collect-ops-files
     file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
     input_mapping:
@@ -2598,8 +2598,8 @@ jobs:
       ops-files: collected-ops-files
       vars-files: capi-ci-private
     params:
-      BBL_STATE_DIR: xena-postgres
-      SYSTEM_DOMAIN: *xena-postgres-domain
+      BBL_STATE_DIR: gabrielle-postgres
+      SYSTEM_DOMAIN: *gabrielle-postgres-domain
       OPS_FILES: |
         skip-cert-verify.yml
         base-ops-files/operations/bosh-lite.yml
@@ -2612,16 +2612,16 @@ jobs:
   - task: extract-bbl-environment
     file: capi-ci/ci/bbl-tasks/extract_bbl_environment.yml
     params:
-      ENV_NAME: xena-postgres
+      ENV_NAME: gabrielle-postgres
   - task: run-drats
     file: capi-ci/ci/drats/run-drats.yml
     privileged: true # necessary for sshuttle util
     input_mapping:
       bbr-binary-release: bbr-github-release
     params:
-      CF_API_URL: https://api.xena-postgres.capi.land
+      CF_API_URL: https://api.gabrielle-postgres.capi.land
       SKIP_SUITE_NAME: "cf-nfsbroker|cf-credhub"
-      BBL_STATE_DIR: "xena-postgres"
+      BBL_STATE_DIR: "gabrielle-postgres"
 
 - name: leia-azure-storage
   serial: true
