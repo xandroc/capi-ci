@@ -12,6 +12,14 @@ pushd diego-release/src/code.cloudfoundry.org/bbs
   BBS_SHA=$(git rev-parse HEAD)
 popd
 
+pushd diego-release/src/code.cloudfoundry.org/lager
+  LAGER_SHA=$(git rev-parse HEAD)
+popd
+
+pushd diego-release/src/code.cloudfoundry.org/locket
+  LOCKET_SHA=$(git rev-parse HEAD)
+popd
+
 pushd cc-uploader
   CC_UPLOADER_SHA=$(git rev-parse HEAD)
 popd
@@ -30,6 +38,16 @@ pushd capi-release
     pushd bbs
       git fetch
       git checkout "${BBS_SHA}"
+    popd
+
+    pushd lager
+      git fetch
+      git checkout "${LAGER_SHA}"
+    popd
+
+    pushd locket
+      git fetch
+      git checkout "${LOCKET_SHA}"
     popd
 
     pushd cc-uploader
