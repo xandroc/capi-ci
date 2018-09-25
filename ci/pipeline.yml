@@ -323,13 +323,6 @@ resources:
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/cf-acceptance-tests.git
 
-- name: cf-acceptance-tests-master
-  type: git
-  source:
-    branch: master
-    private_key: ((private_key))
-    uri: git@github.com:cloudfoundry/cf-acceptance-tests.git
-
 - name: bbr-github-release
   type: github-release
   source:
@@ -1006,7 +999,6 @@ jobs:
     - get: elsa-bbl-state
     - get: elsa-integration-configs
     - get: cf-acceptance-tests
-      resource: cf-acceptance-tests-master
     - get: sync-integration-tests
     - get: capi-ci
     - get: capi-ci-private
