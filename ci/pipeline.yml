@@ -504,6 +504,7 @@ jobs:
       file: capi-ci/ci/test-unit/run_cc_unit_tests.yml
       params:
         DB: mysql
+        RUN_IN_PARALLEL: true
       on_failure:
         put: slack-alert
         params:
@@ -513,6 +514,7 @@ jobs:
       file: capi-ci/ci/test-unit/run_cc_unit_tests.yml
       params:
         DB: postgres
+        RUN_IN_PARALLEL: true
       on_failure:
         put: slack-alert
         params:
