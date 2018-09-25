@@ -679,7 +679,6 @@ jobs:
         cf-deployment-operations/log-all-sequel-activity.yml
         cf-deployment-operations/temporary/disable-uaa-get-requests.yml
         cf-deployment-operations/enable-cef-security-event-logging.yml
-        cf-deployment-operations/temporary/enable-bpm-capi.yml
         cf-deployment-operations/temporary/add-deployment-updater-postgres.yml
   - task: deploy
     file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
@@ -703,8 +702,6 @@ jobs:
         log-all-sequel-activity.yml
         disable-uaa-get-requests.yml
         enable-cef-security-event-logging.yml
-        base-ops-files/operations/experimental/enable-bpm.yml
-        enable-bpm-capi.yml
         add-deployment-updater-postgres.yml
   - task: updated-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
@@ -916,7 +913,6 @@ jobs:
       NEW_OPS_FILES: |
         cf-deployment-operations/scale-up-cells.yml
         cf-deployment-operations/use-latest-capi.yml
-        cf-deployment-operations/temporary/enable-bpm-capi.yml
         cf-deployment-operations/use-nfs-blobstore.yml
         cf-deployment-operations/skip-cert-verify.yml
         cf-deployment-operations/temporary/disable-uaa-get-requests.yml
@@ -937,8 +933,6 @@ jobs:
         base-ops-files/operations/experimental/use-xenial-stemcell.yml
         base-ops-files/operations/experimental/use-compiled-releases-xenial-stemcell.yml
         use-latest-capi.yml
-        base-ops-files/operations/experimental/enable-bpm.yml
-        enable-bpm-capi.yml
         use-nfs-blobstore.yml
         skip-cert-verify.yml
         disable-uaa-get-requests.yml
