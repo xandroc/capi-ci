@@ -57,6 +57,10 @@ groups:
   - update-bosh-ripley
   - update-bosh-leia-azure-storage
   - update-bosh-rey-gcs-storage
+  - bbl-destroy-xena-mysql
+  - bbl-destroy-rey-gcs-storage
+  - bbl-destroy-gabrielle-postgres
+  - bbl-destroy-leia-azure-storage
 
 resource_types:
 - name: slack-notification
@@ -2266,6 +2270,114 @@ jobs:
       bbl-state: updated-bbl-state
     params:
       BBL_STATE_DIR: "rey-gcs-storage"
+
+- name: bbl-destroy-xena-mysql
+  serial: true
+  plan:
+  - aggregate:
+    - get: cf-deployment-concourse-tasks
+      resource: cf-deployment-concourse-tasks-v7
+    - get: rey-gcs-storage-bbl-state
+    - get: capi-ci
+    - get: capi-ci-private
+    - get: cf-deployment
+    - get: nightly
+      trigger: true
+    - get: bosh-deployment
+  - task: bbl-destroy-xena-mysql
+    file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
+    input_mapping:
+      bbl-state: capi-ci-private
+      bbl-config: capi-ci-private
+    params:
+      BBL_STATE_DIR: "xena-mysql"
+      BBL_GCP_SERVICE_ACCOUNT_KEY: ((xena_gcp_json_key))
+    ensure:
+      put: xena-mysql-bbl-state
+      params:
+        repository: updated-bbl-state
+        rebase: true
+
+- name: bbl-destroy-rey-gcs-storage
+  serial: true
+  plan:
+  - aggregate:
+    - get: cf-deployment-concourse-tasks
+      resource: cf-deployment-concourse-tasks-v7
+    - get: rey-gcs-storage-bbl-state
+    - get: capi-ci
+    - get: capi-ci-private
+    - get: cf-deployment
+    - get: nightly
+      trigger: true
+    - get: bosh-deployment
+  - task: bbl-destroy-rey-gcs-storage
+    file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
+    input_mapping:
+      bbl-state: capi-ci-private
+      bbl-config: capi-ci-private
+    params:
+      BBL_STATE_DIR: "rey-gcs-storage"
+      BBL_GCP_SERVICE_ACCOUNT_KEY: ((rey_gcp_json_key))
+    ensure:
+      put: rey-gcs-storage-bbl-state
+      params:
+        repository: updated-bbl-state
+        rebase: true
+
+- name: bbl-destroy-gabrielle-postgres
+  serial: true
+  plan:
+  - aggregate:
+    - get: cf-deployment-concourse-tasks
+      resource: cf-deployment-concourse-tasks-v7
+    - get: rey-gcs-storage-bbl-state
+    - get: capi-ci
+    - get: capi-ci-private
+    - get: cf-deployment
+    - get: nightly
+      trigger: true
+    - get: bosh-deployment
+  - task: bbl-destroy-gabrielle-postgres
+    file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
+    input_mapping:
+      bbl-state: capi-ci-private
+      bbl-config: capi-ci-private
+    params:
+      BBL_STATE_DIR: "gabrielle-postgres"
+      BBL_GCP_SERVICE_ACCOUNT_KEY: ((xena_gcp_json_key))
+    ensure:
+      put: gabrielle-postgres-bbl-state
+      params:
+        repository: updated-bbl-state
+        rebase: true
+
+- name: bbl-destroy-leia-azure-storage
+  serial: true
+  plan:
+  - aggregate:
+    - get: cf-deployment-concourse-tasks
+      resource: cf-deployment-concourse-tasks-v7
+    - get: rey-gcs-storage-bbl-state
+    - get: capi-ci
+    - get: capi-ci-private
+    - get: cf-deployment
+    - get: nightly
+      trigger: true
+    - get: bosh-deployment
+  - task: bbl-destroy-leia-azure-storage
+    file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
+    input_mapping:
+      bbl-state: capi-ci-private
+      bbl-config: capi-ci-private
+    params:
+      BBL_STATE_DIR: "leia-azure-storage"
+      BBL_GCP_SERVICE_ACCOUNT_KEY: ((leia_gcp_json_key))
+    ensure:
+      put: leia-azure-storage-bbl-state
+      params:
+        repository: updated-bbl-state
+        rebase: true
 
 - name: deliver-stories
   serial: true
