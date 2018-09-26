@@ -817,7 +817,6 @@ jobs:
         log-all-sequel-activity.yml
         disable-uaa-get-requests.yml
         base-ops-files/operations/experimental/bits-service.yml
-        base-ops-files/operations/experimental/enable-bits-service-consul.yml
         base-ops-files/operations/experimental/bits-service-webdav.yml
         add-deployment-updater-postgres.yml
   - task: updated-integration-configs
@@ -1065,7 +1064,6 @@ jobs:
       # Add windows diego cell
       - cf-deployment/operations/windows-cell.yml
       - capi-ci/cf-deployment-operations/skip-cert-verify-on-windows-cell.yml
-      - capi-ci/cf-deployment-operations/windows-cell-consul-mutual-tls.yml
       # Use rotatable database encryption keys
       - capi-ci/cf-deployment-operations/rotate-cc-database-key/add-database-encryption-keys.yml
       # Scale up cells to prevent apps piling onto one cell during rolling deploy.
