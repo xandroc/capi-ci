@@ -2273,8 +2273,6 @@ jobs:
     - get: capi-ci
     - get: capi-ci-private
     - get: cf-deployment
-    - get: nightly
-      trigger: true
     - get: bosh-deployment
   - task: bbl-destroy-xena-mysql
     file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
@@ -2300,8 +2298,6 @@ jobs:
     - get: capi-ci
     - get: capi-ci-private
     - get: cf-deployment
-    - get: nightly
-      trigger: true
     - get: bosh-deployment
   - task: bbl-destroy-rey-gcs-storage
     file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
@@ -2327,8 +2323,6 @@ jobs:
     - get: capi-ci
     - get: capi-ci-private
     - get: cf-deployment
-    - get: nightly
-      trigger: true
     - get: bosh-deployment
   - task: bbl-destroy-gabrielle-postgres
     file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
@@ -2354,8 +2348,6 @@ jobs:
     - get: capi-ci
     - get: capi-ci-private
     - get: cf-deployment
-    - get: nightly
-      trigger: true
     - get: bosh-deployment
   - task: bbl-destroy-leia-azure-storage
     file: cf-deployment-concourse-tasks/bbl-destroy/task.yml
