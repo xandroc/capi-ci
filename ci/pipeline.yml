@@ -2485,6 +2485,7 @@ jobs:
     params:
       NEW_OPS_FILES: |
         cf-deployment-operations/skip-cert-verify.yml
+        cf-deployment-operations/temporary/capi-bbr-enable-bpm.yml
         cf-deployment-operations/use-latest-capi.yml
         cf-deployment-operations/scale-up-cloud-controller.yml
   - task: deploy
@@ -2500,7 +2501,7 @@ jobs:
         skip-cert-verify.yml
         base-ops-files/operations/bosh-lite.yml
         base-ops-files/operations/backup-and-restore/enable-backup-restore.yml
-        cf-deployment-operations/temporary/capi-bbr-enable-bpm.yml
+        capi-bbr-enable-bpm.yml
         base-ops-files/operations/use-compiled-releases.yml
         use-latest-capi.yml
         scale-up-cloud-controller.yml
