@@ -2500,6 +2500,7 @@ jobs:
         skip-cert-verify.yml
         base-ops-files/operations/bosh-lite.yml
         base-ops-files/operations/backup-and-restore/enable-backup-restore.yml
+        cf-deployment-operations/temporary/capi-bbr-enable-bpm.yml
         base-ops-files/operations/use-compiled-releases.yml
         use-latest-capi.yml
         scale-up-cloud-controller.yml
