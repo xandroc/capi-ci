@@ -10,19 +10,6 @@
     persistent_disk_type: 100GB
     networks: [ name: default ]
     jobs:
-    - name: consul_agent
-      release: consul
-      consumes:
-        consul_common: {from: consul_common_link}
-        consul_server: nil
-        consul_client: {from: consul_client_link}
-      properties:
-        consul:
-          agent:
-            services:
-              nfstestserver:
-                name: nfstestserver
-                check: {}
     - name: nfstestserver
       release: nfs-volume
       properties:
