@@ -555,6 +555,8 @@ jobs:
       params:
         submodules:
         - src/code.cloudfoundry.org/bbs
+        - src/code.cloudfoundry.org/lager
+        - src/code.cloudfoundry.org/locket
     - get: cc-uploader
       passed: [bridge-unit-tests]
       trigger: true
