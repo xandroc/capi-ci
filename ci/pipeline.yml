@@ -936,7 +936,6 @@ jobs:
         use-nfs-blobstore.yml
         skip-cert-verify.yml
         disable-uaa-get-requests.yml
-        base-ops-files/operations/workaround/use-4-azs-for-router.yml
         add-deployment-updater.yml
         base-ops-files/operations/experimental/use-pxc.yml
   - task: updated-integration-configs
@@ -1097,8 +1096,6 @@ jobs:
       - cf-deployment/operations/experimental/use-pxc.yml
       # Credhub requires UAA auth so we must allow containers to talk to UAA
       - capi-ci/cf-deployment-operations/seed-uaa-asg.yml
-      # Workaround for GCP issue that causes 502s if there are empty LB instance groups #152766388
-      - cf-deployment/operations/workaround/use-4-azs-for-router.yml
       # Deployment Updater for ZDT
       - capi-ci/cf-deployment-operations/temporary/add-deployment-updater.yml
   - task: updated-integration-configs
@@ -1218,7 +1215,6 @@ jobs:
         base-ops-files/operations/use-postgres.yml
         log-all-sequel-activity.yml
         disable-uaa-get-requests.yml
-        base-ops-files/operations/workaround/use-4-azs-for-router.yml
   - task: ensure-api-healthy
     file: runtime-ci/tasks/ensure-api-healthy/task.yml
     params:
