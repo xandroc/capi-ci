@@ -1062,7 +1062,6 @@ jobs:
       - cf-deployment/operations/test/add-persistent-isolation-segment-diego-cell.yml
       # Add windows diego cell
       - cf-deployment/operations/windows-cell.yml
-      - capi-ci/cf-deployment-operations/skip-cert-verify-on-windows-cell.yml
       # Use rotatable database encryption keys
       - capi-ci/cf-deployment-operations/rotate-cc-database-key/add-database-encryption-keys.yml
       # Scale up cells to prevent apps piling onto one cell during rolling deploy.
