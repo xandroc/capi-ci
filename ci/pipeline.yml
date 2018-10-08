@@ -897,12 +897,10 @@ jobs:
     params:
       BBL_STATE_DIR: "ripley"
   - task: ripley-linux-stemcell-upload
-    file: capi-ci/ci/bosh/bosh-upload-stemcell.yml
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
     input_mapping:
-      stemcell: gcp-xenial-stemcell
       bbl-state: ripley-bbl-state
     params:
-      STEMCELL_NAME: '*.tgz'
       BBL_STATE_DIR: "ripley"
   - task: collect-ops-files
     file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
@@ -930,8 +928,7 @@ jobs:
         base-ops-files/operations/test/add-persistent-isolation-segment-diego-cell.yml
         base-ops-files/operations/scale-to-one-az.yml
         scale-up-cells.yml
-        base-ops-files/operations/experimental/use-xenial-stemcell.yml
-        base-ops-files/operations/experimental/use-compiled-releases-xenial-stemcell.yml
+        base-ops-files/operations/use-compiled-releases.yml
         use-latest-capi.yml
         use-nfs-blobstore.yml
         skip-cert-verify.yml
