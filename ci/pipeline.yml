@@ -323,6 +323,12 @@ resources:
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/cf-acceptance-tests.git
 
+- name: capi-bara-tests
+  type: git
+  source:
+    private_key: ((private_key))
+    uri: git@github.com:cloudfoundry/capi-bara-tests.git
+
 - name: bbr-github-release
   type: github-release
   source:
@@ -647,6 +653,7 @@ jobs:
     - get: mulan-integration-configs
     - get: cf-acceptance-tests
     - get: sync-integration-tests
+    - get: capi-bara-tests
     - get: capi-ci
     - get: capi-ci-private
     - get: capi-release-tarball
@@ -735,6 +742,13 @@ jobs:
         NODES: 6
         CONFIG_FILE_PATH: "mulan/cats_integration_config.json"
         CAPTURE_LOGS: true
+    - task: capi-bara-tests
+      file: capi-ci/ci/baras/run-baras.yml
+      input_mapping:
+        integration-config: updated-integration-configs
+      params:
+        NODES: 6
+        CONFIG_FILE_PATH: "mulan/cats_integration_config.json"
     - task: sync-integration-tests
       file: sync-integration-tests/concourse/task_with_credhub.yml
       input_mapping:

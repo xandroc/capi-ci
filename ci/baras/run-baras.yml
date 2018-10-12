@@ -1,0 +1,25 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: relintdockerhubpushbot/cf-deployment-concourse-tasks
+
+inputs:
+  - name: capi-ci
+  - name: capi-bara-tests
+  - name: integration-config
+
+run:
+  path: capi-ci/ci/baras/run-baras.sh
+
+params:
+  NODES: 12
+  # - Optional
+  # - Number of parallel ginkgo nodes.
+
+  CONFIG_FILE_PATH: integration_config.json
+  # - Optional
+  # - Path to the BARAs integration configuration file.
+  # - The path is relative to the `integration-config` input.
