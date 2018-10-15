@@ -143,7 +143,7 @@ jobs:
                   - cf-deployment/operations/bosh-lite.yml
                   - cf-deployment/operations/use-compiled-releases.yml
                   - capi-ci/cf-deployment-operations/seed-credhub-asg.yml
-                  - capi-ci/cf-deployment-operations/temporary/add-deployment-updater.yml
+                  - cf-deployment/operations/experimental/add-deployment-updater.yml
               - task: upload-to-gcs
                 file: capi-ci/ci/gcs/upload-to-gcs.yml
                 input_mapping:
