@@ -780,6 +780,7 @@ jobs:
     - get: buffy-integration-configs
     - get: cf-acceptance-tests
     - get: sync-integration-tests
+    - get: capi-bara-tests
     - get: capi-ci
     - get: capi-ci-private
     - get: capi-release-tarball
@@ -865,6 +866,13 @@ jobs:
         CONFIG_FILE_PATH: "buffy/cats_integration_config.json"
         SKIP_REGEXP: "Stages with multiple admin buildpacks"
         CAPTURE_LOGS: true
+    - task: capi-bara-tests
+      file: capi-ci/ci/baras/run-baras.yml
+      input_mapping:
+        integration-config: updated-integration-configs
+      params:
+        NODES: 6
+        CONFIG_FILE_PATH: "buffy/cats_integration_config.json"
     - task: sync-integration-tests
       file: sync-integration-tests/concourse/task_with_credhub.yml
       input_mapping:
@@ -896,6 +904,7 @@ jobs:
     - get: ripley-integration-configs
     - get: cf-acceptance-tests
     - get: sync-integration-tests
+    - get: capi-bara-tests
     - get: gcp-xenial-stemcell
     - get: runtime-ci
     - get: capi-ci
@@ -979,6 +988,13 @@ jobs:
         NODES: 6
         CONFIG_FILE_PATH: "ripley/cats_integration_config.json"
         CAPTURE_LOGS: true
+    - task: capi-bara-tests
+      file: capi-ci/ci/baras/run-baras.yml
+      input_mapping:
+        integration-config: updated-integration-configs
+      params:
+        NODES: 6
+        CONFIG_FILE_PATH: "ripley/cats_integration_config.json"
     - task: sync-integration-tests
       file: sync-integration-tests/concourse/task_with_credhub.yml
       input_mapping:
@@ -1010,6 +1026,7 @@ jobs:
     - get: elsa-integration-configs
     - get: cf-acceptance-tests
     - get: sync-integration-tests
+    - get: capi-bara-tests
     - get: capi-ci
     - get: capi-ci-private
     - get: capi-release-tarball
@@ -1139,6 +1156,13 @@ jobs:
         NODES: 8
         CONFIG_FILE_PATH: "elsa/cats_integration_config.json"
         CAPTURE_LOGS: true
+    - task: capi-bara-tests
+      file: capi-ci/ci/baras/run-baras.yml
+      input_mapping:
+        integration-config: updated-integration-configs
+      params:
+        NODES: 6
+        CONFIG_FILE_PATH: "elsa/cats_integration_config.json"
     - task: sync-integration-tests
       file: sync-integration-tests/concourse/task_with_credhub.yml
       input_mapping:
@@ -1166,6 +1190,7 @@ jobs:
     - get: kiki-bbl-state
     - get: kiki-integration-configs
     - get: sync-integration-tests
+    - get: capi-bara-tests
     - get: capi-ci
     - get: capi-ci-private
     - get: capi-release
@@ -1268,6 +1293,13 @@ jobs:
         NODES: 4
         CONFIG_FILE_PATH: "kiki/cats_integration_config.json"
         CAPTURE_LOGS: true
+    - task: capi-bara-tests
+      file: capi-ci/ci/baras/run-baras.yml
+      input_mapping:
+        integration-config: updated-integration-configs
+      params:
+        NODES: 4
+        CONFIG_FILE_PATH: "kiki/cats_integration_config.json"
     - task: sync-integration-tests
       file: sync-integration-tests/concourse/task_with_credhub.yml
       input_mapping:
@@ -2753,6 +2785,7 @@ jobs:
     - get: leia-azure-storage-integration-configs
     - get: cf-acceptance-tests
     - get: sync-integration-tests
+    - get: capi-bara-tests
   - task: stemcell-upload
     file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
     input_mapping:
@@ -2818,6 +2851,13 @@ jobs:
         NODES: 4
         CONFIG_FILE_PATH: "leia-azure-storage/cats_integration_config.json"
         CAPTURE_LOGS: true
+    - task: capi-bara-tests
+      file: capi-ci/ci/baras/run-baras.yml
+      input_mapping:
+        integration-config: updated-integration-configs
+      params:
+        NODES: 2
+        CONFIG_FILE_PATH: "leia-azure-storage/cats_integration_config.json"
     - task: sync-integration-tests
       file: sync-integration-tests/concourse/task_with_credhub.yml
       input_mapping:
@@ -2853,6 +2893,7 @@ jobs:
     - get: rey-gcs-storage-integration-configs
     - get: cf-acceptance-tests
     - get: sync-integration-tests
+    - get: capi-bara-tests
   - task: stemcell-upload
     file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
     input_mapping:
@@ -2918,6 +2959,13 @@ jobs:
         NODES: 4
         CONFIG_FILE_PATH: "rey-gcs-storage/cats_integration_config.json"
         CAPTURE_LOGS: true
+    - task: capi-bara-tests
+      file: capi-ci/ci/baras/run-baras.yml
+      input_mapping:
+        integration-config: updated-integration-configs
+      params:
+        NODES: 2
+        CONFIG_FILE_PATH: "rey-gcs-storage/cats_integration_config.json"
     - task: sync-integration-tests
       file: sync-integration-tests/concourse/task_with_credhub.yml
       input_mapping:
