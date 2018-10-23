@@ -637,7 +637,7 @@ jobs:
 
 - name: mulan-postgres-webdav-bridge
   serial: true
-  serial_groups: [deploy-mulan]
+  serial_groups: [mulan]
   plan:
   - aggregate:
     - get: cloud_controller_ng
@@ -764,7 +764,7 @@ jobs:
 
 - name: buffy-bits-postgres-webdav
   serial: true
-  serial_groups: [deploy-buffy]
+  serial_groups: [buffy]
   plan:
   - aggregate:
     - get: cloud_controller_ng
@@ -888,7 +888,7 @@ jobs:
 
 - name: ripley-nfs
   serial: true
-  serial_groups: [deploy-ripley]
+  serial_groups: [ripley]
   plan:
   - aggregate:
     - get: cloud_controller_ng
@@ -1010,7 +1010,7 @@ jobs:
 
 - name: elsa-mysql-s3-bypass
   serial: true
-  serial_groups: [deploy-elsa]
+  serial_groups: [elsa]
   plan:
   - aggregate:
     - get: cloud_controller_ng
@@ -1178,7 +1178,7 @@ jobs:
 
 - name: kiki-back-compat-migrations
   serial: true
-  serial_groups: [deploy-kiki]
+  serial_groups: [kiki]
   plan:
   - aggregate:
     - get: cloud_controller_ng
@@ -1607,7 +1607,7 @@ jobs:
 
 - name: update-bosh-mulan
   serial: true
-  serial_groups: [deploy-mulan]
+  serial_groups: [mulan]
   plan:
   - aggregate:
     - get: cf-deployment-concourse-tasks
@@ -1679,7 +1679,7 @@ jobs:
 
 - name: update-bosh-buffy
   serial: true
-  serial_groups: [deploy-buffy]
+  serial_groups: [buffy]
   plan:
   - aggregate:
     - get: cf-deployment-concourse-tasks
@@ -1742,7 +1742,7 @@ jobs:
 
 - name: update-bosh-ripley
   serial: true
-  serial_groups: [deploy-ripley]
+  serial_groups: [ripley]
   plan:
   - aggregate:
     - get: cf-deployment-concourse-tasks
@@ -1805,7 +1805,7 @@ jobs:
 
 - name: update-bosh-elsa
   serial: true
-  serial_groups: [deploy-elsa]
+  serial_groups: [elsa]
   plan:
   - aggregate:
     - get: cf-deployment-concourse-tasks
@@ -1885,7 +1885,7 @@ jobs:
 
 - name: update-bosh-kiki
   serial: true
-  serial_groups: [deploy-kiki]
+  serial_groups: [kiki]
   plan:
   - aggregate:
     - get: cf-deployment-concourse-tasks
@@ -1948,6 +1948,7 @@ jobs:
 
 - name: update-bosh-xena-mysql
   serial: true
+  serial_groups: [xena-mysql]
   plan:
   - aggregate:
     - get: cf-deployment-concourse-tasks
@@ -2037,6 +2038,7 @@ jobs:
 
 - name: update-bosh-gabrielle-postgres
   serial: true
+  serial_groups: [gabrielle-postgres]
   plan:
   - aggregate:
     - get: cf-deployment-concourse-tasks
@@ -2125,6 +2127,7 @@ jobs:
 
 - name: update-bosh-leia-azure-storage
   serial: true
+  serial_groups: [leia-azure-storage]
   plan:
   - aggregate:
     - get: cf-deployment-concourse-tasks
@@ -2214,6 +2217,7 @@ jobs:
 
 - name: update-bosh-rey-gcs-storage
   serial: true
+  serial_groups: [rey-gcs-storage]
   plan:
   - aggregate:
     - get: cf-deployment-concourse-tasks
@@ -2303,6 +2307,7 @@ jobs:
 
 - name: bbl-destroy-xena-mysql
   serial: true
+  serial_groups: [xena-mysql]
   plan:
   - aggregate:
     - get: cf-deployment-concourse-tasks
@@ -2328,6 +2333,7 @@ jobs:
 
 - name: bbl-destroy-rey-gcs-storage
   serial: true
+  serial_groups: [rey-gcs-storage]
   plan:
   - aggregate:
     - get: cf-deployment-concourse-tasks
@@ -2353,6 +2359,7 @@ jobs:
 
 - name: bbl-destroy-gabrielle-postgres
   serial: true
+  serial_groups: [gabrielle-postgres]
   plan:
   - aggregate:
     - get: cf-deployment-concourse-tasks
@@ -2378,6 +2385,7 @@ jobs:
 
 - name: bbl-destroy-leia-azure-storage
   serial: true
+  serial_groups: [leia-azure-storage]
   plan:
   - aggregate:
     - get: cf-deployment-concourse-tasks
@@ -2680,6 +2688,7 @@ jobs:
 
 - name: gabrielle-postgres-drats
   serial: true
+  serial_groups: [gabrielle-postgres]
   plan:
   - aggregate:
     - get: cloud_controller_ng
