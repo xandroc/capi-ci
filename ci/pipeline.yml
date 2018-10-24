@@ -589,11 +589,6 @@ jobs:
     - get: cloud_controller_ng
       passed: [cc-unit-tests]
       #trigger: true
-    - get: diego-release
-      passed: [bridge-unit-tests]
-      params:
-        submodules:
-        - src/code.cloudfoundry.org/bbs
   - task: bump-bbs-protos
     file: capi-ci/ci/protos/bump_bbs_protos.yml
 #  - put: capi-release-develop
