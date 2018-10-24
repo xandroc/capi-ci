@@ -2,10 +2,10 @@
 # To pin a version of a git resource, include the commit hash in the list here:
 #
 version_pins:
-- &CF_D_CT_VERSION v7.9
-- &CATS_VERSION v2.2.0
+- &CF_D_CT_VERSION 171abd0e0432a9580636cf72559f5e507dbb1cdb
+- &CATS_VERSION a73124909e27a0c4c1681a17a8d027d7d2ebc876
 #
-# And then reference it whenever you `get` that resource:
+# And then reference it in every place where you `get` that resource:
 #
 #      - get: bosh-deployment
 #        version: { ref: *BOSH_DEPLOYMENT_VERSION }
@@ -315,7 +315,7 @@ resources:
     branch: master
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/cf-deployment-concourse-tasks.git
-    tag_filter: *CF_D_CT_VERSION
+    tag_filter: v7.*
 
 - name: cf-acceptance-tests
   type: git
@@ -323,7 +323,6 @@ resources:
     branch: release-candidate
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/cf-acceptance-tests.git
-    tag_filter: *CATS_VERSION
 
 - name: capi-bara-tests
   type: git
@@ -646,6 +645,7 @@ jobs:
       passed: [create-capi-release]
     - get: cf-deployment-concourse-tasks
       resource: cf-deployment-concourse-tasks-v7
+      version: { ref: *CF_D_CT_VERSION }
     - get: cf-deployment
       resource: cf-deployment
     - get: capi-release
@@ -654,6 +654,7 @@ jobs:
     - get: mulan-bbl-state
     - get: mulan-integration-configs
     - get: cf-acceptance-tests
+      version: { ref: *CATS_VERSION }
     - get: sync-integration-tests
     - get: capi-bara-tests
     - get: capi-ci
@@ -773,6 +774,7 @@ jobs:
       passed: [create-capi-release]
     - get: cf-deployment-concourse-tasks
       resource: cf-deployment-concourse-tasks-v7
+      version: { ref: *CF_D_CT_VERSION }
     - get: cf-deployment
       resource: cf-deployment
     - get: capi-release
@@ -781,6 +783,7 @@ jobs:
     - get: buffy-bbl-state
     - get: buffy-integration-configs
     - get: cf-acceptance-tests
+      version: { ref: *CATS_VERSION }
     - get: sync-integration-tests
     - get: capi-bara-tests
     - get: capi-ci
@@ -897,6 +900,7 @@ jobs:
       passed: [create-capi-release]
     - get: cf-deployment-concourse-tasks
       resource: cf-deployment-concourse-tasks-v7
+      version: { ref: *CF_D_CT_VERSION }
     - get: cf-deployment
       resource: cf-deployment
     - get: capi-release
@@ -905,6 +909,7 @@ jobs:
     - get: ripley-bbl-state
     - get: ripley-integration-configs
     - get: cf-acceptance-tests
+      version: { ref: *CATS_VERSION }
     - get: sync-integration-tests
     - get: capi-bara-tests
     - get: gcp-xenial-stemcell
@@ -1018,6 +1023,7 @@ jobs:
     - get: cloud_controller_ng
       passed: [create-capi-release]
     - get: cf-deployment-concourse-tasks
+      version: { ref: *CF_D_CT_VERSION }
       resource: cf-deployment-concourse-tasks-v7
     - get: cf-deployment
       resource: cf-deployment
@@ -1027,6 +1033,7 @@ jobs:
     - get: elsa-bbl-state
     - get: elsa-integration-configs
     - get: cf-acceptance-tests
+      version: { ref: *CATS_VERSION }
     - get: sync-integration-tests
     - get: capi-bara-tests
     - get: capi-ci
@@ -1186,6 +1193,7 @@ jobs:
     - get: cloud_controller_ng
       passed: [create-capi-release]
     - get: cf-deployment-concourse-tasks
+      version: { ref: *CF_D_CT_VERSION }
       resource: cf-deployment-concourse-tasks-v7
     - get: cf-deployment
       resource: cf-deployment-master
@@ -1204,6 +1212,7 @@ jobs:
       - create-capi-release
       trigger: true
     - get: cf-acceptance-tests
+      version: { ref: *CATS_VERSION }
     - get: runtime-ci
   - task: kiki-stemcell-upload
     file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
@@ -1542,6 +1551,7 @@ jobs:
   plan:
   - aggregate:
     - get: cf-deployment-concourse-tasks
+      version: { ref: *CF_D_CT_VERSION }
       resource: cf-deployment-concourse-tasks-v7
     - get: arya-bbl-state
     - get: capi-ci
@@ -1613,6 +1623,7 @@ jobs:
   plan:
   - aggregate:
     - get: cf-deployment-concourse-tasks
+      version: { ref: *CF_D_CT_VERSION }
       resource: cf-deployment-concourse-tasks-v7
     - get: mulan-bbl-state
     - get: capi-ci
@@ -1685,6 +1696,7 @@ jobs:
   plan:
   - aggregate:
     - get: cf-deployment-concourse-tasks
+      version: { ref: *CF_D_CT_VERSION }
       resource: cf-deployment-concourse-tasks-v7
     - get: buffy-bbl-state
     - get: capi-ci
@@ -1748,6 +1760,7 @@ jobs:
   plan:
   - aggregate:
     - get: cf-deployment-concourse-tasks
+      version: { ref: *CF_D_CT_VERSION }
       resource: cf-deployment-concourse-tasks-v7
     - get: ripley-bbl-state
     - get: capi-ci
@@ -1811,6 +1824,7 @@ jobs:
   plan:
   - aggregate:
     - get: cf-deployment-concourse-tasks
+      version: { ref: *CF_D_CT_VERSION }
       resource: cf-deployment-concourse-tasks-v7
     - get: elsa-bbl-state
     - get: capi-ci
@@ -1891,6 +1905,7 @@ jobs:
   plan:
   - aggregate:
     - get: cf-deployment-concourse-tasks
+      version: { ref: *CF_D_CT_VERSION }
       resource: cf-deployment-concourse-tasks-v7
     - get: capi-ci
     - get: capi-ci-private
@@ -1954,6 +1969,7 @@ jobs:
   plan:
   - aggregate:
     - get: cf-deployment-concourse-tasks
+      version: { ref: *CF_D_CT_VERSION }
       resource: cf-deployment-concourse-tasks-v7
     - get: xena-mysql-bbl-state
     - get: capi-ci
@@ -2044,6 +2060,7 @@ jobs:
   plan:
   - aggregate:
     - get: cf-deployment-concourse-tasks
+      version: { ref: *CF_D_CT_VERSION }
       resource: cf-deployment-concourse-tasks-v7
     - get: gabrielle-postgres-bbl-state
     - get: capi-ci
@@ -2133,6 +2150,7 @@ jobs:
   plan:
   - aggregate:
     - get: cf-deployment-concourse-tasks
+      version: { ref: *CF_D_CT_VERSION }
       resource: cf-deployment-concourse-tasks-v7
     - get: leia-azure-storage-bbl-state
     - get: capi-ci
@@ -2223,6 +2241,7 @@ jobs:
   plan:
   - aggregate:
     - get: cf-deployment-concourse-tasks
+      version: { ref: *CF_D_CT_VERSION }
       resource: cf-deployment-concourse-tasks-v7
     - get: rey-gcs-storage-bbl-state
     - get: capi-ci
@@ -2313,6 +2332,7 @@ jobs:
   plan:
   - aggregate:
     - get: cf-deployment-concourse-tasks
+      version: { ref: *CF_D_CT_VERSION }
       resource: cf-deployment-concourse-tasks-v7
     - get: rey-gcs-storage-bbl-state
     - get: capi-ci
@@ -2339,6 +2359,7 @@ jobs:
   plan:
   - aggregate:
     - get: cf-deployment-concourse-tasks
+      version: { ref: *CF_D_CT_VERSION }
       resource: cf-deployment-concourse-tasks-v7
     - get: rey-gcs-storage-bbl-state
     - get: capi-ci
@@ -2365,6 +2386,7 @@ jobs:
   plan:
   - aggregate:
     - get: cf-deployment-concourse-tasks
+      version: { ref: *CF_D_CT_VERSION }
       resource: cf-deployment-concourse-tasks-v7
     - get: rey-gcs-storage-bbl-state
     - get: capi-ci
@@ -2391,6 +2413,7 @@ jobs:
   plan:
   - aggregate:
     - get: cf-deployment-concourse-tasks
+      version: { ref: *CF_D_CT_VERSION }
       resource: cf-deployment-concourse-tasks-v7
     - get: rey-gcs-storage-bbl-state
     - get: capi-ci
@@ -2496,6 +2519,7 @@ jobs:
     - get: capi-ci-private
     - get: xena-mysql-bbl-state
     - get: cf-deployment-concourse-tasks
+      version: { ref: *CF_D_CT_VERSION }
       resource: cf-deployment-concourse-tasks-v7
     - get: capi-release
       resource: capi-release-develop
@@ -2582,6 +2606,7 @@ jobs:
     - get: cf-deployment
       passed: [xena-mysql-drats]
     - get: cf-deployment-concourse-tasks
+      version: { ref: *CF_D_CT_VERSION }
       resource: cf-deployment-concourse-tasks-v7
     - get: capi-release
       resource: capi-release-develop
@@ -2701,6 +2726,7 @@ jobs:
     - get: capi-ci-private
     - get: gabrielle-postgres-bbl-state
     - get: cf-deployment-concourse-tasks
+      version: { ref: *CF_D_CT_VERSION }
       resource: cf-deployment-concourse-tasks-v7
     - get: capi-release
       resource: capi-release-develop
@@ -2786,6 +2812,7 @@ jobs:
     - get: capi-ci
     - get: capi-ci-private
     - get: cf-deployment-concourse-tasks
+      version: { ref: *CF_D_CT_VERSION }
       resource: cf-deployment-concourse-tasks-v7
     - get: capi-release
       resource: capi-release-develop
@@ -2795,6 +2822,7 @@ jobs:
       trigger: true
     - get: leia-azure-storage-integration-configs
     - get: cf-acceptance-tests
+      version: { ref: *CATS_VERSION }
     - get: sync-integration-tests
     - get: capi-bara-tests
   - task: stemcell-upload
@@ -2894,6 +2922,7 @@ jobs:
     - get: capi-ci
     - get: capi-ci-private
     - get: cf-deployment-concourse-tasks
+      version: { ref: *CF_D_CT_VERSION }
       resource: cf-deployment-concourse-tasks-v7
     - get: capi-release
       resource: capi-release-develop
@@ -2903,6 +2932,7 @@ jobs:
       trigger: true
     - get: rey-gcs-storage-integration-configs
     - get: cf-acceptance-tests
+      version: { ref: *CATS_VERSION }
     - get: sync-integration-tests
     - get: capi-bara-tests
   - task: stemcell-upload
