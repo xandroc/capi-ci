@@ -1,8 +1,9 @@
 # PINNED VERSIONS
 # To pin a version of a git resource, include the commit hash in the list here:
 #
-# version_pins:
-# - &BOSH_DEPLOYMENT_VERSION 3f4466a51a74dadbff6612e7d2b79d2802668469
+version_pins:
+- &CF_D_CT_VERSION v7.9
+- &CATS_VERSION v2.2.0
 #
 # And then reference it whenever you `get` that resource:
 #
@@ -314,7 +315,7 @@ resources:
     branch: master
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/cf-deployment-concourse-tasks.git
-    tag_filter: v7.*
+    tag_filter: *CF_D_CT_VERSION
 
 - name: cf-acceptance-tests
   type: git
@@ -322,6 +323,7 @@ resources:
     branch: release-candidate
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/cf-acceptance-tests.git
+    tag_filter: *CATS_VERSION
 
 - name: capi-bara-tests
   type: git
