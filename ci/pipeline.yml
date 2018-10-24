@@ -31,6 +31,7 @@ groups:
   - ripley-nfs
   - bump-ci-passed
   - snyk-test
+  - bump-bbs-protos
 - name: ship-it
   jobs:
   - ship-it
@@ -594,7 +595,7 @@ jobs:
         submodules:
         - src/code.cloudfoundry.org/bbs
   - task: bump-bbs-protos
-    file: capi-ci/protos/git/bump_bbs_protos.yml
+    file: capi-ci/ci/protos/bump_bbs_protos.yml
 #  - put: capi-release-develop
 #    params:
 #      repository: bumped/capi-release
