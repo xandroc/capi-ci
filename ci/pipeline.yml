@@ -578,6 +578,28 @@ jobs:
       repository: bumped/capi-release
       rebase: true
 
+- name: bump-bbs-protos
+  plan:
+  - aggregate:
+    - get: capi-ci
+    - get: capi-release
+      resource: capi-release-develop
+      #trigger: true
+    - get: cloud_controller_ng
+      passed: [cc-unit-tests]
+      #trigger: true
+    - get: diego-release
+      passed: [bridge-unit-tests]
+      params:
+        submodules:
+        - src/code.cloudfoundry.org/bbs
+  - task: bump-bbs-protos
+    file: capi-ci/protos/git/bump_bbs_protos.yml
+#  - put: capi-release-develop
+#    params:
+#      repository: bumped/capi-release
+#      rebase: true
+
 - name: bridge-unit-tests
   plan:
   - aggregate:
