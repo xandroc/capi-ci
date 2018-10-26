@@ -583,15 +583,16 @@ jobs:
     - get: capi-ci
     - get: capi-release
       resource: capi-release-develop
+    - get: diego-release
       trigger: true
     - get: cloud_controller_ng
       passed: [cc-unit-tests]
   - task: bump-bbs-protos
     file: capi-ci/ci/protos/bump_bbs_protos.yml
-#  - put: cloud_controller_ng
-#    params:
-#      repository: bumped/cloud_controller_ng
-#      rebase: true
+  - put: cloud_controller_ng
+    params:
+      repository: bumped/cloud_controller_ng
+      rebase: true
 
 - name: bridge-unit-tests
   plan:
