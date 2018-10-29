@@ -1138,7 +1138,7 @@ jobs:
       # Disable GETs against UAA in anticipation of it being removed #148914087
       - capi-ci/cf-deployment-operations/temporary/disable-uaa-get-requests.yml
       # Temporarily use a newer version of diego-release
-      - cf-deployment-operations/temporary/use-diego-2-20.yml
+      - capi-ci/cf-deployment-operations/temporary/use-diego-2-20.yml
       # Open ASGS for apps to use Credhub
       - capi-ci/cf-deployment-operations/seed-credhub-asg.yml
       # Use clustered PXC MySQL as our Database
