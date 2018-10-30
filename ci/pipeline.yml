@@ -730,6 +730,7 @@ jobs:
         enable-cef-security-event-logging.yml
         base-ops-files/operations/experimental/add-deployment-updater.yml
         base-ops-files/operations/experimental/add-deployment-updater-postgres.yml
+        use-diego-2-20.yml
   - task: updated-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
     input_mapping:
@@ -854,6 +855,7 @@ jobs:
         base-ops-files/operations/experimental/bits-service-webdav.yml
         base-ops-files/operations/experimental/add-deployment-updater.yml
         base-ops-files/operations/experimental/add-deployment-updater-postgres.yml
+        use-diego-2-20.yml
   - task: updated-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
     input_mapping:
@@ -978,6 +980,7 @@ jobs:
         disable-uaa-get-requests.yml
         base-ops-files/operations/experimental/use-pxc.yml
         base-ops-files/operations/experimental/add-deployment-updater.yml
+        use-diego-2-20.yml
   - task: updated-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
     input_mapping:
@@ -2864,6 +2867,7 @@ jobs:
         skip-cert-verify.yml
         base-ops-files/operations/experimental/use-pxc.yml
         base-ops-files/operations/experimental/add-deployment-updater.yml
+        use-diego-2-20.yml
       VARS_FILES: leia-azure-storage/azure-storage-vars.yml
   - task: updated-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
@@ -2973,6 +2977,7 @@ jobs:
         skip-cert-verify.yml
         base-ops-files/operations/experimental/use-pxc.yml
         base-ops-files/operations/experimental/add-deployment-updater.yml
+        use-diego-2-20.yml
       VARS_FILES: rey-gcs-storage/gcs-storage-vars.yml
   - task: updated-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
