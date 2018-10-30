@@ -1151,6 +1151,8 @@ jobs:
       - capi-ci/cf-deployment-operations/seed-uaa-asg.yml
       # Deployment Updater for ZDT
       - cf-deployment/operations/experimental/add-deployment-updater.yml
+      # Enable log-cache
+      - cf-deployment/operations/experimental/use-logcache-for-cloud-controller-app-stats.yml
   - task: updated-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
     input_mapping:
