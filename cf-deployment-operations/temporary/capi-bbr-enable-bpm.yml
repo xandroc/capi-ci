@@ -1,4 +1,4 @@
 - type: replace
-  path: /instance_groups/name=backup-restore/jobs/name=bbr-cloudcontrollerdb/properties/bpm?
+  path: /instance_groups/name=backup-restore/jobs/name=bbr-cloudcontrollerdb/properties?/bpm
   value:
     enabled: true
