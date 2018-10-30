@@ -704,7 +704,6 @@ jobs:
         cf-deployment-operations/disable-credhub-interpolate-service-bindings.yml
         cf-deployment-operations/log-all-sequel-activity.yml
         cf-deployment-operations/temporary/disable-uaa-get-requests.yml
-        cf-deployment-operations/temporary/use-diego-2-20.yml
         cf-deployment-operations/enable-cef-security-event-logging.yml
   - task: deploy
     file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
@@ -730,7 +729,6 @@ jobs:
         enable-cef-security-event-logging.yml
         base-ops-files/operations/experimental/add-deployment-updater.yml
         base-ops-files/operations/experimental/add-deployment-updater-postgres.yml
-        use-diego-2-20.yml
   - task: updated-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
     input_mapping:
@@ -831,7 +829,6 @@ jobs:
         cf-deployment-operations/scale-up-cells.yml
         cf-deployment-operations/log-all-sequel-activity.yml
         cf-deployment-operations/temporary/disable-uaa-get-requests.yml
-        cf-deployment-operations/temporary/use-diego-2-20.yml
   - task: deploy
     file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
     input_mapping:
@@ -855,7 +852,6 @@ jobs:
         base-ops-files/operations/experimental/bits-service-webdav.yml
         base-ops-files/operations/experimental/add-deployment-updater.yml
         base-ops-files/operations/experimental/add-deployment-updater-postgres.yml
-        use-diego-2-20.yml
   - task: updated-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
     input_mapping:
@@ -959,7 +955,6 @@ jobs:
         cf-deployment-operations/use-nfs-blobstore.yml
         cf-deployment-operations/skip-cert-verify.yml
         cf-deployment-operations/temporary/disable-uaa-get-requests.yml
-        cf-deployment-operations/temporary/use-diego-2-20.yml
   - task: deploy
     file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
     input_mapping:
@@ -980,7 +975,6 @@ jobs:
         disable-uaa-get-requests.yml
         base-ops-files/operations/experimental/use-pxc.yml
         base-ops-files/operations/experimental/add-deployment-updater.yml
-        use-diego-2-20.yml
   - task: updated-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
     input_mapping:
@@ -1140,8 +1134,6 @@ jobs:
       - capi-ci/cf-deployment-operations/silence-noisy-logs-isolated-diego-cell.yml
       # Disable GETs against UAA in anticipation of it being removed #148914087
       - capi-ci/cf-deployment-operations/temporary/disable-uaa-get-requests.yml
-      # Temporarily use a newer version of diego-release
-      - capi-ci/cf-deployment-operations/temporary/use-diego-2-20.yml
       # Open ASGS for apps to use Credhub
       - capi-ci/cf-deployment-operations/seed-credhub-asg.yml
       # Use clustered PXC MySQL as our Database
@@ -1261,7 +1253,6 @@ jobs:
         cf-deployment-operations/scale-up-cells.yml
         cf-deployment-operations/log-all-sequel-activity.yml
         cf-deployment-operations/temporary/disable-uaa-get-requests.yml
-        cf-deployment-operations/temporary/use-diego-2-20.yml
   - task: deploy
     file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
     input_mapping:
@@ -2563,7 +2554,6 @@ jobs:
         cf-deployment-operations/temporary/capi-bbr-enable-bpm.yml
         cf-deployment-operations/use-latest-capi.yml
         cf-deployment-operations/scale-up-cloud-controller.yml
-        cf-deployment-operations/temporary/use-diego-2-20.yml
   - task: deploy
     file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
     input_mapping:
@@ -2638,7 +2628,6 @@ jobs:
         cf-deployment-operations/temporary/capi-bbr-enable-bpm.yml
         cf-deployment-operations/use-latest-capi.yml
         cf-deployment-operations/scale-up-cloud-controller.yml
-        cf-deployment-operations/temporary/use-diego-2-20.yml
         cf-deployment-operations/rotate-cc-database-key/add-database-encryption-keys.yml
         cf-deployment-operations/rotate-cc-database-key/change-current-database-encryption-key.yml
         cf-deployment-operations/rotate-cc-database-key/remove-old-key.yml
@@ -2769,7 +2758,6 @@ jobs:
         cf-deployment-operations/skip-cert-verify.yml
         cf-deployment-operations/use-latest-capi.yml
         cf-deployment-operations/scale-up-cloud-controller.yml
-        cf-deployment-operations/temporary/use-diego-2-20.yml
   - task: deploy
     file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
     input_mapping:
@@ -2850,7 +2838,6 @@ jobs:
       NEW_OPS_FILES: |
         cf-deployment-operations/skip-cert-verify.yml
         cf-deployment-operations/use-latest-capi.yml
-        cf-deployment-operations/temporary/use-diego-2-20.yml
   - task: deploy
     file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
     input_mapping:
@@ -2869,7 +2856,6 @@ jobs:
         skip-cert-verify.yml
         base-ops-files/operations/experimental/use-pxc.yml
         base-ops-files/operations/experimental/add-deployment-updater.yml
-        use-diego-2-20.yml
       VARS_FILES: leia-azure-storage/azure-storage-vars.yml
   - task: updated-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
@@ -2960,7 +2946,6 @@ jobs:
       NEW_OPS_FILES: |
         cf-deployment-operations/skip-cert-verify.yml
         cf-deployment-operations/use-latest-capi.yml
-        cf-deployment-operations/temporary/use-diego-2-20.yml
   - task: deploy
     file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
     input_mapping:
@@ -2979,7 +2964,6 @@ jobs:
         skip-cert-verify.yml
         base-ops-files/operations/experimental/use-pxc.yml
         base-ops-files/operations/experimental/add-deployment-updater.yml
-        use-diego-2-20.yml
       VARS_FILES: rey-gcs-storage/gcs-storage-vars.yml
   - task: updated-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
