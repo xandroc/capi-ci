@@ -848,8 +848,7 @@ jobs:
         base-ops-files/operations/experimental/enable-tls-cloud-controller-postgres.yml
         log-all-sequel-activity.yml
         disable-uaa-get-requests.yml
-        base-ops-files/operations/bits-service.yml
-        base-ops-files/operations/experimental/bits-service-webdav.yml
+        base-ops-files/operations/bits-service/use-bits-service.yml
         base-ops-files/operations/experimental/add-deployment-updater.yml
         base-ops-files/operations/experimental/add-deployment-updater-postgres.yml
   - task: updated-integration-configs
