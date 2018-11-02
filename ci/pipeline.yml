@@ -973,7 +973,7 @@ jobs:
         use-nfs-blobstore.yml
         skip-cert-verify.yml
         disable-uaa-get-requests.yml
-        base-ops-files/operations/experimental/use-pxc.yml
+        base-ops-files/operations/use-pxc.yml
         base-ops-files/operations/experimental/add-deployment-updater.yml
   - task: updated-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
@@ -1138,7 +1138,7 @@ jobs:
       - capi-ci/cf-deployment-operations/seed-credhub-asg.yml
       # Use clustered PXC MySQL as our Database
       - cf-deployment/operations/scale-database-cluster.yml
-      - cf-deployment/operations/experimental/use-pxc.yml
+      - cf-deployment/operations/use-pxc.yml
       # Credhub requires UAA auth so we must allow containers to talk to UAA
       - capi-ci/cf-deployment-operations/seed-uaa-asg.yml
       # Deployment Updater for ZDT
@@ -2571,7 +2571,7 @@ jobs:
         base-ops-files/operations/use-compiled-releases.yml
         use-latest-capi.yml
         scale-up-cloud-controller.yml
-        base-ops-files/operations/experimental/use-pxc.yml
+        base-ops-files/operations/use-pxc.yml
         base-ops-files/operations/experimental/add-deployment-updater.yml
   - task: extract-bbl-environment
     file: capi-ci/ci/bbl-tasks/extract_bbl_environment.yml
@@ -2650,7 +2650,7 @@ jobs:
         scale-up-cloud-controller.yml
         add-database-encryption-keys.yml
         change-current-database-encryption-key.yml
-        base-ops-files/operations/experimental/use-pxc.yml
+        base-ops-files/operations/use-pxc.yml
         base-ops-files/operations/experimental/add-deployment-updater.yml
   - task: seed-app-data # encrypt app env vars with changed database_encryption key/current_key_label
     file: capi-ci/ci/cf/push-app.yml
@@ -2686,7 +2686,7 @@ jobs:
         add-database-encryption-keys.yml
         change-current-database-encryption-key.yml
         remove-old-key.yml
-        base-ops-files/operations/experimental/use-pxc.yml
+        base-ops-files/operations/use-pxc.yml
         base-ops-files/operations/experimental/add-deployment-updater.yml
   - aggregate:
     - task: verify-env-vars
@@ -2854,7 +2854,7 @@ jobs:
         base-ops-files/operations/use-azure-storage-blobstore.yml
         use-latest-capi.yml
         skip-cert-verify.yml
-        base-ops-files/operations/experimental/use-pxc.yml
+        base-ops-files/operations/use-pxc.yml
         base-ops-files/operations/experimental/add-deployment-updater.yml
       VARS_FILES: leia-azure-storage/azure-storage-vars.yml
   - task: updated-integration-configs
@@ -2962,7 +2962,7 @@ jobs:
         base-ops-files/operations/use-gcs-blobstore-service-account.yml
         use-latest-capi.yml
         skip-cert-verify.yml
-        base-ops-files/operations/experimental/use-pxc.yml
+        base-ops-files/operations/use-pxc.yml
         base-ops-files/operations/experimental/add-deployment-updater.yml
       VARS_FILES: rey-gcs-storage/gcs-storage-vars.yml
   - task: updated-integration-configs
