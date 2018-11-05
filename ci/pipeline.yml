@@ -842,7 +842,6 @@ jobs:
         base-ops-files/operations/test/add-persistent-isolation-segment-diego-cell.yml
         skip-cert-verify.yml
         use-latest-capi.yml
-        base-ops-files/operations/scale-to-one-az.yml
         scale-up-cells.yml
         base-ops-files/operations/use-postgres.yml
         base-ops-files/operations/experimental/enable-tls-cloud-controller-postgres.yml
