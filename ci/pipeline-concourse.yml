@@ -57,6 +57,7 @@ resources:
 - name: concourse-deployment
   type: bosh2-deployment
   source:
+    skip_check: true
     deployment: concourse
     ignore_ssl: true
     vars_store:

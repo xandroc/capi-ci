@@ -79,6 +79,8 @@ resources:
       uri: https://github.com/cloudfoundry/cf-deployment.git
   - name: cf-deploy
     type: bosh-deployment
+    source:
+      skip_check: true
   - name: slack-alert
     type: slack-notification
     source:
