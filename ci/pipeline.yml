@@ -419,6 +419,7 @@ resources:
 - name: elsa-deployment
   type: bosh2-deployment
   source:
+    skip_check: true
 
 - name: elsa-aws-storage-terraform
   type: terraform
