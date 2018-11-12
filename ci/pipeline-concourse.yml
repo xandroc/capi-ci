@@ -9,6 +9,10 @@ resource_types:
   type: docker-image
   source:
     repository: cloudfoundry/bosh-deployment-resource
+- name: bbl-state-resource
+  type: docker-image
+  source:
+    repository: cfinfrastructure/bbl-state-resource
 
 resources:
 - name: gcp-stemcell
@@ -45,14 +49,14 @@ resources:
   source:
     repository: cloudfoundry/postgres-release
 
-# Using Dave McClure's fork to get load-balancers for concourse from bbl
-# We can switch back after this PR is merged: https://github.com/cloudfoundry/cf-deployment-concourse-tasks/pull/40/files
-- name: cf-deployment-concourse-tasks
-  type: git
+- name: ci-bbl-state
+  type: bbl-state-resource
   source:
-    branch: lb-type
-    private_key: ((private_key))
-    uri: git@github.com:mcwumbly/cf-deployment-concourse-tasks.git
+    bucket: ci-bbl-state
+    iaas: gcp
+    gcp_region: ((ci_gcp_region))
+    gcp_service_account_key: ((ci_gcp_json_key))
+    lb_type: concourse
 
 - name: concourse-deployment
   type: bosh2-deployment
@@ -66,20 +70,6 @@ resources:
         bucket: ((ci_bosh_vars_bucket))
         file_name: &ci_vars_store_path "bosh/vars-store.yml"
         json_key: ((ci_gcp_json_key))
-
-# Duplicates of capi-ci-private
-- name: concourse-config
-  type: git
-  source:
-    private_key: ((private_key))
-    uri: git@github.com:cloudfoundry/capi-ci-private.git
-
-- name: concourse-bbl-state
-  type: git
-  source:
-    private_key: ((private_key))
-    branch: master
-    uri: git@github.com:cloudfoundry/capi-ci-private.git
 
 # Scheduling
 - name: weekly-sunday
@@ -95,42 +85,18 @@ jobs:
   serial: true
   plan:
     - aggregate:
-      - get: cf-deployment-concourse-tasks
-      - get: concourse-bbl-state
       - get: capi-ci
       - get: capi-ci-private
       - get: weekly-sunday
         trigger: true
-    - task: update-bosh-concourse
-      file: cf-deployment-concourse-tasks/bbl-up/task.yml
-      input_mapping:
-        bbl-state: concourse-bbl-state
-        ops-files: capi-ci-private
-        bbl-plan-patch: concourse-bbl-state
-        # - Per the comment on bbl-up task.yml...If no patch is necessary, we suggest you use
-        #   `input_mapping` to map your `bbl-state` resource
-        #   to `bbl-plan-patch` in order to satisfy this
-        #   required input.
+    - put: ci-bbl-state
       params:
-        BBL_STATE_DIR: "ci"
-        BBL_IAAS: "gcp"
-        BBL_LB_CERT: "certs/ci.cf-app.com/certificate.crt"
-        BBL_LB_KEY: "certs/ci.cf-app.com/certificate.key"
-        BBL_LB_TYPE: "concourse"
-        BBL_ENV_NAME: "concourse"
-        BBL_GCP_SERVICE_ACCOUNT_KEY: ((ci_gcp_json_key))
-        BBL_GCP_PROJECT_ID: ((ci_gcp_project_id))
-        BBL_GCP_ZONE: ((ci_gcp_zone))
-        BBL_GCP_REGION: ((ci_gcp_region))
-      ensure:
-        put: concourse-bbl-state
-        params:
-          repository: updated-bbl-state
-          rebase: true
+        state_dir: capi-ci-private/ci
+        command: up
     - task: run-bosh-cleanup
       file: capi-ci/ci/bbl-tasks/run-bosh-cleanup.yml
       input_mapping:
-        bbl-state: concourse-bbl-state
+        bbl-state: capi-ci-private
       params:
         BBL_STATE_DIR: "ci"
 
@@ -147,19 +113,15 @@ jobs:
         version: 1.16.3
     - get: postgres
       version: { version: '28' }
-    - get: concourse-config
-    - get: gcp-stemcell
     - get: capi-ci-private
+    - get: gcp-stemcell
     - get: capi-ci
-  - task: extract-bbl-environment
-    file: capi-ci/ci/bbl-tasks/extract_bbl_environment.yml
-    params:
-      ENV_NAME: ci
-      DEPLOYMENT_NAME: concourse
+    - get: ci-bbl-state
+      passed: [update-bosh-concourse]
   - put: concourse-deployment
     params:
-      source_file: environment/metadata
-      manifest: concourse-config/ci/concourse.yml
+      source_file: ci-bbl-state/metadata
+      manifest: capi-ci-private/ci/concourse.yml
       ops_files:
       - capi-ci/concourse-deployment-operations/gcp.yml
       releases:
