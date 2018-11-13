@@ -1160,6 +1160,7 @@ jobs:
         rebase: true
   - task: enable-feature-flags
     file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
+    attempts: 10
     input_mapping:
       bbl-state: elsa-bbl-state
     params:
