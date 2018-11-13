@@ -1,6 +1,6 @@
 - type: replace
   path: /disk_pools/name=disks/disk_size
-  value: 100_000
+  value: 500_000
 - type: replace
   path: /disk_pools/name=disks/cloud_properties?/type
   value: pd-ssd
