@@ -15,10 +15,10 @@ resource_types:
     repository: cfinfrastructure/bbl-state-resource
 
 resources:
-- name: gcp-xenial-stemcell
+- name: gcp-trusty-stemcell
   type: bosh-io-stemcell
   source:
-    name: bosh-google-kvm-ubuntu-xenial-go_agent
+    name: bosh-google-kvm-ubuntu-trusty-go_agent
 
 - name: capi-ci-private
   type: git
@@ -114,7 +114,7 @@ jobs:
     - get: postgres
       version: { version: '28' }
     - get: capi-ci-private
-    - get: gcp-xenial-stemcell
+    - get: gcp-trusty-stemcell
     - get: capi-ci
     - get: ci-bbl-state
       passed: [update-bosh-concourse]
@@ -129,7 +129,7 @@ jobs:
         - garden-runc/release.tgz
         - postgres/*.tgz
       stemcells:
-        - gcp-xenial-stemcell/*.tgz
+        - gcp-trusty-stemcell/*.tgz
       vars:
         ci_atc_certificate: ((ci_atc_certificate))
         ci_atc_private_key: ((ci_atc_private_key))
