@@ -87,12 +87,24 @@ jobs:
     - aggregate:
       - get: capi-ci
       - get: capi-ci-private
+      - get: cf-deployment-concourse-tasks
       - get: weekly-sunday
         trigger: true
     - put: ci-bbl-state
       params:
         state_dir: capi-ci-private/ci
         command: up
+    - task: copy-and-commit-bbl-state
+      file: capi-ci/ci/bbl-tasks/copy-and-commit-bbl-state.yml
+      input_mapping:
+        new-bbl-state: ci-bbl-state
+        bbl-state-repo: capi-ci-private
+      params:
+        REPO_SUBDIRECTORY: "ci"
+    - put: capi-ci-private
+      params:
+        repository: updated-bbl-state-repo
+        rebase: true
     - task: run-bosh-cleanup
       file: capi-ci/ci/bbl-tasks/run-bosh-cleanup.yml
       input_mapping:

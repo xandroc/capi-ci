@@ -1,0 +1,24 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: cloudfoundry/capi
+    tag: bbl
+
+inputs:
+  - name: new-bbl-state
+  - name: bbl-state-repo
+  - name: cf-deployment-concourse-tasks
+
+params:
+  REPO_SUBDIRECTORY:
+  GIT_COMMIT_EMAIL: capi-bot@pivotal.io
+  GIT_COMMIT_USERNAME: "CAPI CI Bot"
+
+outputs:
+  - name: updated-bbl-state-repo
+
+run:
+  path: capi-ci/ci/bbl-tasks/copy-and-commit-bbl-state.sh
