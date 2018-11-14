@@ -10,7 +10,6 @@ image_resource:
 inputs:
   - name: new-bbl-state
   - name: bbl-state-repo
-  - name: cf-deployment-concourse-tasks
 
 params:
   REPO_SUBDIRECTORY:

@@ -87,7 +87,6 @@ jobs:
     - aggregate:
       - get: capi-ci
       - get: capi-ci-private
-      - get: cf-deployment-concourse-tasks
       - get: weekly-sunday
         trigger: true
     - put: ci-bbl-state
