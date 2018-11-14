@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-source cf-deployment-concourse-tasks/shared-functions
-
 if [ -z "${REPO_SUBDIRECTORY}" ]; then
     echo "REPO_SUBDIRECTORY has not been set"
     exit 1
