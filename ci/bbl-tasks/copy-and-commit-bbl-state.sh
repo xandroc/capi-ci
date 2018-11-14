@@ -5,7 +5,7 @@ if [ -z "${REPO_SUBDIRECTORY}" ]; then
     exit 1
 fi
 
-cp -rf new-bbl-state/ bbl-state-repo/${REPO_SUBDIRECTORY}
+cp -rf new-bbl-state/* bbl-state-repo/${REPO_SUBDIRECTORY}
 
 pushd "${PWD}/bbl-state-repo/${REPO_SUBDIRECTORY}"
     status="$(git status --porcelain)"
