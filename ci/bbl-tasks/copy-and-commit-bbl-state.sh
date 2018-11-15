@@ -13,7 +13,7 @@ pushd "${PWD}/bbl-state-repo/${REPO_SUBDIRECTORY}"
       git config user.name "${GIT_COMMIT_USERNAME}"
       git config user.email "${GIT_COMMIT_EMAIL}"    
       git add --all .
-      git commit -m "Copy and commit $(cat new-bbl-state/name) back into bbl-state-repo/${REPO_SUBDIRECTORY}"
+      git commit -m "Copy and commit $(cat name) back into bbl-state-repo/${REPO_SUBDIRECTORY}"
     fi
 popd
 

@@ -93,23 +93,26 @@ jobs:
       params:
         state_dir: capi-ci-private/ci
         command: up
-    - task: copy-and-commit-bbl-state
-      file: capi-ci/ci/bbl-tasks/copy-and-commit-bbl-state.yml
-      input_mapping:
-        new-bbl-state: ci-bbl-state
-        bbl-state-repo: capi-ci-private
-      params:
-        REPO_SUBDIRECTORY: "ci"
-    - put: capi-ci-private
-      params:
-        repository: updated-bbl-state-repo
-        rebase: true
-    - task: run-bosh-cleanup
-      file: capi-ci/ci/bbl-tasks/run-bosh-cleanup.yml
-      input_mapping:
-        bbl-state: capi-ci-private
-      params:
-        BBL_STATE_DIR: "ci"
+      ensure:
+        do:
+        - get: ci-bbl-state
+        - task: copy-and-commit-bbl-state
+          file: capi-ci/ci/bbl-tasks/copy-and-commit-bbl-state.yml
+          input_mapping:
+            new-bbl-state: ci-bbl-state
+            bbl-state-repo: capi-ci-private
+          params:
+            REPO_SUBDIRECTORY: "ci"
+        - put: capi-ci-private
+          params:
+            repository: updated-bbl-state-repo
+            rebase: true
+        - task: run-bosh-cleanup
+          file: capi-ci/ci/bbl-tasks/run-bosh-cleanup.yml
+          input_mapping:
+            bbl-state: capi-ci-private
+          params:
+            BBL_STATE_DIR: "ci"
 
 - name: deploy-concourse
   serial: true
