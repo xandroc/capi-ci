@@ -111,6 +111,13 @@ resources:
     project_id: '966314'
     tracker_url: https://www.pivotaltracker.com
 
+- name: deliver-vat-stories
+  type: tracker
+  source:
+    token: ((deliver_capi_tracker_token))
+    project_id: '2196383'
+    tracker_url: https://www.pivotaltracker.com
+
 - name: capi-final-releases
   type: s3
   source:
@@ -2440,6 +2447,12 @@ jobs:
       - capi-release/src/cloud_controller_ng
       - capi-release/src/code.cloudfoundry.org/tps
       - capi-release
+  - put: deliver-vat-stories
+    params:
+      repos:
+      - capi-release/src/cloud_controller_ng
+      - capi-release/src/code.cloudfoundry.org/tps
+      - capi-release
 
 - name: merge-capi-release-master
   serial: true
@@ -2583,7 +2596,7 @@ jobs:
       bbr-binary-release: bbr-github-release
     params:
       CF_API_URL: https://api.xena-mysql.capi.land
-      SKIP_SUITE_NAME: "cf-nfsbroker|cf-credhub"
+      SKIP_SUITE_NAME: "cf-nfsbroker|cf-credhub|cf-smbbroker"
       BBL_STATE_DIR: "xena-mysql"
 
 - name: xena-mysql-rotate-ccdb-key
@@ -2788,7 +2801,7 @@ jobs:
       bbr-binary-release: bbr-github-release
     params:
       CF_API_URL: https://api.gabrielle-postgres.capi.land
-      SKIP_SUITE_NAME: "cf-nfsbroker|cf-credhub"
+      SKIP_SUITE_NAME: "cf-nfsbroker|cf-credhub|cf-smbbroker"
       BBL_STATE_DIR: "gabrielle-postgres"
 
 - name: leia-azure-storage
