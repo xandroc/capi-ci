@@ -10,6 +10,9 @@
 #        version: { ref: *BOSH_DEPLOYMENT_VERSION }
 ##
 
+version_pins:
+  - &CATS_VERSION a302e9bc299d3e50d50ae1aa0adf2d8599e35dfc
+
 groups:
 - name: capi-release
   jobs:
@@ -328,7 +331,7 @@ resources:
   type: git
   source:
 #    branch: master
-    ref: a302e9bc299d3e50d50ae1aa0adf2d8599e35dfc
+    version: { ref: *CATS_VERSION }
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/cf-acceptance-tests.git
 
