@@ -330,8 +330,7 @@ resources:
 - name: cf-acceptance-tests
   type: git
   source:
-#    branch: master
-    version: { ref: *CATS_VERSION }
+    branch: develop
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/cf-acceptance-tests.git
 
@@ -682,6 +681,7 @@ jobs:
     - get: mulan-bbl-state
     - get: mulan-integration-configs
     - get: cf-acceptance-tests
+      version: { ref: *CATS_VERSION }
     - get: sync-integration-tests
     - get: capi-bara-tests
     - get: capi-ci
@@ -809,6 +809,7 @@ jobs:
     - get: buffy-bbl-state
     - get: buffy-integration-configs
     - get: cf-acceptance-tests
+      version: { ref: *CATS_VERSION }
     - get: sync-integration-tests
     - get: capi-bara-tests
     - get: capi-ci
@@ -931,6 +932,7 @@ jobs:
     - get: ripley-bbl-state
     - get: ripley-integration-configs
     - get: cf-acceptance-tests
+      version: { ref: *CATS_VERSION }
     - get: sync-integration-tests
     - get: capi-bara-tests
     - get: gcp-xenial-stemcell
@@ -1053,6 +1055,7 @@ jobs:
     - get: elsa-bbl-state
     - get: elsa-integration-configs
     - get: cf-acceptance-tests
+      version: { ref: *CATS_VERSION }
     - get: sync-integration-tests
     - get: capi-bara-tests
     - get: capi-ci
@@ -1232,6 +1235,7 @@ jobs:
       - create-capi-release
       trigger: true
     - get: cf-acceptance-tests
+      version: { ref: *CATS_VERSION }
     - get: runtime-ci
   - task: kiki-stemcell-upload
     file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
@@ -2824,6 +2828,7 @@ jobs:
       trigger: true
     - get: leia-azure-storage-integration-configs
     - get: cf-acceptance-tests
+      version: { ref: *CATS_VERSION }
     - get: sync-integration-tests
     - get: capi-bara-tests
   - task: stemcell-upload
@@ -2932,6 +2937,7 @@ jobs:
       trigger: true
     - get: rey-gcs-storage-integration-configs
     - get: cf-acceptance-tests
+      version: { ref: *CATS_VERSION }
     - get: sync-integration-tests
     - get: capi-bara-tests
   - task: stemcell-upload
