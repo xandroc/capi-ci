@@ -640,6 +640,7 @@ jobs:
       params:
         pre: rc
     - get: cloud_controller_ng
+      passed: [bump-capi-release]
   - put: version
     params:
       file: version/version
