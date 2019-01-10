@@ -4,7 +4,7 @@ set -e
 
 source ~/.bashrc
 
-VERSION=`cat version/version`
+VERSION=`cat next-version/version`
 
 pushd cloud_controller_ng
   if [ -n "$CC_BRANCH" ]; then

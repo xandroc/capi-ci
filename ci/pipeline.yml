@@ -200,7 +200,7 @@ resources:
     access_key_id: ((wasabi_ci_artifacts_s3_access_key))
     secret_access_key: ((wasabi_ci_artifacts_s3_secret_key))
 
-- name: version
+- name: next-version
   type: semver
   source:
     access_key_id: ((wasabi_ci_artifacts_s3_access_key))
@@ -632,15 +632,15 @@ jobs:
       passed: [bump-capi-release, capi-release-template-tests]
       trigger: true
     - get: capi-ci
-    - get: version
-      resource: version
+    - get: next-version
+      resource: next-version
       params:
         pre: rc
     - get: cloud_controller_ng
       passed: [bump-capi-release]
-  - put: version
+  - put: next-version
     params:
-      file: version/version
+      file: next-version/version
     on_failure:
       put: slack-alert
       params:
@@ -1352,10 +1352,10 @@ jobs:
       passed: [bump-ci-passed]
     - get: capi-release-tarball
       passed: [bump-ci-passed]
-    - get: version
+    - get: next-version
       params: {bump: final}
-  - put: version
-    params: {file: version/version}
+  - put: next-version
+    params: {file: next-version/version}
   - task: finalize-release
     file: capi-ci/ci/bosh/finalize-release.yml
   - put: capi-final-releases
@@ -1365,8 +1365,8 @@ jobs:
     resource: capi-release-master
     params:
       repository: finalized-release-git-repo/capi-release
-      tag: version/version
-  - put: version
+      tag: next-version/version
+  - put: next-version
     params:
       bump: minor
   - task: block
@@ -1466,7 +1466,7 @@ jobs:
   - aggregate:
     # we are using version as an input to gate on ship-it using a cheap to get resource
     # it is not actually a necessary input for this job
-    - get: version
+    - get: next-version
       passed: [ship-it]
       trigger: true
     - get: cc-api-v3-version
@@ -1480,7 +1480,7 @@ jobs:
   - aggregate:
     # we are using version as an input to gate on ship-it using a cheap to get resource
     # it is not actually a necessary input for this job
-    - get: version
+    - get: next-version
       passed: [ship-it]
       trigger: true
     - get: cc-api-v2-version
