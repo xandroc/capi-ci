@@ -8,7 +8,7 @@ image_resource:
     tag: runtime-ci
 
 inputs:
-  - name: version
+  - name: next-version
   - name: capi-ci
   - name: capi-ci-private
   - name: capi-release

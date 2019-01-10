@@ -10,7 +10,7 @@ image_resource:
 inputs:
   - name: capi-release
   - name: capi-ci
-  - name: version
+  - name: next-version
   - name: cloud_controller_ng
 
 outputs:
