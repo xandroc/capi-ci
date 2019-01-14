@@ -788,6 +788,7 @@ jobs:
         CF_APPS_DOMAIN: *mulan-domain
         BBL_STATE_DIR: mulan
         USE_CREDHUB: true
+        RUN_REVISIONS_TESTS: true
 
 - name: buffy-bits-postgres-webdav
   serial: true
@@ -910,6 +911,7 @@ jobs:
         CF_APPS_DOMAIN: *buffy-domain
         BBL_STATE_DIR: buffy
         USE_CREDHUB: true
+        RUN_REVISIONS_TESTS: true
 
 - name: ripley-nfs
   serial: true
@@ -1032,6 +1034,7 @@ jobs:
         CF_APPS_DOMAIN: *ripley-domain
         BBL_STATE_DIR: ripley
         USE_CREDHUB: true
+        RUN_REVISIONS_TESTS: true
 
 - name: elsa-mysql-s3-bypass
   serial: true
@@ -1202,6 +1205,7 @@ jobs:
         CF_APPS_DOMAIN: *elsa-domain
         BBL_STATE_DIR: elsa
         USE_CREDHUB: true
+        RUN_REVISIONS_TESTS: true
 
 - name: kiki-back-compat-migrations
   serial: true
@@ -1332,6 +1336,7 @@ jobs:
         CF_APPS_DOMAIN: *kiki-domain
         BBL_STATE_DIR: kiki
         USE_CREDHUB: true
+        RUN_REVISIONS_TESTS: true
   - task: delete-deployment
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
@@ -2907,6 +2912,7 @@ jobs:
         CF_APPS_DOMAIN: *leia-azure-storage-domain
         BBL_STATE_DIR: leia-azure-storage
         USE_CREDHUB: true
+        RUN_REVISIONS_TESTS: true
 
 - name: rey-gcs-storage
   serial: true
@@ -3015,3 +3021,4 @@ jobs:
         CF_APPS_DOMAIN: *rey-gcs-storage-domain
         BBL_STATE_DIR: rey-gcs-storage
         USE_CREDHUB: true
+        RUN_REVISIONS_TESTS: true
