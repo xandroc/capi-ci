@@ -15,6 +15,7 @@ groups:
   jobs:
   - cc-unit-tests
   - bridge-unit-tests
+  - verify-capi-release-commits
   - capi-release-template-tests
   - create-capi-release
   - bump-capi-release
@@ -533,6 +534,23 @@ jobs:
           text: '[cc-unit-tests] OH NO! Failed when running with postgres'
           icon_emoji: ((slack_failure_emoji))
 
+- name: verify-capi-release-commits
+  plan:
+  - aggregate:
+    - get: capi-ci
+    - get: capi-release
+      resource: capi-release-develop
+      trigger: true
+    - get: capi-release-master
+      trigger: true
+  - task: run-capi-release-commit-test
+    file: capi-ci/ci/test-unit/run_capi_release_commit_test.yml
+    on_failure:
+      put: slack-alert
+      params:
+        text: "[verify-capi-release-commits] OH NO! There's a bad commit on capi-release"
+        icon_emoji: ((slack_failure_emoji))
+
 - name: snyk-test
   plan:
   - aggregate:
@@ -561,6 +579,7 @@ jobs:
     - get: capi-ci
     - get: capi-release
       resource: capi-release-develop
+      passed: [verify-capi-release-commits]
       trigger: true
     - get: cloud_controller_ng
       passed: [cc-unit-tests]
@@ -591,6 +610,7 @@ jobs:
     - get: capi-ci
     - get: capi-release
       resource: capi-release-develop
+      passed: [verify-capi-release-commits]
     - get: diego-release
       trigger: true
     - get: cloud_controller_ng
