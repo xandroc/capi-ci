@@ -1356,7 +1356,7 @@ jobs:
         CF_APPS_DOMAIN: *kiki-domain
         BBL_STATE_DIR: kiki
         USE_CREDHUB: true
-        RUN_REVISIONS_TESTS: true
+        RUN_REVISIONS_TESTS: false
   - task: delete-deployment
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
