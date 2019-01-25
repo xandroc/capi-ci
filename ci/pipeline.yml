@@ -1625,7 +1625,7 @@ jobs:
         repository: updated-bbl-state
         rebase: true
   - task: create-dns-record
-    attempts: 3
+    attempts: 5
     file: capi-ci/ci/bbl-tasks/create-dns-record.yml
     input_mapping:
       bbl-state: updated-bbl-state
@@ -1705,7 +1705,7 @@ jobs:
         repository: updated-bbl-state
         rebase: true
   - task: create-dns-record
-    attempts: 3
+    attempts: 5
     file: capi-ci/ci/bbl-tasks/create-dns-record.yml
     input_mapping:
       bbl-state: updated-bbl-state
@@ -1768,7 +1768,7 @@ jobs:
         repository: updated-bbl-state
         rebase: true
   - task: create-dns-record
-    attempts: 3
+    attempts: 5
     file: capi-ci/ci/bbl-tasks/create-dns-record.yml
     input_mapping:
       bbl-state: updated-bbl-state
@@ -1831,7 +1831,7 @@ jobs:
         repository: updated-bbl-state
         rebase: true
   - task: create-dns-record
-    attempts: 3
+    attempts: 5
     file: capi-ci/ci/bbl-tasks/create-dns-record.yml
     input_mapping:
       bbl-state: updated-bbl-state
@@ -1903,7 +1903,7 @@ jobs:
         repository: updated-bbl-state
         rebase: true
   - task: create-dns-record
-    attempts: 3
+    attempts: 5
     file: capi-ci/ci/bbl-tasks/create-dns-record.yml
     input_mapping:
       bbl-state: updated-bbl-state
@@ -1974,7 +1974,7 @@ jobs:
         repository: updated-bbl-state
         rebase: true
   - task: create-dns-record
-    attempts: 3
+    attempts: 5
     file: capi-ci/ci/bbl-tasks/create-dns-record.yml
     input_mapping:
       bbl-state: updated-bbl-state
@@ -2063,7 +2063,7 @@ jobs:
       BBL_STATE_DIR: "xena-mysql"
       CLOUD_CONFIG_PATH: iaas-support/bosh-lite/cloud-config.yml
   - task: create-dns-record
-    attempts: 3
+    attempts: 5
     file: capi-ci/ci/bbl-tasks/create-dns-record.yml
     input_mapping:
       bbl-state: updated-bbl-state
@@ -2152,7 +2152,7 @@ jobs:
       BBL_STATE_DIR: "gabrielle-postgres"
       CLOUD_CONFIG_PATH: iaas-support/bosh-lite/cloud-config.yml
   - task: create-dns-record
-    attempts: 3
+    attempts: 5
     file: capi-ci/ci/bbl-tasks/create-dns-record.yml
     input_mapping:
       bbl-state: updated-bbl-state
@@ -2242,7 +2242,7 @@ jobs:
       BBL_STATE_DIR: "leia-azure-storage"
       CLOUD_CONFIG_PATH: iaas-support/bosh-lite/cloud-config.yml
   - task: create-dns-record
-    attempts: 3
+    attempts: 5
     file: capi-ci/ci/bbl-tasks/create-dns-record.yml
     input_mapping:
       bbl-state: updated-bbl-state
@@ -2332,7 +2332,7 @@ jobs:
       BBL_STATE_DIR: "rey-gcs-storage"
       CLOUD_CONFIG_PATH: iaas-support/bosh-lite/cloud-config.yml
   - task: create-dns-record
-    attempts: 3
+    attempts: 5
     file: capi-ci/ci/bbl-tasks/create-dns-record.yml
     input_mapping:
       bbl-state: updated-bbl-state
