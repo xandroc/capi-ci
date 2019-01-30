@@ -89,10 +89,17 @@ jobs:
       - get: capi-ci-private
       - get: weekly-sunday
         trigger: true
-    - put: ci-bbl-state
-      params:
-        state_dir: capi-ci-private/ci
-        command: up
+    - do:
+      - put: ci-bbl-state
+        params:
+          state_dir: capi-ci-private/ci
+          command: plan
+          args:
+            lb-type: concourse
+      - put: ci-bbl-state
+        params:
+          command: up
+          name_file: ci-bbl-state/name
       ensure:
         do:
         - get: ci-bbl-state
