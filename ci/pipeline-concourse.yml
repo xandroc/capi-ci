@@ -128,7 +128,7 @@ jobs:
   - aggregate:
     - get: concourse
       version:
-        version: 4.2.1
+        version: 4.2.2
     - get: garden-runc
       version:
         version: 1.16.3
