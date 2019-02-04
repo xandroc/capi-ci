@@ -144,7 +144,9 @@ jobs:
       source_file: ci-bbl-state/metadata
       manifest: capi-ci-private/ci/concourse.yml
       ops_files:
-      - capi-ci/concourse-deployment-operations/gcp.yml
+        - capi-ci/concourse-deployment-operations/gcp.yml
+      skip_drain:
+        - worker
       releases:
         - concourse/release.tgz
         - garden-runc/release.tgz
