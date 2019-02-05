@@ -1136,7 +1136,7 @@ jobs:
       # Add isolation segment diego cell for CATs
       - cf-deployment/operations/test/add-persistent-isolation-segment-diego-cell.yml
       # Add windows diego cell
-      - cf-deployment/operations/windows2012R2-cell.yml
+      - cf-deployment/operations/windows1803-cell.yml
       - capi-ci/cf-deployment-operations/skip-cert-verify-on-windows-cell.yml
       # Use rotatable database encryption keys
       - capi-ci/cf-deployment-operations/rotate-cc-database-key/add-database-encryption-keys.yml
