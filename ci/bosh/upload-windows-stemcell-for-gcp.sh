@@ -8,7 +8,7 @@ function setup_bosh_env_vars() {
 }
 
 function upload_stemcell() {
-  bosh upload-stemcell --sha2 https://bosh.io/d/stemcells/bosh-google-kvm-windows2012R2-go_agent
+  bosh upload-stemcell --sha2 https://bosh.io/d/stemcells/bosh-google-kvm-windows1803-go_agent
 }
 
 function main() {
