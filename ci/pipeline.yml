@@ -1138,7 +1138,7 @@ jobs:
       # Add windows diego cell
       - cf-deployment/operations/windows1803-cell.yml
       # Skip ssl validation on that cell
-      - capi-ci/cf-deployment/operations/skip-cert-verify-on-windows-cell.yml
+      - capi-ci/cf-deployment-operations/skip-cert-verify-on-windows-cell.yml
       # Use rotatable database encryption keys
       - capi-ci/cf-deployment-operations/rotate-cc-database-key/add-database-encryption-keys.yml
       # Scale up cells to prevent apps piling onto one cell during rolling deploy.
