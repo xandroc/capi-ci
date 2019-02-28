@@ -4,13 +4,17 @@ platform: linux
 image_resource:
   type: docker-image
   source:
-    repository: relintdockerhubpushbot/cf-deployment-concourse-tasks
+    repository: cloudfoundry/capi
 
 inputs:
   - name: capi-ci
-  - name: cloud_controller_ng
+  - name: environment
+  - name: capi-ci-private
 
 run:
   path: capi-ci/ci/benchmarks/run-blobstore-benchmarks.sh
 
-params: {}
+params:
+  BOSH_API_INSTANCE:
+  BOSH_DEPLOYMENT_NAME:
+  BBL_STATE_DIR:
