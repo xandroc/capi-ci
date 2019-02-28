@@ -5,6 +5,7 @@ image_resource:
   type: docker-image
   source:
     repository: cloudfoundry/capi
+    tag: migration-compatibility
 
 inputs:
   - name: capi-ci
