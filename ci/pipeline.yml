@@ -796,8 +796,6 @@ jobs:
       params:
         NODES: 2
         CONFIG_FILE_PATH: "mulan/cats_integration_config.json"
-    - task: run-blobstore-benchmarks
-      file: capi-ci/ci/benchmarks/run-blobstore-benchmarks.yml
     - task: sync-integration-tests
       file: sync-integration-tests/concourse/task_with_credhub.yml
       input_mapping:
@@ -811,6 +809,12 @@ jobs:
         BBL_STATE_DIR: mulan
         USE_CREDHUB: true
         RUN_REVISIONS_TESTS: true
+    - task: run-blobstore-benchmarks
+      file: capi-ci/ci/benchmarks/run-blobstore-benchmarks.yml
+      params:
+        BOSH_API_INSTANCE: api/0
+        BOSH_DEPLOYMENT_NAME: cf
+        BBL_STATE_DIR: mulan
 
 - name: buffy-bits-postgres-webdav
   serial: true
@@ -934,6 +938,12 @@ jobs:
         BBL_STATE_DIR: buffy
         USE_CREDHUB: true
         RUN_REVISIONS_TESTS: true
+    - task: run-blobstore-benchmarks
+      file: capi-ci/ci/benchmarks/run-blobstore-benchmarks.yml
+      params:
+        BOSH_API_INSTANCE: api/0
+        BOSH_DEPLOYMENT_NAME: cf
+        BBL_STATE_DIR: buffy
 
 - name: ripley-nfs
   serial: true
@@ -1058,6 +1068,12 @@ jobs:
         BBL_STATE_DIR: ripley
         USE_CREDHUB: true
         RUN_REVISIONS_TESTS: true
+    - task: run-blobstore-benchmarks
+      file: capi-ci/ci/benchmarks/run-blobstore-benchmarks.yml
+      params:
+        BOSH_API_INSTANCE: api/0
+        BOSH_DEPLOYMENT_NAME: cf
+        BBL_STATE_DIR: ripley
 
 - name: elsa-mysql-s3-bypass
   serial: true
@@ -1232,6 +1248,12 @@ jobs:
         BBL_STATE_DIR: elsa
         USE_CREDHUB: true
         RUN_REVISIONS_TESTS: true
+    - task: run-blobstore-benchmarks
+      file: capi-ci/ci/benchmarks/run-blobstore-benchmarks.yml
+      params:
+        BOSH_API_INSTANCE: api/0
+        BOSH_DEPLOYMENT_NAME: cf
+        BBL_STATE_DIR: elsa
 
 - name: kiki-back-compat-migrations
   serial: true
@@ -1321,12 +1343,6 @@ jobs:
     file: capi-ci/ci/migrations/apply_latest_migrations.yml
     params:
       BBL_STATE_DIR: "kiki"
-  - task: run-blobstore-benchmarks
-    file: capi-ci/ci/benchmarks/run-blobstore-benchmarks.yml
-    params:
-      BOSH_API_INSTANCE: api/0
-      BOSH_DEPLOYMENT_NAME: cf
-      BBL_STATE_DIR: "kiki"
   - task: updated-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
     input_mapping:
@@ -1371,6 +1387,12 @@ jobs:
         BBL_STATE_DIR: kiki
         USE_CREDHUB: true
         RUN_REVISIONS_TESTS: false
+    - task: run-blobstore-benchmarks
+      file: capi-ci/ci/benchmarks/run-blobstore-benchmarks.yml
+      params:
+        BOSH_API_INSTANCE: api/0
+        BOSH_DEPLOYMENT_NAME: cf
+        BBL_STATE_DIR: kiki
   - task: delete-deployment
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
@@ -2941,6 +2963,12 @@ jobs:
         BBL_STATE_DIR: leia-azure-storage
         USE_CREDHUB: true
         RUN_REVISIONS_TESTS: true
+    - task: run-blobstore-benchmarks
+      file: capi-ci/ci/benchmarks/run-blobstore-benchmarks.yml
+      params:
+        BOSH_API_INSTANCE: api/0
+        BOSH_DEPLOYMENT_NAME: cf
+        BBL_STATE_DIR: leia
 
 - name: rey-gcs-storage
   serial: true
@@ -3049,3 +3077,9 @@ jobs:
         BBL_STATE_DIR: rey-gcs-storage
         USE_CREDHUB: true
         RUN_REVISIONS_TESTS: true
+    - task: run-blobstore-benchmarks
+      file: capi-ci/ci/benchmarks/run-blobstore-benchmarks.yml
+      params:
+        BOSH_API_INSTANCE: api/0
+        BOSH_DEPLOYMENT_NAME: cf
+        BBL_STATE_DIR: rey
