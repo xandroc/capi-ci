@@ -758,8 +758,6 @@ jobs:
         log-all-sequel-activity.yml
         disable-uaa-get-requests.yml
         enable-cef-security-event-logging.yml
-        base-ops-files/operations/experimental/add-deployment-updater.yml
-        base-ops-files/operations/experimental/add-deployment-updater-postgres.yml
   - task: updated-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
     input_mapping:
@@ -798,6 +796,8 @@ jobs:
       params:
         NODES: 2
         CONFIG_FILE_PATH: "mulan/cats_integration_config.json"
+    - task: run-blobstore-benchmarks
+      file: capi-ci/ci/benchmarks/run-blobstore-benchmarks.yml
     - task: sync-integration-tests
       file: sync-integration-tests/concourse/task_with_credhub.yml
       input_mapping:
@@ -882,8 +882,6 @@ jobs:
         log-all-sequel-activity.yml
         disable-uaa-get-requests.yml
         base-ops-files/operations/bits-service/use-bits-service.yml
-        base-ops-files/operations/experimental/add-deployment-updater.yml
-        base-ops-files/operations/experimental/add-deployment-updater-postgres.yml
   - task: updated-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
     input_mapping:
@@ -1009,7 +1007,6 @@ jobs:
         skip-cert-verify.yml
         disable-uaa-get-requests.yml
         base-ops-files/operations/use-pxc.yml
-        base-ops-files/operations/experimental/add-deployment-updater.yml
   - task: updated-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
     input_mapping:
@@ -1086,6 +1083,8 @@ jobs:
     - get: capi-release-tarball
       passed: [create-capi-release]
       trigger: true
+  - task: perform_blobstore_benchmarks
+    file: capi-ci/ci/
   - task: upload-capi-release-tarball
     file: capi-ci/ci/bosh/upload-release.yml
     input_mapping:
@@ -1180,8 +1179,6 @@ jobs:
       - cf-deployment/operations/use-pxc.yml
       # Credhub requires UAA auth so we must allow containers to talk to UAA
       - capi-ci/cf-deployment-operations/seed-uaa-asg.yml
-      # Deployment Updater for ZDT
-      - cf-deployment/operations/experimental/add-deployment-updater.yml
       # Enable log-cache
       - cf-deployment/operations/experimental/use-logcache-for-cloud-controller-app-stats.yml
   - task: updated-integration-configs
@@ -1323,6 +1320,12 @@ jobs:
   - task: apply-cc-migrations
     file: capi-ci/ci/migrations/apply_latest_migrations.yml
     params:
+      BBL_STATE_DIR: "kiki"
+  - task: run-blobstore-benchmarks
+    file: capi-ci/ci/benchmarks/run-blobstore-benchmarks.yml
+    params:
+      BOSH_API_INSTANCE: api/0
+      BOSH_DEPLOYMENT_NAME: cf
       BBL_STATE_DIR: "kiki"
   - task: updated-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
@@ -2614,7 +2617,6 @@ jobs:
         use-latest-capi.yml
         scale-up-cloud-controller.yml
         base-ops-files/operations/use-pxc.yml
-        base-ops-files/operations/experimental/add-deployment-updater.yml
   - task: extract-bbl-environment
     file: capi-ci/ci/bbl-tasks/extract_bbl_environment.yml
     params:
@@ -2693,7 +2695,6 @@ jobs:
         add-database-encryption-keys.yml
         change-current-database-encryption-key.yml
         base-ops-files/operations/use-pxc.yml
-        base-ops-files/operations/experimental/add-deployment-updater.yml
   - task: seed-app-data # encrypt app env vars with changed database_encryption key/current_key_label
     file: capi-ci/ci/cf/push-app.yml
     params:
@@ -2729,7 +2730,6 @@ jobs:
         change-current-database-encryption-key.yml
         remove-old-key.yml
         base-ops-files/operations/use-pxc.yml
-        base-ops-files/operations/experimental/add-deployment-updater.yml
   - aggregate:
     - task: verify-env-vars
       file: capi-ci/ci/cf/verify-env-vars.yml
@@ -2819,8 +2819,6 @@ jobs:
         base-ops-files/operations/use-postgres.yml
         use-postgres-9x.yml
         base-ops-files/operations/experimental/enable-tls-cloud-controller-postgres.yml
-        base-ops-files/operations/experimental/add-deployment-updater.yml
-        base-ops-files/operations/experimental/add-deployment-updater-postgres.yml
         scale-up-cloud-controller.yml
   - task: extract-bbl-environment
     file: capi-ci/ci/bbl-tasks/extract_bbl_environment.yml
@@ -2899,7 +2897,6 @@ jobs:
         use-latest-capi.yml
         skip-cert-verify.yml
         base-ops-files/operations/use-pxc.yml
-        base-ops-files/operations/experimental/add-deployment-updater.yml
       VARS_FILES: leia-azure-storage/azure-storage-vars.yml
   - task: updated-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
@@ -3008,7 +3005,6 @@ jobs:
         use-latest-capi.yml
         skip-cert-verify.yml
         base-ops-files/operations/use-pxc.yml
-        base-ops-files/operations/experimental/add-deployment-updater.yml
       VARS_FILES: rey-gcs-storage/gcs-storage-vars.yml
   - task: updated-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
