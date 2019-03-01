@@ -719,6 +719,10 @@ jobs:
       bbl-state: mulan-bbl-state
     params:
       BBL_STATE_DIR: "mulan"
+  - task: extract-bbl-environment
+    file: capi-ci/ci/bbl-tasks/extract_bbl_environment.yml
+    params:
+      ENV_NAME: mulan
   - task: collect-ops-files
     file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
     input_mapping:
@@ -851,6 +855,10 @@ jobs:
       bbl-state: buffy-bbl-state
     params:
       BBL_STATE_DIR: "buffy"
+  - task: extract-bbl-environment
+    file: capi-ci/ci/bbl-tasks/extract_bbl_environment.yml
+    params:
+      ENV_NAME: buffy
   - task: collect-ops-files
     file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
     input_mapping:
@@ -980,6 +988,10 @@ jobs:
       bbl-state: ripley-bbl-state
     params:
       BBL_STATE_DIR: "ripley"
+  - task: extract-bbl-environment
+    file: capi-ci/ci/bbl-tasks/extract_bbl_environment.yml
+    params:
+      ENV_NAME: ripley
   - task: collect-ops-files
     file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
     input_mapping:
@@ -1093,8 +1105,6 @@ jobs:
     - get: capi-release-tarball
       passed: [create-capi-release]
       trigger: true
-  - task: perform_blobstore_benchmarks
-    file: capi-ci/ci/
   - task: upload-capi-release-tarball
     file: capi-ci/ci/bosh/upload-release.yml
     input_mapping:
