@@ -33,10 +33,9 @@ export BOSH_ENVIRONMENT BOSH_CLIENT BOSH_CLIENT_SECRET BOSH_CA_CERT \
 
 green="$(tput -T xterm-256color setaf 2)"
 reset="$(tput -T xterm-256color sgr0)"
-tmp_dir="$( mktemp -d /tmp/capi-migrations.XXXXXXXXXX )"
+tmp_dir="$( mktemp -d /tmp/capi-benchmarks.XXXXXXXXXX )"
 
 tunnel_port="8080"
-proxychains_conf="${tmp_dir}/proxychains.conf"
 
 setup_bbl_environment() {
   pushd "capi-ci-private/${BBL_STATE_DIR}"
@@ -57,20 +56,6 @@ start_background_ssh_tunnel() {
   echo "${green}Starting background SSH tunnel as SOCKS Proxy...${reset}"
   ssh_jumpbox_url=$(echo "${JUMPBOX_URL}" | cut -d':' -f1)
   ssh -o 'StrictHostKeyChecking no' -o 'UserKnownHostsFile /dev/null' -D ${tunnel_port} -fNC ${JUMPBOX_USERNAME}@${ssh_jumpbox_url} -i ${JUMPBOX_PRIVATE_KEY}
-}
-
-write_proxychains_config() {
-  echo "${green}Writing proxychains config file...${reset}"
-
-  cat << EOF > "${proxychains_conf}"
-strict_chain
-proxy_dns
-tcp_read_time_out 15000
-tcp_connect_time_out 8000
-
-[ProxyList]
-socks5 	127.0.0.1 ${tunnel_port}
-EOF
 }
 
 kill_background_ssh_tunnel() {
@@ -99,10 +84,8 @@ cache_ip_for_hostname() {
 }
 
 perform_blobstore_benchmarks() {
-  echo "${green}Applying latest migrations to deployment...${reset}"
+  echo "${green}Performing blobstore benchmarks...${reset}"
   bosh ssh -d "${BOSH_DEPLOYMENT_NAME}" "${BOSH_API_INSTANCE}"  sudo /var/vcap/jobs/cloud_controller_ng/bin/perform_blobstore_benchmarks
-  # proxychains forwards all TCP connections over the SSH SOCKS Proxy
-  # proxychains4 -f "${proxychains_conf}" /var/vcap/jobs/cloud_controller_ng/bin/perform_blobstore_benchmarks
 }
 
 cleanup() {
@@ -116,7 +99,6 @@ main() {
   setup_bbl_environment
   write_ssh_key
   start_background_ssh_tunnel
-  write_proxychains_config
 
   trap 'cleanup' EXIT
 
