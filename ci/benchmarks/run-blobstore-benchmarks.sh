@@ -100,8 +100,9 @@ cache_ip_for_hostname() {
 
 perform_blobstore_benchmarks() {
   echo "${green}Applying latest migrations to deployment...${reset}"
+  bosh ssh -d "${BOSH_DEPLOYMENT_NAME}" "${BOSH_API_INSTANCE}"  sudo /var/vcap/jobs/cloud_controller_ng/bin/perform_blobstore_benchmarks
   # proxychains forwards all TCP connections over the SSH SOCKS Proxy
-  proxychains4 -f "${proxychains_conf}" /var/vcap/jobs/cloud_controller_ng/bin/perform_blobstore_benchmarks
+  # proxychains4 -f "${proxychains_conf}" /var/vcap/jobs/cloud_controller_ng/bin/perform_blobstore_benchmarks
 }
 
 cleanup() {
