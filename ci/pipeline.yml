@@ -317,13 +317,13 @@ resources:
     repository: cf-deployment
     access_token: ((github_access_token))
 
-- name: cf-deployment-concourse-tasks-v7
+- name: cf-deployment-concourse-tasks
   type: git
   source:
     branch: master
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/cf-deployment-concourse-tasks.git
-    tag_filter: v7.*
+    tag_filter: v8.*
 
 - name: cf-acceptance-tests
   type: git
@@ -690,7 +690,7 @@ jobs:
     - get: cloud_controller_ng
       passed: [create-capi-release]
     - get: cf-deployment-concourse-tasks
-      resource: cf-deployment-concourse-tasks-v7
+      resource: cf-deployment-concourse-tasks
     - get: cf-deployment
       resource: cf-deployment
     - get: capi-release
@@ -822,7 +822,7 @@ jobs:
     - get: cloud_controller_ng
       passed: [create-capi-release]
     - get: cf-deployment-concourse-tasks
-      resource: cf-deployment-concourse-tasks-v7
+      resource: cf-deployment-concourse-tasks
     - get: cf-deployment
       resource: cf-deployment
     - get: capi-release
@@ -949,7 +949,7 @@ jobs:
     - get: cloud_controller_ng
       passed: [create-capi-release]
     - get: cf-deployment-concourse-tasks
-      resource: cf-deployment-concourse-tasks-v7
+      resource: cf-deployment-concourse-tasks
     - get: cf-deployment
       resource: cf-deployment
     - get: capi-release
@@ -1077,7 +1077,7 @@ jobs:
     - get: cloud_controller_ng
       passed: [create-capi-release]
     - get: cf-deployment-concourse-tasks
-      resource: cf-deployment-concourse-tasks-v7
+      resource: cf-deployment-concourse-tasks
     - get: cf-deployment
       resource: cf-deployment
     - get: capi-release
@@ -1255,7 +1255,7 @@ jobs:
     - get: cloud_controller_ng
       passed: [create-capi-release]
     - get: cf-deployment-concourse-tasks
-      resource: cf-deployment-concourse-tasks-v7
+      resource: cf-deployment-concourse-tasks
     - get: cf-deployment
       resource: cf-deployment-master
     - get: kiki-bbl-state
@@ -1611,7 +1611,7 @@ jobs:
   plan:
   - aggregate:
     - get: cf-deployment-concourse-tasks
-      resource: cf-deployment-concourse-tasks-v7
+      resource: cf-deployment-concourse-tasks
     - get: arya-bbl-state
     - get: capi-ci
     - get: capi-ci-private
@@ -1682,7 +1682,7 @@ jobs:
   plan:
   - aggregate:
     - get: cf-deployment-concourse-tasks
-      resource: cf-deployment-concourse-tasks-v7
+      resource: cf-deployment-concourse-tasks
     - get: mulan-bbl-state
     - get: capi-ci
     - get: capi-ci-private
@@ -1754,7 +1754,7 @@ jobs:
   plan:
   - aggregate:
     - get: cf-deployment-concourse-tasks
-      resource: cf-deployment-concourse-tasks-v7
+      resource: cf-deployment-concourse-tasks
     - get: buffy-bbl-state
     - get: capi-ci
     - get: capi-ci-private
@@ -1817,7 +1817,7 @@ jobs:
   plan:
   - aggregate:
     - get: cf-deployment-concourse-tasks
-      resource: cf-deployment-concourse-tasks-v7
+      resource: cf-deployment-concourse-tasks
     - get: ripley-bbl-state
     - get: capi-ci
     - get: capi-ci-private
@@ -1880,7 +1880,7 @@ jobs:
   plan:
   - aggregate:
     - get: cf-deployment-concourse-tasks
-      resource: cf-deployment-concourse-tasks-v7
+      resource: cf-deployment-concourse-tasks
     - get: elsa-bbl-state
     - get: capi-ci
     - get: capi-ci-private
@@ -1960,7 +1960,7 @@ jobs:
   plan:
   - aggregate:
     - get: cf-deployment-concourse-tasks
-      resource: cf-deployment-concourse-tasks-v7
+      resource: cf-deployment-concourse-tasks
     - get: capi-ci
     - get: capi-ci-private
     - get: weekly-sunday
@@ -2023,7 +2023,7 @@ jobs:
   plan:
   - aggregate:
     - get: cf-deployment-concourse-tasks
-      resource: cf-deployment-concourse-tasks-v7
+      resource: cf-deployment-concourse-tasks
     - get: xena-mysql-bbl-state
     - get: capi-ci
     - get: capi-ci-private
@@ -2113,7 +2113,7 @@ jobs:
   plan:
   - aggregate:
     - get: cf-deployment-concourse-tasks
-      resource: cf-deployment-concourse-tasks-v7
+      resource: cf-deployment-concourse-tasks
     - get: gabrielle-postgres-bbl-state
     - get: capi-ci
     - get: capi-ci-private
@@ -2202,7 +2202,7 @@ jobs:
   plan:
   - aggregate:
     - get: cf-deployment-concourse-tasks
-      resource: cf-deployment-concourse-tasks-v7
+      resource: cf-deployment-concourse-tasks
     - get: leia-azure-storage-bbl-state
     - get: capi-ci
     - get: capi-ci-private
@@ -2292,7 +2292,7 @@ jobs:
   plan:
   - aggregate:
     - get: cf-deployment-concourse-tasks
-      resource: cf-deployment-concourse-tasks-v7
+      resource: cf-deployment-concourse-tasks
     - get: rey-gcs-storage-bbl-state
     - get: capi-ci
     - get: capi-ci-private
@@ -2382,7 +2382,7 @@ jobs:
   plan:
   - aggregate:
     - get: cf-deployment-concourse-tasks
-      resource: cf-deployment-concourse-tasks-v7
+      resource: cf-deployment-concourse-tasks
     - get: rey-gcs-storage-bbl-state
     - get: capi-ci
     - get: capi-ci-private
@@ -2408,7 +2408,7 @@ jobs:
   plan:
   - aggregate:
     - get: cf-deployment-concourse-tasks
-      resource: cf-deployment-concourse-tasks-v7
+      resource: cf-deployment-concourse-tasks
     - get: rey-gcs-storage-bbl-state
     - get: capi-ci
     - get: capi-ci-private
@@ -2434,7 +2434,7 @@ jobs:
   plan:
   - aggregate:
     - get: cf-deployment-concourse-tasks
-      resource: cf-deployment-concourse-tasks-v7
+      resource: cf-deployment-concourse-tasks
     - get: rey-gcs-storage-bbl-state
     - get: capi-ci
     - get: capi-ci-private
@@ -2460,7 +2460,7 @@ jobs:
   plan:
   - aggregate:
     - get: cf-deployment-concourse-tasks
-      resource: cf-deployment-concourse-tasks-v7
+      resource: cf-deployment-concourse-tasks
     - get: rey-gcs-storage-bbl-state
     - get: capi-ci
     - get: capi-ci-private
@@ -2571,7 +2571,7 @@ jobs:
     - get: capi-ci-private
     - get: xena-mysql-bbl-state
     - get: cf-deployment-concourse-tasks
-      resource: cf-deployment-concourse-tasks-v7
+      resource: cf-deployment-concourse-tasks
     - get: capi-release
       resource: capi-release-develop
       passed: [create-capi-release]
@@ -2656,7 +2656,7 @@ jobs:
     - get: cf-deployment
       passed: [xena-mysql-drats]
     - get: cf-deployment-concourse-tasks
-      resource: cf-deployment-concourse-tasks-v7
+      resource: cf-deployment-concourse-tasks
     - get: capi-release
       resource: capi-release-develop
       passed: [xena-mysql-drats]
@@ -2773,7 +2773,7 @@ jobs:
     - get: capi-ci-private
     - get: gabrielle-postgres-bbl-state
     - get: cf-deployment-concourse-tasks
-      resource: cf-deployment-concourse-tasks-v7
+      resource: cf-deployment-concourse-tasks
     - get: capi-release
       resource: capi-release-develop
       passed: [create-capi-release]
@@ -2858,7 +2858,7 @@ jobs:
     - get: capi-ci
     - get: capi-ci-private
     - get: cf-deployment-concourse-tasks
-      resource: cf-deployment-concourse-tasks-v7
+      resource: cf-deployment-concourse-tasks
     - get: capi-release
       resource: capi-release-develop
       passed: [create-capi-release]
@@ -2970,7 +2970,7 @@ jobs:
     - get: capi-ci
     - get: capi-ci-private
     - get: cf-deployment-concourse-tasks
-      resource: cf-deployment-concourse-tasks-v7
+      resource: cf-deployment-concourse-tasks
     - get: capi-release
       resource: capi-release-develop
       passed: [create-capi-release]
