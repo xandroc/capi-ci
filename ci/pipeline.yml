@@ -1389,10 +1389,6 @@ jobs:
         BBL_STATE_DIR: kiki
         USE_CREDHUB: true
         RUN_REVISIONS_TESTS: false
-    - task: run-blobstore-benchmarks
-      file: capi-ci/ci/benchmarks/run-blobstore-benchmarks.yml
-      params:
-        BBL_STATE_DIR: kiki
   - task: delete-deployment
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:

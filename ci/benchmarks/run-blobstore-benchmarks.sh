@@ -1,9 +1,6 @@
 #!/bin/bash
-set -xe
-
-#!/bin/bash
-
 set -eu
+set +x
 
 # ENV
 : "${BOSH_API_INSTANCE:="api/0"}"
