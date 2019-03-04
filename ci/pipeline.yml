@@ -2956,7 +2956,7 @@ jobs:
     - task: run-blobstore-benchmarks
       file: capi-ci/ci/benchmarks/run-blobstore-benchmarks.yml
       params:
-        BBL_STATE_DIR: leia
+        BBL_STATE_DIR: leia-azure-storage
 
 - name: rey-gcs-storage
   serial: true
@@ -3072,4 +3072,4 @@ jobs:
     - task: run-blobstore-benchmarks
       file: capi-ci/ci/benchmarks/run-blobstore-benchmarks.yml
       params:
-        BBL_STATE_DIR: rey
+        BBL_STATE_DIR: rey-gcs-storage
