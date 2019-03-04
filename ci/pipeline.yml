@@ -944,10 +944,6 @@ jobs:
         BBL_STATE_DIR: buffy
         USE_CREDHUB: true
         RUN_REVISIONS_TESTS: true
-    - task: run-blobstore-benchmarks
-      file: capi-ci/ci/benchmarks/run-blobstore-benchmarks.yml
-      params:
-        BBL_STATE_DIR: buffy
 
 - name: ripley-nfs
   serial: true
