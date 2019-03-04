@@ -2255,12 +2255,6 @@ jobs:
       params:
         repository: updated-bbl-state
         rebase: true
-  - task: extract-bbl-environment
-    file: capi-ci/ci/bbl-tasks/extract_bbl_environment.yml
-    input_mapping:
-      capi-ci-private: updated-bbl-state
-    params:
-      ENV_NAME: leia-azure-storage
   - task: update-cloud-config
     file: capi-ci/ci/bosh/update_cloud_config.yml
     input_mapping:
@@ -2878,6 +2872,10 @@ jobs:
     params:
       BBL_STATE_DIR: leia-azure-storage
       INFRASTRUCTURE: bosh-lite
+  - task: extract-bbl-environment
+    file: capi-ci/ci/bbl-tasks/extract_bbl_environment.yml
+    params:
+      ENV_NAME: leia-azure-storage
   - task: release-upload
     file: capi-ci/ci/bosh/upload-release.yml
     input_mapping:
@@ -2990,6 +2988,10 @@ jobs:
     params:
       BBL_STATE_DIR: rey-gcs-storage
       INFRASTRUCTURE: bosh-lite
+  - task: extract-bbl-environment
+    file: capi-ci/ci/bbl-tasks/extract_bbl_environment.yml
+    params:
+      ENV_NAME: rey-gcs-storage
   - task: release-upload
     file: capi-ci/ci/bosh/upload-release.yml
     input_mapping:
