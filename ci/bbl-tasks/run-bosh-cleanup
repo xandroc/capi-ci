@@ -10,7 +10,7 @@ function setup_bosh_env_vars() {
 
 function bosh_clean_up() {
   echo "Running bosh clean-up on ${BOSH_ENVIRONMENT}..."
-  bosh -n clean-up --all
+  bosh -n clean-up
 }
 
 function main() {
