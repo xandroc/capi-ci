@@ -13,9 +13,16 @@ function bosh_clean_up() {
   bosh -n clean-up
 }
 
+function bosh_delete_orphaned_disks() {
+  # bosh clean-up --all also did this, but deleted "unused" releases like bosh-dns that later jobs rely on
+  echo "Manually deleting orphaned disks on ${BOSH_ENVIRONMENT}..."
+  bosh disks --orphaned --json | jq .Tables[].Rows[].disk_cid | xargs -L1 bosh delete-disk -n
+}
+
 function main() {
   setup_bosh_env_vars
   bosh_clean_up
+  bosh_delete_orphaned_disks
   echo "Done"
 }
 
