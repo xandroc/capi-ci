@@ -1333,6 +1333,11 @@ jobs:
     file: runtime-ci/tasks/ensure-api-healthy/task.yml
     params:
       SYSTEM_DOMAIN: *kiki-domain
+      CONFIG_FILE_PATH: kiki/cats_integration_config.json
+      CATS_INTEGRATION_CONFIG_FILE: "kiki/cats_integration_config.json"
+    input_mapping:
+      cats-integration-config: kiki-integration-configs
+      integration-configs: kiki-integration-configs
   - task: extract-bbl-environment
     file: capi-ci/ci/bbl-tasks/extract_bbl_environment.yml
     params:
