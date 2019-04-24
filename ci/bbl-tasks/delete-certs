@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
-workspace_dir="$( cd "${script_dir}/../../../" && pwd )"
+set -ex
+
+workspace_dir="$( pwd )"
 updated_capi_ci_private="${workspace_dir}/updated-capi-ci-private"
 output_path="${updated_capi_ci_private}/${ENVIRONMENT}"
 
