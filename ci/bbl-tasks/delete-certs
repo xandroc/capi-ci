@@ -5,10 +5,11 @@ set -ex
 workspace_dir="$( pwd )"
 updated_capi_ci_private="${workspace_dir}/updated-capi-ci-private"
 output_path="${updated_capi_ci_private}/${ENVIRONMENT}"
+delete_var_store_script="${workspace_dir}/capi-ci/ci/bbl-tasks/delete-var-store-certs.rb"
 
 function delete_bbl_certs() {
-  yq 'to_entries | .[] | select(.value.certificate?) | .key' vars/director-vars-store.yml > /tmp/cert-keys.txt
-  cat /tmp/cert-keys.txt
+  ${delete_var_store_script} ${output_path}/vars/director-vars-store.yml
+  ${delete_var_store_script} ${output_path}/vars/jumpbox-vars-store.yml
 }
 
 function commit_capi_ci_private() {
@@ -26,7 +27,6 @@ cp -rf capi-ci-private/* ${updated_capi_ci_private}
 mkdir -p "${updated_capi_ci_private}/${ENVIRONMENT}"
 pushd "${updated_capi_ci_private}/${ENVIRONMENT}"
   delete_bbl_certs
-  delete_credhub_certs
 
   commit_capi_ci_private
 popd
