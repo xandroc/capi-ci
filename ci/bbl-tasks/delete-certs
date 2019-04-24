@@ -6,6 +6,11 @@ workspace_dir="$( pwd )"
 updated_capi_ci_private="${workspace_dir}/updated-capi-ci-private"
 output_path="${updated_capi_ci_private}/${ENVIRONMENT}"
 
+function delete_bbl_certs() {
+  yq 'to_entries | .[] | select(.value.certificate?) | .key' vars/director-vars-store.yml > /tmp/cert-keys.txt
+  cat /tmp/cert-keys.txt
+}
+
 function commit_capi_ci_private() {
   if [[ -n $(git status --porcelain) ]]; then
     git config user.name "CI Bot"
