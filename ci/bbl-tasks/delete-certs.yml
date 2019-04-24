@@ -8,14 +8,10 @@ image_resource:
 
 inputs:
 - name: capi-ci
-- name: bbl-state
+- name: capi-ci-private
 
 run:
   path: capi-ci/ci/bbl-tasks/delete-certs
 
 params:
-  BBL_STATE_DIR:
-  # - Optional
-  # - Path to the directory containing the `bbl-state.json` file
-  # - The path is relative to root of the `bbl-state` input
-  # - If unspecified, uses the root of the `bbl-state` input
+  ENVIRONMENT: leia-azure-storage # TODO: undefault
