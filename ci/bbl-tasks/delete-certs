@@ -1,1 +1,23 @@
 #!/usr/bin/env bash
+
+workspace_dir="$( cd "${script_dir}/../../../" && pwd )"
+updated_capi_ci_private="${workspace_dir}/updated-capi-ci-private"
+output_path="${updated_capi_ci_private}/${ENVIRONMENT}"
+
+function commit_capi_ci_private() {
+  if [[ -n $(git status --porcelain) ]]; then
+    git config user.name "CI Bot"
+    git config user.email "cf-capi-eng@pivotal.io"
+
+    git add "${updated_capi_ci_private}/${ENVIRONMENT}"
+    git commit -m "Initial commit for '${ENVIRONMENT}'"
+  fi
+}
+
+mkdir -p "${updated_capi_ci_private}/${ENVIRONMENT}"
+pushd "${updated_capi_ci_private}/${ENVIRONMENT}"
+  delete_bbl_certs
+  delete_credhub_certs
+
+  commit_capi_ci_private
+popd

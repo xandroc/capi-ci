@@ -10,6 +10,9 @@ inputs:
 - name: capi-ci
 - name: capi-ci-private
 
+outputs:
+  - name: updated-capi-ci-private
+
 run:
   path: capi-ci/ci/bbl-tasks/delete-certs
 
