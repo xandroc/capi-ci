@@ -63,6 +63,7 @@ groups:
   - bbl-destroy-rey-gcs-storage
   - bbl-destroy-gabrielle-postgres
   - bbl-destroy-leia-azure-storage
+  - rotate-certs-leia-azure-storage
 
 resource_types:
 - name: slack-notification
@@ -2287,6 +2288,73 @@ jobs:
     params:
       BBL_STATE_DIR: "leia-azure-storage"
 
+- name: rotate-certs-leia-azure-storage
+  serial: true
+  serial_groups: [leia-azure-storage]
+  plan:
+  - aggregate:
+    - get: leia-azure-storage-bbl-state
+    - get: capi-ci-private
+    - get: capi-ci
+    - get: cf-deployment-concourse-tasks
+  - task: delete-certs
+    file: capi-ci/ci/bbl-tasks/delete-certs.yml
+    params:
+      ENVIRONMENT: leia-azure-storage
+  - put: capi-ci-private
+    params:
+      repository: updated-capi-ci-private
+      rebase: true
+  - task: update-bosh-leia-azure-storage
+    file: cf-deployment-concourse-tasks/bbl-up/task.yml
+    input_mapping:
+      bbl-state: updated-capi-ci-private
+      bbl-config: updated-capi-ci-private
+      ops-files: collected-ops-files
+    params:
+      BBL_STATE_DIR: "leia-azure-storage"
+      BBL_IAAS: "gcp"
+      BBL_CONFIG_DIR: "leia-azure-storage/bosh-lite-plan-patch"
+      BBL_ENV_NAME: "leia-azure-storage"
+      BBL_GCP_SERVICE_ACCOUNT_KEY: ((leia_gcp_json_key))
+      BBL_GCP_PROJECT_ID: ((leia_gcp_project_id))
+      BBL_GCP_ZONE: ((leia_gcp_zone))
+      BBL_GCP_REGION: ((leia_gcp_region))
+      IS_BOSH_LITE: true
+      SKIP_LB_CREATION: true
+      OPS_FILES: |
+        base-ops-files/bosh-lite.yml
+        base-ops-files/bosh-lite-runc.yml
+        base-ops-files/gcp/bosh-lite-vm-type.yml
+        increase-persistent-disk.yml
+    ensure:
+      put: leia-azure-storage-bbl-state
+      params:
+        repository: updated-bbl-state
+        rebase: true
+  - task: collect-ops-files
+    file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
+    input_mapping:
+      base-ops-files: cf-deployment
+      new-ops-files: capi-ci
+    params:
+      NEW_OPS_FILES: |
+        cf-deployment-operations/skip-cert-verify.yml
+        cf-deployment-operations/use-latest-capi.yml
+  - task: deploy
+    file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
+    input_mapping:
+      bbl-state: leia-azure-storage-bbl-state
+      ops-files: collected-ops-files
+      vars-files: capi-ci-private
+    params:
+      BBL_STATE_DIR: leia-azure-storage
+      SYSTEM_DOMAIN: *leia-azure-storage-domain
+      OPS_FILES: *leia-azure-storage-ops-files
+      VARS_FILES: leia-azure-storage/azure-storage-vars.yml
+      BOSH_DEPLOY_ARGS: '--recreate'
+
+
 - name: update-bosh-rey-gcs-storage
   serial: true
   serial_groups: [rey-gcs-storage]
@@ -2906,7 +2974,7 @@ jobs:
     params:
       BBL_STATE_DIR: leia-azure-storage
       SYSTEM_DOMAIN: *leia-azure-storage-domain
-      OPS_FILES: |
+      OPS_FILES: &leia-azure-storage-ops-files |
         base-ops-files/operations/bosh-lite.yml
         base-ops-files/operations/use-compiled-releases.yml
         base-ops-files/operations/use-external-blobstore.yml
