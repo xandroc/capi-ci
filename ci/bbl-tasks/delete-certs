@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -ex
+set -e
 
 workspace_dir="$( pwd )"
 updated_capi_ci_private="${workspace_dir}/updated-capi-ci-private"
