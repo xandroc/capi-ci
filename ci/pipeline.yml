@@ -63,6 +63,8 @@ groups:
   - bbl-destroy-rey-gcs-storage
   - bbl-destroy-gabrielle-postgres
   - bbl-destroy-leia-azure-storage
+- name: cert-rotation
+  jobs:
   - rotate-certs-leia-azure-storage
 
 resource_types:
@@ -2251,7 +2253,7 @@ jobs:
       BBL_GCP_REGION: ((leia_gcp_region))
       IS_BOSH_LITE: true
       SKIP_LB_CREATION: true
-      OPS_FILES: |
+      OPS_FILES: &leia-azure-storage-bbl-ops |
         base-ops-files/bosh-lite.yml
         base-ops-files/bosh-lite-runc.yml
         base-ops-files/gcp/bosh-lite-vm-type.yml
@@ -2323,11 +2325,7 @@ jobs:
       BBL_GCP_REGION: ((leia_gcp_region))
       IS_BOSH_LITE: true
       SKIP_LB_CREATION: true
-      OPS_FILES: |
-        base-ops-files/bosh-lite.yml
-        base-ops-files/bosh-lite-runc.yml
-        base-ops-files/gcp/bosh-lite-vm-type.yml
-        increase-persistent-disk.yml
+      OPS_FILES: *leia-azure-storage-bbl-ops
     ensure:
       put: leia-azure-storage-bbl-state
       params:
@@ -2339,9 +2337,7 @@ jobs:
       base-ops-files: cf-deployment
       new-ops-files: capi-ci
     params:
-      NEW_OPS_FILES: |
-        cf-deployment-operations/skip-cert-verify.yml
-        cf-deployment-operations/use-latest-capi.yml
+      NEW_OPS_FILES: *leia-azure-storage-ops-to-collect
   - task: deploy
     file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
     input_mapping:
@@ -2353,7 +2349,7 @@ jobs:
       SYSTEM_DOMAIN: *leia-azure-storage-domain
       OPS_FILES: *leia-azure-storage-ops-files
       VARS_FILES: leia-azure-storage/azure-storage-vars.yml
-      BOSH_DEPLOY_ARGS: '--recreate'
+      BOSH_DEPLOY_ARGS: '--recreate --fix'
 
 
 - name: update-bosh-rey-gcs-storage
@@ -2963,7 +2959,7 @@ jobs:
       base-ops-files: cf-deployment
       new-ops-files: capi-ci
     params:
-      NEW_OPS_FILES: |
+      NEW_OPS_FILES: &leia-azure-storage-ops-to-collect |
         cf-deployment-operations/skip-cert-verify.yml
         cf-deployment-operations/use-latest-capi.yml
   - task: deploy
