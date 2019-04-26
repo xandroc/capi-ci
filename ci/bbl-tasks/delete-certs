@@ -18,7 +18,8 @@ function delete_cf_certs() {
   # then delete them from credhub one by one
   yq '.variables | .[] | select(.type=="certificate") | .name' <(bosh -dcf manifest) \
      |  xargs -n1 -I{} sh -c \
-        "echo about to delete {} from credhub && credhub delete -n /bosh-${ENVIRONMENT}/cf/{}"
+        "echo about to delete {} from credhub && credhub delete -n /bosh-${ENVIRONMENT}/cf/{}" \
+     | yes # best effort for reentrancy - we always want to bbl up even if this fails
 }
 
 function commit_capi_ci_private() {
