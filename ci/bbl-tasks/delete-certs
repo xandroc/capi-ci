@@ -22,7 +22,7 @@ function commit_capi_ci_private() {
   fi
 }
 
-cp -rf capi-ci-private/* ${updated_capi_ci_private}
+cp -rf capi-ci-private/. ${updated_capi_ci_private}
 
 mkdir -p "${updated_capi_ci_private}/${ENVIRONMENT}"
 pushd "${updated_capi_ci_private}/${ENVIRONMENT}"
