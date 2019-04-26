@@ -2297,6 +2297,7 @@ jobs:
     - get: capi-ci-private
     - get: capi-ci
     - get: cf-deployment-concourse-tasks
+    - get: cf-deployment
   - task: delete-certs
     file: capi-ci/ci/bbl-tasks/delete-certs.yml
     params:
