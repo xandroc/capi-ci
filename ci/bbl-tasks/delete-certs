@@ -12,6 +12,15 @@ function delete_bbl_certs() {
   ${delete_var_store_script} ${output_path}/vars/jumpbox-vars-store.yml
 }
 
+function delete_cf_certs() {
+  eval "$(bbl print-env)"
+  # from the cf-deployment manifest, find all the certs by name,
+  # then delete them from credhub one by one
+  yq '.variables | .[] | select(.type=="certificate") | .name' <(bosh -dcf manifest) \
+     |  xargs -n1 -I{} sh -c \
+        "echo about to delete {} from credhub && credhub delete -n /bosh-${ENVIRONMENT}/cf/{}"
+}
+
 function commit_capi_ci_private() {
   if [[ -n $(git status --porcelain) ]]; then
     git config user.name "CI Bot"
@@ -26,6 +35,7 @@ cp -rf capi-ci-private/. ${updated_capi_ci_private}
 
 mkdir -p "${updated_capi_ci_private}/${ENVIRONMENT}"
 pushd "${updated_capi_ci_private}/${ENVIRONMENT}"
+  delete_cf_certs
   delete_bbl_certs
 
   commit_capi_ci_private
