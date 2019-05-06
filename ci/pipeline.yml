@@ -2357,6 +2357,8 @@ jobs:
       BOSH_DEPLOY_ARGS: '--recreate --fix'
   - task: enable-resurrection
     file: capi-ci/ci/bbl-tasks/update-resurrection.yml
+    input_mapping:
+      capi-ci-private: updated-bbl-state
     params:
       ENVIRONMENT: leia-azure-storage
       ON_OR_OFF: on
