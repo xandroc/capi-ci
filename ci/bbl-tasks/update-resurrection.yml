@@ -1,0 +1,18 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: cloudfoundry/capi
+    tag: bbl
+
+inputs:
+- name: capi-ci-private
+
+run:
+  path: capi-ci/ci/bbl-tasks/update-resurrection
+
+params:
+  ENVIRONMENT: leia-azure-storage # TODO: undefault
+  ON_OR_OFF:

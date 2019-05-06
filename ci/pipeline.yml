@@ -2300,6 +2300,11 @@ jobs:
     - get: capi-ci
     - get: cf-deployment-concourse-tasks
     - get: cf-deployment
+  - task: disable-resurrection
+    file: capi-ci/ci/bbl-tasks/update-resurrection.yml
+    params:
+      ENVIRONMENT: leia-azure-storage
+      ON_OR_OFF: off
   - task: delete-certs
     file: capi-ci/ci/bbl-tasks/delete-certs.yml
     params:
@@ -2350,6 +2355,11 @@ jobs:
       OPS_FILES: *leia-azure-storage-ops-files
       VARS_FILES: leia-azure-storage/azure-storage-vars.yml
       BOSH_DEPLOY_ARGS: '--recreate --fix'
+  - task: enable-resurrection
+    file: capi-ci/ci/bbl-tasks/update-resurrection.yml
+    params:
+      ENVIRONMENT: leia-azure-storage
+      ON_OR_OFF: on
 
 
 - name: update-bosh-rey-gcs-storage
