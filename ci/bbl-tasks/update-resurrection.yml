@@ -8,6 +8,7 @@ image_resource:
     tag: bbl
 
 inputs:
+- name: capi-ci
 - name: capi-ci-private
 
 run:
