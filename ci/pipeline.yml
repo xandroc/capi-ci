@@ -47,7 +47,7 @@ groups:
   - update-checkman
   - deliver-stories
   - update-and-push-docs-v2
-- name: bosh
+- name: update-bosh
   jobs:
   - update-bosh-arya
   - update-bosh-mulan
@@ -59,13 +59,16 @@ groups:
   - update-bosh-ripley
   - update-bosh-leia-azure-storage
   - update-bosh-rey-gcs-storage
+- name: bbl-destroy
+  jobs:
   - bbl-destroy-xena-mysql
   - bbl-destroy-rey-gcs-storage
   - bbl-destroy-gabrielle-postgres
   - bbl-destroy-leia-azure-storage
-- name: cert-rotation
+- name: rotate-certs
   jobs:
   - rotate-certs-leia-azure-storage
+  - rotate-certs-ripley
 
 resource_types:
 - name: slack-notification
@@ -997,7 +1000,7 @@ jobs:
       base-ops-files: cf-deployment
       new-ops-files: capi-ci
     params:
-      NEW_OPS_FILES: |
+      NEW_OPS_FILES: &ripley-ops-to-collect |
         cf-deployment-operations/scale-up-cells.yml
         cf-deployment-operations/performance/scale-generic-worker-processes.yml
         cf-deployment-operations/use-latest-capi.yml
@@ -1013,7 +1016,7 @@ jobs:
     params:
       BBL_STATE_DIR: "ripley"
       SYSTEM_DOMAIN: *ripley-domain
-      OPS_FILES: |
+      OPS_FILES: &ripley-ops-files |
         base-ops-files/operations/test/add-persistent-isolation-segment-diego-cell.yml
         base-ops-files/operations/scale-to-one-az.yml
         scale-up-cells.yml
@@ -1079,6 +1082,67 @@ jobs:
       file: capi-ci/ci/benchmarks/run-blobstore-benchmarks.yml
       params:
         BBL_STATE_DIR: ripley
+
+- name: rotate-certs-ripley
+  serial: true
+  serial_groups: [ripley-nfs]
+  plan:
+  - aggregate:
+    - get: ripley-bbl-state
+    - get: capi-ci-private
+    - get: capi-ci
+    - get: cf-deployment-concourse-tasks
+    - get: cf-deployment
+  - task: disable-resurrection
+    file: capi-ci/ci/bbl-tasks/update-resurrection.yml
+    params:
+      ENVIRONMENT: ripley
+      ON_OR_OFF: off
+  - task: delete-certs
+    file: capi-ci/ci/bbl-tasks/delete-certs.yml
+    params:
+      ENVIRONMENT: ripley
+  - put: capi-ci-private
+    params:
+      repository: updated-capi-ci-private
+      rebase: true
+  - task: update-bosh-ripley
+    file: cf-deployment-concourse-tasks/bbl-up/task.yml
+    input_mapping:
+      bbl-state: updated-capi-ci-private
+      bbl-config: updated-capi-ci-private
+      ops-files: collected-ops-files
+    params: *update-bosh-ripley-params
+    ensure:
+      put: ripley-bbl-state
+      params:
+        repository: updated-bbl-state
+        rebase: true
+  - task: collect-ops-files
+    file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
+    input_mapping:
+      base-ops-files: cf-deployment
+      new-ops-files: capi-ci
+    params:
+      NEW_OPS_FILES: *ripley-ops-to-collect
+  - task: deploy
+    file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
+    input_mapping:
+      bbl-state: ripley-bbl-state
+      ops-files: collected-ops-files
+      vars-files: capi-ci-private
+    params:
+      BBL_STATE_DIR: ripley
+      SYSTEM_DOMAIN: *ripley-domain
+      OPS_FILES: *ripley-ops-files
+      BOSH_DEPLOY_ARGS: '--recreate --fix'
+  - task: enable-resurrection
+    file: capi-ci/ci/bbl-tasks/update-resurrection.yml
+    input_mapping:
+      capi-ci-private: updated-bbl-state
+    params:
+      ENVIRONMENT: ripley
+      ON_OR_OFF: on
 
 - name: elsa-mysql-s3-bypass
   serial: true
@@ -1848,7 +1912,7 @@ jobs:
       bbl-state: updated-capi-ci-private
       bbl-config: updated-capi-ci-private
       ops-files: capi-ci
-    params:
+    params: &update-bosh-ripley-params
       BBL_STATE_DIR: "ripley"
       BBL_IAAS: "gcp"
       BBL_LB_CERT: "certs/load-balancer/server.crt"
@@ -1930,7 +1994,7 @@ jobs:
       BBL_GCP_PROJECT_ID: ((elsa_gcp_project_id))
       BBL_GCP_ZONE: ((elsa_gcp_zone))
       BBL_GCP_REGION: ((elsa_gcp_region))
-      OPS_FILES: |
+      OPS_FILES: &elsa-mysql-s3-bypass-bbl-ops |
         base-ops-files/local-dns.yml
         increase-persistent-disk.yml
     ensure:
@@ -2242,7 +2306,7 @@ jobs:
       bbl-state: updated-capi-ci-private
       bbl-config: updated-capi-ci-private
       ops-files: collected-ops-files
-    params:
+    params: &update-bosh-leia-params
       BBL_STATE_DIR: "leia-azure-storage"
       BBL_IAAS: "gcp"
       BBL_CONFIG_DIR: "leia-azure-storage/bosh-lite-plan-patch"
@@ -2253,7 +2317,7 @@ jobs:
       BBL_GCP_REGION: ((leia_gcp_region))
       IS_BOSH_LITE: true
       SKIP_LB_CREATION: true
-      OPS_FILES: &leia-azure-storage-bbl-ops |
+      OPS_FILES: |
         base-ops-files/bosh-lite.yml
         base-ops-files/bosh-lite-runc.yml
         base-ops-files/gcp/bosh-lite-vm-type.yml
@@ -2319,18 +2383,7 @@ jobs:
       bbl-state: updated-capi-ci-private
       bbl-config: updated-capi-ci-private
       ops-files: collected-ops-files
-    params:
-      BBL_STATE_DIR: "leia-azure-storage"
-      BBL_IAAS: "gcp"
-      BBL_CONFIG_DIR: "leia-azure-storage/bosh-lite-plan-patch"
-      BBL_ENV_NAME: "leia-azure-storage"
-      BBL_GCP_SERVICE_ACCOUNT_KEY: ((leia_gcp_json_key))
-      BBL_GCP_PROJECT_ID: ((leia_gcp_project_id))
-      BBL_GCP_ZONE: ((leia_gcp_zone))
-      BBL_GCP_REGION: ((leia_gcp_region))
-      IS_BOSH_LITE: true
-      SKIP_LB_CREATION: true
-      OPS_FILES: *leia-azure-storage-bbl-ops
+    params: *update-bosh-leia-params
     ensure:
       put: leia-azure-storage-bbl-state
       params:
