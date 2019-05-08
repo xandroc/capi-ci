@@ -67,7 +67,7 @@ groups:
   - bbl-destroy-leia-azure-storage
 - name: rotate-certs
   jobs:
-  - monthly-warning
+  - thirtyfirstly-warning
   - rotate-certs-leia-azure-storage
   - rotate-certs-ripley
   - rotate-certs-rey-gcs-storage
@@ -99,6 +99,10 @@ resource_types:
   source:
     repository: pivotalservices/concourse-curl-resource
     tag: latest
+- name: cron-resource
+  type: docker-image
+  source:
+    repository: cftoolsmiths/cron-resource
 
 resources:
 
@@ -118,23 +122,19 @@ resources:
     start: 23:00
     stop: 23:30
 
-- name: monthly-warning
-  type: time
+- name: thirtiethly
+  type: cron-resource
   source:
+    expression: "5 14 30 * *"
     location: America/Los_Angeles
-    interval: 30d
-    start: 2:45 PM
-    stop: 3:00 PM
-    days: [Friday]
+    fire_immediately: true
 
-- name: monthly
-  type: time
+- name: thirtyfirstly
+  type: cron-resource
   source:
+    expression: "5 3 31 * *"
     location: America/Los_Angeles
-    interval: 30d
-    start: 3:00 AM
-    stop: 3:30 AM
-    days: [Monday]
+    fire_immediately: true
 
 - name: deliver-capi-stories
   type: tracker
@@ -312,6 +312,11 @@ resources:
   type: slack-notification
   source:
     url: ((slack_failure_hook_url))
+
+- name: slack-rotation-alert
+  type: slack-notification
+  source:
+    url: ((slack_channel_webhook_for_cert_rotations))
 
 - name: sync-integration-tests
   type: git
@@ -1110,7 +1115,7 @@ jobs:
 
 - name: rotate-certs-ripley
   serial: true
-  serial_groups: [ripley-nfs]
+  serial_groups: [ripley]
   plan:
   - aggregate:
     - get: ripley-bbl-state
@@ -1118,7 +1123,7 @@ jobs:
     - get: capi-ci
     - get: cf-deployment-concourse-tasks
     - get: cf-deployment
-    - get: monthly
+    - get: thirtyfirstly
       trigger: true
   - task: disable-resurrection
     file: capi-ci/ci/bbl-tasks/update-resurrection.yml
@@ -1860,7 +1865,7 @@ jobs:
     - get: capi-ci
     - get: cf-deployment-concourse-tasks
     - get: cf-deployment
-    - get: monthly
+    - get: thirtyfirstly
       trigger: true
   - task: disable-resurrection
     file: capi-ci/ci/bbl-tasks/update-resurrection.yml
@@ -1987,7 +1992,7 @@ jobs:
     - get: capi-ci
     - get: cf-deployment-concourse-tasks
     - get: cf-deployment
-    - get: monthly
+    - get: thirtyfirstly
       trigger: true
   - task: disable-resurrection
     file: capi-ci/ci/bbl-tasks/update-resurrection.yml
@@ -2257,7 +2262,7 @@ jobs:
     - get: capi-ci
     - get: cf-deployment-concourse-tasks
     - get: cf-deployment
-    - get: monthly
+    - get: thirtyfirstly
       trigger: true
   - task: delete-certs
     file: capi-ci/ci/bbl-tasks/delete-certs.yml
@@ -2380,7 +2385,7 @@ jobs:
     - get: capi-ci
     - get: cf-deployment-concourse-tasks
     - get: cf-deployment
-    - get: monthly
+    - get: thirtyfirstly
       trigger: true
   - task: disable-resurrection
     file: capi-ci/ci/bbl-tasks/update-resurrection.yml
@@ -2533,7 +2538,7 @@ jobs:
     - get: capi-ci
     - get: cf-deployment-concourse-tasks
     - get: cf-deployment
-    - get: monthly
+    - get: thirtyfirstly
       trigger: true
   - task: delete-certs
     file: capi-ci/ci/bbl-tasks/delete-certs.yml
@@ -2650,7 +2655,7 @@ jobs:
     - get: capi-ci
     - get: cf-deployment-concourse-tasks
     - get: cf-deployment
-    - get: monthly
+    - get: thirtyfirstly
       trigger: true
   - task: disable-resurrection
     file: capi-ci/ci/bbl-tasks/update-resurrection.yml
@@ -2798,7 +2803,7 @@ jobs:
 
 - name: rotate-certs-rey-gcs-storage
   serial: true
-  serial_groups: [rey-gcs-storage-nfs]
+  serial_groups: [rey-gcs-storage]
   plan:
   - aggregate:
     - get: rey-gcs-storage-bbl-state
@@ -2806,7 +2811,7 @@ jobs:
     - get: capi-ci
     - get: cf-deployment-concourse-tasks
     - get: cf-deployment
-    - get: monthly
+    - get: thirtyfirstly
       trigger: true
   - task: disable-resurrection
     file: capi-ci/ci/bbl-tasks/update-resurrection.yml
@@ -3565,15 +3570,17 @@ jobs:
       params:
         BBL_STATE_DIR: rey-gcs-storage
 
-- name: monthly-warning
+- name: thirtyfirstly-warning
   plan:
-  - get: monthly-warning
+  - get: thirtiethly
     trigger: true
-  - put: slack-alert
+  - put: slack-rotation-alert
     params:
       silent: true
       username: "cert rotator"
       icon_emoji: ":whale2rotate:"
       text: |
-        Early Monday morning, all the certs will rotate
-        unless you pause the \"monthly\" resource in concourse.
+        If there's another day in this month,
+        all the certs are going to rotate TONIGHT
+        unless you pause the "thirtyfirstly" resource in concourse.
+        January, March, May, July, August, October, or December.
