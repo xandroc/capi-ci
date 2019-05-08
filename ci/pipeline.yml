@@ -67,12 +67,15 @@ groups:
   - bbl-destroy-leia-azure-storage
 - name: rotate-certs
   jobs:
+  - monthly-warning
   - rotate-certs-leia-azure-storage
   - rotate-certs-ripley
   - rotate-certs-rey-gcs-storage
   - rotate-certs-xena
   - rotate-certs-buffy
   - rotate-certs-mulan
+  - rotate-certs-kiki
+  - rotate-certs-gabrielle
 
 resource_types:
 - name: slack-notification
@@ -114,6 +117,24 @@ resources:
     location: America/Los_Angeles
     start: 23:00
     stop: 23:30
+
+- name: monthly-warning
+  type: time
+  source:
+    location: America/Los_Angeles
+    interval: 30d
+    start: 2:45 PM
+    stop: 3:00 PM
+    days: [Friday]
+
+- name: monthly
+  type: time
+  source:
+    location: America/Los_Angeles
+    interval: 30d
+    start: 3:00 AM
+    stop: 3:30 AM
+    days: [Monday]
 
 - name: deliver-capi-stories
   type: tracker
@@ -1097,6 +1118,8 @@ jobs:
     - get: capi-ci
     - get: cf-deployment-concourse-tasks
     - get: cf-deployment
+    - get: monthly
+      trigger: true
   - task: disable-resurrection
     file: capi-ci/ci/bbl-tasks/update-resurrection.yml
     params:
@@ -1837,6 +1860,8 @@ jobs:
     - get: capi-ci
     - get: cf-deployment-concourse-tasks
     - get: cf-deployment
+    - get: monthly
+      trigger: true
   - task: disable-resurrection
     file: capi-ci/ci/bbl-tasks/update-resurrection.yml
     params:
@@ -1962,6 +1987,8 @@ jobs:
     - get: capi-ci
     - get: cf-deployment-concourse-tasks
     - get: cf-deployment
+    - get: monthly
+      trigger: true
   - task: disable-resurrection
     file: capi-ci/ci/bbl-tasks/update-resurrection.yml
     params:
@@ -2183,7 +2210,7 @@ jobs:
       bbl-state: updated-capi-ci-private
       bbl-config: updated-capi-ci-private
       ops-files: capi-ci
-    params:
+    params: &update-bosh-kiki-params
       BBL_STATE_DIR: "kiki"
       BBL_IAAS: "gcp"
       BBL_LB_CERT: "certs/load-balancer/server.crt"
@@ -2219,6 +2246,39 @@ jobs:
       bbl-state: updated-bbl-state
     params:
       BBL_STATE_DIR: "kiki"
+
+- name: rotate-certs-kiki
+  serial: true
+  serial_groups: [kiki]
+  plan:
+  - aggregate:
+    - get: kiki-bbl-state
+    - get: capi-ci-private
+    - get: capi-ci
+    - get: cf-deployment-concourse-tasks
+    - get: cf-deployment
+    - get: monthly
+      trigger: true
+  - task: delete-certs
+    file: capi-ci/ci/bbl-tasks/delete-certs.yml
+    params:
+      ENVIRONMENT: kiki
+  - put: capi-ci-private
+    params:
+      repository: updated-capi-ci-private
+      rebase: true
+  - task: update-bosh-kiki
+    file: cf-deployment-concourse-tasks/bbl-up/task.yml
+    input_mapping:
+      bbl-state: updated-capi-ci-private
+      bbl-config: updated-capi-ci-private
+      ops-files: collected-ops-files
+    params: *update-bosh-kiki-params
+    ensure:
+      put: kiki-bbl-state
+      params:
+        repository: updated-bbl-state
+        rebase: true
 
 - name: update-bosh-xena-mysql
   serial: true
@@ -2320,6 +2380,8 @@ jobs:
     - get: capi-ci
     - get: cf-deployment-concourse-tasks
     - get: cf-deployment
+    - get: monthly
+      trigger: true
   - task: disable-resurrection
     file: capi-ci/ci/bbl-tasks/update-resurrection.yml
     params:
@@ -2408,7 +2470,7 @@ jobs:
       bbl-state: updated-capi-ci-private
       bbl-config: updated-capi-ci-private
       ops-files: collected-ops-files
-    params:
+    params: &update-bosh-gabrielle-params
       BBL_STATE_DIR: "gabrielle-postgres"
       BBL_IAAS: "gcp"
       BBL_CONFIG_DIR: "gabrielle-postgres/bosh-lite-plan-patch"
@@ -2460,6 +2522,39 @@ jobs:
       bbl-state: updated-bbl-state
     params:
       BBL_STATE_DIR: "gabrielle-postgres"
+
+- name: rotate-certs-gabrielle
+  serial: true
+  serial_groups: [gabrielle-postgres]
+  plan:
+  - aggregate:
+    - get: gabrielle-postgres-bbl-state
+    - get: capi-ci-private
+    - get: capi-ci
+    - get: cf-deployment-concourse-tasks
+    - get: cf-deployment
+    - get: monthly
+      trigger: true
+  - task: delete-certs
+    file: capi-ci/ci/bbl-tasks/delete-certs.yml
+    params:
+      ENVIRONMENT: gabrielle-postgres
+  - put: capi-ci-private
+    params:
+      repository: updated-capi-ci-private
+      rebase: true
+  - task: update-bosh-gabrielle
+    file: cf-deployment-concourse-tasks/bbl-up/task.yml
+    input_mapping:
+      bbl-state: updated-capi-ci-private
+      bbl-config: updated-capi-ci-private
+      ops-files: collected-ops-files
+    params: *update-bosh-gabrielle-params
+    ensure:
+      put: gabrielle-postgres-bbl-state
+      params:
+        repository: updated-bbl-state
+        rebase: true
 
 - name: update-bosh-leia-azure-storage
   serial: true
@@ -2555,6 +2650,8 @@ jobs:
     - get: capi-ci
     - get: cf-deployment-concourse-tasks
     - get: cf-deployment
+    - get: monthly
+      trigger: true
   - task: disable-resurrection
     file: capi-ci/ci/bbl-tasks/update-resurrection.yml
     params:
@@ -2709,6 +2806,8 @@ jobs:
     - get: capi-ci
     - get: cf-deployment-concourse-tasks
     - get: cf-deployment
+    - get: monthly
+      trigger: true
   - task: disable-resurrection
     file: capi-ci/ci/bbl-tasks/update-resurrection.yml
     params:
@@ -2992,7 +3091,7 @@ jobs:
       base-ops-files: cf-deployment
       new-ops-files: capi-ci
     params:
-      NEW_OPS_FILES: &xena-mysql-ops-to-collect |
+      NEW_OPS_FILES: |
         cf-deployment-operations/skip-cert-verify.yml
         cf-deployment-operations/temporary/capi-bbr-enable-bpm.yml
         cf-deployment-operations/use-latest-capi.yml
@@ -3006,7 +3105,7 @@ jobs:
     params:
       BBL_STATE_DIR: xena-mysql
       SYSTEM_DOMAIN: *xena-mysql-domain
-      OPS_FILES: &xena-mysql-ops-files |
+      OPS_FILES: |
         skip-cert-verify.yml
         base-ops-files/operations/bosh-lite.yml
         base-ops-files/operations/backup-and-restore/enable-backup-restore.yml
@@ -3065,7 +3164,7 @@ jobs:
       base-ops-files: cf-deployment
       new-ops-files: capi-ci
     params:
-      NEW_OPS_FILES: |
+      NEW_OPS_FILES: &xena-mysql-ops-to-collect |
         cf-deployment-operations/skip-cert-verify.yml
         cf-deployment-operations/temporary/capi-bbr-enable-bpm.yml
         cf-deployment-operations/use-latest-capi.yml
@@ -3117,7 +3216,7 @@ jobs:
     params:
       BBL_STATE_DIR: xena-mysql
       SYSTEM_DOMAIN: *xena-mysql-domain
-      OPS_FILES: |
+      OPS_FILES: &xena-mysql-ops-files |
         skip-cert-verify.yml
         base-ops-files/operations/bosh-lite.yml
         base-ops-files/operations/backup-and-restore/enable-backup-restore.yml
@@ -3465,3 +3564,16 @@ jobs:
       file: capi-ci/ci/benchmarks/run-blobstore-benchmarks.yml
       params:
         BBL_STATE_DIR: rey-gcs-storage
+
+- name: monthly-warning
+  plan:
+  - get: monthly-warning
+    trigger: true
+  - put: slack-alert
+    params:
+      silent: true
+      username: "cert rotator"
+      icon_emoji: ":whale2rotate:"
+      text: |
+        Early Monday morning, all the certs will rotate
+        unless you pause the \"monthly\" resource in concourse.
