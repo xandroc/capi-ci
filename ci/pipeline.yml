@@ -132,7 +132,7 @@ resources:
 - name: thirtyfirstly
   type: cron-resource
   source:
-    expression: "5 3 31 * *"
+    expression: "5 19 31 * *"
     location: America/Los_Angeles
     fire_immediately: true
 
@@ -3579,8 +3579,8 @@ jobs:
       silent: true
       username: "cert rotator"
       icon_emoji: ":whale2rotate:"
-      text: |
+      text: |-
         If there's another day in this month,
-        all the certs are going to rotate TONIGHT
+        all the certs are going to rotate TONIGHT at 7pm PST
         unless you pause the "thirtyfirstly" resource in concourse.
-        January, March, May, July, August, October, or December.
+        January, March, May, July, August, October, and December all have 31 days.
