@@ -1,0 +1,25 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: cloudfoundry/capi
+    tag: rc-docs
+
+inputs:
+  - name: cf-deployment
+  - name: capi-release
+  - name: capi-ci
+  - name: api-docs-test
+
+outputs:
+  - name: updated-api-docs
+
+run:
+  path: capi-ci/ci/docs/update_docs_v2-test.sh
+
+params:
+  CF_VERSIONS_FILE_PATH:
+  GIT_COMMIT_USERNAME:
+  GIT_COMMIT_EMAIL:
