@@ -47,6 +47,7 @@ groups:
   - update-checkman
   - deliver-stories
   - update-and-push-docs-v2
+  - test-app
 - name: update-bosh
   jobs:
   - update-bosh-arya
@@ -103,6 +104,11 @@ resource_types:
   type: docker-image
   source:
     repository: cftoolsmiths/cron-resource
+- name: cf-test
+  type: docker-image
+  source:
+    repository: morspin/cf-resource
+    tag: 79e4723a2d70
 
 resources:
 
@@ -214,8 +220,25 @@ resources:
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/api-docs.git
 
+- name: api-docs-test
+  type: git
+  source:
+    branch: test-docs
+    private_key: ((private_key))
+    uri: git@github.com:cloudfoundry/api-docs.git
+
 - name: api-docs-production-deploy
   type: cf
+  source:
+    api: https://api.run.pivotal.io
+    username: ((cf_api_docs_username))
+    password: ((cf_api_docs_password))
+    organization: cfcommunity
+    space: api
+    skip_cert_check: false
+
+- name: api-docs-production-deploy-test
+  type: cf-test
   source:
     api: https://api.run.pivotal.io
     username: ((cf_api_docs_username))
@@ -1617,6 +1640,40 @@ jobs:
   - put: api-docs-production-deploy
     params:
       manifest: updated-api-docs/api-docs/manifest-sample.yml
+
+- name: test-app
+  serial: true
+  plan:
+  - aggregate:
+    - get: cf-deployment-release
+      trigger: true
+    - get: cf-deployment-master
+    - get: capi-ci
+    - get: api-docs-test
+    - get: capi-release-master
+      params:
+        submodules:
+        - src/cloud_controller_ng
+  - task: update-docs-v2-test
+    file: capi-ci/ci/docs/update_docs_v2-test.yml
+    params:
+      CF_VERSIONS_FILE_PATH: api-docs-test/data/cf-deployment-api-versions.json
+      GIT_COMMIT_USERNAME: "CAPI CI"
+      GIT_COMMIT_EMAIL: "cf-capi-eng+ci@pivotal.io"
+    input_mapping:
+      capi-release: capi-release-master
+      cf-deployment: cf-deployment-master
+  - put: api-docs-test
+    resource: api-docs-test
+    params:
+      repository: updated-api-docs/api-docs-test
+      branch: test-docs
+      rebase: true
+  - put: api-docs-production-deploy-test
+    params:
+      manifest: updated-api-docs/api-docs-test/manifest-sample.yml
+      current_app_name: testapidocs
+      use_rolling_app_deployment: true
 
 - name: bump-cc-v3-api
   serial: true
