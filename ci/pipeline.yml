@@ -104,11 +104,11 @@ resource_types:
   type: docker-image
   source:
     repository: cftoolsmiths/cron-resource
-- name: cf-test
+- name: cf-test10
   type: docker-image
   source:
-    repository: morspin/cf-resource
-    tag: 79e4723a2d70
+    repository: morspin/cf-resource-test
+    tag: round10
 
 resources:
 
@@ -238,7 +238,7 @@ resources:
     skip_cert_check: false
 
 - name: api-docs-production-deploy-test
-  type: cf-test
+  type: cf-test10
   source:
     api: https://api.run.pivotal.io
     username: ((cf_api_docs_username))
@@ -1674,6 +1674,7 @@ jobs:
       manifest: updated-api-docs/api-docs-test/manifest-sample.yml
       current_app_name: testapidocs
       use_rolling_app_deployment: true
+      path: updated-api-docs/api-docs-test
 
 - name: bump-cc-v3-api
   serial: true
