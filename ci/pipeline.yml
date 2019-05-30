@@ -1617,6 +1617,10 @@ jobs:
   - put: api-docs-production-deploy
     params:
       manifest: updated-api-docs/api-docs/manifest-sample.yml
+      use_rolling_app_deployment: false
+      # Uncomment the following lines if `use_rolling_app_deployment` is true
+      # current_app_name: apidocs
+      # path: updated-api-docs/api-docs
 
 - name: bump-cc-v3-api
   serial: true
