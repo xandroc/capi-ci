@@ -19,6 +19,47 @@ variable "aws_region" {
   default = "us-west-1"
 }
 
+# Declare outputs as empty variables here
+
+variable "cc_storage_region" {
+}
+
+variable "cc_s3_buildpack_bucket_name" {
+}
+
+variable "cc_s3_access_key" {
+}
+
+variable "cc_s3_secret_key" {
+}
+
+variable "cc_s3_droplet_bucket_name" {
+}
+
+variable "cc_cdn_droplet_uri" {
+}
+
+variable "cc_cdn_droplet_private_key" {
+}
+
+variable "cc_cdn_droplet_key_pair_id" {
+}
+
+variable "cc_s3_package_bucket_name" {
+}
+
+variable "cc_s3_resource_pool_bucket_name" {
+}
+
+variable "cc_cdn_resource_pool_uri" {
+}
+
+variable "cc_cdn_resource_pool_private_key" {
+}
+
+variable "cc_cdn_resource_pool_key_pair_id" {
+}
+
 # TASK
 
 # Create four buckets:
