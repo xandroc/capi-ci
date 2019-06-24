@@ -3437,12 +3437,8 @@ jobs:
       NEW_OPS_FILES: &leia-azure-storage-ops-to-collect |
         cf-deployment-operations/skip-cert-verify.yml
         cf-deployment-operations/use-latest-capi.yml
-<<<<<<< HEAD
         cf-deployment-operations/enable-pxc-binlogging.yml
-||||||| merged common ancestors
-=======
         cf-deployment-operations/log-cache-reduce-memory.yml
->>>>>>> reduce log cache memory allowance from 50% to 25% on bosh lites
   - task: deploy
     file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
     input_mapping:
