@@ -1326,7 +1326,7 @@ jobs:
       input_mapping:
         integration-config: updated-integration-configs
       params:
-        NODES: 8
+        NODES: 6
         CONFIG_FILE_PATH: "elsa/cats_integration_config.json"
         CAPTURE_LOGS: true
     - task: capi-bara-tests
@@ -1334,7 +1334,7 @@ jobs:
       input_mapping:
         integration-config: updated-integration-configs
       params:
-        NODES: 4
+        NODES: 2
         CONFIG_FILE_PATH: "elsa/cats_integration_config.json"
     - task: sync-integration-tests
       file: sync-integration-tests/concourse/task_with_credhub.yml
