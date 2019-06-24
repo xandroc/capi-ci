@@ -3457,6 +3457,7 @@ jobs:
         use-latest-capi.yml
         skip-cert-verify.yml
         enable-pxc-binlogging.yml
+        log-cache-reduce-memory.yml
       VARS_FILES: leia-azure-storage/azure-storage-vars.yml
   - task: updated-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
@@ -3574,6 +3575,7 @@ jobs:
         use-latest-capi.yml
         skip-cert-verify.yml
         base-ops-files/operations/use-pxc.yml
+        log-cache-reduce-memory.yml
       VARS_FILES: rey-gcs-storage/gcs-storage-vars.yml
   - task: updated-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
