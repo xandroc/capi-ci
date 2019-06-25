@@ -888,6 +888,7 @@ jobs:
     - get: capi-bara-tests
     - get: capi-ci
     - get: capi-ci-private
+    - get: capi-workspace
     - get: capi-release-tarball
       passed: [create-capi-release]
       trigger: true
@@ -987,12 +988,17 @@ jobs:
       params:
         BOSH_DEPLOYMENT_NAME: cf
         BOSH_API_INSTANCE: api/0
-        CF_API_TARGET: https://api.buffy.capi.land
+        CF_API_TARGET: &buffy-api-url https://api.buffy.capi.land
         CF_SKIP_SSL_VALIDATION: true
         CF_APPS_DOMAIN: *buffy-domain
         BBL_STATE_DIR: buffy
         USE_CREDHUB: true
         RUN_REVISIONS_TESTS: true
+    - task: cleanup-acceptance-test-leftovers
+      file: capi-ci/ci/acceptance-test-utils/cats_cleanup.yml
+      params:
+        CF_API_TARGET: *buffy-api-url
+        BBL_STATE_DIR: buffy
 
 - name: ripley-nfs
   serial: true
@@ -1017,6 +1023,7 @@ jobs:
     - get: runtime-ci
     - get: capi-ci
     - get: capi-ci-private
+    - get: capi-workspace
     - get: capi-release-tarball
       passed: [create-capi-release]
       trigger: true
@@ -1115,7 +1122,7 @@ jobs:
       params:
         BOSH_DEPLOYMENT_NAME: cf
         BOSH_API_INSTANCE: api/0
-        CF_API_TARGET: https://api.ripley.capi.land
+        CF_API_TARGET: &ripley-api-url https://api.ripley.capi.land
         CF_SKIP_SSL_VALIDATION: true
         CF_APPS_DOMAIN: *ripley-domain
         BBL_STATE_DIR: ripley
@@ -1124,6 +1131,11 @@ jobs:
     - task: run-blobstore-benchmarks
       file: capi-ci/ci/benchmarks/run-blobstore-benchmarks.yml
       params:
+        BBL_STATE_DIR: ripley
+    - task: cleanup-acceptance-test-leftovers
+      file: capi-ci/ci/acceptance-test-utils/cats_cleanup.yml
+      params:
+        CF_API_TARGET: *ripley-api-url
         BBL_STATE_DIR: ripley
 
 - name: rotate-certs-ripley
@@ -1211,6 +1223,7 @@ jobs:
     - get: capi-bara-tests
     - get: capi-ci
     - get: capi-ci-private
+    - get: capi-workspace
     - get: capi-release-tarball
       passed: [create-capi-release]
       trigger: true
@@ -1355,7 +1368,7 @@ jobs:
       params:
         BOSH_DEPLOYMENT_NAME: cf
         BOSH_API_INSTANCE: api/0
-        CF_API_TARGET: https://api.elsa.capi.land
+        CF_API_TARGET: &elsa-api-url https://api.elsa.capi.land
         CF_SKIP_SSL_VALIDATION: false
         CF_APPS_DOMAIN: *elsa-domain
         BBL_STATE_DIR: elsa
@@ -1364,6 +1377,11 @@ jobs:
     - task: run-blobstore-benchmarks
       file: capi-ci/ci/benchmarks/run-blobstore-benchmarks.yml
       params:
+        BBL_STATE_DIR: elsa
+    - task: cleanup-acceptance-test-leftovers
+      file: capi-ci/ci/acceptance-test-utils/cats_cleanup.yml
+      params:
+        CF_API_TARGET: *elsa-api-url
         BBL_STATE_DIR: elsa
 
 - name: kiki-back-compat-migrations
@@ -3422,6 +3440,7 @@ jobs:
     - get: cf-acceptance-tests
     - get: sync-integration-tests
     - get: capi-bara-tests
+    - get: capi-workspace
   - task: stemcell-upload
     file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
     input_mapping:
@@ -3508,7 +3527,7 @@ jobs:
       params:
         BOSH_DEPLOYMENT_NAME: cf
         BOSH_API_INSTANCE: api/0
-        CF_API_TARGET: https://api.leia-azure-storage.capi.land
+        CF_API_TARGET: &leia-azure-storage-api-url https://api.leia-azure-storage.capi.land
         CF_SKIP_SSL_VALIDATION: true
         CF_APPS_DOMAIN: *leia-azure-storage-domain
         BBL_STATE_DIR: leia-azure-storage
@@ -3517,6 +3536,11 @@ jobs:
     - task: run-blobstore-benchmarks
       file: capi-ci/ci/benchmarks/run-blobstore-benchmarks.yml
       params:
+        BBL_STATE_DIR: leia-azure-storage
+    - task: cleanup-acceptance-test-leftovers
+      file: capi-ci/ci/acceptance-test-utils/cats_cleanup.yml
+      params:
+        CF_API_TARGET: *leia-azure-storage-api-url
         BBL_STATE_DIR: leia-azure-storage
 
 - name: rey-gcs-storage
@@ -3542,6 +3566,7 @@ jobs:
     - get: cf-acceptance-tests
     - get: sync-integration-tests
     - get: capi-bara-tests
+    - get: capi-workspace
   - task: stemcell-upload
     file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
     input_mapping:
@@ -3626,7 +3651,7 @@ jobs:
       params:
         BOSH_DEPLOYMENT_NAME: cf
         BOSH_API_INSTANCE: api/0
-        CF_API_TARGET: https://api.rey-gcs-storage.capi.land
+        CF_API_TARGET: &rey-gcs-storage-api-url https://api.rey-gcs-storage.capi.land
         CF_SKIP_SSL_VALIDATION: true
         CF_APPS_DOMAIN: *rey-gcs-storage-domain
         BBL_STATE_DIR: rey-gcs-storage
@@ -3635,6 +3660,11 @@ jobs:
     - task: run-blobstore-benchmarks
       file: capi-ci/ci/benchmarks/run-blobstore-benchmarks.yml
       params:
+        BBL_STATE_DIR: rey-gcs-storage
+    - task: cleanup-acceptance-test-leftovers
+      file: capi-ci/ci/acceptance-test-utils/cats_cleanup.yml
+      params:
+        CF_API_TARGET: *rey-gcs-storage-api-url
         BBL_STATE_DIR: rey-gcs-storage
 
 - name: thirtyfirstly-warning
