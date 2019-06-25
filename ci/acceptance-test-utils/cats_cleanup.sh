@@ -3,6 +3,7 @@ set -eu
 
 # ENV
 : "${CF_API_TARGET:?}"
+: "${CF_DEPLOYMENT_NAME:=cf}"
 
 CF_ADMIN_USERNAME=admin
 
