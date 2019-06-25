@@ -375,6 +375,12 @@ resources:
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/capi-bara-tests.git
 
+- name: capi-workspace
+  type: git
+  source:
+    private_key: ((private_key))
+    uri: git@github.com:cloudfoundry/capi-workspace.git
+
 - name: bbr-github-release
   type: github-release
   source:
@@ -740,6 +746,7 @@ jobs:
     - get: capi-bara-tests
     - get: capi-ci
     - get: capi-ci-private
+    - get: capi-workspace
     - get: capi-release-tarball
       passed: [create-capi-release]
       trigger: true
@@ -844,7 +851,7 @@ jobs:
       params:
         BOSH_DEPLOYMENT_NAME: cf
         BOSH_API_INSTANCE: api/0
-        CF_API_TARGET: https://api.mulan.capi.land
+        CF_API_TARGET: &mulan-api-url https://api.mulan.capi.land
         CF_SKIP_SSL_VALIDATION: true
         CF_APPS_DOMAIN: *mulan-domain
         BBL_STATE_DIR: mulan
@@ -853,6 +860,11 @@ jobs:
     - task: run-blobstore-benchmarks
       file: capi-ci/ci/benchmarks/run-blobstore-benchmarks.yml
       params:
+        BBL_STATE_DIR: mulan
+    - task: cleanup-acceptance-test-leftovers
+      file: capi-ci/ci/acceptance-test-utils/cats_cleanup.yml
+      params:
+        CF_API_TARGET: *mulan-api-url
         BBL_STATE_DIR: mulan
 
 - name: buffy-bits-postgres-webdav
