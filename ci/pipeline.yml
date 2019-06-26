@@ -854,11 +854,11 @@ jobs:
       file: capi-ci/ci/benchmarks/run-blobstore-benchmarks.yml
       params:
         BBL_STATE_DIR: mulan
-    - task: cleanup-acceptance-test-leftovers
-      file: capi-ci/ci/acceptance-test-utils/cats_cleanup.yml
-      params:
-        CF_API_TARGET: *mulan-api-url
-        BBL_STATE_DIR: mulan
+  - task: cleanup-acceptance-test-leftovers
+    file: capi-ci/ci/acceptance-test-utils/cats_cleanup.yml
+    params:
+      CF_API_TARGET: *mulan-api-url
+      BBL_STATE_DIR: mulan
 
 - name: buffy-bits-postgres-webdav
   serial: true
@@ -986,11 +986,11 @@ jobs:
         BBL_STATE_DIR: buffy
         USE_CREDHUB: true
         RUN_REVISIONS_TESTS: true
-    - task: cleanup-acceptance-test-leftovers
-      file: capi-ci/ci/acceptance-test-utils/cats_cleanup.yml
-      params:
-        CF_API_TARGET: *buffy-api-url
-        BBL_STATE_DIR: buffy
+  - task: cleanup-acceptance-test-leftovers
+    file: capi-ci/ci/acceptance-test-utils/cats_cleanup.yml
+    params:
+      CF_API_TARGET: *buffy-api-url
+      BBL_STATE_DIR: buffy
 
 - name: ripley-nfs
   serial: true
@@ -1123,11 +1123,11 @@ jobs:
       file: capi-ci/ci/benchmarks/run-blobstore-benchmarks.yml
       params:
         BBL_STATE_DIR: ripley
-    - task: cleanup-acceptance-test-leftovers
-      file: capi-ci/ci/acceptance-test-utils/cats_cleanup.yml
-      params:
-        CF_API_TARGET: *ripley-api-url
-        BBL_STATE_DIR: ripley
+  - task: cleanup-acceptance-test-leftovers
+    file: capi-ci/ci/acceptance-test-utils/cats_cleanup.yml
+    params:
+      CF_API_TARGET: *ripley-api-url
+      BBL_STATE_DIR: ripley
 
 - name: rotate-certs-ripley
   serial: true
@@ -1368,11 +1368,11 @@ jobs:
       file: capi-ci/ci/benchmarks/run-blobstore-benchmarks.yml
       params:
         BBL_STATE_DIR: elsa
-    - task: cleanup-acceptance-test-leftovers
-      file: capi-ci/ci/acceptance-test-utils/cats_cleanup.yml
-      params:
-        CF_API_TARGET: *elsa-api-url
-        BBL_STATE_DIR: elsa
+  - task: cleanup-acceptance-test-leftovers
+    file: capi-ci/ci/acceptance-test-utils/cats_cleanup.yml
+    params:
+      CF_API_TARGET: *elsa-api-url
+      BBL_STATE_DIR: elsa
 
 - name: kiki-back-compat-migrations
   serial: true
@@ -3526,11 +3526,11 @@ jobs:
       file: capi-ci/ci/benchmarks/run-blobstore-benchmarks.yml
       params:
         BBL_STATE_DIR: leia-azure-storage
-    - task: cleanup-acceptance-test-leftovers
-      file: capi-ci/ci/acceptance-test-utils/cats_cleanup.yml
-      params:
-        CF_API_TARGET: *leia-azure-storage-api-url
-        BBL_STATE_DIR: leia-azure-storage
+  - task: cleanup-acceptance-test-leftovers
+    file: capi-ci/ci/acceptance-test-utils/cats_cleanup.yml
+    params:
+      CF_API_TARGET: *leia-azure-storage-api-url
+      BBL_STATE_DIR: leia-azure-storage
 
 - name: rey-gcs-storage
   serial: true
@@ -3649,11 +3649,11 @@ jobs:
       file: capi-ci/ci/benchmarks/run-blobstore-benchmarks.yml
       params:
         BBL_STATE_DIR: rey-gcs-storage
-    - task: cleanup-acceptance-test-leftovers
-      file: capi-ci/ci/acceptance-test-utils/cats_cleanup.yml
-      params:
-        CF_API_TARGET: *rey-gcs-storage-api-url
-        BBL_STATE_DIR: rey-gcs-storage
+  - task: cleanup-acceptance-test-leftovers
+    file: capi-ci/ci/acceptance-test-utils/cats_cleanup.yml
+    params:
+      CF_API_TARGET: *rey-gcs-storage-api-url
+      BBL_STATE_DIR: rey-gcs-storage
 
 - name: thirtyfirstly-warning
   plan:
