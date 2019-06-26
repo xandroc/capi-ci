@@ -1,13 +1,13 @@
 ---
 - type: replace
-  path: /instance_groups/name=web/jobs/name=atc/properties/tls_cert?
+  path: /instance_groups/name=web/jobs/name=web/properties/tls_cert?
   value: ((ci_atc_certificate))
 
 
 - type: replace
-  path: /instance_groups/name=web/jobs/name=atc/properties/tls_key?
+  path: /instance_groups/name=web/jobs/name=web/properties/tls_key?
   value: ((ci_atc_private_key))
 
 - type: replace
-  path: /instance_groups/name=web/jobs/name=atc/properties/tls_bind_port?
+  path: /instance_groups/name=web/jobs/name=web/properties/tls_bind_port?
   value: 443
