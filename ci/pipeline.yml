@@ -375,12 +375,6 @@ resources:
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/capi-bara-tests.git
 
-- name: capi-workspace
-  type: git
-  source:
-    private_key: ((private_key))
-    uri: git@github.com:cloudfoundry/capi-workspace.git
-
 - name: bbr-github-release
   type: github-release
   source:
@@ -746,7 +740,6 @@ jobs:
     - get: capi-bara-tests
     - get: capi-ci
     - get: capi-ci-private
-    - get: capi-workspace
     - get: capi-release-tarball
       passed: [create-capi-release]
       trigger: true
@@ -888,7 +881,6 @@ jobs:
     - get: capi-bara-tests
     - get: capi-ci
     - get: capi-ci-private
-    - get: capi-workspace
     - get: capi-release-tarball
       passed: [create-capi-release]
       trigger: true
@@ -1023,7 +1015,6 @@ jobs:
     - get: runtime-ci
     - get: capi-ci
     - get: capi-ci-private
-    - get: capi-workspace
     - get: capi-release-tarball
       passed: [create-capi-release]
       trigger: true
@@ -1223,7 +1214,6 @@ jobs:
     - get: capi-bara-tests
     - get: capi-ci
     - get: capi-ci-private
-    - get: capi-workspace
     - get: capi-release-tarball
       passed: [create-capi-release]
       trigger: true
@@ -3440,7 +3430,6 @@ jobs:
     - get: cf-acceptance-tests
     - get: sync-integration-tests
     - get: capi-bara-tests
-    - get: capi-workspace
   - task: stemcell-upload
     file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
     input_mapping:
@@ -3566,7 +3555,6 @@ jobs:
     - get: cf-acceptance-tests
     - get: sync-integration-tests
     - get: capi-bara-tests
-    - get: capi-workspace
   - task: stemcell-upload
     file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
     input_mapping:

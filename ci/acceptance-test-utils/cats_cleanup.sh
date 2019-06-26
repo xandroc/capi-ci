@@ -23,9 +23,10 @@ echo "Logging in and setting up..."
 cf api $CF_API_TARGET --skip-ssl-validation
 cf auth admin "$CF_ADMIN_PASSWORD"
 
-echo "Running cats cleanup script"
-pushd "capi-workspace/scripts"
-  ./cats_cleanup
-popd
+echo "Deleting orphaned test resources"
+cf buildpacks | grep -E 'CATS|BARA|SMOKE|SITS' | awk 'NF { print $1 }' | xargs --no-run-if-empty -n 1 -P 8 cf delete-buildpack -f
+cf orgs | grep -E 'WATS|CATS|BARA|SMOKE|SITS' | grep -v persistent | awk 'NF { print $0 }' | xargs --no-run-if-empty -n 1 -P 8 cf delete-org -f
+cf quotas | grep -E 'WATS|CATS|BARA|SMOKE|SITS' | grep -v persistent | awk 'NF { print $1 }' | xargs --no-run-if-empty -n 1 -P 8 cf delete-quota -f
+cf service-brokers | grep -E 'WATS|CATS|BARA|SMOKE|SITS' | grep -v persistent | awk 'NF { print $1 }' | xargs --no-run-if-empty -n 1 -P 8 cf delete-service-broker -f
 
 echo "Success!"

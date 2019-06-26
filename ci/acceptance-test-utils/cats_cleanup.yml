@@ -9,7 +9,6 @@ image_resource:
 inputs:
   - name: capi-ci
   - name: capi-ci-private
-  - name: capi-workspace
 
 run:
   path: capi-ci/ci/acceptance-test-utils/cats_cleanup.sh
