@@ -2,9 +2,11 @@
   path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/cc/database_encryption
   value: &new_key
     keys:
-      encryption_key_0: '((cc_db_encryption_key))'
-      encryption_key_1: '((new_cc_db_encryption_key))'
-    current_key_label: 'encryption_key_1'
+      - encryption_key: '((cc_db_encryption_key))'
+        label: 'encryption_key_0'
+      - encryption_key: '((new_cc_db_encryption_key))'
+        label: 'encryption_key_1'
+        active: true
 
 - type: replace
   path: /instance_groups/name=cc-worker/jobs/name=cloud_controller_worker/properties/cc/database_encryption
