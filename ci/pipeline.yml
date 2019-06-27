@@ -2461,6 +2461,9 @@ jobs:
     params:
       BBL_STATE_DIR: "xena-mysql"
 
+  # TODO: We deploy the cf and rotate the ccdb encryption key twice,
+  # due to two formats of specifying encryption keys
+  # in the manifest
 - name: xena-mysql-rotate-ccdb-key
   serial: true
   serial_groups: [xena-mysql]
@@ -2505,6 +2508,9 @@ jobs:
         cf-deployment-operations/rotate-cc-database-key/add-database-encryption-keys.yml
         cf-deployment-operations/rotate-cc-database-key/change-current-database-encryption-key.yml
         cf-deployment-operations/rotate-cc-database-key/remove-old-key.yml
+        cf-deployment-operations/rotate-cc-database-key/add-database-encryption-keys-new-format.yml
+        cf-deployment-operations/rotate-cc-database-key/change-current-database-encryption-key-new-format.yml
+        cf-deployment-operations/rotate-cc-database-key/remove-old-key-new-format.yml
   - task: deploy
     file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
     input_mapping:
@@ -2577,6 +2583,80 @@ jobs:
         APP_ENV_VAR_NAME: transcendant
         APP_ENV_VAR_VALUE: butterfly
         BBL_STATE_DIR: xena-mysql
+  ## END OF OLD KEY FORMAT TESTS
+  - task: deploy
+    file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
+    input_mapping:
+      bbl-state: capi-ci-private
+      ops-files: collected-ops-files
+      vars-files: capi-ci-private
+    params:
+      BBL_STATE_DIR: xena-mysql
+      SYSTEM_DOMAIN: *xena-mysql-domain
+      OPS_FILES: |
+        skip-cert-verify.yml
+        base-ops-files/operations/bosh-lite.yml
+        base-ops-files/operations/backup-and-restore/enable-backup-restore.yml
+        capi-bbr-enable-bpm.yml
+        base-ops-files/operations/use-compiled-releases.yml
+        use-latest-capi.yml
+        scale-up-cloud-controller.yml
+        add-database-encryption-keys-new-format.yml
+        change-current-database-encryption-key-new-format.yml
+        base-ops-files/operations/use-pxc.yml
+  - task: seed-app-data # encrypt app env vars with changed database_encryption key/current_key_label
+    file: capi-ci/ci/cf/push-app.yml
+    params:
+      CF_API_URL: https://api.xena-mysql.capi.land
+      APP_NAME: mature-new
+      APP_ENV_VAR_NAME: transcendant
+      APP_ENV_VAR_VALUE: butterfly
+      BBL_STATE_DIR: xena-mysql
+  - task: rotate-db-encryption-key
+    file: cf-deployment-concourse-tasks/run-errand/task.yml
+    input_mapping:
+      bbl-state: capi-ci-private
+    params:
+      ERRAND_NAME: "rotate-cc-database-key"
+      BBL_STATE_DIR: xena-mysql
+  - task: deploy
+    file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
+    input_mapping:
+      bbl-state: capi-ci-private
+      ops-files: collected-ops-files
+      vars-files: capi-ci-private
+    params:
+      BBL_STATE_DIR: xena-mysql
+      SYSTEM_DOMAIN: *xena-mysql-domain
+      OPS_FILES: &xena-mysql-ops-files |
+        skip-cert-verify.yml
+        base-ops-files/operations/bosh-lite.yml
+        base-ops-files/operations/backup-and-restore/enable-backup-restore.yml
+        base-ops-files/operations/use-compiled-releases.yml
+        use-latest-capi.yml
+        scale-up-cloud-controller.yml
+        add-database-encryption-keys-new-format.yml
+        change-current-database-encryption-key-new-format.yml
+        remove-old-key-new-format.yml
+        base-ops-files/operations/use-pxc.yml
+  - in_parallel:
+    - task: verify-env-vars
+      file: capi-ci/ci/cf/verify-env-vars.yml
+      params:
+        CF_API_URL: https://api.xena-mysql.capi.land
+        APP_NAME: teenager
+        APP_ENV_VAR_NAME: pupa
+        APP_ENV_VAR_VALUE: chrysalis
+        BBL_STATE_DIR: xena-mysql
+    - task: verify-env-vars
+      file: capi-ci/ci/cf/verify-env-vars.yml
+      params:
+        CF_API_URL: https://api.xena-mysql.capi.land
+        APP_NAME: mature-new
+        APP_ENV_VAR_NAME: transcendant
+        APP_ENV_VAR_VALUE: butterfly
+        BBL_STATE_DIR: xena-mysql
+
 
 - name: rotate-certs-xena
   serial: true
