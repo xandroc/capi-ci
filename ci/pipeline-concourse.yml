@@ -147,8 +147,6 @@ jobs:
     params:
       source_file: ci-bbl-state/metadata
       manifest: capi-ci-private/ci/concourse.yml
-      ops_files:
-        - capi-ci/concourse-deployment-operations/gcp.yml
       skip_drain:
         - worker
       releases:
@@ -158,6 +156,3 @@ jobs:
         - bpm/*.tgz
       stemcells:
         - gcp-xenial-stemcell/*.tgz
-      vars:
-        ci_atc_certificate: ((ci_atc_certificate))
-        ci_atc_private_key: ((ci_atc_private_key))
