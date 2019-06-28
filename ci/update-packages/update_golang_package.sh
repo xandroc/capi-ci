@@ -19,4 +19,4 @@ git config user.email "cf-capi-eng+ci@pivotal.io"
 
 git add -A packages .final_builds
 git commit -n -m "Bump Golang to $new_go_version"
-cp -r $PWD/ ../updated-capi-release
+cp -r $PWD/. ../updated-capi-release
