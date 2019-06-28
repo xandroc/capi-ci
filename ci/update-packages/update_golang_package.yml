@@ -13,7 +13,7 @@ image_resource:
   type: docker-image
   source:
     repository: cloudfoundry/capi
-      tag: runtime-ci
+    tag: runtime-ci
 
 run:
   path: capi-ci/ci/update-packages/update_golang_package.sh
