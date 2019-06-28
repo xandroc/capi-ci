@@ -1202,7 +1202,7 @@ jobs:
         integration-config: updated-integration-configs
       params:
         NODES: 2
-        CONFIG_FILE_PATH: "mulan/cats_integration_config.json"
+        CONFIG_FILE_PATH: "mulan/baras_integration_config.json"
     - task: sync-integration-tests
       file: sync-integration-tests/concourse/task_with_credhub.yml
       input_mapping:
