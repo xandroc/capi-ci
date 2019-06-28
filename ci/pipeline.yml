@@ -77,6 +77,9 @@ groups:
   - rotate-certs-rey-gcs-storage
   - rotate-certs-ripley
   - rotate-certs-xena
+- name: bump-dependencies
+  jobs:
+    - autobump-golang-package
 
 resource_types:
 - name: slack-notification
@@ -294,6 +297,13 @@ resources:
     repository: capi-release
     drafts: false
     access_token: ((github_access_token))
+
+- name: golang-release
+  type: git
+  source:
+    branch: master
+    uri: git@github.com:bosh-packages/golang-release
+    tag_filter: v*
 
 - name: cloud_controller_ng
   type: git
@@ -543,6 +553,21 @@ resources:
     uri: https://github.com/cloudfoundry-incubator/disaster-recovery-acceptance-tests
 
 jobs:
+- name: autobump-golang-package
+  plan:
+    - aggregate:
+        - get: capi-ci
+        - get: capi-ci-private
+        - get: capi-release
+          resource: capi-release-develop
+        - get: golang-release
+          trigger: true
+    - task: update-golang-package
+      file: capi-ci/ci/update-packages/update_golang_package.yml
+    - put: capi-release-develop
+      params:
+        repository: updated-capi-release
+
 - name: cc-unit-tests
   plan:
   - in_parallel:

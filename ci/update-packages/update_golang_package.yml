@@ -1,0 +1,19 @@
+---
+platform: linux
+
+inputs:
+  - name: capi-ci
+  - name: capi-ci-private
+  - name: capi-release
+  - name: golang-release
+outputs:
+  - name: updated-capi-release
+
+image_resource:
+  type: docker-image
+  source:
+    repository: cloudfoundry/capi
+      tag: runtime-ci
+
+run:
+  path: capi-ci/ci/update-packages/update_golang_package.sh
