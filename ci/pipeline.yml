@@ -302,6 +302,7 @@ resources:
   type: git
   source:
     branch: master
+    private_key: ((private_key))
     uri: git@github.com:bosh-packages/golang-release
     tag_filter: v*
 
@@ -555,18 +556,18 @@ resources:
 jobs:
 - name: autobump-golang-package
   plan:
-    - aggregate:
-        - get: capi-ci
-        - get: capi-ci-private
-        - get: capi-release
-          resource: capi-release-develop
-        - get: golang-release
-          trigger: true
-    - task: update-golang-package
-      file: capi-ci/ci/update-packages/update_golang_package.yml
-    - put: capi-release-develop
-      params:
-        repository: updated-capi-release
+  - in_parallel:
+      - get: capi-ci
+      - get: capi-ci-private
+      - get: capi-release
+        resource: capi-release-develop
+      - get: golang-release
+        trigger: true
+  - task: update-golang-package
+    file: capi-ci/ci/update-packages/update_golang_package.yml
+  - put: capi-release-develop
+    params:
+      repository: updated-capi-release
 
 - name: cc-unit-tests
   plan:
