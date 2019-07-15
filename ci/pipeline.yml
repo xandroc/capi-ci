@@ -1166,6 +1166,7 @@ jobs:
         disable-credhub-interpolate-service-bindings.yml
         log-all-sequel-activity.yml
         disable-uaa-get-requests.yml
+        disable-uaa-tls.yml
         enable-cef-security-event-logging.yml
   - task: updated-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
@@ -1305,6 +1306,7 @@ jobs:
         base-ops-files/operations/experimental/enable-tls-cloud-controller-postgres.yml
         log-all-sequel-activity.yml
         disable-uaa-get-requests.yml
+        disable-uaa-tls.yml
         base-ops-files/operations/bits-service/use-bits-service.yml
   - task: updated-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
