@@ -1142,7 +1142,6 @@ jobs:
         cf-deployment-operations/disable-credhub-interpolate-service-bindings.yml
         cf-deployment-operations/log-all-sequel-activity.yml
         cf-deployment-operations/temporary/disable-uaa-get-requests.yml
-        cf-deployment-operations/temporary/disable-uaa-tls.yml
         cf-deployment-operations/enable-cef-security-event-logging.yml
   - task: deploy
     file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
@@ -1282,7 +1281,6 @@ jobs:
         cf-deployment-operations/performance/scale-generic-worker-processes.yml
         cf-deployment-operations/log-all-sequel-activity.yml
         cf-deployment-operations/temporary/disable-uaa-get-requests.yml
-        cf-deployment-operations/temporary/disable-uaa-tls.yml
   - task: deploy
     file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
     input_mapping:
