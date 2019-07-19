@@ -3323,6 +3323,20 @@ jobs:
       params:
         repository: updated-integration-configs
         rebase: true
+  - task: updated-baras-integration-configs
+    file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
+    input_mapping:
+      bbl-state: capi-ci-private
+      integration-configs: updated-integration-configs
+    params:
+      BBL_STATE_DIR: rey-gcs-storage
+      CATS_INTEGRATION_CONFIG_FILE: "rey-gcs-storage/baras_integration_config.json"
+      SYSTEM_DOMAIN: *rey-gcs-storage-domain
+    ensure:
+      put: rey-gcs-storage-integration-configs
+      params:
+        repository: updated-integration-configs
+        rebase: true
   - in_parallel:
     - task: acceptance-tests
       file: cf-deployment-concourse-tasks/run-cats/task.yml
