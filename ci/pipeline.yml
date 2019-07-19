@@ -1180,6 +1180,20 @@ jobs:
       params:
         repository: updated-integration-configs
         rebase: true
+  - task: updated-baras-integration-configs
+    file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
+    input_mapping:
+      bbl-state: capi-ci-private
+      integration-configs: updated-integration-configs
+    params:
+      BBL_STATE_DIR: "mulan"
+      CATS_INTEGRATION_CONFIG_FILE: "mulan/baras_integration_config.json"
+      SYSTEM_DOMAIN: *mulan-domain
+    ensure:
+      put: mulan-integration-configs
+      params:
+        repository: updated-integration-configs
+        rebase: true
   - task: enable-feature-flags
     file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
     input_mapping:
@@ -1318,6 +1332,20 @@ jobs:
       params:
         repository: updated-integration-configs
         rebase: true
+  - task: updated-baras-integration-configs
+    file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
+    input_mapping:
+      bbl-state: capi-ci-private
+      integration-configs: updated-integration-configs
+    params:
+      BBL_STATE_DIR: "buffy"
+      CATS_INTEGRATION_CONFIG_FILE: "buffy/baras_integration_config.json"
+      SYSTEM_DOMAIN: *buffy-domain
+    ensure:
+      put: buffy-integration-configs
+      params:
+        repository: updated-integration-configs
+        rebase: true
   - task: enable-feature-flags
     file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
     input_mapping:
@@ -1445,6 +1473,20 @@ jobs:
       bbl-state: ripley-bbl-state
     params:
       CATS_INTEGRATION_CONFIG_FILE: "ripley/cats_integration_config.json"
+      SYSTEM_DOMAIN: *ripley-domain
+      BBL_STATE_DIR: "ripley"
+    ensure:
+      put: ripley-integration-configs
+      params:
+        repository: updated-integration-configs
+        rebase: true
+  - task: updated-baras-integration-configs
+    file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
+    input_mapping:
+      bbl-state: capi-ci-private
+      integration-configs: updated-integration-configs
+    params:
+      CATS_INTEGRATION_CONFIG_FILE: "ripley/baras_integration_config.json"
       SYSTEM_DOMAIN: *ripley-domain
       BBL_STATE_DIR: "ripley"
     ensure:
@@ -1690,6 +1732,20 @@ jobs:
       integration-configs: elsa-integration-configs
     params:
       CATS_INTEGRATION_CONFIG_FILE: "elsa/cats_integration_config.json"
+      BBL_STATE_DIR: elsa
+      SYSTEM_DOMAIN: *elsa-domain
+    ensure:
+      put: elsa-integration-configs
+      params:
+        repository: updated-integration-configs
+        rebase: true
+  - task: updated-baras-integration-configs
+    file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
+    input_mapping:
+      bbl-state: capi-ci-private
+      integration-configs: updated-integration-configs
+    params:
+      CATS_INTEGRATION_CONFIG_FILE: "elsa/baras_integration_config.json"
       BBL_STATE_DIR: elsa
       SYSTEM_DOMAIN: *elsa-domain
     ensure:
@@ -3040,6 +3096,20 @@ jobs:
     params:
       BBL_STATE_DIR: leia-azure-storage
       CATS_INTEGRATION_CONFIG_FILE: "leia-azure-storage/cats_integration_config.json"
+      SYSTEM_DOMAIN: *leia-azure-storage-domain
+    ensure:
+      put: leia-azure-storage-integration-configs
+      params:
+        repository: updated-integration-configs
+        rebase: true
+  - task: updated-baras-integration-configs
+    file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
+    input_mapping:
+      bbl-state: capi-ci-private
+      integration-configs: updated-integration-configs
+    params:
+      BBL_STATE_DIR: leia-azure-storage
+      CATS_INTEGRATION_CONFIG_FILE: "leia-azure-storage/baras_integration_config.json"
       SYSTEM_DOMAIN: *leia-azure-storage-domain
     ensure:
       put: leia-azure-storage-integration-configs
