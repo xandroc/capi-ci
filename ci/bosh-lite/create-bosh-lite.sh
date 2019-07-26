@@ -39,6 +39,7 @@ pushd "${state_dir}" > /dev/null
     -o "${deployment_repo}/external-ip-not-recommended-uaa.yml" \
     -o "${deployment_repo}/credhub.yml" \
     -o "${script_dir}/use-external-ip-credhub.yml" ${additional_args} \
+    -o "${script_dir}/use-ssd-disks.yml" \
     -v director_name="bosh-lite" \
     -v gcp_credentials_json="'${GCP_JSON_KEY}'" \
     -l "${terraform_dir}/metadata" \
