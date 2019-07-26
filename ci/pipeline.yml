@@ -1231,10 +1231,10 @@ jobs:
         BBL_STATE_DIR: mulan
         USE_CREDHUB: true
         RUN_REVISIONS_TESTS: true
-    - task: run-blobstore-benchmarks
-      file: capi-ci/ci/benchmarks/run-blobstore-benchmarks.yml
-      params:
-        BBL_STATE_DIR: mulan
+  - task: run-blobstore-benchmarks
+    file: capi-ci/ci/benchmarks/run-blobstore-benchmarks.yml
+    params:
+      BBL_STATE_DIR: mulan
   - task: cleanup-acceptance-test-leftovers
     file: capi-ci/ci/acceptance-test-utils/cats_cleanup.yml
     params:
@@ -1531,10 +1531,10 @@ jobs:
         BBL_STATE_DIR: ripley
         USE_CREDHUB: true
         RUN_REVISIONS_TESTS: true
-    - task: run-blobstore-benchmarks
-      file: capi-ci/ci/benchmarks/run-blobstore-benchmarks.yml
-      params:
-        BBL_STATE_DIR: ripley
+  - task: run-blobstore-benchmarks
+    file: capi-ci/ci/benchmarks/run-blobstore-benchmarks.yml
+    params:
+      BBL_STATE_DIR: ripley
   - task: cleanup-acceptance-test-leftovers
     file: capi-ci/ci/acceptance-test-utils/cats_cleanup.yml
     params:
@@ -1790,10 +1790,10 @@ jobs:
         BBL_STATE_DIR: elsa
         USE_CREDHUB: true
         RUN_REVISIONS_TESTS: true
-    - task: run-blobstore-benchmarks
-      file: capi-ci/ci/benchmarks/run-blobstore-benchmarks.yml
-      params:
-        BBL_STATE_DIR: elsa
+  - task: run-blobstore-benchmarks
+    file: capi-ci/ci/benchmarks/run-blobstore-benchmarks.yml
+    params:
+      BBL_STATE_DIR: elsa
   - task: cleanup-acceptance-test-leftovers
     file: capi-ci/ci/acceptance-test-utils/cats_cleanup.yml
     params:
@@ -3147,10 +3147,10 @@ jobs:
         BBL_STATE_DIR: leia-azure-storage
         USE_CREDHUB: true
         RUN_REVISIONS_TESTS: true
-    - task: run-blobstore-benchmarks
-      file: capi-ci/ci/benchmarks/run-blobstore-benchmarks.yml
-      params:
-        BBL_STATE_DIR: leia-azure-storage
+  - task: run-blobstore-benchmarks
+    file: capi-ci/ci/benchmarks/run-blobstore-benchmarks.yml
+    params:
+      BBL_STATE_DIR: leia-azure-storage
   - task: cleanup-acceptance-test-leftovers
     file: capi-ci/ci/acceptance-test-utils/cats_cleanup.yml
     params:
@@ -3440,10 +3440,10 @@ jobs:
         BBL_STATE_DIR: rey-gcs-storage
         USE_CREDHUB: true
         RUN_REVISIONS_TESTS: true
-    - task: run-blobstore-benchmarks
-      file: capi-ci/ci/benchmarks/run-blobstore-benchmarks.yml
-      params:
-        BBL_STATE_DIR: rey-gcs-storage
+  - task: run-blobstore-benchmarks
+    file: capi-ci/ci/benchmarks/run-blobstore-benchmarks.yml
+    params:
+      BBL_STATE_DIR: rey-gcs-storage
   - task: cleanup-acceptance-test-leftovers
     file: capi-ci/ci/acceptance-test-utils/cats_cleanup.yml
     params:
