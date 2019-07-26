@@ -3068,6 +3068,7 @@ jobs:
         cf-deployment-operations/use-latest-capi.yml
         cf-deployment-operations/enable-pxc-binlogging.yml
         cf-deployment-operations/log-cache-reduce-memory.yml
+        cf-deployment-operations/increase-route-registration-interval.yml
   - task: deploy
     file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
     input_mapping:
@@ -3087,6 +3088,7 @@ jobs:
         skip-cert-verify.yml
         enable-pxc-binlogging.yml
         log-cache-reduce-memory.yml
+        increase-route-registration-interval.yml
       VARS_FILES: leia-azure-storage/azure-storage-vars.yml
   - task: updated-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
@@ -3360,6 +3362,7 @@ jobs:
         cf-deployment-operations/skip-cert-verify.yml
         cf-deployment-operations/use-latest-capi.yml
         cf-deployment-operations/log-cache-reduce-memory.yml
+        cf-deployment-operations/increase-route-registration-interval.yml
   - task: deploy
     file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
     input_mapping:
@@ -3378,6 +3381,7 @@ jobs:
         skip-cert-verify.yml
         base-ops-files/operations/use-pxc.yml
         log-cache-reduce-memory.yml
+        increase-route-registration-interval.yml
       VARS_FILES: rey-gcs-storage/gcs-storage-vars.yml
   - task: updated-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
