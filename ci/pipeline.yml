@@ -25,12 +25,15 @@ groups:
   - xena-mysql-drats
   - xena-mysql-rotate-ccdb-key
   - gabrielle-postgres-drats
-  - leia-azure-storage
-  - rey-gcs-storage
   - ripley-nfs
   - bump-ci-passed
   - snyk-test
   - bump-bbs-protos
+- name: blobstore-fanout
+  jobs:
+  - create-capi-release
+  - leia-azure-storage
+  - rey-gcs-storage
 - name: ship-it
   jobs:
   - ship-it
@@ -2727,11 +2730,12 @@ jobs:
       passed: [create-capi-release]
     - get: capi-release-tarball
       passed: [create-capi-release]
-      trigger: true
     - get: leia-azure-storage-integration-configs
     - get: cf-acceptance-tests
     - get: sync-integration-tests
     - get: capi-bara-tests
+    - get: nightly
+      trigger: true
   - task: stemcell-upload
     file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
     input_mapping:
@@ -3022,11 +3026,12 @@ jobs:
       passed: [create-capi-release]
     - get: capi-release-tarball
       passed: [create-capi-release]
-      trigger: true
     - get: rey-gcs-storage-integration-configs
     - get: cf-acceptance-tests
     - get: sync-integration-tests
     - get: capi-bara-tests
+    - get: nightly
+      trigger: true
   - task: stemcell-upload
     file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
     input_mapping:
@@ -3359,8 +3364,6 @@ jobs:
       - xena-mysql-rotate-ccdb-key
       - gabrielle-postgres-drats
       - ripley-nfs
-      - leia-azure-storage
-      - rey-gcs-storage
     - get: capi-release
       resource: capi-release-develop
       passed:
@@ -3370,8 +3373,6 @@ jobs:
       - xena-mysql-rotate-ccdb-key
       - gabrielle-postgres-drats
       - ripley-nfs
-      - leia-azure-storage
-      - rey-gcs-storage
       trigger: true
     - get: capi-release-tarball
       passed:
@@ -3381,8 +3382,6 @@ jobs:
       - xena-mysql-rotate-ccdb-key
       - gabrielle-postgres-drats
       - ripley-nfs
-      - leia-azure-storage
-      - rey-gcs-storage
   - put: capi-release-ci-passed
     params:
       repository: capi-release
