@@ -2766,7 +2766,6 @@ jobs:
         cf-deployment-operations/enable-pxc-binlogging.yml
         cf-deployment-operations/log-cache-reduce-memory.yml
         cf-deployment-operations/increase-route-registration-interval.yml
-        cf-deployment-operations/temporary/disable-route-integrity.yml
   - task: deploy
     file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
     input_mapping:
@@ -3062,7 +3061,6 @@ jobs:
         cf-deployment-operations/use-latest-capi.yml
         cf-deployment-operations/log-cache-reduce-memory.yml
         cf-deployment-operations/increase-route-registration-interval.yml
-        cf-deployment-operations/temporary/disable-route-integrity.yml
   - task: deploy
     file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
     input_mapping:
