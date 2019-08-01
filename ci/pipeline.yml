@@ -2621,13 +2621,6 @@ jobs:
       params:
         repository: updated-bbl-state
         rebase: true
-  - task: delete-deployment
-    file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
-    input_mapping:
-      bbl-state: gabrielle-postgres-bbl-state
-    params:
-      BBL_STATE_DIR: gabrielle-postgres
-      IGNORE_ERRORS: true
 - name: update-bosh-leia-azure-storage
   serial: true
   serial_groups: [leia-azure-storage]
