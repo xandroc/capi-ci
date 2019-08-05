@@ -19,8 +19,8 @@ groups:
   - capi-release-template-tests
   - create-capi-release
   - bump-capi-release
-  - mulan-postgres-webdav-bridge
-  - elsa-mysql-s3-bypass
+  - mulan-postgres
+  - elsa-HA
   - kiki-back-compat-migrations
   - xena-mysql-drats
   - xena-mysql-rotate-ccdb-key
@@ -911,7 +911,7 @@ jobs:
       BBL_GCP_PROJECT_ID: ((elsa_gcp_project_id))
       BBL_GCP_ZONE: ((elsa_gcp_zone))
       BBL_GCP_REGION: ((elsa_gcp_region))
-      OPS_FILES: &elsa-mysql-s3-bypass-bbl-ops |
+      OPS_FILES: &elsa-HA-bbl-ops |
         base-ops-files/local-dns.yml
         increase-persistent-disk.yml
     ensure:
@@ -1008,7 +1008,7 @@ jobs:
     params:
       BBL_STATE_DIR: "kiki"
 
-- name: mulan-postgres-webdav-bridge
+- name: mulan-postgres
   serial: true
   serial_groups: [mulan]
   plan:
@@ -1356,7 +1356,7 @@ jobs:
       ENVIRONMENT: ripley
       ON_OR_OFF: on
 
-- name: elsa-mysql-s3-bypass
+- name: elsa-HA
   serial: true
   serial_groups: [elsa]
   plan:
@@ -3285,8 +3285,8 @@ jobs:
   - in_parallel:
     - get: cloud_controller_ng
       passed:
-      - elsa-mysql-s3-bypass
-      - mulan-postgres-webdav-bridge
+      - elsa-HA
+      - mulan-postgres
       - kiki-back-compat-migrations
       - xena-mysql-rotate-ccdb-key
       - gabrielle-postgres-drats
@@ -3294,8 +3294,8 @@ jobs:
     - get: capi-release
       resource: capi-release-develop
       passed:
-      - elsa-mysql-s3-bypass
-      - mulan-postgres-webdav-bridge
+      - elsa-HA
+      - mulan-postgres
       - kiki-back-compat-migrations
       - xena-mysql-rotate-ccdb-key
       - gabrielle-postgres-drats
@@ -3303,8 +3303,8 @@ jobs:
       trigger: true
     - get: capi-release-tarball
       passed:
-      - elsa-mysql-s3-bypass
-      - mulan-postgres-webdav-bridge
+      - elsa-HA
+      - mulan-postgres
       - kiki-back-compat-migrations
       - xena-mysql-rotate-ccdb-key
       - gabrielle-postgres-drats
