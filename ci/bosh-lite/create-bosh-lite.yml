@@ -21,3 +21,5 @@ run:
 params:
   GCP_JSON_KEY: ""
   GCP_INSTANCE_TYPE: ~
+  GCP_INSTANCE_RAM: ~
+  GCP_INSTANCE_CPU: ~

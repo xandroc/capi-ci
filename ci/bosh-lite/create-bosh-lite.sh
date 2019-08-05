@@ -25,6 +25,19 @@ if [ -n "${GCP_INSTANCE_TYPE}" ]; then
 EOD
 
   additional_args="-o ${script_dir}/custom-vm-size.yml"
+elif [ -n "${GCP_INSTANCE_RAM}" ] && [ -n "${GCP_INSTANCE_CPU}" ]; then
+  cat > ${script_dir}/custom-vm-size.yml << EOD
+---
+# Configure sizes for bosh-lite on gcp
+- type: replace
+  path: /resource_pools/name=vms/cloud_properties/ram
+  value: ${GCP_INSTANCE_RAM}
+- type: replace
+  path: /resource_pools/name=vms/cloud_properties/cpu
+  value: ${GCP_INSTANCE_CPU}
+EOD
+
+  additional_args="-o ${script_dir}/custom-vm-size.yml"
 fi
 
 pushd "${state_dir}" > /dev/null
