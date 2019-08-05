@@ -1181,7 +1181,6 @@ jobs:
     - get: ripley-integration-configs
     - get: cf-acceptance-tests
     - get: sync-integration-tests
-    - get: capi-bara-tests
     - get: gcp-xenial-stemcell
     - get: runtime-ci
     - get: capi-ci
@@ -1253,20 +1252,6 @@ jobs:
       params:
         repository: updated-integration-configs
         rebase: true
-  - task: updated-baras-integration-configs
-    file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
-    input_mapping:
-      bbl-state: capi-ci-private
-      integration-configs: updated-integration-configs
-    params:
-      CATS_INTEGRATION_CONFIG_FILE: "ripley/baras_integration_config.json"
-      SYSTEM_DOMAIN: *ripley-domain
-      BBL_STATE_DIR: "ripley"
-    ensure:
-      put: ripley-integration-configs
-      params:
-        repository: updated-integration-configs
-        rebase: true
   - task: enable-feature-flags
     file: cf-deployment-concourse-tasks/set-feature-flags/task.yml
     input_mapping:
@@ -1284,13 +1269,6 @@ jobs:
         NODES: 6
         CONFIG_FILE_PATH: "ripley/cats_integration_config.json"
         CAPTURE_LOGS: true
-    - task: capi-bara-tests
-      file: capi-ci/ci/baras/run-baras.yml
-      input_mapping:
-        integration-config: updated-integration-configs
-      params:
-        NODES: 2
-        CONFIG_FILE_PATH: "ripley/baras_integration_config.json"
     - task: sync-integration-tests
       file: sync-integration-tests/concourse/task_with_credhub.yml
       input_mapping:
@@ -2726,7 +2704,6 @@ jobs:
     - get: leia-azure-storage-integration-configs
     - get: cf-acceptance-tests
     - get: sync-integration-tests
-    - get: capi-bara-tests
     - get: nightly
       trigger: true
   - task: stemcell-upload
@@ -2794,20 +2771,6 @@ jobs:
       params:
         repository: updated-integration-configs
         rebase: true
-  - task: updated-baras-integration-configs
-    file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
-    input_mapping:
-      bbl-state: capi-ci-private
-      integration-configs: updated-integration-configs
-    params:
-      BBL_STATE_DIR: leia-azure-storage
-      CATS_INTEGRATION_CONFIG_FILE: "leia-azure-storage/baras_integration_config.json"
-      SYSTEM_DOMAIN: *leia-azure-storage-domain
-    ensure:
-      put: leia-azure-storage-integration-configs
-      params:
-        repository: updated-integration-configs
-        rebase: true
   - in_parallel:
     - task: acceptance-tests
       file: cf-deployment-concourse-tasks/run-cats/task.yml
@@ -2817,13 +2780,6 @@ jobs:
         NODES: 4
         CONFIG_FILE_PATH: "leia-azure-storage/cats_integration_config.json"
         CAPTURE_LOGS: true
-    - task: capi-bara-tests
-      file: capi-ci/ci/baras/run-baras.yml
-      input_mapping:
-        integration-config: updated-integration-configs
-      params:
-        NODES: 1
-        CONFIG_FILE_PATH: "leia-azure-storage/baras_integration_config.json"
     - task: sync-integration-tests
       file: sync-integration-tests/concourse/task_with_credhub.yml
       input_mapping:
@@ -3022,7 +2978,6 @@ jobs:
     - get: rey-gcs-storage-integration-configs
     - get: cf-acceptance-tests
     - get: sync-integration-tests
-    - get: capi-bara-tests
     - get: nightly
       trigger: true
   - task: stemcell-upload
@@ -3088,20 +3043,6 @@ jobs:
       params:
         repository: updated-integration-configs
         rebase: true
-  - task: updated-baras-integration-configs
-    file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
-    input_mapping:
-      bbl-state: capi-ci-private
-      integration-configs: updated-integration-configs
-    params:
-      BBL_STATE_DIR: rey-gcs-storage
-      CATS_INTEGRATION_CONFIG_FILE: "rey-gcs-storage/baras_integration_config.json"
-      SYSTEM_DOMAIN: *rey-gcs-storage-domain
-    ensure:
-      put: rey-gcs-storage-integration-configs
-      params:
-        repository: updated-integration-configs
-        rebase: true
   - in_parallel:
     - task: acceptance-tests
       file: cf-deployment-concourse-tasks/run-cats/task.yml
@@ -3111,13 +3052,6 @@ jobs:
         NODES: 4
         CONFIG_FILE_PATH: "rey-gcs-storage/cats_integration_config.json"
         CAPTURE_LOGS: true
-    - task: capi-bara-tests
-      file: capi-ci/ci/baras/run-baras.yml
-      input_mapping:
-        integration-config: updated-integration-configs
-      params:
-        NODES: 1
-        CONFIG_FILE_PATH: "rey-gcs-storage/baras_integration_config.json"
     - task: sync-integration-tests
       file: sync-integration-tests/concourse/task_with_credhub.yml
       input_mapping:
