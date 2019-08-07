@@ -1565,6 +1565,7 @@ jobs:
     - get: kiki-bbl-state
     - get: kiki-integration-configs
     - get: sync-integration-tests
+    - get: capi-bara-tests
     - get: capi-ci
     - get: capi-ci-private
     - get: capi-release
