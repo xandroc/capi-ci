@@ -2638,18 +2638,13 @@ jobs:
     params: &update-bosh-leia-params
       BBL_STATE_DIR: "leia-azure-storage"
       BBL_IAAS: "gcp"
-      BBL_CONFIG_DIR: "leia-azure-storage/bosh-lite-plan-patch"
       BBL_ENV_NAME: "leia-azure-storage"
       BBL_GCP_SERVICE_ACCOUNT_KEY: ((leia_gcp_json_key))
       BBL_GCP_PROJECT_ID: ((leia_gcp_project_id))
       BBL_GCP_ZONE: ((leia_gcp_zone))
       BBL_GCP_REGION: ((leia_gcp_region))
-      IS_BOSH_LITE: true
       SKIP_LB_CREATION: true
       OPS_FILES: |
-        base-ops-files/bosh-lite.yml
-        base-ops-files/bosh-lite-runc.yml
-        base-ops-files/gcp/bosh-lite-vm-type.yml
         increase-persistent-disk.yml
     ensure:
       put: leia-azure-storage-bbl-state
