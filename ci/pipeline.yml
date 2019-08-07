@@ -2637,6 +2637,9 @@ jobs:
       ops-files: collected-ops-files
     params: &update-bosh-leia-params
       BBL_STATE_DIR: "leia-azure-storage"
+      BBL_LB_CERT: "certs/load-balancer/server.crt"
+      BBL_LB_KEY: "certs/load-balancer/server.key"
+      LB_DOMAIN: *leia-azure-storage-domain
       BBL_IAAS: "gcp"
       BBL_ENV_NAME: "leia-azure-storage"
       BBL_GCP_SERVICE_ACCOUNT_KEY: ((leia_gcp_json_key))
@@ -2707,7 +2710,6 @@ jobs:
       bbl-state: capi-ci-private
     params:
       BBL_STATE_DIR: leia-azure-storage
-      INFRASTRUCTURE: bosh-lite
   - task: extract-bbl-environment
     file: capi-ci/ci/bbl-tasks/extract_bbl_environment.yml
     params:
