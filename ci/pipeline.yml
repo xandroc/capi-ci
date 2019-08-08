@@ -2723,6 +2723,7 @@ jobs:
         cf-deployment-operations/enable-pxc-binlogging.yml
         cf-deployment-operations/log-cache-reduce-memory.yml
         cf-deployment-operations/increase-route-registration-interval.yml
+        cf-deployment-operations/scale-to-one-az.yml
   - task: deploy
     file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
     input_mapping:
@@ -2737,6 +2738,7 @@ jobs:
         base-ops-files/operations/use-external-blobstore.yml
         base-ops-files/operations/use-azure-storage-blobstore.yml
         base-ops-files/operations/use-pxc.yml
+        scale-to-one-az.yml
         use-latest-capi.yml
         skip-cert-verify.yml
         enable-pxc-binlogging.yml
@@ -2976,6 +2978,7 @@ jobs:
         cf-deployment-operations/use-latest-capi.yml
         cf-deployment-operations/log-cache-reduce-memory.yml
         cf-deployment-operations/increase-route-registration-interval.yml
+        cf-deployment-operations/scale-to-one-az.yml
   - task: deploy
     file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
     input_mapping:
@@ -2989,6 +2992,7 @@ jobs:
         base-ops-files/operations/use-compiled-releases.yml
         base-ops-files/operations/use-external-blobstore.yml
         base-ops-files/operations/use-gcs-blobstore-service-account.yml
+        scale-to-one-az.yml
         use-latest-capi.yml
         skip-cert-verify.yml
         base-ops-files/operations/use-pxc.yml
