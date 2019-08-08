@@ -2646,7 +2646,6 @@ jobs:
       BBL_GCP_PROJECT_ID: ((leia_gcp_project_id))
       BBL_GCP_ZONE: ((leia_gcp_zone))
       BBL_GCP_REGION: ((leia_gcp_region))
-      SKIP_LB_CREATION: true
       OPS_FILES: |
         increase-persistent-disk.yml
     ensure:
@@ -2654,14 +2653,6 @@ jobs:
       params:
         repository: updated-bbl-state
         rebase: true
-  - task: update-cloud-config
-    file: capi-ci/ci/bosh/update_cloud_config.yml
-    input_mapping:
-      bbl-state: updated-bbl-state
-      cloud-config: cf-deployment
-    params:
-      BBL_STATE_DIR: "leia-azure-storage"
-      CLOUD_CONFIG_PATH: iaas-support/bosh-lite/cloud-config.yml
   - task: create-dns-record
     attempts: 5
     file: capi-ci/ci/bbl-tasks/create-dns-record.yml
@@ -2673,7 +2664,6 @@ jobs:
       GCP_DNS_SERVICE_ACCOUNT_KEY: ((dns_gcp_json_key))
       GCP_PROJECT_ID: ((dns_gcp_project_id))
       SHARED_DNS_ZONE_NAME: "capi-land"
-      IS_BOSH_LITE: true
   - task: run-bosh-cleanup
     file: capi-ci/ci/bbl-tasks/run-bosh-cleanup.yml
     input_mapping:
@@ -2743,7 +2733,6 @@ jobs:
       BBL_STATE_DIR: leia-azure-storage
       SYSTEM_DOMAIN: *leia-azure-storage-domain
       OPS_FILES: &leia-azure-storage-ops-files |
-        base-ops-files/operations/bosh-lite.yml
         base-ops-files/operations/use-compiled-releases.yml
         base-ops-files/operations/use-external-blobstore.yml
         base-ops-files/operations/use-azure-storage-blobstore.yml
@@ -2902,19 +2891,16 @@ jobs:
       ops-files: collected-ops-files
     params: &update-bosh-rey-gcs-storage-params
       BBL_STATE_DIR: "rey-gcs-storage"
+      BBL_LB_CERT: "certs/load-balancer/server.crt"
+      BBL_LB_KEY: "certs/load-balancer/server.key"
+      LB_DOMAIN: *rey-gcs-storage-domain
       BBL_IAAS: "gcp"
-      BBL_CONFIG_DIR: "rey-gcs-storage/bosh-lite-plan-patch"
       BBL_ENV_NAME: "rey-gcs-storage"
       BBL_GCP_SERVICE_ACCOUNT_KEY: ((rey_gcp_json_key))
       BBL_GCP_PROJECT_ID: ((rey_gcp_project_id))
       BBL_GCP_ZONE: ((rey_gcp_zone))
       BBL_GCP_REGION: ((rey_gcp_region))
-      IS_BOSH_LITE: true
-      SKIP_LB_CREATION: true
       OPS_FILES: |
-        base-ops-files/bosh-lite.yml
-        base-ops-files/bosh-lite-runc.yml
-        base-ops-files/gcp/bosh-lite-vm-type.yml
         increase-persistent-disk.yml
     ensure:
       put: rey-gcs-storage-bbl-state
@@ -2927,14 +2913,6 @@ jobs:
       capi-ci-private: updated-bbl-state
     params:
       ENV_NAME: rey-gcs-storage
-  - task: update-cloud-config
-    file: capi-ci/ci/bosh/update_cloud_config.yml
-    input_mapping:
-      bbl-state: updated-bbl-state
-      cloud-config: cf-deployment
-    params:
-      BBL_STATE_DIR: "rey-gcs-storage"
-      CLOUD_CONFIG_PATH: iaas-support/bosh-lite/cloud-config.yml
   - task: create-dns-record
     attempts: 5
     file: capi-ci/ci/bbl-tasks/create-dns-record.yml
@@ -2946,7 +2924,6 @@ jobs:
       GCP_DNS_SERVICE_ACCOUNT_KEY: ((dns_gcp_json_key))
       GCP_PROJECT_ID: ((dns_gcp_project_id))
       SHARED_DNS_ZONE_NAME: "capi-land"
-      IS_BOSH_LITE: true
   - task: run-bosh-cleanup
     file: capi-ci/ci/bbl-tasks/run-bosh-cleanup.yml
     input_mapping:
@@ -2977,13 +2954,6 @@ jobs:
     - get: sync-integration-tests
     - get: nightly
       trigger: true
-  - task: stemcell-upload
-    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
-    input_mapping:
-      bbl-state: capi-ci-private
-    params:
-      BBL_STATE_DIR: rey-gcs-storage
-      INFRASTRUCTURE: bosh-lite
   - task: extract-bbl-environment
     file: capi-ci/ci/bbl-tasks/extract_bbl_environment.yml
     params:
@@ -3016,7 +2986,6 @@ jobs:
       BBL_STATE_DIR: rey-gcs-storage
       SYSTEM_DOMAIN: *rey-gcs-storage-domain
       OPS_FILES: &rey-gcs-storage-ops-files |
-        base-ops-files/operations/bosh-lite.yml
         base-ops-files/operations/use-compiled-releases.yml
         base-ops-files/operations/use-external-blobstore.yml
         base-ops-files/operations/use-gcs-blobstore-service-account.yml
