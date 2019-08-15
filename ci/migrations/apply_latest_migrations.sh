@@ -60,10 +60,11 @@ download_cloud_controller_config() {
 
   #  Change config to use newest format for database (instead of database_parts:)
   #  TODO: Remove this after capi-release 1.88
+  new_config_path="${tmp_dir}/cloud_controller_ng2.yml"
   awk '!/database: \"post/' "${config_path}" | \
-    awk '{sub("database_parts:", "database:", $0); print}' > "${config_path}"
+    awk '{sub("database_parts:", "database:", $0); print}' > "${new_config_path}"
 
-  export CLOUD_CONTROLLER_NG_CONFIG="${config_path}"
+  export CLOUD_CONTROLLER_NG_CONFIG="${new_config_path}"
 }
 
 start_background_ssh_tunnel() {
