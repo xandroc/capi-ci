@@ -57,6 +57,12 @@ download_cloud_controller_config() {
   bosh -d "${BOSH_DEPLOYMENT_NAME}" scp \
    "${BOSH_API_INSTANCE}:/var/vcap/jobs/cloud_controller_ng/config/cloud_controller_ng.yml" \
    "${config_path}"
+
+  #  Change config to use newest format for database (instead of database_parts:)
+  #  TODO: Remove this after capi-release 1.88
+  awk '!/database: \"post/' "${config_path}" | \
+    awk '{sub("database_parts:", "database:", $0); print}' > "${config_path}"
+
   export CLOUD_CONTROLLER_NG_CONFIG="${config_path}"
 }
 
