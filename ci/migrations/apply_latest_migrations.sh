@@ -139,7 +139,6 @@ run_migrations() {
 cleanup() {
   echo "${green}Cleaning up...${reset}"
   kill_background_ssh_tunnel
-  rm -rf "${tmp_dir}"
   echo "${green}Finished cleanup.${reset}"
 }
 
