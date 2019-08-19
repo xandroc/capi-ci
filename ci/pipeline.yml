@@ -1476,6 +1476,8 @@ jobs:
       - capi-ci/cf-deployment-operations/seed-uaa-asg.yml
       # Enable log-cache
       - cf-deployment/operations/experimental/use-logcache-for-cloud-controller-app-stats.yml
+      # enable telemetry emissions
+      - capi-ci-private/elsa/telemetry.yml
   - task: updated-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
     input_mapping:
