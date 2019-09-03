@@ -371,6 +371,7 @@ resources:
     branch: master
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/cf-deployment-concourse-tasks.git
+    tag_filter: v*
 
 - name: cf-acceptance-tests
   type: git
