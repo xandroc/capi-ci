@@ -56,6 +56,7 @@ groups:
   - update-bosh-kiki
   - update-bosh-leia-azure-storage
   - update-bosh-mulan
+  - update-bosh-jean
   - update-bosh-rey-gcs-storage
   - update-bosh-ripley
   - update-bosh-xena-mysql
@@ -1006,6 +1007,73 @@ jobs:
       bbl-state: updated-bbl-state
     params:
       BBL_STATE_DIR: "kiki"
+
+- name: update-bosh-jean
+  serial: true
+  serial_groups: [mulan]
+  plan:
+  - in_parallel:
+    - get: cf-deployment-concourse-tasks
+      resource: cf-deployment-concourse-tasks
+    - get: mulan-bbl-state
+    - get: capi-ci
+    - get: capi-ci-private
+    - get: bosh-deployment
+    - get: weekly-sunday
+      trigger: true
+  - task: seed-capi-ci-private
+    file: capi-ci/ci/setup-environment/seed.yml
+    params:
+      ENVIRONMENT: jean
+      DOMAIN: &jean-domain "jean.capi.land"
+  - put: capi-ci-private
+    params:
+      repository: updated-capi-ci-private
+      rebase: true
+  - task: collect-ops-files
+    file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
+    input_mapping:
+      base-ops-files: bosh-deployment
+      new-ops-files: capi-ci
+  - task: update-bosh-jean
+    file: cf-deployment-concourse-tasks/bbl-up/task.yml
+    input_mapping:
+      bbl-state: updated-capi-ci-private
+      bbl-config: updated-capi-ci-private
+    params: &update-bosh-mulan-params
+      BBL_STATE_DIR: "jean"
+      BBL_IAAS: "gcp"
+      BBL_LB_CERT: "certs/load-balancer/server.crt"
+      BBL_LB_KEY: "certs/load-balancer/server.key"
+      LB_DOMAIN: *jean-domain
+      BBL_ENV_NAME: "jean"
+      BBL_GCP_SERVICE_ACCOUNT_KEY: ((jean_gcp_json_key))
+      BBL_GCP_PROJECT_ID: ((jean_gcp_project_id))
+      BBL_GCP_ZONE: ((jean_gcp_zone))
+      BBL_GCP_REGION: ((jean_gcp_region))
+    ensure:
+      put: mulan-bbl-state
+      params:
+        repository: updated-bbl-state
+        rebase: true
+  - task: create-dns-record
+    attempts: 5
+    file: capi-ci/ci/bbl-tasks/create-dns-record.yml
+    input_mapping:
+      bbl-state: updated-bbl-state
+    params:
+      BBL_STATE_DIR: "jean"
+      DNS_DOMAIN: *jean-domain
+      GCP_DNS_SERVICE_ACCOUNT_KEY: ((dns_gcp_json_key))
+      GCP_PROJECT_ID: ((dns_gcp_project_id))
+      SHARED_DNS_ZONE_NAME: "capi-land"
+  - task: run-bosh-cleanup
+    file: capi-ci/ci/bbl-tasks/run-bosh-cleanup.yml
+    input_mapping:
+      bbl-state: updated-bbl-state
+    params:
+      BBL_STATE_DIR: "jean"
+
 
 - name: mulan-postgres
   serial: true
