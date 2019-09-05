@@ -52,14 +52,14 @@ function write_load_balancer_certs() {
     mkdir -p "${lb_output_path}"
     pushd "${lb_output_path}"
       local cert_cn
-      cert_cn="_.${DOMAIN}"
+      cert_cn="*.${DOMAIN}"
       certstrap --depot-path "." init --passphrase '' --common-name "server-ca"
-      certstrap --depot-path "." request-cert --passphrase '' --common-name "${cert_cn}"
-      certstrap --depot-path "." sign --CA "server-ca" "${cert_cn}"
+      certstrap --depot-path "." request-cert --passphrase '' --common-name "${cert_cn}" --csr "$DOMAIN.csr" --key "${DOMAIN}.key"
+      certstrap --depot-path "." sign --CA "server-ca" "${DOMAIN}"
 
-      mv "${cert_cn}.csr" "server.csr"
-      mv "${cert_cn}.crt" "server.crt"
-      mv "${cert_cn}.key" "server.key"
+      mv "${DOMAIN}.csr" "server.csr"
+      mv "${DOMAIN}.crt" "server.crt"
+      mv "${DOMAIN}.key" "server.key"
     popd
   fi
 }
