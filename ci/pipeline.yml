@@ -20,6 +20,7 @@ groups:
   - create-capi-release
   - bump-capi-release
   - mulan-postgres
+  - jean-eirini
   - elsa-HA
   - kiki-back-compat-migrations
   - xena-mysql-drats
@@ -426,6 +427,19 @@ resources:
     branch: master
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/capi-ci-private.git
+
+
+# Jean resources
+- name: eirini-bosh-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry-community/eirini-bosh-release
+
+- name: bits-service-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry-incubator/bits-service-release
+
 
 # Ripley resources
 - name: ripley-bbl-state
@@ -1010,7 +1024,7 @@ jobs:
 
 - name: update-bosh-jean
   serial: true
-  serial_groups: [mulan]
+  serial_groups: [jean]
   plan:
   - in_parallel:
     - get: cf-deployment-concourse-tasks
@@ -1040,7 +1054,7 @@ jobs:
     input_mapping:
       bbl-state: updated-capi-ci-private
       bbl-config: updated-capi-ci-private
-    params: &update-bosh-mulan-params
+    params: &update-bosh-jean-params
       BBL_STATE_DIR: "jean"
       BBL_IAAS: "gcp"
       BBL_LB_CERT: "certs/load-balancer/server.crt"
@@ -1122,7 +1136,7 @@ jobs:
       base-ops-files: cf-deployment
       new-ops-files: capi-ci
     params:
-      NEW_OPS_FILES: &mulan-ops-to-collect |
+      NEW_OPS_FILES: &jean-ops-to-collect |
         cf-deployment-operations/skip-cert-verify.yml
         cf-deployment-operations/use-latest-capi.yml
         cf-deployment-operations/scale-up-cells.yml
@@ -1229,6 +1243,140 @@ jobs:
     params:
       CF_API_TARGET: *mulan-api-url
       BBL_STATE_DIR: mulan
+
+
+
+- name: jean-eirini
+  serial: true
+  serial_groups: [jean]
+  plan:
+  - in_parallel:
+    - get: cloud_controller_ng
+      passed: [create-capi-release]
+    - get: cf-deployment-concourse-tasks
+      resource: cf-deployment-concourse-tasks
+    - get: cf-deployment
+      resource: cf-deployment
+    - get: capi-release
+      resource: capi-release-develop
+      passed: [create-capi-release]
+    - get: mulan-bbl-state
+    - get: mulan-integration-configs
+    - get: cf-acceptance-tests
+    - get: capi-ci
+    - get: capi-ci-private
+    - get: capi-release-tarball
+      passed: [create-capi-release]
+      trigger: true
+    - get: eirini-bosh-release
+    - get: bits-service-release
+  - task: upload-capi-release-tarball
+    file: capi-ci/ci/bosh/upload-release.yml
+    input_mapping:
+      bbl-state: mulan-bbl-state
+      release-tarball: capi-release-tarball
+    params:
+      BBL_STATE_DIR: "jean"
+  - task: upload-eirni-release-tarball
+    file: capi-ci/ci/bosh/upload-release.yml
+    input_mapping:
+      bbl-state: mulan-bbl-state
+      release-tarball: eirini-bosh-release
+    params:
+      BBL_STATE_DIR: "jean"
+  - task: upload-bits-service-release-tarball
+    file: capi-ci/ci/bosh/upload-release.yml
+    input_mapping:
+      bbl-state: mulan-bbl-state
+      release-tarball: bits-service-release
+    params:
+      BBL_STATE_DIR: "jean"
+  - task: jean-stemcell-upload
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    input_mapping:
+      bbl-state: mulan-bbl-state
+    params:
+      BBL_STATE_DIR: "jean"
+  - task: extract-bbl-environment
+    file: capi-ci/ci/bbl-tasks/extract_bbl_environment.yml
+    params:
+      ENV_NAME: jean
+
+  - task: collect-ops-files
+    file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
+    input_mapping:
+      base-ops-files: cf-deployment
+      new-ops-files: capi-ci
+    params:
+      NEW_OPS_FILES: &jean-ops-to-collect |
+        cf-deployment-operations/skip-cert-verify.yml
+        cf-deployment-operations/use-latest-capi.yml
+        cf-deployment-operations/eirini/add-eirini.yml
+        cf-deployment-operations/eirini/hardcode-doppler-ip.yml
+        cf-deployment-operations/scale-up-cells.yml
+        cf-deployment-operations/performance/scale-generic-worker-processes.yml
+        cf-deployment-operations/seed-credhub-asg.yml
+        cf-deployment-operations/disable-credhub-interpolate-service-bindings.yml
+        cf-deployment-operations/log-all-sequel-activity.yml
+        cf-deployment-operations/temporary/disable-uaa-get-requests.yml
+        cf-deployment-operations/enable-cef-security-event-logging.yml
+  - task: deploy
+    file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
+    input_mapping:
+      bbl-state: capi-ci-private
+      ops-files: collected-ops-files
+      vars-files: capi-ci-private
+    params:
+      BBL_STATE_DIR: "jean"
+      SYSTEM_DOMAIN: *jean-domain
+      OPS_FILES: &jean-ops-files |
+        base-ops-files/operations/test/add-persistent-isolation-segment-diego-cell.yml
+        skip-cert-verify.yml
+        base-ops-files/operations/use-compiled-releases.yml
+        use-latest-capi.yml
+        base-ops-files/operations/bits-service/use-bits-service.yml
+        eirini/add-eirini.yml
+        eirini/hardcode-doppler-ip.yml
+        base-ops-files/operations/scale-to-one-az.yml
+        scale-up-cells.yml
+        scale-generic-worker-processes.yml
+        seed-credhub-asg.yml
+        disable-credhub-interpolate-service-bindings.yml
+        log-all-sequel-activity.yml
+        disable-uaa-get-requests.yml
+        enable-cef-security-event-logging.yml
+  - task: updated-integration-configs
+    file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
+    input_mapping:
+      bbl-state: mulan-bbl-state
+      integration-configs: mulan-integration-configs
+    params:
+      BBL_STATE_DIR: "jean"
+      CATS_INTEGRATION_CONFIG_FILE: "jean/cats_integration_config.json"
+      SYSTEM_DOMAIN: *jean-domain
+    ensure:
+      put: mulan-integration-configs
+      params:
+        repository: updated-integration-configs
+        rebase: true
+  - in_parallel:
+    - task: acceptance-tests
+      file: cf-deployment-concourse-tasks/run-cats/task.yml
+      input_mapping:
+        integration-config: updated-integration-configs
+      params:
+        NODES: 6
+        CONFIG_FILE_PATH: "jean/cats_integration_config.json"
+        CAPTURE_LOGS: true
+  - task: run-blobstore-benchmarks
+    file: capi-ci/ci/benchmarks/run-blobstore-benchmarks.yml
+    params:
+      BBL_STATE_DIR: jean
+  - task: cleanup-acceptance-test-leftovers
+    file: capi-ci/ci/acceptance-test-utils/cats_cleanup.yml
+    params:
+      CF_API_TARGET: https://api.jean.capi.land
+      BBL_STATE_DIR: jean
 
 - name: ripley-nfs
   serial: true
