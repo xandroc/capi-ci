@@ -1374,10 +1374,6 @@ jobs:
         NODES: 6
         CONFIG_FILE_PATH: "jean/cats_integration_config.json"
         CAPTURE_LOGS: true
-  - task: run-blobstore-benchmarks
-    file: capi-ci/ci/benchmarks/run-blobstore-benchmarks.yml
-    params:
-      BBL_STATE_DIR: jean
   - task: cleanup-acceptance-test-leftovers
     file: capi-ci/ci/acceptance-test-utils/cats_cleanup.yml
     params:
