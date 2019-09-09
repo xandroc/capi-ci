@@ -1,0 +1,24 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: cloudfoundry/capi
+    tag: bbl
+
+inputs:
+- name: capi-ci
+- name: capi-ci-private
+
+outputs:
+- name: updated-capi-ci-private
+
+run:
+  path: capi-ci/ci/bbl-tasks/delete-certs
+  args: ["cf-only"]
+
+
+params:
+  ENVIRONMENT: kiki # TODO: undefault
+

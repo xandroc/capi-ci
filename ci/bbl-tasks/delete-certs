@@ -37,7 +37,10 @@ cp -rf capi-ci-private/. ${updated_capi_ci_private}
 mkdir -p "${updated_capi_ci_private}/${ENVIRONMENT}"
 pushd "${updated_capi_ci_private}/${ENVIRONMENT}"
   delete_cf_certs
-  delete_bbl_certs
+  
+  if [ $1 != "cf-only" ]; then
+    delete_bbl_certs
+  fi
 
   commit_capi_ci_private
 popd
