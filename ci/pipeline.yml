@@ -778,7 +778,6 @@ jobs:
     input_mapping:
       bbl-state: updated-capi-ci-private
       bbl-config: updated-capi-ci-private
-      ops-files: collected-ops-files
     params: &update-bosh-mulan-params
       BBL_STATE_DIR: "mulan"
       BBL_IAAS: "gcp"
@@ -913,7 +912,6 @@ jobs:
     input_mapping:
       bbl-state: updated-capi-ci-private
       bbl-config: updated-capi-ci-private
-      ops-files: collected-ops-files
     params:
       BBL_STATE_DIR: "elsa"
       BBL_IAAS: "gcp"
@@ -1539,7 +1537,6 @@ jobs:
     input_mapping:
       bbl-state: updated-capi-ci-private
       bbl-config: updated-capi-ci-private
-      ops-files: collected-ops-files
     params: *update-bosh-ripley-params
     ensure:
       put: ripley-bbl-state
@@ -2233,7 +2230,6 @@ jobs:
     input_mapping:
       bbl-state: updated-capi-ci-private
       bbl-config: updated-capi-ci-private
-      ops-files: collected-ops-files
     params: *update-bosh-arya-params
     ensure:
       put: arya-bbl-state
@@ -2279,7 +2275,6 @@ jobs:
     input_mapping:
       bbl-state: updated-capi-ci-private
       bbl-config: updated-capi-ci-private
-      ops-files: collected-ops-files
     params: *update-bosh-mulan-params
     ensure:
       put: mulan-bbl-state
@@ -2338,7 +2333,6 @@ jobs:
     input_mapping:
       bbl-state: updated-capi-ci-private
       bbl-config: updated-capi-ci-private
-      ops-files: collected-ops-files
     params: *update-bosh-kiki-params
     ensure:
       put: kiki-bbl-state
@@ -2381,7 +2375,6 @@ jobs:
     input_mapping:
       bbl-state: updated-capi-ci-private
       bbl-config: updated-capi-ci-private
-      ops-files: collected-ops-files
     params: &update-bosh-xena-mysql-params
       BBL_STATE_DIR: "xena-mysql"
       BBL_IAAS: "gcp"
@@ -2471,7 +2464,6 @@ jobs:
     input_mapping:
       bbl-state: updated-capi-ci-private
       bbl-config: updated-capi-ci-private
-      ops-files: collected-ops-files
     params: &update-bosh-gabrielle-params
       BBL_STATE_DIR: "gabrielle-postgres"
       BBL_IAAS: "gcp"
@@ -2550,7 +2542,6 @@ jobs:
     input_mapping:
       bbl-state: updated-capi-ci-private
       bbl-config: updated-capi-ci-private
-      ops-files: collected-ops-files
     params: *update-bosh-gabrielle-params
     ensure:
       put: gabrielle-postgres-bbl-state
@@ -2592,7 +2583,6 @@ jobs:
     input_mapping:
       bbl-state: updated-capi-ci-private
       bbl-config: updated-capi-ci-private
-      ops-files: collected-ops-files
     params: &update-bosh-leia-params
       BBL_STATE_DIR: "leia-azure-storage"
       BBL_LB_CERT: "certs/load-balancer/server.crt"
@@ -2777,7 +2767,6 @@ jobs:
     input_mapping:
       bbl-state: updated-capi-ci-private
       bbl-config: updated-capi-ci-private
-      ops-files: collected-ops-files
     params: *update-bosh-leia-params
     ensure:
       put: leia-azure-storage-bbl-state
@@ -2847,7 +2836,6 @@ jobs:
     input_mapping:
       bbl-state: updated-capi-ci-private
       bbl-config: updated-capi-ci-private
-      ops-files: collected-ops-files
     params: &update-bosh-rey-gcs-storage-params
       BBL_STATE_DIR: "rey-gcs-storage"
       BBL_LB_CERT: "certs/load-balancer/server.crt"
@@ -3031,7 +3019,6 @@ jobs:
     input_mapping:
       bbl-state: updated-capi-ci-private
       bbl-config: updated-capi-ci-private
-      ops-files: collected-ops-files
     params: *update-bosh-rey-gcs-storage-params
     ensure:
       put: rey-gcs-storage-bbl-state
@@ -3525,7 +3512,6 @@ jobs:
     input_mapping:
       bbl-state: updated-capi-ci-private
       bbl-config: updated-capi-ci-private
-      ops-files: collected-ops-files
     params: *update-bosh-xena-mysql-params
     ensure:
       put: xena-mysql-bbl-state
