@@ -75,6 +75,7 @@ groups:
   - rotate-certs-kiki
   - rotate-certs-leia-azure-storage
   - rotate-certs-mulan
+  - rotate-certs-jean
   - rotate-certs-rey-gcs-storage
   - rotate-certs-ripley
   - rotate-certs-xena
@@ -2306,6 +2307,69 @@ jobs:
       capi-ci-private: updated-bbl-state
     params:
       ENVIRONMENT: mulan
+      ON_OR_OFF: on
+
+- name: rotate-certs-jean
+  serial: true
+  serial_groups: [jean]
+  plan:
+  - in_parallel:
+    - get: mulan-bbl-state
+    - get: capi-ci-private
+    - get: capi-ci
+    - get: cf-deployment-concourse-tasks
+    - get: cf-deployment
+    - get: thirtyfirstly
+      trigger: true
+  - task: disable-resurrection
+    file: capi-ci/ci/bbl-tasks/update-resurrection.yml
+    params:
+      ENVIRONMENT: jean
+      ON_OR_OFF: off
+  - task: delete-certs
+    file: capi-ci/ci/bbl-tasks/delete-certs.yml
+    params:
+      ENVIRONMENT: jean
+  - put: capi-ci-private
+    params:
+      repository: updated-capi-ci-private
+      rebase: true
+  - task: update-bosh-jean
+    file: cf-deployment-concourse-tasks/bbl-up/task.yml
+    input_mapping:
+      bbl-state: updated-capi-ci-private
+      bbl-config: updated-capi-ci-private
+    params: *update-bosh-jean-params
+    ensure:
+      put: mulan-bbl-state
+      params:
+        repository: updated-bbl-state
+        rebase: true
+  - task: collect-ops-files
+    file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
+    input_mapping:
+      base-ops-files: cf-deployment
+      new-ops-files: capi-ci
+    params:
+      NEW_OPS_FILES: *jean-ops-to-collect
+  - task: deploy
+    file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
+    input_mapping:
+      bbl-state: updated-bbl-state
+      ops-files: collected-ops-files
+      vars-files: capi-ci-private
+    params:
+      BBL_STATE_DIR: jean
+      SYSTEM_DOMAIN: *jean-domain
+      OPS_FILES: *jean-ops-files
+      BOSH_DEPLOY_ARGS: '--recreate --fix'
+    attempts: 2 # hack around deploy not working due to https://www.pivotaltracker.com/story/show/165591078
+  - task: enable-resurrection
+    file: capi-ci/ci/bbl-tasks/update-resurrection.yml
+    input_mapping:
+      capi-ci-private: updated-bbl-state
+    params:
+      ENVIRONMENT: jean
       ON_OR_OFF: on
 
 - name: rotate-certs-kiki
