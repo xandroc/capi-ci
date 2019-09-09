@@ -1136,7 +1136,7 @@ jobs:
       base-ops-files: cf-deployment
       new-ops-files: capi-ci
     params:
-      NEW_OPS_FILES: &jean-ops-to-collect |
+      NEW_OPS_FILES: &mulan-ops-to-collect |
         cf-deployment-operations/skip-cert-verify.yml
         cf-deployment-operations/use-latest-capi.yml
         cf-deployment-operations/scale-up-cells.yml
@@ -1301,7 +1301,6 @@ jobs:
     file: capi-ci/ci/bbl-tasks/extract_bbl_environment.yml
     params:
       ENV_NAME: jean
-
   - task: collect-ops-files
     file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
     input_mapping:
@@ -1335,8 +1334,8 @@ jobs:
         base-ops-files/operations/use-compiled-releases.yml
         use-latest-capi.yml
         base-ops-files/operations/bits-service/use-bits-service.yml
-        eirini/add-eirini.yml
-        eirini/hardcode-doppler-ip.yml
+        add-eirini.yml
+        hardcode-doppler-ip.yml
         base-ops-files/operations/scale-to-one-az.yml
         scale-up-cells.yml
         scale-generic-worker-processes.yml
@@ -1345,6 +1344,13 @@ jobs:
         log-all-sequel-activity.yml
         disable-uaa-get-requests.yml
         enable-cef-security-event-logging.yml
+  - task: configure-eirini-bosh
+    file: cf-deployment-concourse-tasks/run-errand/task.yml
+    input_mapping:
+      bbl-state: capi-ci-private
+    params:
+      ERRAND_NAME: configure-eirini-bosh
+      BBL_STATE_DIR: jean
   - task: updated-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
     input_mapping:
