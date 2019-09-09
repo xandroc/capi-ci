@@ -1028,7 +1028,6 @@ jobs:
   - in_parallel:
     - get: cf-deployment-concourse-tasks
       resource: cf-deployment-concourse-tasks
-    - get: mulan-bbl-state
     - get: capi-ci
     - get: capi-ci-private
     - get: bosh-deployment
@@ -1065,7 +1064,7 @@ jobs:
       BBL_GCP_ZONE: ((jean_gcp_zone))
       BBL_GCP_REGION: ((jean_gcp_region))
     ensure:
-      put: mulan-bbl-state
+      put: capi-ci-private
       params:
         repository: updated-bbl-state
         rebase: true
@@ -1156,6 +1155,7 @@ jobs:
       SYSTEM_DOMAIN: *mulan-domain
       OPS_FILES: &mulan-ops-files |
         base-ops-files/operations/test/add-persistent-isolation-segment-diego-cell.yml
+        base-ops-files/operations/use-compiled-releases.yml
         skip-cert-verify.yml
         use-latest-capi.yml
         base-ops-files/operations/scale-to-one-az.yml
@@ -1259,8 +1259,6 @@ jobs:
     - get: capi-release
       resource: capi-release-develop
       passed: [create-capi-release]
-    - get: mulan-bbl-state
-    - get: mulan-integration-configs
     - get: cf-acceptance-tests
     - get: capi-ci
     - get: capi-ci-private
@@ -1272,28 +1270,28 @@ jobs:
   - task: upload-capi-release-tarball
     file: capi-ci/ci/bosh/upload-release.yml
     input_mapping:
-      bbl-state: mulan-bbl-state
+      bbl-state: capi-ci-private
       release-tarball: capi-release-tarball
     params:
       BBL_STATE_DIR: "jean"
-  - task: upload-eirni-release-tarball
+  - task: upload-eirini-release-tarball
     file: capi-ci/ci/bosh/upload-release.yml
     input_mapping:
-      bbl-state: mulan-bbl-state
+      bbl-state: capi-ci-private
       release-tarball: eirini-bosh-release
     params:
       BBL_STATE_DIR: "jean"
   - task: upload-bits-service-release-tarball
     file: capi-ci/ci/bosh/upload-release.yml
     input_mapping:
-      bbl-state: mulan-bbl-state
+      bbl-state: capi-ci-private
       release-tarball: bits-service-release
     params:
       BBL_STATE_DIR: "jean"
   - task: jean-stemcell-upload
     file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
     input_mapping:
-      bbl-state: mulan-bbl-state
+      bbl-state: capi-ci-private
     params:
       BBL_STATE_DIR: "jean"
   - task: extract-bbl-environment
@@ -1353,14 +1351,14 @@ jobs:
   - task: updated-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
     input_mapping:
-      bbl-state: mulan-bbl-state
-      integration-configs: mulan-integration-configs
+      bbl-state: capi-ci-private
+      integration-configs: capi-ci-private
     params:
       BBL_STATE_DIR: "jean"
       CATS_INTEGRATION_CONFIG_FILE: "jean/cats_integration_config.json"
       SYSTEM_DOMAIN: *jean-domain
     ensure:
-      put: mulan-integration-configs
+      put: capi-ci-private
       params:
         repository: updated-integration-configs
         rebase: true
@@ -2314,7 +2312,6 @@ jobs:
   serial_groups: [jean]
   plan:
   - in_parallel:
-    - get: mulan-bbl-state
     - get: capi-ci-private
     - get: capi-ci
     - get: cf-deployment-concourse-tasks
@@ -2341,7 +2338,7 @@ jobs:
       bbl-config: updated-capi-ci-private
     params: *update-bosh-jean-params
     ensure:
-      put: mulan-bbl-state
+      put: capi-ci-private
       params:
         repository: updated-bbl-state
         rebase: true
