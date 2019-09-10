@@ -18,4 +18,4 @@ run:
   path: capi-ci/ci/bbl-tasks/delete-certs
 
 params:
-  ENVIRONMENT: leia-azure-storage # TODO: undefault
+  ENVIRONMENT:

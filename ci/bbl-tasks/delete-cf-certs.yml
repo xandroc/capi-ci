@@ -20,5 +20,4 @@ run:
 
 
 params:
-  ENVIRONMENT: kiki # TODO: undefault
-
+  ENVIRONMENT:
