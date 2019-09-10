@@ -1806,6 +1806,8 @@ jobs:
       release-tarball: capi-release-tarball
     params:
       BBL_STATE_DIR: "kiki"
+  - task: delete-cf-certs
+    file: capi-ci/ci/bbl-tasks/delete-cf-certs.yml
   - task: delete-deployment
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
@@ -1903,6 +1905,8 @@ jobs:
         BBL_STATE_DIR: kiki
         USE_CREDHUB: true
         RUN_REVISIONS_TESTS: false
+  - task: delete-cf-certs
+    file: capi-ci/ci/bbl-tasks/delete-cf-certs.yml
   - task: delete-deployment
     file: cf-deployment-concourse-tasks/bosh-delete-deployment/task.yml
     input_mapping:
