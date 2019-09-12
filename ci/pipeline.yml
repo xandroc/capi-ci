@@ -3269,6 +3269,7 @@ jobs:
       - xena-mysql-drats
       - gabrielle-postgres-drats
       - ripley-nfs
+      - jean-eirini
     - get: capi-release
       resource: capi-release-develop
       passed:
@@ -3278,6 +3279,7 @@ jobs:
       - xena-mysql-drats
       - gabrielle-postgres-drats
       - ripley-nfs
+      - jean-eirini
       trigger: true
     - get: capi-release-tarball
       passed:
@@ -3287,6 +3289,7 @@ jobs:
       - xena-mysql-drats
       - gabrielle-postgres-drats
       - ripley-nfs
+      - jean-eirini
   - put: capi-release-ci-passed
     params:
       repository: capi-release
