@@ -1451,7 +1451,6 @@ jobs:
         use-nfs-blobstore.yml
         skip-cert-verify.yml
         disable-uaa-get-requests.yml
-        base-ops-files/operations/use-pxc.yml
   - task: updated-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
     input_mapping:
@@ -1684,7 +1683,6 @@ jobs:
       - capi-ci/cf-deployment-operations/seed-credhub-asg.yml
       # Use clustered PXC MySQL as our Database
       - cf-deployment/operations/scale-database-cluster.yml
-      - cf-deployment/operations/use-pxc.yml
       # Credhub requires UAA auth so we must allow containers to talk to UAA
       - capi-ci/cf-deployment-operations/seed-uaa-asg.yml
       # Enable log-cache
@@ -2749,7 +2747,6 @@ jobs:
         base-ops-files/operations/use-compiled-releases.yml
         base-ops-files/operations/use-external-blobstore.yml
         base-ops-files/operations/use-azure-storage-blobstore.yml
-        base-ops-files/operations/use-pxc.yml
         base-ops-files/operations/scale-to-one-az.yml
         use-latest-capi.yml
         skip-cert-verify.yml
@@ -3004,7 +3001,6 @@ jobs:
         base-ops-files/operations/scale-to-one-az.yml
         use-latest-capi.yml
         skip-cert-verify.yml
-        base-ops-files/operations/use-pxc.yml
         log-cache-reduce-memory.yml
         increase-route-registration-interval.yml
       VARS_FILES: rey-gcs-storage/gcs-storage-vars.yml
@@ -3365,7 +3361,6 @@ jobs:
         base-ops-files/operations/use-compiled-releases.yml
         use-latest-capi.yml
         scale-up-cloud-controller.yml
-        base-ops-files/operations/use-pxc.yml
   - task: extract-bbl-environment
     file: capi-ci/ci/bbl-tasks/extract_bbl_environment.yml
     params:
@@ -3423,7 +3418,6 @@ jobs:
         scale-up-cloud-controller.yml
         add-database-encryption-keys.yml
         change-current-database-encryption-key.yml
-        base-ops-files/operations/use-pxc.yml
   - task: seed-app-data # encrypt app env vars with changed database_encryption key/current_key_label
     file: capi-ci/ci/cf/push-app.yml
     params:
@@ -3458,7 +3452,6 @@ jobs:
         add-database-encryption-keys.yml
         change-current-database-encryption-key.yml
         remove-old-key.yml
-        base-ops-files/operations/use-pxc.yml
   - in_parallel:
     - task: verify-env-vars
       file: capi-ci/ci/cf/verify-env-vars.yml
@@ -3496,7 +3489,6 @@ jobs:
         scale-up-cloud-controller.yml
         add-database-encryption-keys-new-format.yml
         change-current-database-encryption-key-new-format.yml
-        base-ops-files/operations/use-pxc.yml
   - task: seed-app-data # encrypt app env vars with changed database_encryption key/current_key_label
     file: capi-ci/ci/cf/push-app.yml
     params:
@@ -3531,7 +3523,6 @@ jobs:
         add-database-encryption-keys-new-format.yml
         change-current-database-encryption-key-new-format.yml
         remove-old-key-new-format.yml
-        base-ops-files/operations/use-pxc.yml
   - in_parallel:
     - task: verify-env-vars
       file: capi-ci/ci/cf/verify-env-vars.yml
