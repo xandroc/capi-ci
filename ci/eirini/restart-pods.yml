@@ -8,7 +8,6 @@ image_resource:
 
 inputs:
   - name: capi-ci
-  - name: environment
 
 run:
   path: capi-ci/ci/eirini/restart-pods.sh
