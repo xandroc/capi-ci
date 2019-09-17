@@ -2363,10 +2363,15 @@ jobs:
       OPS_FILES: *jean-ops-files
       BOSH_DEPLOY_ARGS: '--recreate --fix'
     attempts: 2 # hack around deploy not working due to https://www.pivotaltracker.com/story/show/165591078
-  - task: restart-kubebernetes-pods
+  - task: restart-loggregator-pods
     file: capi-ci/ci/eirini/restart-pods.yml
     params:
       GCP_JSON_KEY: ((jean_gcp_json_key))
+      GCP_PROJECT_ID: ((jean_gcp_project_id))
+      GCP_ZONE: ((jean_gcp_zone))
+      CLUSTER_NAME: jean-cluster
+      POD_NAMESPACE: cf-system
+      POD_NAME_LABEL: eirini-loggregator-fluentd
   - task: enable-resurrection
     file: capi-ci/ci/bbl-tasks/update-resurrection.yml
     input_mapping:

@@ -13,4 +13,9 @@ run:
   path: capi-ci/ci/eirini/restart-pods.sh
 
 params:
-  GCP_JSON_KEY: ((jean_gcp_json_key))
+  GCP_JSON_KEY:
+  GCP_PROJECT_ID:
+  GCP_ZONE:
+  CLUSTER_NAME:
+  POD_NAMESPACE:
+  POD_NAME_LABEL:
