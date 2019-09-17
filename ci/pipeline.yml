@@ -2364,7 +2364,7 @@ jobs:
       BOSH_DEPLOY_ARGS: '--recreate --fix'
     attempts: 2 # hack around deploy not working due to https://www.pivotaltracker.com/story/show/165591078
   - task: restart-kubebernetes-pods
-    file: capi-ci/ci/eirini/restart-pods
+    file: capi-ci/ci/eirini/restart-pods.yml
     params:
       GCP_JSON_KEY: ((jean_gcp_json_key))
   - task: enable-resurrection
