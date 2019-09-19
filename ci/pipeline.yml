@@ -2370,7 +2370,7 @@ jobs:
       GCP_PROJECT_ID: ((jean_gcp_project_id))
       GCP_ZONE: ((jean_gcp_zone))
       CLUSTER_NAME: jean-cluster
-      POD_NAMESPACE: cf-system
+      POD_NAMESPACE: default
       POD_NAME_LABEL: add-lb-cert-to-nodes
   - task: enable-resurrection
     file: capi-ci/ci/bbl-tasks/update-resurrection.yml
