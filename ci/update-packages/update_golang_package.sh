@@ -5,12 +5,12 @@ set -e -x
 cp $PWD/capi-ci-private/ci/private.yml $PWD/capi-release/config/private.yml
 
 pushd golang-release
-	new_go_version=$(bosh blobs | grep linux | grep go1. | cut -d . -f 1-3 | sort | tail -1)
+	new_go_version=$(bosh blobs | grep linux | grep go${GO_VERSION} | cut -d . -f 1-3 | sort | tail -1)
 popd
 
 cd capi-release
 
-bosh vendor-package golang-1.12-linux ../golang-release
+bosh vendor-package golang-${GO_VERSION}-linux ../golang-release
 
 git --no-pager diff packages .final_builds
 

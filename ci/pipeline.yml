@@ -564,6 +564,8 @@ jobs:
       - get: golang-release
         trigger: true
   - task: update-golang-package
+    params:
+      GO_VERSION: 1.12
     file: capi-ci/ci/update-packages/update_golang_package.yml
   - put: capi-release-develop
     params:

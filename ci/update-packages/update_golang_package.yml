@@ -15,5 +15,8 @@ image_resource:
     repository: cloudfoundry/capi
     tag: runtime-ci
 
+params:
+  GO_VERSION:
+
 run:
   path: capi-ci/ci/update-packages/update_golang_package.sh
