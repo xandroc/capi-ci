@@ -156,7 +156,7 @@
   value: https://eirini.service.cf.internal:8484
 - type: replace
   path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/cc/opi?/opi_staging?
-  value: true
+  value: false
 - type: replace
   path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/cc/opi?/client_cert?
   value: ((eirini_tls_client_cert.certificate))
