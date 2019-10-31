@@ -65,10 +65,12 @@ function write_load_balancer_certs() {
 }
 
 function write_envrc() {
-  cat <<- 'EOF' > "${envrc_output_path}"
+  if [ ! -f "${envrc_output_path}" ]; then
+    cat <<- 'EOF' > "${envrc_output_path}"
 eval "$(bbl print-env)"
 export BOSH_DEPLOYMENT=cf
 EOF
+  fi
 }
 
 function commit_capi_ci_private() {
