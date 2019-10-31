@@ -52,6 +52,7 @@ groups:
 - name: update-bosh
   jobs:
   - update-bosh-arya
+  - update-bosh-katniss
   - update-bosh-elsa
   - update-bosh-gabrielle-postgres
   - update-bosh-kiki
@@ -2199,6 +2200,78 @@ jobs:
       bbl-state: updated-bbl-state
     params:
       BBL_STATE_DIR: "arya"
+      RUNTIME_CONFIG_PATH: "bosh-deployment/runtime-configs/dns.yml"
+      RUNTIME_CONFIG_NAME: "dns"
+
+# This GCP project exists mainly to house our bosh-lites,
+# but we deploy a bosh in case we need to deploy something
+# short-term for an investigation.
+- name: update-bosh-katniss
+  serial: true
+  plan:
+  - in_parallel:
+    - get: cf-deployment-concourse-tasks
+      resource: cf-deployment-concourse-tasks
+    - get: capi-ci
+    - get: capi-ci-private
+    - get: weekly-sunday
+      trigger: true
+  - task: seed-capi-ci-private
+    file: capi-ci/ci/setup-environment/seed.yml
+    params:
+      ENVIRONMENT: katniss
+      DOMAIN: &katniss-domain "katniss.capi.land"
+  - put: capi-ci-private
+    params:
+      repository: updated-capi-ci-private
+      rebase: true
+  - task: update-bosh-katniss
+    file: cf-deployment-concourse-tasks/bbl-up/task.yml
+    input_mapping:
+      bbl-state: updated-capi-ci-private
+      bbl-config: updated-capi-ci-private
+      ops-files: capi-ci
+    params: &update-bosh-katniss-params
+      BBL_STATE_DIR: "katniss"
+      BBL_IAAS: "gcp"
+      BBL_LB_CERT: "certs/load-balancer/server.crt"
+      BBL_LB_KEY: "certs/load-balancer/server.key"
+      LB_DOMAIN: *katniss-domain
+      BBL_ENV_NAME: "katniss"
+      BBL_GCP_SERVICE_ACCOUNT_KEY: ((katniss_gcp_json_key))
+      BBL_GCP_PROJECT_ID: ((katniss_gcp_project_id))
+      BBL_GCP_ZONE: ((katniss_gcp_zone))
+      BBL_GCP_REGION: ((katniss_gcp_region))
+      OPS_FILES: |
+        bosh-director-operations/increase-persistent-disk.yml
+    ensure:
+      put: capi-ci-private
+      params:
+        repository: updated-bbl-state
+        rebase: true
+  - task: create-dns-record
+    attempts: 5
+    file: capi-ci/ci/bbl-tasks/create-dns-record.yml
+    input_mapping:
+      bbl-state: updated-bbl-state
+    params:
+      BBL_STATE_DIR: "katniss"
+      DNS_DOMAIN: *katniss-domain
+      GCP_DNS_SERVICE_ACCOUNT_KEY: ((dns_gcp_json_key))
+      GCP_PROJECT_ID: ((dns_gcp_project_id))
+      SHARED_DNS_ZONE_NAME: "capi-land"
+  - task: run-bosh-cleanup
+    file: capi-ci/ci/bbl-tasks/run-bosh-cleanup.yml
+    input_mapping:
+      bbl-state: updated-bbl-state
+    params:
+      BBL_STATE_DIR: "katniss"
+  - task: add-bosh-dns-runtime-config
+    file: capi-ci/ci/bbl-tasks/update-runtime-config.yml
+    input_mapping:
+      bbl-state: updated-bbl-state
+    params:
+      BBL_STATE_DIR: "katniss"
       RUNTIME_CONFIG_PATH: "bosh-deployment/runtime-configs/dns.yml"
       RUNTIME_CONFIG_NAME: "dns"
 
