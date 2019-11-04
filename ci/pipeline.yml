@@ -3539,6 +3539,7 @@ jobs:
       bbl-state: xena-mysql-bbl-state
     params:
       BBL_STATE_DIR: xena-mysql
+      IGNORE_ERRORS: true
   - task: collect-ops-files
     file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
     input_mapping:
@@ -3852,6 +3853,7 @@ jobs:
       bbl-state: gabrielle-postgres-bbl-state
     params:
       BBL_STATE_DIR: gabrielle-postgres
+      IGNORE_ERRORS: true
   - task: collect-ops-files
     file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
     input_mapping:
