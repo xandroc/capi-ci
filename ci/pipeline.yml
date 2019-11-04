@@ -1362,6 +1362,10 @@ jobs:
       params:
         repository: updated-integration-configs
         rebase: true
+  - task: extract-kubeconfig
+    file: capi-ci/ci/k8s/extract-kubeconfig.yml
+    params:
+      BBL_STATE_DIR: "katniss"
 
 - name: jean-eirini
   serial: true
