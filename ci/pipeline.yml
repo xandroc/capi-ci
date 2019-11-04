@@ -29,6 +29,9 @@ groups:
   - bump-ci-passed
   - snyk-test
   - bump-bbs-protos
+- name: dev-env
+  jobs:
+  - katniss-kpack
 - name: blobstore-fanout
   jobs:
   - create-capi-release
@@ -85,6 +88,11 @@ groups:
     - autobump-golang-package
 
 resource_types:
+- name: kubernetes
+  type: docker-image
+  source:
+    repository: zlabjp/kubernetes-resource
+    tag: "1.14"
 - name: slack-notification
   type: docker-image
   source:
@@ -112,6 +120,13 @@ resource_types:
     repository: cftoolsmiths/cron-resource
 
 resources:
+
+- name: katniss-cf-deployment
+  type: git
+  source:
+    uri: git@github.com:cloudfoundry/cf-deployment.git
+    private_key: ((private_key))
+    tag_filter: v12.6.0
 
 # schedules
 - name: weekly-sunday
@@ -1246,7 +1261,107 @@ jobs:
       CF_API_TARGET: *mulan-api-url
       BBL_STATE_DIR: mulan
 
-
+- name: katniss-kpack
+  serial: true
+  serial_groups: [katniss]
+  plan:
+  - in_parallel:
+    - get: cf-deployment-concourse-tasks
+      resource: cf-deployment-concourse-tasks
+    - get: cf-deployment
+      resource: katniss-cf-deployment
+    - get: capi-release
+      resource: capi-release-develop
+      passed: [create-capi-release]
+    - get: cf-acceptance-tests
+    - get: capi-ci
+    - get: capi-ci-private
+    - get: capi-release-tarball # TODO: probably don't want CI updating this?
+      passed: [create-capi-release]
+    - get: eirini-bosh-release
+      version: 0.0.22
+    - get: bits-service-release
+      version: 2.29.0
+  - task: upload-capi-release-tarball
+    file: capi-ci/ci/bosh/upload-release.yml
+    input_mapping:
+      bbl-state: capi-ci-private
+      release-tarball: capi-release-tarball
+    params:
+      BBL_STATE_DIR: "katniss"
+  - task: upload-eirini-release-tarball
+    file: capi-ci/ci/bosh/upload-release.yml
+    input_mapping:
+      bbl-state: capi-ci-private
+      release-tarball: eirini-bosh-release
+    params:
+      BBL_STATE_DIR: "katniss"
+  - task: upload-bits-service-release-tarball
+    file: capi-ci/ci/bosh/upload-release.yml
+    input_mapping:
+      bbl-state: capi-ci-private
+      release-tarball: bits-service-release
+    params:
+      BBL_STATE_DIR: "katniss"
+  - task: katniss-stemcell-upload
+    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
+    input_mapping:
+      bbl-state: capi-ci-private
+    params:
+      BBL_STATE_DIR: "katniss"
+  - task: extract-bbl-environment
+    file: capi-ci/ci/bbl-tasks/extract_bbl_environment.yml
+    params:
+      ENV_NAME: katniss
+  - task: collect-ops-files
+    file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
+    input_mapping:
+      base-ops-files: cf-deployment
+      new-ops-files: capi-ci
+    params:
+      NEW_OPS_FILES: &katniss-ops-to-collect |
+        cf-deployment-operations/skip-cert-verify.yml
+        cf-deployment-operations/use-latest-capi.yml
+        cf-deployment-operations/eirini/add-eirini.yml
+        cf-deployment-operations/eirini/hardcode-doppler-ip.yml
+  - task: deploy
+    file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
+    input_mapping:
+      bbl-state: capi-ci-private
+      ops-files: collected-ops-files
+      vars-files: capi-ci-private
+    params:
+      BBL_STATE_DIR: "katniss"
+      SYSTEM_DOMAIN: katniss.capi.land
+      OPS_FILES: &katniss-ops-files |
+        skip-cert-verify.yml
+        base-ops-files/operations/use-compiled-releases.yml
+        use-latest-capi.yml
+        base-ops-files/operations/bits-service/use-bits-service.yml
+        add-eirini.yml
+        hardcode-doppler-ip.yml
+        base-ops-files/operations/scale-to-one-az.yml
+  - task: configure-eirini-bosh
+    file: cf-deployment-concourse-tasks/run-errand/task.yml
+    input_mapping:
+      bbl-state: capi-ci-private
+    params:
+      ERRAND_NAME: configure-eirini-bosh
+      BBL_STATE_DIR: katniss
+  - task: updated-integration-configs
+    file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
+    input_mapping:
+      bbl-state: capi-ci-private
+      integration-configs: capi-ci-private
+    params:
+      BBL_STATE_DIR: "katniss"
+      CATS_INTEGRATION_CONFIG_FILE: "katniss/cats_integration_config.json"
+      SYSTEM_DOMAIN: katniss.capi.land
+    ensure:
+      put: capi-ci-private
+      params:
+        repository: updated-integration-configs
+        rebase: true
 
 - name: jean-eirini
   serial: true
