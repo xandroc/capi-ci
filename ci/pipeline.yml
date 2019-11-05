@@ -88,7 +88,7 @@ groups:
     - autobump-golang-package
 
 resource_types:
-- name: kubernetes
+- name: kubectl
   type: docker-image
   source:
     repository: zlabjp/kubernetes-resource
@@ -120,6 +120,16 @@ resource_types:
     repository: cftoolsmiths/cron-resource
 
 resources:
+
+- name: kubectl
+  type: kubectl
+
+- name: kpack-github-release
+  type: github-release
+  source:
+    user: pivotal
+    repository: kpack
+    pre_release: true
 
 - name: katniss-cf-deployment
   type: git
@@ -1266,6 +1276,9 @@ jobs:
   serial_groups: [katniss]
   plan:
   - in_parallel:
+    - get: kpack-release
+      globs: ["release-*.yaml"]
+      resource: kpack-github-release
     - get: cf-deployment-concourse-tasks
       resource: cf-deployment-concourse-tasks
     - get: cf-deployment
@@ -1276,8 +1289,6 @@ jobs:
     - get: cf-acceptance-tests
     - get: capi-ci
     - get: capi-ci-private
-    - get: capi-release-tarball # TODO: probably don't want CI updating this?
-      passed: [create-capi-release]
     - get: eirini-bosh-release
       version: 0.0.22
     - get: bits-service-release
@@ -1366,9 +1377,9 @@ jobs:
     file: capi-ci/ci/k8s/extract-kubeconfig.yml
     params:
       BBL_STATE_DIR: "katniss"
-  - put: kubernetes
+  - put: kubectl
     params:
-      kubectl: get pods -A
+      kubectl: apply -f kpack-release/release-*.yaml
       kubeconfig_file: kubeconfig/config
       context: katniss-cluster
 
