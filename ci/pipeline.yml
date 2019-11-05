@@ -1366,6 +1366,11 @@ jobs:
     file: capi-ci/ci/k8s/extract-kubeconfig.yml
     params:
       BBL_STATE_DIR: "katniss"
+  - put: kubernetes
+    params:
+      kubectl: get pods -A
+      kubeconfig_file: kubeconfig/config
+      context: katniss-cluster
 
 - name: jean-eirini
   serial: true
