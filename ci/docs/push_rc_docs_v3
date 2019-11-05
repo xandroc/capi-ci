@@ -19,19 +19,12 @@ function setup_v3() {
   git config user.email 'cf-capi-eng+ci@pivotal.io'
 }
 
-function build_v2_docs() {
-  aws s3 rm s3://cc-api-docs/release-candidate/ --recursive
-  aws s3 cp docs/v2 s3://cc-api-docs/release-candidate --recursive
-}
-
 function build_v3_docs() {
   ./scripts/publish_docs_for_version.sh 'release-candidate'
 }
 
 function main() {
   pushd capi-release/src/cloud_controller_ng
-    build_v2_docs
-
     setup_v3_ssh
     setup_v3
     build_v3_docs

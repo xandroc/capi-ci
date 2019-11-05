@@ -15,6 +15,11 @@ function update_versions_json() {
   capi-ci/ci/docs/update_docs_v2.rb
 }
 
+function build_v2_docs() {
+  aws s3 rm s3://cc-api-docs/release-candidate/ --recursive
+  aws s3 cp docs/v2 s3://cc-api-docs/release-candidate --recursive
+}
+
 function copy_to_output_dir() {
   cp -ar api-docs updated-api-docs/
 }
@@ -33,6 +38,7 @@ function main() {
   update_versions_json
   commit_updated_versions
   copy_to_output_dir
+  build_v2_docs
 }
 
 main
