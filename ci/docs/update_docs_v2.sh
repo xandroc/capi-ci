@@ -16,8 +16,10 @@ function update_versions_json() {
 }
 
 function build_v2_docs() {
-  aws s3 rm s3://cc-api-docs/release-candidate/ --recursive
-  aws s3 cp docs/v2 s3://cc-api-docs/release-candidate --recursive
+  pushd capi-release/src/cloud_controller_ng
+    aws s3 rm s3://cc-api-docs/release-candidate/ --recursive
+    aws s3 cp docs/v2 s3://cc-api-docs/release-candidate --recursive
+  popd
 }
 
 function copy_to_output_dir() {
