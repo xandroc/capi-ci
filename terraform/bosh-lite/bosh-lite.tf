@@ -20,6 +20,10 @@ variable "system_domain_suffix" {}
 
 # RESOURCES
 
+provider "acme" {
+  server_url = "https://acme-v02.api.letsencrypt.org/directory"
+}
+
 provider "google" {
   credentials = "${var.json_key}"
   project = "${var.project_id}"
@@ -76,6 +80,28 @@ resource "google_dns_record_set" "default" {
   rrdatas = [ "${google_compute_address.default.address}" ]
 }
 
+resource "tls_private_key" "private_key" {
+  algorithm = "RSA"
+}
+
+resource "acme_registration" "reg" {
+  account_key_pem = "${tls_private_key.private_key.private_key_pem}"
+  email_address   = "cf-v3-acceleration@pivotal.io"
+}
+
+resource "acme_certificate" "certificate" {
+  account_key_pem           = "${acme_registration.reg.account_key_pem}"
+  common_name = "*.${var.env_name}.${var.system_domain_suffix}"
+
+  dns_challenge {
+    provider = "gcloud"
+    config = {
+      GCE_PROJECT = "cf-cli"
+      GCE_SERVICE_ACCOUNT = "${var.json_key}"
+    }
+  }
+}
+
 # OUTPUTS
 
 output "external_ip" {
@@ -116,4 +142,12 @@ output "internal_gw" {
 
 output "internal_cidr" {
   value = "${google_compute_subnetwork.default.ip_cidr_range}"
+}
+
+output "CF_TLS_key" {
+  value = "${acme_certificate.certificate.private_key_pem}"
+}
+
+output "CF_TLS_cert" {
+  value = "${acme_certificate.certificate.certificate_pem}"
 }
