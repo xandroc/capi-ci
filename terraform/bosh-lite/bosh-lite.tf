@@ -98,6 +98,7 @@ resource "acme_certificate" "certificate" {
     config = {
       GCE_PROJECT = "cf-cli"
       GCE_SERVICE_ACCOUNT = "${var.json_key}"
+      GCE_PROPAGATION_TIMEOUT = 600
     }
   }
 }
