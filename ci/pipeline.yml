@@ -1289,6 +1289,7 @@ jobs:
     - get: cf-acceptance-tests
     - get: capi-ci
     - get: capi-ci-private
+    - get: capi-release-tarball
     - get: eirini-bosh-release
       version: 0.0.22
     - get: bits-service-release
