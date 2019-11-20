@@ -4,5 +4,5 @@
     host_url: ((k8s_host_url))
     service_account:
       name: ((k8s_service_username))
-      token: ((k8s_service_account_data.token))
-    ca: ((k8s_ca))
+      token: ((k8s_service_token))
+    ca: ((k8s_node_ca))
