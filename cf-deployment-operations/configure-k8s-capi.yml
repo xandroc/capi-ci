@@ -6,3 +6,8 @@
       name: ((k8s_service_username))
       token: ((k8s_service_token))
     ca: ((k8s_node_ca))
+    kpack:
+      builder_namespace: 'cf-workloads'
+      registry_service_account: 'gcr-service-account'
+      registry_tag_base: gcr.io/(( gcr_project_name ))/capi-kpack-images  # variable needs to be supplied
+
