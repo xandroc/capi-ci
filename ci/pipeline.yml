@@ -1331,12 +1331,19 @@ jobs:
       base-ops-files: cf-deployment
       new-ops-files: capi-ci
     params:
-      NEW_OPS_FILES: &katniss-ops-to-collect |
+      NEW_OPS_FILES: |
         cf-deployment-operations/skip-cert-verify.yml
         cf-deployment-operations/use-latest-capi.yml
         cf-deployment-operations/eirini/add-eirini.yml
         cf-deployment-operations/eirini/hardcode-doppler-ip.yml
-        cf-deployment-operations/configure-k8s-capi.yml
+  - task: collect-ops-files
+    file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
+    input_mapping:
+      base-ops-files: collected-ops-files
+      new-ops-files: capi-ci-private
+    params:
+      NEW_OPS_FILES: |
+        katniss/cf-deployment-operations/configure-kpack-k8s.yml
   - task: deploy
     file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
     input_mapping:
