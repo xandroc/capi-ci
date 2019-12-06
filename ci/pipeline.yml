@@ -1292,27 +1292,18 @@ jobs:
     - get: capi-release-tarball
     - get: eirini-bosh-release
       version: 0.0.22
-    - get: bits-service-release
-      version: 2.29.0
-  - task: upload-capi-release-tarball
-    file: capi-ci/ci/bosh/upload-release.yml
-    input_mapping:
-      bbl-state: capi-ci-private
-      release-tarball: capi-release-tarball
-    params:
-      BBL_STATE_DIR: "katniss"
+  # - task: upload-capi-release-tarball
+  #   file: capi-ci/ci/bosh/upload-release.yml
+  #   input_mapping:
+  #     bbl-state: capi-ci-private
+  #     release-tarball: capi-release-tarball
+  #   params:
+  #     BBL_STATE_DIR: "katniss"
   - task: upload-eirini-release-tarball
     file: capi-ci/ci/bosh/upload-release.yml
     input_mapping:
       bbl-state: capi-ci-private
       release-tarball: eirini-bosh-release
-    params:
-      BBL_STATE_DIR: "katniss"
-  - task: upload-bits-service-release-tarball
-    file: capi-ci/ci/bosh/upload-release.yml
-    input_mapping:
-      bbl-state: capi-ci-private
-      release-tarball: bits-service-release
     params:
       BBL_STATE_DIR: "katniss"
   - task: katniss-stemcell-upload
@@ -1334,7 +1325,7 @@ jobs:
       NEW_OPS_FILES: |
         cf-deployment-operations/skip-cert-verify.yml
         cf-deployment-operations/use-latest-capi.yml
-        cf-deployment-operations/eirini/add-eirini.yml
+        cf-deployment-operations/eirini/add-eirini-without-bits.yml
         cf-deployment-operations/eirini/hardcode-doppler-ip.yml
   - task: collect-ops-files
     file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
@@ -1354,14 +1345,16 @@ jobs:
       BBL_STATE_DIR: "katniss"
       SYSTEM_DOMAIN: katniss.capi.land
       OPS_FILES: &katniss-ops-files |
-        skip-cert-verify.yml
-        base-ops-files/operations/use-compiled-releases.yml
-        use-latest-capi.yml
-        base-ops-files/operations/bits-service/use-bits-service.yml
-        add-eirini.yml
-        hardcode-doppler-ip.yml
-        base-ops-files/operations/scale-to-one-az.yml
-        configure-k8s-capi.yml
+        base-ops-files/skip-cert-verify.yml
+        base-ops-files/base-ops-files/operations/use-compiled-releases.yml
+        base-ops-files/base-ops-files/operations/use-external-blobstore.yml
+        base-ops-files/base-ops-files/operations/use-gcs-blobstore-service-account.yml
+        base-ops-files/use-latest-capi.yml
+        base-ops-files/add-eirini-without-bits.yml
+        base-ops-files/hardcode-doppler-ip.yml
+        base-ops-files/base-ops-files/operations/scale-to-one-az.yml
+        configure-kpack-k8s.yml
+      VARS_FILES: katniss/gcs-storage-vars.yml
   - task: configure-eirini-bosh
     file: cf-deployment-concourse-tasks/run-errand/task.yml
     input_mapping:
