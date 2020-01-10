@@ -1189,6 +1189,7 @@ jobs:
         use-latest-capi.yml
         base-ops-files/operations/scale-to-one-az.yml
         scale-up-cells.yml
+        scale-up-dopplers.yml
         scale-generic-worker-processes.yml
         seed-credhub-asg.yml
         base-ops-files/operations/use-postgres.yml
@@ -1588,6 +1589,7 @@ jobs:
         base-ops-files/operations/test/add-persistent-isolation-segment-diego-cell.yml
         base-ops-files/operations/scale-to-one-az.yml
         scale-up-cells.yml
+        scale-up-dopplers.yml
         scale-generic-worker-processes.yml
         base-ops-files/operations/use-compiled-releases.yml
         use-latest-capi.yml
