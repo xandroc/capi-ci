@@ -1166,6 +1166,7 @@ jobs:
         cf-deployment-operations/skip-cert-verify.yml
         cf-deployment-operations/use-latest-capi.yml
         cf-deployment-operations/scale-up-cells.yml
+        cf-deployment-operations/scale-up-dopplers.yml
         cf-deployment-operations/performance/scale-generic-worker-processes.yml
         cf-deployment-operations/seed-credhub-asg.yml
         cf-deployment-operations/disable-credhub-interpolate-service-bindings.yml
@@ -1568,6 +1569,7 @@ jobs:
     params:
       NEW_OPS_FILES: &ripley-ops-to-collect |
         cf-deployment-operations/scale-up-cells.yml
+        cf-deployment-operations/scale-up-dopplers.yml
         cf-deployment-operations/performance/scale-generic-worker-processes.yml
         cf-deployment-operations/use-latest-capi.yml
         cf-deployment-operations/use-nfs-blobstore.yml
@@ -1962,6 +1964,7 @@ jobs:
       NEW_OPS_FILES: |
         cf-deployment-operations/skip-cert-verify.yml
         cf-deployment-operations/scale-up-cells.yml
+        cf-deployment-operations/scale-up-dopplers.yml
         cf-deployment-operations/performance/scale-generic-worker-processes.yml
         cf-deployment-operations/log-all-sequel-activity.yml
         cf-deployment-operations/temporary/disable-uaa-get-requests.yml
@@ -1979,6 +1982,7 @@ jobs:
         skip-cert-verify.yml
         base-ops-files/operations/scale-to-one-az.yml
         scale-up-cells.yml
+        scale-up-dopplers.yml
         scale-generic-worker-processes.yml
         base-ops-files/operations/use-postgres.yml
         log-all-sequel-activity.yml
