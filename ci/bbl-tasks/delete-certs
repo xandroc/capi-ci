@@ -22,6 +22,22 @@ function delete_cf_certs() {
      || true # best effort for reentrancy - we always want to bbl up even if this fails
 }
 
+function delete_bosh_dns_certs() {
+  eval "$(bbl print-env)"
+
+  bosh_dns_runtime_config_file="$(mktemp)"
+
+  # Get bosh runtime config; we assume that bosh dns is deployed in this
+  # runtime config. Pipe to `cat` to remove extra bosh cli output.  Remove
+  # header from bosh cli output, trim any tab characters and format to yaml. Whew.
+  bosh -d cf config --type runtime --name dns | cat | tail +5 | tr -d '\t' | yq -y . > "$bosh_dns_runtime_config_file"
+
+  yq '.variables | .[] | select(.type=="certificate") | .name' "$bosh_dns_runtime_config_file" \
+     |  xargs -n1 -I{} sh -c \
+        "echo about to delete {} from credhub && credhub delete -n {}" \
+     || true # best effort for reentrancy - we always want to bbl up even if this fails
+}
+
 function commit_capi_ci_private() {
   if [[ -n $(git status --porcelain) ]]; then
     git config user.name "CI Bot"
@@ -37,6 +53,7 @@ cp -rf capi-ci-private/. ${updated_capi_ci_private}
 mkdir -p "${updated_capi_ci_private}/${ENVIRONMENT}"
 pushd "${updated_capi_ci_private}/${ENVIRONMENT}"
   delete_cf_certs
+  delete_bosh_dns_certs
   
   if [ $1 != "cf-only" ]; then
     delete_bbl_certs
