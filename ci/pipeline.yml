@@ -3499,7 +3499,7 @@ jobs:
       - kiki-back-compat-migrations
       - xena-mysql-drats
       - gabrielle-postgres-drats
-      # - ripley-nfs
+      - ripley-nfs
       - jean-eirini
     - get: capi-release
       resource: capi-release-develop
@@ -3509,7 +3509,7 @@ jobs:
       - kiki-back-compat-migrations
       - xena-mysql-drats
       - gabrielle-postgres-drats
-      # - ripley-nfs
+      - ripley-nfs
       - jean-eirini
       trigger: true
     - get: capi-release-tarball
@@ -3519,7 +3519,7 @@ jobs:
       - kiki-back-compat-migrations
       - xena-mysql-drats
       - gabrielle-postgres-drats
-      # - ripley-nfs
+      - ripley-nfs
       - jean-eirini
   - put: capi-release-ci-passed
     params:
