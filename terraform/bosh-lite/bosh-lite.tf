@@ -21,32 +21,32 @@ variable "system_domain_suffix" {}
 # RESOURCES
 
 provider "google" {
-  credentials = "${var.json_key}"
-  project = "${var.project_id}"
-  region = "${var.region}"
+  credentials = var.json_key
+  project = var.project_id
+  region = var.region
 }
 
 provider "google" {
   alias = "dns"
-  credentials = "${var.dns_json_key}"
-  project = "${var.dns_project_id}"
-  region = "${var.region}"
+  credentials = var.dns_json_key
+  project = var.dns_project_id
+  region = var.region
 }
 
 resource "google_compute_network" "default" {
-  name = "${var.env_name}"
+  name = var.env_name
   auto_create_subnetworks = false
 }
 
 resource "google_compute_subnetwork" "default" {
-  name = "${var.env_name}"
-  ip_cidr_range = "${var.internal_cidr}"
-  network = "${google_compute_network.default.self_link}"
+  name = var.env_name
+  ip_cidr_range = var.internal_cidr
+  network = google_compute_network.default.self_link
 }
 
 resource "google_compute_firewall" "default" {
-  name = "${var.env_name}"
-  network = "${google_compute_network.default.name}"
+  name = var.env_name
+  network = google_compute_network.default.name
 
   allow {
     protocol = "icmp"
@@ -59,27 +59,27 @@ resource "google_compute_firewall" "default" {
 
   source_ranges = ["0.0.0.0/0"]
 
-  target_tags = ["${var.env_name}"]
+  target_tags = [var.env_name]
 }
 
 resource "google_compute_address" "default" {
-  name = "${var.env_name}"
+  name = var.env_name
 }
 
 resource "google_dns_record_set" "default" {
-  provider = "google.dns"
+  provider = google.dns
   name = "*.${var.env_name}.${var.system_domain_suffix}."
   type = "A"
   ttl = 300
 
-  managed_zone = "${var.dns_zone_name}"
-  rrdatas = [ "${google_compute_address.default.address}" ]
+  managed_zone = var.dns_zone_name
+  rrdatas = [ google_compute_address.default.address ]
 }
 
 # OUTPUTS
 
 output "external_ip" {
-  value = "${google_compute_address.default.address}"
+  value = google_compute_address.default.address
 }
 
 output "system_domain" {
@@ -87,23 +87,23 @@ output "system_domain" {
 }
 
 output "network" {
-  value = "${google_compute_network.default.name}"
+  value = google_compute_network.default.name
 }
 
 output "subnetwork" {
-  value = "${google_compute_subnetwork.default.name}"
+  value = google_compute_subnetwork.default.name
 }
 
 output "zone" {
-  value = "${var.zone}"
+  value = var.zone
 }
 
 output "tags" {
-  value = "${google_compute_firewall.default.target_tags}"
+  value = google_compute_firewall.default.target_tags
 }
 
 output "project_id" {
-  value = "${var.project_id}"
+  value = var.project_id
 }
 
 output "internal_ip" {
@@ -115,5 +115,5 @@ output "internal_gw" {
 }
 
 output "internal_cidr" {
-  value = "${google_compute_subnetwork.default.ip_cidr_range}"
+  value = google_compute_subnetwork.default.ip_cidr_range
 }
