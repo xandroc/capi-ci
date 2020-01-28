@@ -15,6 +15,7 @@ groups:
   jobs:
   - cc-unit-tests
   - bridge-unit-tests
+  - build-docker-image
   - verify-capi-release-commits
   - capi-release-template-tests
   - create-capi-release
@@ -579,6 +580,15 @@ resources:
     branch: master
     uri: https://github.com/cloudfoundry-incubator/disaster-recovery-acceptance-tests
 
+# Docker images
+- name: capi-docker-image
+  type: docker-image
+  source:
+    repository: cloudfoundry/capi
+    username: ((dockerhub_user))
+    password: ((dockerhub_pass))
+    tag: cloud-controller-ng
+
 jobs:
 - name: autobump-golang-package
   plan:
@@ -694,6 +704,15 @@ jobs:
     params:
       repository: bumped/capi-release
       rebase: true
+
+- name: build-docker-image
+  plan:
+    - get: cloud_controller_ng
+      passed: [cc-unit-tests]
+      trigger: true
+    - put: capi-docker-image
+      params:
+        build: cloud_controller_ng
 
 - name: bump-bbs-protos
   plan:
