@@ -584,10 +584,9 @@ resources:
 - name: capi-docker-image
   type: docker-image
   source:
-    repository: cloudfoundry/capi
+    repository: cloudfoundry/cloud-controller-ng
     username: ((dockerhub_user))
     password: ((dockerhub_pass))
-    tag: cloud-controller-ng
 
 jobs:
 - name: autobump-golang-package
@@ -713,6 +712,7 @@ jobs:
     - put: capi-docker-image
       params:
         build: cloud_controller_ng
+        cache: true
 
 - name: bump-bbs-protos
   plan:
