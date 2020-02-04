@@ -1321,6 +1321,7 @@ jobs:
   - task: kubectl-apply-kpack
     file: capi-ci/ci/k8s/apply-kpack.yml
     params:
+      CAPI_ENVIRONMENT_NAME: samus
       KUBECTL_YAML_FILE: kpack-release/release-*.yaml
 
 - name: katniss-kpack
