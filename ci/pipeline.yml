@@ -1318,11 +1318,10 @@ jobs:
       CF_INSTALL_VALUES_FILE: capi-ci-private/samus/cf-install-values.yml
       GOOGLE_SERVICE_ACCOUNT_EMAIL: concourse@cf-capi-arya.iam.gserviceaccount.com
       GOOGLE_PROJECT_NAME: cf-capi-arya
-  - put: kubectl
+  - task: kubectl-apply-kpack
+    file: capi-ci/ci/k8s/apply-kpack.yml
     params:
-      kubectl: apply -f kpack-release/release-*.yaml
-      kubeconfig_file: kubeconfig/config
-      context: samus-cluster
+      KUBECTL_YAML_FILE: kpack-release/release-*.yaml
 
 - name: katniss-kpack
   serial: true

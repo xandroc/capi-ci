@@ -1,0 +1,25 @@
+---
+platform: linux
+
+image_resource:
+  type: registry-image
+  source:
+    repository: cloudfoundry/capi
+    tag: cf-for-k8s
+
+inputs:
+- name: capi-ci
+- name: capi-ci-private
+
+params:
+  # Required.
+  # This is the environment name inside capi-ci-private. This should be the
+  # directory name.
+  CAPI_ENVIRONMENT_NAME: ""
+
+  # Required.
+  # This is the yaml file to apply to the K8s cluster using kubectl.
+  KUBECTL_YAML_FILE: ""
+
+run:
+  path: capi-ci/ci/k8s/apply-kpack.sh
