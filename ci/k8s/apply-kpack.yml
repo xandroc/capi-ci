@@ -10,6 +10,7 @@ image_resource:
 inputs:
 - name: capi-ci
 - name: capi-ci-private
+- name: kpack-release
 
 params:
   # Required.
