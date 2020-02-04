@@ -1322,6 +1322,8 @@ jobs:
     file: capi-ci/ci/k8s/apply-kpack.yml
     params:
       CAPI_ENVIRONMENT_NAME: samus
+      GOOGLE_SERVICE_ACCOUNT_EMAIL: concourse@cf-capi-arya.iam.gserviceaccount.com
+      GOOGLE_PROJECT_NAME: cf-capi-arya
       KUBECTL_YAML_FILE: kpack-release/release-*.yaml
 
 - name: katniss-kpack
