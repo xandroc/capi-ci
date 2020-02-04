@@ -33,6 +33,7 @@ groups:
 - name: dev-env
   jobs:
   - katniss-kpack
+  - samus-cf-for-k8s
 - name: blobstore-fanout
   jobs:
   - create-capi-release
@@ -211,6 +212,13 @@ resources:
     branch: master
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/capi-ci-private.git
+
+- name: cf-for-k8s
+  type: git
+  source:
+    branch: master
+    private_key: ((private_key))
+    uri: git@github.com:cloudfoundry/cf-for-k8s.git
 
 - name: arya-bbl-state
   type: git
@@ -1291,6 +1299,30 @@ jobs:
     params:
       CF_API_TARGET: *mulan-api-url
       BBL_STATE_DIR: mulan
+
+- name: samus-cf-for-k8s
+  serial: true
+  serial_groups: [samus]
+  plan:
+  - in_parallel:
+    - get: kpack-release
+      globs: ["release-*.yaml"]
+      resource: kpack-github-release
+    - get: capi-ci
+    - get: capi-ci-private
+    - get: cf-for-k8s
+  - task: deploy
+    file: capi-ci/ci/k8s/deploy-cf-for-k8s.sh
+    params:
+      CAPI_ENVIRONMENT_NAME: samus
+      CF_INSTALL_VALUES_FILE: capi-ci-private/samus/cf-install-values.yml
+      GOOGLE_SERVICE_ACCOUNT_EMAIL: concourse@cf-capi-arya.iam.gserviceaccount.com
+      GOOGLE_PROJECT_NAME: cf-capi-arya
+  - put: kubectl
+    params:
+      kubectl: apply -f kpack-release/release-*.yaml
+      kubeconfig_file: kubeconfig/config
+      context: samus-cluster
 
 - name: katniss-kpack
   serial: true
