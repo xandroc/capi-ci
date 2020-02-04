@@ -9,4 +9,6 @@ gcloud auth activate-service-account \
 
 source "capi-ci-private/${CAPI_ENVIRONMENT_NAME}/.envrc"
 
-bin/install-cf.sh "${CF_INSTALL_VALUES_FILE}"
+pushd "cf-for-k8s"
+  bin/install-cf.sh ../"${CF_INSTALL_VALUES_FILE}"
+popd
