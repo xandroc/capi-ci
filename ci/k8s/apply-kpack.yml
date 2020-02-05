@@ -27,9 +27,5 @@ params:
   # GOOGLE_PROJECT_NAME.
   GOOGLE_SERVICE_ACCOUNT_EMAIL: ""
 
-  # Required.
-  # This is the yaml file to apply to the K8s cluster using kubectl.
-  KUBECTL_YAML_FILE: ""
-
 run:
   path: capi-ci/ci/k8s/apply-kpack.sh
