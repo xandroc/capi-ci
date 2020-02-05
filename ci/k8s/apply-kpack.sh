@@ -12,4 +12,4 @@ gcloud auth activate-service-account \
 
 gcloud --project=cf-capi-arya container clusters get-credentials --zone us-central1-a samus-cluster
 
-kubectl apply -f "kpack-release/release-*.yaml"
+kubectl apply -f kpack-release/release-*.yaml
