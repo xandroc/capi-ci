@@ -1318,13 +1318,13 @@ jobs:
       CF_INSTALL_VALUES_FILE: capi-ci-private/samus/cf-install-values.yml
       GOOGLE_SERVICE_ACCOUNT_EMAIL: concourse@cf-capi-arya.iam.gserviceaccount.com
       GOOGLE_PROJECT_NAME: cf-capi-arya
+      GOOGLE_KEY_FILE_PATH: capi-ci-private/samus/concourse-service-account.json
   - task: kubectl-apply-kpack
     file: capi-ci/ci/k8s/apply-kpack.yml
     params:
       CAPI_ENVIRONMENT_NAME: samus
       GOOGLE_SERVICE_ACCOUNT_EMAIL: concourse@cf-capi-arya.iam.gserviceaccount.com
       GOOGLE_PROJECT_NAME: cf-capi-arya
-      GOOGLE_KEY_FILE_PATH: capi-ci-private/samus/concourse-service-account.json
 
 - name: katniss-kpack
   serial: true
