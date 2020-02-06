@@ -1324,6 +1324,7 @@ jobs:
       CAPI_ENVIRONMENT_NAME: samus
       GOOGLE_SERVICE_ACCOUNT_EMAIL: concourse@cf-capi-arya.iam.gserviceaccount.com
       GOOGLE_PROJECT_NAME: cf-capi-arya
+      GOOGLE_KEY_FILE_PATH: capi-ci-private/samus/concourse-service-account.json
 
 - name: katniss-kpack
   serial: true

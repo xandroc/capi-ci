@@ -31,5 +31,10 @@ params:
   # GOOGLE_PROJECT_NAME.
   GOOGLE_SERVICE_ACCOUNT_EMAIL: ""
 
+  # Required.
+  # This is the path to a key-file associated with the Google service account
+  # and project.  It'll be passed as a `--key-file` to the `gcloud` command.
+  GOOGLE_KEY_FILE_PATH: ""
+
 run:
   path: capi-ci/ci/k8s/deploy-cf-for-k8s.sh
