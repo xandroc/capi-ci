@@ -1319,6 +1319,15 @@ jobs:
       GOOGLE_SERVICE_ACCOUNT_EMAIL: concourse@cf-capi-arya.iam.gserviceaccount.com
       GOOGLE_PROJECT_NAME: cf-capi-arya
       GOOGLE_KEY_FILE_PATH: capi-ci-private/samus/concourse-service-account.json
+  - task: set-dns
+    file: capi-ci/ci/k8s/create-gcloud-dns-ingress-record.yml
+    params:
+      CF_DOMAIN: samus.capi.land
+      GOOGLE_DNS_ZONE: arya-zone
+      CAPI_ENVIRONMENT_NAME: samus
+      GOOGLE_SERVICE_ACCOUNT_EMAIL: concourse@cf-capi-arya.iam.gserviceaccount.com
+      GOOGLE_PROJECT_NAME: cf-capi-arya
+      GOOGLE_KEY_FILE_PATH: capi-ci-private/samus/concourse-service-account.json
   - task: kubectl-apply-kpack
     file: capi-ci/ci/k8s/apply-kpack.yml
     params:
