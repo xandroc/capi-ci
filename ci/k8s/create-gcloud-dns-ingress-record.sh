@@ -13,7 +13,7 @@ NAME="*.${CF_DOMAIN}."
 INGRESS_IP="$(kubectl get svc -n istio-system istio-ingressgateway -o jsonpath='{.status.loadBalancer.ingress[*].ip}')"
 
 set +e
-PREVIOUS_RECORD_IP="$(gcloud dns record-sets list --zone arya-zone | grep ${CF_DOMAIN} | awk '{ print $4 }')"
+PREVIOUS_RECORD_IP="$(gcloud dns record-sets list --zone ${GOOGLE_DNS_ZONE} | grep ${CF_DOMAIN} | awk '{ print $4 }')"
 set -e
 
 gcloud dns record-sets transaction start --zone="${GOOGLE_DNS_ZONE}"
