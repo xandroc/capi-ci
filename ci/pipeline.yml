@@ -1322,7 +1322,7 @@ jobs:
   - task: set-dns
     file: capi-ci/ci/k8s/create-gcloud-dns-ingress-record.yml
     params:
-      CF_DOMAIN: samus.capi.land
+      CF_DOMAIN: samus.arya.capi.land
       GOOGLE_DNS_ZONE: arya-zone
       CAPI_ENVIRONMENT_NAME: samus
       GOOGLE_SERVICE_ACCOUNT_EMAIL: concourse@cf-capi-arya.iam.gserviceaccount.com
