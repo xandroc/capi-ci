@@ -1335,6 +1335,13 @@ jobs:
       GOOGLE_SERVICE_ACCOUNT_EMAIL: concourse@cff-capi-samus.iam.gserviceaccount.com
       GOOGLE_PROJECT_NAME: cff-capi-samus
       GOOGLE_KEY_FILE_PATH: capi-ci-private/samus/concourse-service-account.json
+  - task: run-smoke-tests
+    file: capi-ci/ci/k8s/run-smoke-tests.yml
+    params:
+      CAPI_ENVIRONMENT_NAME: samus
+      GOOGLE_SERVICE_ACCOUNT_EMAIL: concourse@cff-capi-samus.iam.gserviceaccount.com
+      GOOGLE_PROJECT_NAME: cff-capi-samus
+      GOOGLE_KEY_FILE_PATH: capi-ci-private/samus/concourse-service-account.json
 
 - name: katniss-kpack
   serial: true
