@@ -312,4 +312,4 @@ jobs:
       trigger: true
   - put: docker-image-capi-cf-for-k8s
     params:
-      build: capi-cf-for-k8s/cf-for0k8s
+      build: capi-cf-for-k8s/cf-for-k8s
