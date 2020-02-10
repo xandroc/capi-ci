@@ -9,6 +9,6 @@ gcloud auth activate-service-account \
 
 source "capi-ci-private/${CAPI_ENVIRONMENT_NAME}/.envrc"
 
-pushd "cf-for-k8s"
-  ./bin/run-smoke-tests.sh
+pushd "cf-for-k8s/tests/smoke"
+  ginkgo .
 popd
