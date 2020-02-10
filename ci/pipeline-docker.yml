@@ -43,6 +43,13 @@ resources:
     uri: https://github.com/cloudfoundry/capi-dockerfiles.git
     paths: [sits/Dockerfile]
 
+- name: capi-cf-for-k8s
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/cloudfoundry/capi-dockerfiles.git
+    paths: [cf-for-k8s/Dockerfile]
+
 - name: docker-image-sits
   type: docker-image
   source:
@@ -286,3 +293,14 @@ jobs:
   - put: docker-image-sits
     params:
       build: capi-dockerfiles-sits/sits
+- name: capi-cf-for-k8s
+  serial: true
+  plan:
+  - aggregate:
+    - get: weekly
+      trigger: true
+    - get: capi-cf-for-k8s
+      trigger: true
+  - put: capi-cf-for-k8s
+    params:
+      build: capi-cf-for-k8s/cf-for0k8s
