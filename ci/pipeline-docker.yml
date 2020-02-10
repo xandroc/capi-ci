@@ -116,6 +116,15 @@ resources:
     password: ((dockerhub_pass))
     email: ((dockerhub_email))
 
+- name: docker-image-capi-cf-for-k8s
+  type: docker-image
+  source:
+    repository: cloudfoundry/capi
+    tag: cf-for-k8s
+    username: ((dockerhub_user))
+    password: ((dockerhub_pass))
+    email: ((dockerhub_email))
+
 - name: capi-dockerfiles-bosh-lite
   type: git
   source:
