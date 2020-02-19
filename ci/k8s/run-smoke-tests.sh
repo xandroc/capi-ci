@@ -7,8 +7,10 @@ gcloud auth activate-service-account \
   --key-file="${GOOGLE_KEY_FILE_PATH}" \
   --project="${GOOGLE_PROJECT_NAME}"
 
-source "capi-ci-private/${CAPI_ENVIRONMENT_NAME}/.envrc"
 
-pushd "cf-for-k8s/tests/smoke"
-  ginkgo .
-popd
+DNS_DOMAIN=$(cat env-metadata/dns-domain.txt)
+export SMOKE_TEST_API_ENDPOINT="https://api.${DNS_DOMAIN}"
+export SMOKE_TEST_APPS_DOMAIN="${DNS_DOMAIN}"
+export SMOKE_TEST_USERNAME=admin
+export SMOKE_TEST_PASSWORD=$(cat env-metadata/cf-admin-password.txt)
+cf-for-k8s-master/hack/run-smoke-tests.sh
