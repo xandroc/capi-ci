@@ -33,4 +33,4 @@ params:
 #  GOOGLE_KEY_FILE_PATH:
 
 run:
-  path: capi-ci/ci/k8s/deploy-cf-for-k8s.sh
+  path: capi-ci/ci/k8s/delete-cf-for-k8s.sh
