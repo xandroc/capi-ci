@@ -13,4 +13,6 @@ export SMOKE_TEST_API_ENDPOINT="https://api.${DNS_DOMAIN}"
 export SMOKE_TEST_APPS_DOMAIN="${DNS_DOMAIN}"
 export SMOKE_TEST_USERNAME=admin
 export SMOKE_TEST_PASSWORD=$(cat env-metadata/cf-admin-password.txt)
-cf-for-k8s/hack/run-smoke-tests.sh
+pushd "cf-for-k8s/tests/smoke"
+  ginkgo .
+popd
