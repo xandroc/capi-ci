@@ -11,6 +11,8 @@ inputs:
 - name: capi-ci
 - name: capi-ci-private
 - name: cf-for-k8s
+outputs:
+- name: env-metadata
 
 params:
   # Required.

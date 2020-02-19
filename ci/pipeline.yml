@@ -1320,8 +1320,6 @@ jobs:
       GOOGLE_KEY_FILE_PATH: capi-ci-private/samus/concourse-service-account.json
   - task: deploy
     file: capi-ci/ci/k8s/deploy-cf-for-k8s.yml
-    outputs:
-      - name: env-metadata
     params:
       CAPI_ENVIRONMENT_NAME: samus
       GOOGLE_SERVICE_ACCOUNT_EMAIL: concourse@cff-capi-samus.iam.gserviceaccount.com
@@ -1338,8 +1336,6 @@ jobs:
       GOOGLE_KEY_FILE_PATH: capi-ci-private/samus/concourse-service-account.json
   - task: run-smoke-tests
     file: capi-ci/ci/k8s/run-smoke-tests.yml
-    inputs:
-      - name: env-metadata
     params:
       CAPI_ENVIRONMENT_NAME: samus
       GOOGLE_SERVICE_ACCOUNT_EMAIL: concourse@cff-capi-samus.iam.gserviceaccount.com
