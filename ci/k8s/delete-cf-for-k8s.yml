@@ -18,19 +18,19 @@ params:
   # directory name.
   CAPI_ENVIRONMENT_NAME:
 
-#  # Required.
-#  # This is the Google Cloud project name.
-#  GOOGLE_PROJECT_NAME:
-#
-#  # Required.
-#  # This is the service account that has access to the K8s cluster under
-#  # GOOGLE_PROJECT_NAME.
-#  GOOGLE_SERVICE_ACCOUNT_EMAIL:
-#
-#  # Required.
-#  # This is the path to a key-file associated with the Google service account
-#  # and project.  It'll be passed as a `--key-file` to the `gcloud` command.
-#  GOOGLE_KEY_FILE_PATH:
+  # Required.
+  # This is the Google Cloud project name.
+  GOOGLE_PROJECT_NAME:
+
+  # Required.
+  # This is the service account that has access to the K8s cluster under
+  # GOOGLE_PROJECT_NAME.
+  GOOGLE_SERVICE_ACCOUNT_EMAIL:
+
+  # Required.
+  # This is the path to a key-file associated with the Google service account
+  # and project.  It'll be passed as a `--key-file` to the `gcloud` command.
+  GOOGLE_KEY_FILE_PATH:
 
 run:
   path: capi-ci/ci/k8s/delete-cf-for-k8s.sh
