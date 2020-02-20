@@ -2,9 +2,10 @@
 platform: linux
 
 image_resource:
-  type: docker-image
+  type: registry-image
   source:
-    repository: relintdockerhubpushbot/cf-test-runner
+    repository: cloudfoundry/capi
+    tag: cf-for-k8s
 
 inputs:
 - name: capi-ci
