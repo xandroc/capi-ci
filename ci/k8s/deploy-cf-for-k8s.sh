@@ -16,7 +16,7 @@ popd
 bosh interpolate --path /cf_admin_password cf-for-k8s/cf-install-values.yml > env-metadata/cf-admin-password.txt
 echo "${CAPI_ENVIRONMENT_NAME}.capi.land" > env-metadata/dns-domain.txt
 
-cat > env-metadata/integration-config.json << EOF
+cat > env-metadata/integration_config.json << EOF
 {
   "api": "api.${CAPI_ENVIRONMENT_NAME}.capi.land",
   "apps_domain": "${CAPI_ENVIRONMENT_NAME}.capi.land",
