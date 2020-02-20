@@ -11,7 +11,7 @@ source "capi-ci-private/${CAPI_ENVIRONMENT_NAME}/.envrc"
 
 NAME="*.${CF_DOMAIN}."
 INGRESS_IP="$(kubectl get svc -n istio-system istio-ingressgateway -o jsonpath='{.status.loadBalancer.ingress[*].ip}')"
-DNS_TTL=15
+DNS_TTL=10
 
 set +e
 PREVIOUS_RECORD_IP="$(gcloud dns record-sets list --zone ${GOOGLE_DNS_ZONE} | grep ${NAME} | awk '{ print $4 }')"
@@ -27,4 +27,4 @@ gcloud dns record-sets transaction add "${INGRESS_IP}" --name "${NAME}" --ttl="$
 
 gcloud dns record-sets transaction execute --zone="${GOOGLE_DNS_ZONE}"
 
-sleep "${DNS_TTL}"
+sleep "$((2*DNS_TTL))"
