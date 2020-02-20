@@ -1309,6 +1309,7 @@ jobs:
       globs: ["release-*.yaml"]
       resource: kpack-github-release
     - get: capi-ci
+    - get: capi-bara-tests
     - get: capi-ci-private
     - get: cf-for-k8s
   - task: delete-deployment
