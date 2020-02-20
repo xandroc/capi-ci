@@ -1305,13 +1305,13 @@ jobs:
   serial_groups: [samus]
   plan:
   - in_parallel:
-    - get: kpack-release
-      globs: ["release-*.yaml"]
-      resource: kpack-github-release
     - get: capi-ci
     - get: capi-bara-tests
     - get: capi-ci-private
     - get: cf-for-k8s
+      trigger: true
+#    - get: capi-k8s-release
+#      trigger: true
   - task: delete-deployment
     file: capi-ci/ci/k8s/delete-cf-for-k8s.yml
     params:
