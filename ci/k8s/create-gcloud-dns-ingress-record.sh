@@ -27,4 +27,6 @@ gcloud dns record-sets transaction add "${INGRESS_IP}" --name "${NAME}" --ttl="$
 
 gcloud dns record-sets transaction execute --zone="${GOOGLE_DNS_ZONE}"
 
-sleep "$((2*DNS_TTL))"
+while [ "$(dig +short ${NAME})" != "${INGRESS_IP}" ]; do
+  sleep 1
+done
