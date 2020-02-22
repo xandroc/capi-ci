@@ -1309,7 +1309,6 @@ jobs:
     - get: capi-bara-tests
     - get: capi-ci-private
     - get: cf-for-k8s
-      trigger: true
 #    - get: capi-k8s-release
 #      trigger: true
   - task: delete-deployment
