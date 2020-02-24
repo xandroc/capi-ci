@@ -1325,6 +1325,18 @@ jobs:
       GOOGLE_SERVICE_ACCOUNT_EMAIL: concourse@cff-capi-samus.iam.gserviceaccount.com
       GOOGLE_PROJECT_NAME: cff-capi-samus
       GOOGLE_KEY_FILE_PATH: capi-ci-private/samus/concourse-service-account.json
+    ensure:
+      do:
+      - task: commit-env-metadata
+        file: capi-ci/ci/k8s/commit-env-metadata.yml
+        params:
+          REPO_SUBDIRECTORY: samus
+        input_mapping:
+          private-env-repo: capi-ci-private
+      - put: capi-ci-private
+        params:
+          repository: updated-private-env-repo
+          rebase: true
   - task: set-dns
     file: capi-ci/ci/k8s/create-gcloud-dns-ingress-record.yml
     params:
