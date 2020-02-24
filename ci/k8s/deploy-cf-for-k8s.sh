@@ -13,6 +13,7 @@ pushd "cf-for-k8s"
   bin/install-cf.sh ./cf-install-values.yml
 popd
 
+cp cf-for-k8s/cf-install-values.yml env-metadata/cf-install-values.yml
 bosh interpolate --path /cf_admin_password cf-for-k8s/cf-install-values.yml > env-metadata/cf-admin-password.txt
 echo "${CAPI_ENVIRONMENT_NAME}.capi.land" > env-metadata/dns-domain.txt
 
