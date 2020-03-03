@@ -1,0 +1,18 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: cloudfoundry/capi
+    tag: runtime-ci
+
+inputs:
+  - name: capi-ci
+  - name: repo
+
+outputs:
+  - name: repo-with-head-tag-file
+
+run:
+  path: capi-ci/ci/docker/write-head-tag-file.sh

@@ -709,9 +709,13 @@ jobs:
     - get: cloud_controller_ng
       passed: [cc-unit-tests]
       trigger: true
+    - get: capi-ci
+    - task: write-tag-file
+      file: capi-ci/ci/docker/write-head-tag-file.yml
     - put: capi-docker-image
       params:
-        build: cloud_controller_ng
+        build: repo-with-head-tag-file
+        additional_tags: head-tag-file
         cache: true
 
 - name: bump-bbs-protos
