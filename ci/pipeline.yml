@@ -717,7 +717,7 @@ jobs:
     - put: capi-docker-image
       params:
         build: repo-with-head-tag-file
-        additional_tags: head-tag-file
+        additional_tags: repo-with-head-tag-file/head-tag-file
         cache: true
 
 - name: bump-bbs-protos
