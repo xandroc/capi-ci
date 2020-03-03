@@ -6,4 +6,4 @@ pushd repo
   git rev-parse HEAD > head-tag-file
 popd
 
-cp -r repo repo-with-head-tag-file
+cp -R repo/* repo-with-head-tag-file/

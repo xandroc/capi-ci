@@ -712,6 +712,8 @@ jobs:
     - get: capi-ci
     - task: write-tag-file
       file: capi-ci/ci/docker/write-head-tag-file.yml
+      input_mapping:
+        repo: cloud_controller_ng
     - put: capi-docker-image
       params:
         build: repo-with-head-tag-file
