@@ -21,7 +21,6 @@ groups:
   - create-capi-release
   - bump-capi-release
   - mulan-postgres
-  - jean-eirini
   - elsa-HA
   - kiki-back-compat-migrations
   - xena-mysql-drats
@@ -63,7 +62,6 @@ groups:
   - update-bosh-kiki
   - update-bosh-leia-azure-storage
   - update-bosh-mulan
-  - update-bosh-jean
   - update-bosh-rey-gcs-storage
   - update-bosh-ripley
   - update-bosh-xena-mysql
@@ -81,7 +79,6 @@ groups:
   - rotate-certs-kiki
   - rotate-certs-leia-azure-storage
   - rotate-certs-mulan
-  - rotate-certs-jean
   - rotate-certs-rey-gcs-storage
   - rotate-certs-ripley
   - rotate-certs-xena
@@ -465,16 +462,11 @@ resources:
     uri: git@github.com:cloudfoundry/capi-ci-private.git
 
 
-# Jean resources
+# Katniss resources
 - name: eirini-bosh-release
   type: bosh-io-release
   source:
     repository: cloudfoundry-community/eirini-bosh-release
-
-- name: bits-service-release
-  type: bosh-io-release
-  source:
-    repository: cloudfoundry-incubator/bits-service-release
 
 
 # Ripley resources
@@ -1076,72 +1068,6 @@ jobs:
     params:
       BBL_STATE_DIR: "kiki"
 
-- name: update-bosh-jean
-  serial: true
-  serial_groups: [jean]
-  plan:
-  - in_parallel:
-    - get: cf-deployment-concourse-tasks
-      resource: cf-deployment-concourse-tasks
-    - get: capi-ci
-    - get: capi-ci-private
-    - get: bosh-deployment
-    - get: weekly-sunday
-      trigger: true
-  - task: seed-capi-ci-private
-    file: capi-ci/ci/setup-environment/seed.yml
-    params:
-      ENVIRONMENT: jean
-      DOMAIN: &jean-domain "jean.capi.land"
-  - put: capi-ci-private
-    params:
-      repository: updated-capi-ci-private
-      rebase: true
-  - task: collect-ops-files
-    file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
-    input_mapping:
-      base-ops-files: bosh-deployment
-      new-ops-files: capi-ci
-  - task: update-bosh-jean
-    file: cf-deployment-concourse-tasks/bbl-up/task.yml
-    input_mapping:
-      bbl-state: updated-capi-ci-private
-      bbl-config: updated-capi-ci-private
-    params: &update-bosh-jean-params
-      BBL_STATE_DIR: "jean"
-      BBL_IAAS: "gcp"
-      BBL_LB_CERT: "certs/load-balancer/server.crt"
-      BBL_LB_KEY: "certs/load-balancer/server.key"
-      LB_DOMAIN: *jean-domain
-      BBL_ENV_NAME: "jean"
-      BBL_GCP_SERVICE_ACCOUNT_KEY: ((jean_gcp_json_key))
-      BBL_GCP_PROJECT_ID: ((jean_gcp_project_id))
-      BBL_GCP_ZONE: ((jean_gcp_zone))
-      BBL_GCP_REGION: ((jean_gcp_region))
-    ensure:
-      put: capi-ci-private
-      params:
-        repository: updated-bbl-state
-        rebase: true
-  - task: create-dns-record
-    attempts: 5
-    file: capi-ci/ci/bbl-tasks/create-dns-record.yml
-    input_mapping:
-      bbl-state: updated-bbl-state
-    params:
-      BBL_STATE_DIR: "jean"
-      DNS_DOMAIN: *jean-domain
-      GCP_DNS_SERVICE_ACCOUNT_KEY: ((dns_gcp_json_key))
-      GCP_PROJECT_ID: ((dns_gcp_project_id))
-      SHARED_DNS_ZONE_NAME: "capi-land"
-  - task: run-bosh-cleanup
-    file: capi-ci/ci/bbl-tasks/run-bosh-cleanup.yml
-    input_mapping:
-      bbl-state: updated-bbl-state
-    params:
-      BBL_STATE_DIR: "jean"
-
-
 - name: mulan-postgres
   serial: true
   serial_groups: [mulan]
@@ -1476,138 +1402,6 @@ jobs:
       kubectl: apply -f kpack-release/release-*.yaml
       kubeconfig_file: kubeconfig/config
       context: katniss-cluster
-
-- name: jean-eirini
-  serial: true
-  serial_groups: [jean]
-  plan:
-  - in_parallel:
-    - get: cloud_controller_ng
-      passed: [create-capi-release]
-    - get: cf-deployment-concourse-tasks
-      resource: cf-deployment-concourse-tasks
-    - get: cf-deployment
-      resource: cf-deployment
-    - get: capi-release
-      resource: capi-release-develop
-      passed: [create-capi-release]
-    - get: cf-acceptance-tests
-    - get: capi-ci
-    - get: capi-ci-private
-    - get: capi-release-tarball
-      passed: [create-capi-release]
-      trigger: true
-    - get: eirini-bosh-release
-    - get: bits-service-release
-  - task: upload-capi-release-tarball
-    file: capi-ci/ci/bosh/upload-release.yml
-    input_mapping:
-      bbl-state: capi-ci-private
-      release-tarball: capi-release-tarball
-    params:
-      BBL_STATE_DIR: "jean"
-  - task: upload-eirini-release-tarball
-    file: capi-ci/ci/bosh/upload-release.yml
-    input_mapping:
-      bbl-state: capi-ci-private
-      release-tarball: eirini-bosh-release
-    params:
-      BBL_STATE_DIR: "jean"
-  - task: upload-bits-service-release-tarball
-    file: capi-ci/ci/bosh/upload-release.yml
-    input_mapping:
-      bbl-state: capi-ci-private
-      release-tarball: bits-service-release
-    params:
-      BBL_STATE_DIR: "jean"
-  - task: jean-stemcell-upload
-    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
-    input_mapping:
-      bbl-state: capi-ci-private
-    params:
-      BBL_STATE_DIR: "jean"
-  - task: extract-bbl-environment
-    file: capi-ci/ci/bbl-tasks/extract_bbl_environment.yml
-    params:
-      ENV_NAME: jean
-  - task: collect-ops-files
-    file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
-    input_mapping:
-      base-ops-files: cf-deployment
-      new-ops-files: capi-ci
-    params:
-      NEW_OPS_FILES: &jean-ops-to-collect |
-        cf-deployment-operations/skip-cert-verify.yml
-        cf-deployment-operations/use-latest-capi.yml
-        cf-deployment-operations/eirini/add-eirini.yml
-        cf-deployment-operations/eirini/hardcode-doppler-ip.yml
-        cf-deployment-operations/scale-up-cells.yml
-        cf-deployment-operations/performance/scale-generic-worker-processes.yml
-        cf-deployment-operations/seed-credhub-asg.yml
-        cf-deployment-operations/disable-credhub-interpolate-service-bindings.yml
-        cf-deployment-operations/log-all-sequel-activity.yml
-        cf-deployment-operations/temporary/disable-uaa-get-requests.yml
-        cf-deployment-operations/enable-cef-security-event-logging.yml
-  - task: deploy
-    file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
-    input_mapping:
-      bbl-state: capi-ci-private
-      ops-files: collected-ops-files
-      vars-files: capi-ci-private
-    params:
-      BBL_STATE_DIR: "jean"
-      SYSTEM_DOMAIN: *jean-domain
-      OPS_FILES: &jean-ops-files |
-        base-ops-files/operations/test/add-persistent-isolation-segment-diego-cell.yml
-        skip-cert-verify.yml
-        base-ops-files/operations/use-compiled-releases.yml
-        use-latest-capi.yml
-        base-ops-files/operations/bits-service/use-bits-service.yml
-        add-eirini.yml
-        hardcode-doppler-ip.yml
-        base-ops-files/operations/scale-to-one-az.yml
-        scale-up-cells.yml
-        scale-generic-worker-processes.yml
-        seed-credhub-asg.yml
-        disable-credhub-interpolate-service-bindings.yml
-        log-all-sequel-activity.yml
-        disable-uaa-get-requests.yml
-        enable-cef-security-event-logging.yml
-  - task: configure-eirini-bosh
-    file: cf-deployment-concourse-tasks/run-errand/task.yml
-    input_mapping:
-      bbl-state: capi-ci-private
-    params:
-      ERRAND_NAME: configure-eirini-bosh
-      BBL_STATE_DIR: jean
-  - task: updated-integration-configs
-    file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
-    input_mapping:
-      bbl-state: capi-ci-private
-      integration-configs: capi-ci-private
-    params:
-      BBL_STATE_DIR: "jean"
-      CATS_INTEGRATION_CONFIG_FILE: "jean/cats_integration_config.json"
-      SYSTEM_DOMAIN: *jean-domain
-    ensure:
-      put: capi-ci-private
-      params:
-        repository: updated-integration-configs
-        rebase: true
-  - in_parallel:
-    - task: acceptance-tests
-      file: cf-deployment-concourse-tasks/run-cats/task.yml
-      input_mapping:
-        integration-config: updated-integration-configs
-      params:
-        NODES: 6
-        CONFIG_FILE_PATH: "jean/cats_integration_config.json"
-        CAPTURE_LOGS: true
-  - task: cleanup-acceptance-test-leftovers
-    file: capi-ci/ci/acceptance-test-utils/cats_cleanup.yml
-    params:
-      CF_API_TARGET: https://api.jean.capi.land
-      BBL_STATE_DIR: jean
 
 - name: ripley-nfs
   serial: true
@@ -2617,84 +2411,6 @@ jobs:
       ENVIRONMENT: mulan
       ON_OR_OFF: on
 
-- name: rotate-certs-jean
-  serial: true
-  serial_groups: [jean]
-  plan:
-  - in_parallel:
-    - get: capi-ci-private
-    - get: capi-ci
-    - get: cf-deployment-concourse-tasks
-    - get: cf-deployment
-    - get: thirtyfirstly
-      trigger: true
-  - task: disable-resurrection
-    file: capi-ci/ci/bbl-tasks/update-resurrection.yml
-    params:
-      ENVIRONMENT: jean
-      ON_OR_OFF: off
-  - task: delete-certs
-    file: capi-ci/ci/bbl-tasks/delete-certs.yml
-    params:
-      ENVIRONMENT: jean
-  - put: capi-ci-private
-    params:
-      repository: updated-capi-ci-private
-      rebase: true
-  - task: update-bosh-jean
-    file: cf-deployment-concourse-tasks/bbl-up/task.yml
-    input_mapping:
-      bbl-state: updated-capi-ci-private
-      bbl-config: updated-capi-ci-private
-    params: *update-bosh-jean-params
-    ensure:
-      put: capi-ci-private
-      params:
-        repository: updated-bbl-state
-        rebase: true
-  - task: collect-ops-files
-    file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
-    input_mapping:
-      base-ops-files: cf-deployment
-      new-ops-files: capi-ci
-    params:
-      NEW_OPS_FILES: *jean-ops-to-collect
-  - task: deploy
-    file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
-    input_mapping:
-      bbl-state: updated-bbl-state
-      ops-files: collected-ops-files
-      vars-files: capi-ci-private
-    params:
-      BBL_STATE_DIR: jean
-      SYSTEM_DOMAIN: *jean-domain
-      OPS_FILES: *jean-ops-files
-      BOSH_DEPLOY_ARGS: '--recreate --fix'
-    attempts: 2 # hack around deploy not working due to https://www.pivotaltracker.com/story/show/165591078
-  - task: configure-eirini-bosh
-    file: cf-deployment-concourse-tasks/run-errand/task.yml
-    input_mapping:
-      bbl-state: updated-bbl-state
-    params:
-      ERRAND_NAME: configure-eirini-bosh
-      BBL_STATE_DIR: jean
-  - task: restart-eirini-loggregator-fluentd-pods
-    file: capi-ci/ci/eirini/restart-pods.yml
-    params:
-      GCP_JSON_KEY: ((jean_gcp_json_key))
-      GCP_PROJECT_ID: ((jean_gcp_project_id))
-      GCP_ZONE: ((jean_gcp_zone))
-      CLUSTER_NAME: jean-cluster
-      POD_NAMESPACE: cf-system
-      POD_NAME_LABEL: eirini-loggregator-fluentd
-  - task: enable-resurrection
-    file: capi-ci/ci/bbl-tasks/update-resurrection.yml
-    input_mapping:
-      capi-ci-private: updated-bbl-state
-    params:
-      ENVIRONMENT: jean
-      ON_OR_OFF: on
-
 - name: rotate-certs-kiki
   serial: true
   serial_groups: [kiki]
@@ -3589,7 +3305,6 @@ jobs:
       - xena-mysql-drats
       - gabrielle-postgres-drats
       - ripley-nfs
-      - jean-eirini
     - get: capi-release
       resource: capi-release-develop
       passed:
@@ -3599,7 +3314,6 @@ jobs:
       - xena-mysql-drats
       - gabrielle-postgres-drats
       - ripley-nfs
-      - jean-eirini
       trigger: true
     - get: capi-release-tarball
       passed:
@@ -3609,7 +3323,6 @@ jobs:
       - xena-mysql-drats
       - gabrielle-postgres-drats
       - ripley-nfs
-      - jean-eirini
   - put: capi-release-ci-passed
     params:
       repository: capi-release
