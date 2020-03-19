@@ -29,10 +29,12 @@ groups:
   - bump-ci-passed
   - snyk-test
   - bump-bbs-protos
+- name: capi-k8s-release
+  jobs:
+  - samus-cf-for-k8s
 - name: dev-env
   jobs:
   - katniss-kpack
-  - samus-cf-for-k8s
 - name: blobstore-fanout
   jobs:
   - create-capi-release
