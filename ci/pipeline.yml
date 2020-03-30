@@ -1253,6 +1253,8 @@ jobs:
       trigger: true
     - get: capi-k8s-release
       trigger: true
+    - get: capi-docker-image
+      trigger: true
   - task: delete-deployment
     file: capi-ci/ci/k8s/delete-cf-for-k8s.yml
     params:

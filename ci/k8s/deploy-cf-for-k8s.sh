@@ -2,15 +2,29 @@
 
 set -eux -o pipefail
 
+export CF_FOR_K8s_DIR="${PWD}/cf-for-k8s"
+export SERVICE_ACCOUNT_KEY="${PWD}/${GOOGLE_KEY_FILE_PATH}"
+
+func getImageReference() {
+  pushd $1
+    echo "$(cat repository):$(cat tag)@$(cat digest)"
+  popd
+}
+
 gcloud auth activate-service-account \
   "${GOOGLE_SERVICE_ACCOUNT_EMAIL}" \
   --key-file="${GOOGLE_KEY_FILE_PATH}" \
   --project="${GOOGLE_PROJECT_NAME}"
 
-export CF_FOR_K8s_DIR="${PWD}/cf-for-k8s"
-export SERVICE_ACCOUNT_KEY="${PWD}/${GOOGLE_KEY_FILE_PATH}"
+cat <<- EOF > "${PWD}/update-images.yml"
+---
+- type: replace
+  path: /images/ccng
+  value: $(getImageReference capi-docker-image)
+EOF
 
 pushd "capi-k8s-release"
+  bosh interpolate values.yml -o "../update-images.yml"
   scripts/bump-cf-for-k8s.sh
 popd
 
