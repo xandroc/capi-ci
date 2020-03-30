@@ -7,6 +7,12 @@ gcloud auth activate-service-account \
   --key-file="${GOOGLE_KEY_FILE_PATH}" \
   --project="${GOOGLE_PROJECT_NAME}"
 
+export CF_FOR_K8s_DIR="${PWD}/cf-for-k8s"
+
+pushd "capi-k8s-release"
+  scripts/bump-cf-for-k8s.sh
+popd
+
 source "capi-ci-private/${CAPI_ENVIRONMENT_NAME}/.envrc"
 pushd "cf-for-k8s"
   hack/generate-values.sh "${CAPI_ENVIRONMENT_NAME}.capi.land" > cf-install-values.yml

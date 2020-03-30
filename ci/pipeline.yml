@@ -215,9 +215,16 @@ resources:
 - name: cf-for-k8s
   type: git
   source:
-    branch: master
+    branch: develop
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/cf-for-k8s.git
+
+- name: capi-k8s-release
+  type: git
+  source:
+    branch: master
+    private_key: ((private_key))
+    uri: git@github.com:cloudfoundry/capi-k8s-release.git
 
 - name: arya-bbl-state
   type: git
@@ -1243,8 +1250,9 @@ jobs:
     - get: capi-bara-tests
     - get: capi-ci-private
     - get: cf-for-k8s
-#    - get: capi-k8s-release
-#      trigger: true
+      trigger: true
+    - get: capi-k8s-release
+      trigger: true
   - task: delete-deployment
     file: capi-ci/ci/k8s/delete-cf-for-k8s.yml
     params:

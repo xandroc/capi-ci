@@ -11,6 +11,7 @@ inputs:
 - name: capi-ci
 - name: capi-ci-private
 - name: cf-for-k8s
+- name: capi-k8s-release
 outputs:
 - name: env-metadata
 
