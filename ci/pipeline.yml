@@ -1298,6 +1298,7 @@ jobs:
         GOOGLE_SERVICE_ACCOUNT_EMAIL: concourse@cff-capi-samus.iam.gserviceaccount.com
         GOOGLE_PROJECT_NAME: cff-capi-samus
         GOOGLE_KEY_FILE_PATH: capi-ci-private/samus/concourse-service-account.json
+        SMOKE_TEST_SKIP_SSL: true
     - task: capi-bara-tests
       file: capi-ci/ci/baras/run-baras.yml
       input_mapping:
