@@ -28,7 +28,10 @@ EOF
 
 pushd "capi-k8s-release"
   bosh interpolate values.yml -o "../update-images.yml" > values-int.yml
-  mv values-int.yml values.yml
+
+  echo "#@data/values" > values.yml
+  echo "---" >> values.yml
+  cat values-int.yml >> values.yml
 
   scripts/bump-cf-for-k8s.sh
 popd
