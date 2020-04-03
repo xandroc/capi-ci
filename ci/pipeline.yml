@@ -15,7 +15,8 @@ groups:
   jobs:
   - cc-unit-tests
   - bridge-unit-tests
-  - build-docker-image
+  - build-capi-docker-image
+  - build-watcher-docker-image
   - verify-capi-release-commits
   - capi-release-template-tests
   - create-capi-release
@@ -356,6 +357,14 @@ resources:
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/cloud_controller_ng.git
 
+- name: capi-kpack-watcher
+  type: git
+  source:
+    branch: master
+    paths: [src/capi-kpack-watcher]
+    private_key: ((private_key))
+    uri: git@github.com:cloudfoundry/capi-k8s-release.git
+
 - name: diego-release
   type: git
   source:
@@ -597,6 +606,13 @@ resources:
     username: ((dockerhub_user))
     password: ((dockerhub_pass))
 
+- name: watcher-docker-image
+  type: docker-image
+  source:
+    repository: cloudfoundry/capi-kpack-watcher
+    username: ((dockerhub_user))
+    password: ((dockerhub_pass))
+
 jobs:
 - name: autobump-golang-package
   plan:
@@ -713,7 +729,7 @@ jobs:
       repository: bumped/capi-release
       rebase: true
 
-- name: build-docker-image
+- name: build-capi-docker-image
   plan:
     - get: cloud_controller_ng
       passed: [cc-unit-tests]
@@ -724,6 +740,21 @@ jobs:
       input_mapping:
         repo: cloud_controller_ng
     - put: capi-docker-image
+      params:
+        build: repo-with-head-tag-file
+        additional_tags: repo-with-head-tag-file/head-tag-file
+        cache: true
+
+- name: build-watcher-docker-image
+  plan:
+    - get: capi-kpack-watcher
+      trigger: true
+    - get: capi-ci
+    - task: write-tag-file
+      file: capi-ci/ci/docker/write-head-tag-file.yml
+      input_mapping:
+        repo: capi-kpack-watcher
+    - put: watcher-docker-image
       params:
         build: repo-with-head-tag-file
         additional_tags: repo-with-head-tag-file/head-tag-file
@@ -1255,6 +1286,8 @@ jobs:
       trigger: true
     - get: capi-docker-image
       trigger: true
+    - get: watcher-docker-image
+      trigger: true
   - task: delete-deployment
     file: capi-ci/ci/k8s/delete-cf-for-k8s.yml
     params:
@@ -1677,6 +1710,8 @@ jobs:
       manifest: cf-deployment/cf-deployment.yml
       vars:
         system_domain: *elsa-domain
+        datadog_api_key: ((elsa_datadog_api_key))
+        datadog_metric_prefix: "datadog.nozzle."
         new_relic_license_key: ((new_relic_license_key))
         syslog_address: ((elsa_syslog_remote_address))
         syslog_port: ((elsa_syslog_remote_port))
@@ -1708,6 +1743,7 @@ jobs:
       # Use S3 as blobstore
       - capi-ci/cf-deployment-operations/use-s3-and-cdn-storage.yml
       # Metrics
+      - capi-ci/cf-deployment-operations/add-datadog-firehose-nozzle-gcp.yml
       - capi-ci/cf-deployment-operations/add-new-relic.yml
       - capi-ci/cf-deployment-operations/add-prometheus.yml
       - capi-ci/cf-deployment-operations/add-prometheus-capi-homepage.yml

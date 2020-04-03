@@ -1,0 +1,121 @@
+Testing that deploying from docker image works:
+
+ccng
+nginx
+watcher
+
+cf-for-k8s is on develop
+https://github.com/cloudfoundry/capi-k8s-release@29980921bca735de3000b32a0defb319ce6522d5
+Versions of child repos are at:
+ccng: sha256:0bc1b2b3e0c2fcfbd76d7c4a311b728a240b928fcd8d2b2b1e057de88a0adacf
+nginx: sha256:51e4e48c457d5cb922cf0f569e145054e557e214afa78fb2b312a39bb2f938b6
+watcher: @sha256:67125e0d3a4026a23342d80e09aad9284c08ab4f7b3d9a993ae66e403d5d0796
+	Github: 956150dae --> 67125e0d release (a commit from march 11)
+
+Looking at Samus, does it NOW have the watcher at Docker sha 67125e0
+--> After this is built, it should have the docker sha at the new thing
+--> And new code should be on it
+
+Confirm what's on Samus now
+* Then set pipeline
+
+
+--> OK so. if this works, we'll have a newer version of the watcher because it did a GET 
+
+
+What are the most current docker image refs-- can we confirm that running pipeline changes will change them?
+
+
+Changes to ccng code base
+Changes to Docker image, push to docker repo
+Trigger running samus deploy / baras (done?)
+Deploy samus using docker image 
+
+
+T:DR:
+* Building Docker image. We build every time there is a commit to ccng on master
+* Deploying samus: We deploy whatever ccng is in capi-k8s-release that is pinned / committed to cf-for-k8s
+
+
+Tech forum. Confirm boundries on last story / this story for ccng > capi-k8s-release > cf-for-k8s
+	--> Code snippet that parses docker image reference implies that it started the first part of the next story?
+	--> Yes this was from the unstarted story
+
+How to see if Akash/Seth's change worked:
+* Look for latest ccng change
+* Find the "build-docker-image" job that had that commit as its input and see the image sha
+* Find the samus job that did a get of this corresponding Docker image
+* Confirm that the ccng deployed by Samus here is the same commit (can we tell this?)
+
+Latest ccng commit:
+	14b24b756b88e1acd3eac0be8c401a60be98492a
+build-docker-image job:
+	https://capi.ci.cf-app.com/teams/main/pipelines/capi/jobs/build-docker-image/builds/162
+	output: sha256:468b7f6d96bed53507dec1cef62e5cdd485b0f43f5171dfd881cf7909b7df48e
+
+First run of samus that uses docker image 468b7:
+https://capi.ci.cf-app.com/teams/main/pipelines/capi/jobs/samus-cf-for-k8s/builds/108
+--> Which ccng is this?
+-- it does interpolate in the sha 468b7
+-- But how can we tell if it actually deployed that ccng version...
+
+
+But we "fly hijack"'d to an even later build (115) and it had a most recent commit from several days ago (March 30)
+
+Try going from the other direction
+
+* Look at a build of samus -- build 115
+* Look at which Docker image it used -- 69413
+* Look at the ccng for that docker image -- 064869c, build 163
+--> Confirm that's what's on the container
+
+In update-images we see: 69413583
+
+--> How do we know what's deployed on k9s? The git resource doesn't matter..
+
+
+---
+
+
+Current state Qs:
+* When samus deploys / runs tests, where is it getting its ccng
+	* capi-ci/ci/k8s/deploy-cf-for-k8s.sh
+		pushd "capi-k8s-release"
+		  scripts/bump-cf-for-k8s.sh
+		popd
+	* From CI we run scripts/bump-cf-for-k8s.sh ( so it's getting the ccng )
+	* This is from "develop" of cf-for-k8s
+	* We run vendir sync of cf-for-k8s, which makes sure we're using the version of capi-k8s-release that's in the vendir.yml:
+		  - path: github.com/cloudfoundry/capi-k8s-release
+		    git:
+		      url: https://github.com/cloudfoundry/capi-k8s-release
+		      ref: 29980921bca735de3000b32a0defb319ce6522d5
+	* So this means we're deploying the PINNED version of capi-k8s-release, not the newest-built version
+
+--> Actually, the deploy script DOES seem to be grabbing the lastest ccng off master via the Docker image.
+	* capi-ci/ci/k8s/deploy-cf-for-k8s.sh
+	Updating ccng image
+	* Grabs the lastest sha from cloud_controller_ng/head-tag-file
+	* UPdates capi
+
+
+* When ccng changes are pushed to github, *how* does the new docker image get built
+	* Changes to cloud_controller_ng master
+	* Task capi-ci/ci/docker/write-head-tag-file.yml, repo=ccng
+	* pushd ccng
+	* git rev-parse HEAD -- gives you the sha of the most recent commit
+	* Write last commit to a file
+	* Copy all of ccng to repo-with-head-tag-file --> is this a new directory?
+
+	had:
+	cloud_controller_ng/ --> ccng code base
+
+	repo-with-head-tag-file/ --> all of ccng code base
+		head-tag-file --> contains latest sha
+
+* Docker Image Resource (Concourse)
+	* repository: cloudfoundry/cloud-controller-ng
+	* build: .The path of a directory containing a Dockerfile to build.
+		repo-with-head-tag-file/ --> all of ccng code base
+	*tags: defaults to latest
+	* additional_tags: Optional. Path to a file containing a whitespace-separated list of tags. The Docker build will additionally be pushed with those tags.
