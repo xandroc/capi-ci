@@ -15,4 +15,5 @@ run:
   path: capi-ci/ci/test-unit/run_cc_unit_tests
 
 params:
+  DB: ~
   RUN_IN_PARALLEL: ~
