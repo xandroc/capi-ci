@@ -20,6 +20,3 @@
 - type: replace
   path: /instance_groups/name=diego-cell/jobs/name=rep/properties/diego/ssl?/skip_cert_verify
   value: false
-- type: replace
-  path: /instance_groups/name=nozzle/jobs/name=datadog-firehose-nozzle/properties/nozzle/insecure_ssl_skip_verify?
-  value: false

@@ -1677,8 +1677,6 @@ jobs:
       manifest: cf-deployment/cf-deployment.yml
       vars:
         system_domain: *elsa-domain
-        datadog_api_key: ((elsa_datadog_api_key))
-        datadog_metric_prefix: "datadog.nozzle."
         new_relic_license_key: ((new_relic_license_key))
         syslog_address: ((elsa_syslog_remote_address))
         syslog_port: ((elsa_syslog_remote_port))
@@ -1710,7 +1708,6 @@ jobs:
       # Use S3 as blobstore
       - capi-ci/cf-deployment-operations/use-s3-and-cdn-storage.yml
       # Metrics
-      - capi-ci/cf-deployment-operations/add-datadog-firehose-nozzle-gcp.yml
       - capi-ci/cf-deployment-operations/add-new-relic.yml
       - capi-ci/cf-deployment-operations/add-prometheus.yml
       - capi-ci/cf-deployment-operations/add-prometheus-capi-homepage.yml
