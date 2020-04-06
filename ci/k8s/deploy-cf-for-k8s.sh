@@ -19,8 +19,8 @@ gcloud auth activate-service-account \
 
 echo "Updating images..."
 echo "Updating ccng image to cloud_controller_ng git SHA: $(cat capi-docker-image/rootfs/cloud_controller_ng/head-tag-file)"
-echo "Updating nginx image to cloud_controller_ng git SHA: $(cat capi-docker-image/rootfs/nginx-docker-image/head-tag-file)"
-echo "Updating watcher image to cloud_controller_ng git SHA: $(cat capi-docker-image/rootfs/capi_kpack_watcher/head-tag-file)"
+echo "Updating nginx image to capi-k8s-release git SHA: $(cat capi-docker-image/rootfs/nginx-docker-image/head-tag-file)"
+echo "Updating watcher image to capi-k8s-release git SHA: $(cat capi-docker-image/rootfs/capi_kpack_watcher/head-tag-file)"
 
 cat <<- EOF > "${PWD}/update-images.yml"
 ---

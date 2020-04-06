@@ -372,6 +372,7 @@ resources:
   type: git
   source:
     branch: master
+    paths: [dockerfiles/nginx]
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/capi-k8s-release.git
 
