@@ -13,6 +13,8 @@ inputs:
 - name: cf-for-k8s
 - name: capi-k8s-release
 - name: capi-docker-image
+- name: watcher-docker-image
+- name: nginx-docker-image
 outputs:
 - name: env-metadata
 

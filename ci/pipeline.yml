@@ -17,6 +17,7 @@ groups:
   - bridge-unit-tests
   - build-capi-docker-image
   - build-watcher-docker-image
+  - build-nginx-docker-image
   - verify-capi-release-commits
   - capi-release-template-tests
   - create-capi-release
@@ -365,6 +366,15 @@ resources:
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/capi-k8s-release.git
 
+# currently nginx Dockerfile and source are in the
+# capi-k8s-release repo
+- name: capi-nginx
+  type: git
+  source:
+    branch: master
+    private_key: ((private_key))
+    uri: git@github.com:cloudfoundry/capi-k8s-release.git
+
 - name: diego-release
   type: git
   source:
@@ -613,6 +623,13 @@ resources:
     username: ((dockerhub_user))
     password: ((dockerhub_pass))
 
+- name: nginx-docker-image
+  type: docker-image
+  source:
+    repository: cloudfoundry/capi-nginx
+    username: ((dockerhub_user))
+    password: ((dockerhub_pass))
+
 jobs:
 - name: autobump-golang-package
   plan:
@@ -757,6 +774,21 @@ jobs:
     - put: watcher-docker-image
       params:
         build: repo-with-head-tag-file/src/capi-kpack-watcher
+        additional_tags: repo-with-head-tag-file/head-tag-file
+        cache: true
+
+- name: build-nginx-docker-image
+  plan:
+    - get: capi-nginx
+      trigger: true
+    - get: capi-ci
+    - task: write-tag-file
+      file: capi-ci/ci/docker/write-head-tag-file.yml
+      input_mapping:
+        repo: capi-nginx
+    - put: nginx-docker-image
+      params:
+        build: repo-with-head-tag-file/dockerfiles/nginx
         additional_tags: repo-with-head-tag-file/head-tag-file
         cache: true
 
@@ -1287,6 +1319,8 @@ jobs:
     - get: capi-docker-image
       trigger: true
     - get: watcher-docker-image
+      trigger: true
+    - get: nginx-docker-image
       trigger: true
   - task: delete-deployment
     file: capi-ci/ci/k8s/delete-cf-for-k8s.yml
