@@ -61,6 +61,7 @@ cat > env-metadata/integration_config.json << EOF
   "apps_domain": "${CAPI_ENVIRONMENT_NAME}.capi.land",
   "admin_user": "admin",
   "admin_password": "$(cat env-metadata/cf-admin-password.txt)",
-  "skip_ssl_validation": true
+  "skip_ssl_validation": true,
+  "include_kpack": true
 }
 EOF
