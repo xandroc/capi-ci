@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -eux -o pipefail
+set -eu -o pipefail
 
 gcloud auth activate-service-account \
   "${GOOGLE_SERVICE_ACCOUNT_EMAIL}" \
