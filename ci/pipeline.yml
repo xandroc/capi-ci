@@ -1317,10 +1317,13 @@ jobs:
       trigger: true
     - get: capi-docker-image
       trigger: true
+      passed: [build-capi-docker-image]
     - get: watcher-docker-image
       trigger: true
+      passed: [build-watcher-docker-image]
     - get: nginx-docker-image
       trigger: true
+      passed: [build-nginx-docker-image]
   - task: delete-deployment
     file: capi-ci/ci/k8s/delete-cf-for-k8s.yml
     params:
