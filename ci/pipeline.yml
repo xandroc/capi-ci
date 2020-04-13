@@ -21,6 +21,7 @@ groups:
   - verify-capi-release-commits
   - capi-release-template-tests
   - create-capi-release
+  - samus-cf-for-k8s
   - bump-capi-release
   - mulan-postgres
   - elsa-HA
@@ -31,9 +32,6 @@ groups:
   - bump-ci-passed
   - snyk-test
   - bump-bbs-protos
-- name: capi-k8s-release
-  jobs:
-  - samus-cf-for-k8s
 - name: dev-env
   jobs:
   - katniss-kpack
