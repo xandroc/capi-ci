@@ -33,5 +33,9 @@ params:
   # and project.  It'll be passed as a `--key-file` to the `gcloud` command.
   GOOGLE_KEY_FILE_PATH: ""
 
+  # Optional.
+  # This determines whether to skip ssl validation in the smoke tests.
+  SMOKE_TEST_SKIP_SSL: false
+
 run:
   path: capi-ci/ci/k8s/run-smoke-tests.sh
