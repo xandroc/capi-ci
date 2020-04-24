@@ -5,7 +5,9 @@ build_dir=${PWD}
 
 version=$(cat cf-cli/version)
 curl -L "https://packages.cloudfoundry.org/stable?release=linux64-binary&version=${version:1}&source=github-rel" | tar -zx
-mv cf7 /usr/local/bin/cf
+mv cf7 cf
+PATH="${build_dir}/cf:${PATH}"
+export PATH
 
 cf -v
 
