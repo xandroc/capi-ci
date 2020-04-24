@@ -73,6 +73,7 @@ groups:
   jobs:
   - thirtyfirstly-warning
   - rotate-certs-arya
+  - rotate-certs-elsa
   - rotate-certs-gabrielle
   - rotate-certs-kiki
   - rotate-certs-leia-azure-storage
@@ -1003,7 +1004,7 @@ jobs:
     input_mapping:
       bbl-state: updated-capi-ci-private
       bbl-config: updated-capi-ci-private
-    params:
+    params: &update-bosh-elsa-params
       BBL_STATE_DIR: "elsa"
       BBL_IAAS: "gcp"
       BBL_LB_CERT: "certs/load-balancer/server.crt"
@@ -2210,6 +2211,49 @@ jobs:
       ENVIRONMENT: arya
       ON_OR_OFF: on
 
+- name: rotate-certs-elsa
+  serial: true
+  serial_groups: [elsa]
+  plan:
+  - in_parallel:
+    - get: elsa-bbl-state
+    - get: capi-ci-private
+    - get: capi-ci
+    - get: cf-deployment-concourse-tasks
+    - get: cf-deployment
+    - get: thirtyfirstly
+      trigger: true
+  - task: disable-resurrection
+    file: capi-ci/ci/bbl-tasks/update-resurrection.yml
+    params:
+      ENVIRONMENT: elsa
+      ON_OR_OFF: off
+  - task: delete-certs
+    file: capi-ci/ci/bbl-tasks/delete-certs.yml
+    params:
+      ENVIRONMENT: elsa
+  - put: capi-ci-private
+    params:
+      repository: updated-capi-ci-private
+      rebase: true
+  - task: update-bosh-elsa
+    file: cf-deployment-concourse-tasks/bbl-up/task.yml
+    input_mapping:
+      bbl-state: updated-capi-ci-private
+      bbl-config: updated-capi-ci-private
+    params: *update-bosh-elsa-params
+    ensure:
+      put: elsa-bbl-state
+      params:
+        repository: updated-bbl-state
+        rebase: true
+  - task: enable-resurrection
+    file: capi-ci/ci/bbl-tasks/update-resurrection.yml
+    input_mapping:
+      capi-ci-private: updated-bbl-state
+    params:
+      ENVIRONMENT: elsa
+      ON_OR_OFF: on
 
 - name: rotate-certs-mulan
   serial: true
