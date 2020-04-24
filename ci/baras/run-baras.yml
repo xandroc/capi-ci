@@ -9,7 +9,8 @@ image_resource:
 inputs:
   - name: capi-ci
   - name: capi-bara-tests
-  - name: integration-config
+  # - name: integration-config
+  - name: cf-cli
 
 run:
   path: capi-ci/ci/baras/run-baras.sh

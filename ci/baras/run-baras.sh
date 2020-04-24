@@ -3,11 +3,13 @@ set -xeu
 
 build_dir=${PWD}
 
+sudo cp cf-cli /usr/bin/cf
+
 export CONFIG
 CONFIG=$(mktemp)
 
-original_config="${build_dir}/integration-config/${CONFIG_FILE_PATH}"
-cp ${original_config} ${CONFIG}
+# original_config="${build_dir}/integration-config/${CONFIG_FILE_PATH}"
+# cp ${original_config} ${CONFIG}
 
 CF_GOPATH=/go/src/github.com/cloudfoundry/
 

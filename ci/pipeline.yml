@@ -179,6 +179,13 @@ resources:
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/capi-ci.git
 
+- name: capi-ci-v7
+  type: git
+  source:
+    branch: v7-baras
+    private_key: ((private_key))
+    uri: git@github.com:cloudfoundry/capi-ci.git
+
 - name: capi-ci-private
   type: git
   source:
@@ -414,6 +421,14 @@ resources:
     branch: release-candidate
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/cf-acceptance-tests.git
+
+- name: cf-cli
+  type: github-release
+  source:
+    owner: cloudfoundry
+    repository: cli
+    tag_filter: "v7.0.0-*.*"
+    access_token: ((github_access_token))
 
 - name: capi-bara-tests
   type: git
@@ -1111,6 +1126,37 @@ jobs:
       bbl-state: updated-bbl-state
     params:
       BBL_STATE_DIR: "kiki"
+
+- name: temp-for-cli-v7
+  serial: true
+  serial_groups: [mulan]
+  plan:
+  - in_parallel:
+    - get: cloud_controller_ng
+    - get: cf-deployment-concourse-tasks
+      resource: cf-deployment-concourse-tasks
+    - get: cf-deployment
+      resource: cf-deployment
+    - get: capi-release
+      resource: capi-release-develop
+    - get: mulan-bbl-state
+    - get: mulan-integration-configs
+    - get: cf-acceptance-tests
+    - get: sync-integration-tests
+    - get: capi-bara-tests
+    - get: capi-ci-v7
+    - get: capi-ci-private
+    - get: cf-cli
+    - get: capi-release-tarball
+      trigger: true
+  - in_parallel:
+    - task: capi-bara-tests
+      file: capi-ci/ci/baras/run-baras.yml
+      input_mapping:
+        # integration-config: updated-integration-configs
+      params:
+        NODES: 2
+        CONFIG_FILE_PATH: "mulan/baras_integration_config.json"
 
 - name: mulan-postgres
   serial: true
