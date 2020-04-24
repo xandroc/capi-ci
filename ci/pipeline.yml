@@ -415,6 +415,15 @@ resources:
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/cf-acceptance-tests.git
 
+- name: cf-cli
+  type: github-release
+  source:
+    owner: cloudfoundry
+    repository: cli
+    tag_filter: "v7.0.0-*.*"
+    pre_release: true
+    access_token: ((github_access_token))
+
 - name: capi-bara-tests
   type: git
   source:
@@ -1131,6 +1140,7 @@ jobs:
     - get: cf-acceptance-tests
     - get: sync-integration-tests
     - get: capi-bara-tests
+    - get: cf-cli
     - get: capi-ci
     - get: capi-ci-private
     - get: capi-release-tarball
@@ -1554,6 +1564,7 @@ jobs:
     - get: cf-acceptance-tests
     - get: sync-integration-tests
     - get: capi-bara-tests
+    - get: cf-cli
     - get: capi-ci
     - get: capi-ci-private
     - get: capi-release-tarball
