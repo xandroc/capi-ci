@@ -13,6 +13,7 @@
 groups:
 - name: capi-release
   jobs:
+  - temp-for-cli-v7
   - cc-unit-tests
   - bridge-unit-tests
   - build-capi-docker-image
@@ -429,6 +430,7 @@ resources:
     repository: cli
     tag_filter: "v7.0.0-*.*"
     access_token: ((github_access_token))
+    pre_release: true
 
 - name: capi-bara-tests
   type: git
@@ -1144,7 +1146,8 @@ jobs:
     - get: cf-acceptance-tests
     - get: sync-integration-tests
     - get: capi-bara-tests
-    - get: capi-ci-v7
+    - get: capi-ci
+      resource: capi-ci-v7
     - get: capi-ci-private
     - get: cf-cli
     - get: capi-release-tarball
