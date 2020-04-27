@@ -1287,6 +1287,7 @@ jobs:
   - in_parallel:
     - get: capi-ci
     - get: capi-bara-tests
+    - get: cf-cli
     - get: capi-ci-private
     - get: cf-for-k8s
       trigger: true
