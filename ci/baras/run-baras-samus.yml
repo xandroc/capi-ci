@@ -10,6 +10,7 @@ image_resource:
 inputs:
   - name: capi-ci
   - name: capi-bara-tests
+  - name: cf-cli
   - name: integration-config
 
 run:
