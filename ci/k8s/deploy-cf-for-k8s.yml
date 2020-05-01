@@ -33,6 +33,14 @@ params:
   GOOGLE_PROJECT_NAME:
 
   # Required.
+  # This is the Google Cloud cluster name.
+  CLUSTER_NAME:
+
+  # Required.
+  # This is the Google Cloud cluster zone.
+  GCP_ZONE:
+
+  # Required.
   # This is the service account that has access to the K8s cluster under
   # GOOGLE_PROJECT_NAME.
   GOOGLE_SERVICE_ACCOUNT_EMAIL:

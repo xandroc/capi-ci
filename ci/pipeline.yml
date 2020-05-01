@@ -1315,6 +1315,8 @@ jobs:
       CAPI_ENVIRONMENT_NAME: samus
       GOOGLE_SERVICE_ACCOUNT_EMAIL: concourse@cff-capi-samus.iam.gserviceaccount.com
       GOOGLE_PROJECT_NAME: cff-capi-samus
+      CLUSTER_NAME: samus-cluster
+      GCP_ZONE: us-central1-a
       GOOGLE_KEY_FILE_PATH: capi-ci-private/samus/concourse-service-account.json
     ensure:
       do:
