@@ -11,6 +11,14 @@ cf -v
 export CONFIG
 CONFIG=$(mktemp)
 
+if [ -n ${GOOGLE_SERVICE_ACCOUNT_EMAIL} ]; then
+  echo "Logging into gcloud..."
+  gcloud auth activate-service-account \
+    "${GOOGLE_SERVICE_ACCOUNT_EMAIL}" \
+    --key-file="${GOOGLE_KEY_FILE_PATH}" \
+    --project="${GOOGLE_PROJECT_NAME}"
+fi
+
 original_config="${build_dir}/integration-config/${CONFIG_FILE_PATH}"
 cp ${original_config} ${CONFIG}
 
