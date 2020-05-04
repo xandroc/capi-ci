@@ -1663,8 +1663,6 @@ jobs:
       - cf-deployment/operations/scale-database-cluster.yml
       # Credhub requires UAA auth so we must allow containers to talk to UAA
       - capi-ci/cf-deployment-operations/seed-uaa-asg.yml
-      # Enable log-cache
-      - cf-deployment/operations/experimental/use-logcache-for-cloud-controller-app-stats.yml
       # enable telemetry emissions
       - capi-ci-private/elsa/telemetry.yml
   - task: updated-integration-configs
