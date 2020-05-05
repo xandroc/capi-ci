@@ -11,7 +11,7 @@ cf -v
 export CONFIG
 CONFIG=$(mktemp)
 
-if [ -n ${GOOGLE_SERVICE_ACCOUNT_EMAIL} ]; then
+if [ -n "${GOOGLE_SERVICE_ACCOUNT_EMAIL}" ]; then
   echo "Logging into gcloud..."
   gcloud auth activate-service-account \
     "${GOOGLE_SERVICE_ACCOUNT_EMAIL}" \
