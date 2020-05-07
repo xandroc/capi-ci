@@ -1285,6 +1285,8 @@ jobs:
   serial_groups: [samus]
   plan:
   - in_parallel:
+    - get: cloud_controller_ng
+      passed: [build-capi-docker-image]
     - get: capi-ci
     - get: capi-bara-tests
     - get: cf-cli
@@ -1293,8 +1295,6 @@ jobs:
       trigger: true
     - get: capi-k8s-release
       trigger: true
-    - get: cloud_controller_ng
-      passed: [build-capi-docker-image]
     - get: capi-docker-image
       trigger: true
       passed: [build-capi-docker-image]
