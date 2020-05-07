@@ -1293,6 +1293,8 @@ jobs:
       trigger: true
     - get: capi-k8s-release
       trigger: true
+    - get: cloud_controller_ng
+      passed: [build-capi-docker-image]
     - get: capi-docker-image
       trigger: true
       passed: [build-capi-docker-image]
