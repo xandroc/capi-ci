@@ -15,6 +15,7 @@ groups:
   jobs:
   - cc-unit-tests
   - bridge-unit-tests
+  - capi-k8s-release-unit-tests
   - build-capi-docker-image
   - build-watcher-docker-image
   - build-nginx-docker-image
@@ -651,6 +652,20 @@ jobs:
           text: '[cc-unit-tests] OH NO! Failed when running with postgres'
           icon_emoji: ((slack_failure_emoji))
 
+- name: capi-k8s-release-unit-tests
+  plan:
+  - in_parallel:
+    - get: capi-kpack-watcher
+      trigger: true
+    - get: capi-ci
+  - task: run-capi-kpack-watcher-unit-tests
+    file: capi-ci/ci/k8s/run-capi-kpack-watcher-unit-tests.yml
+    on_failure:
+      put: slack-alert
+      params:
+        text: '[capi-k8s-release-unit-tests] OH NO! Failed when running with postgres'
+        icon_emoji: ((slack_failure_emoji))
+
 - name: verify-capi-release-commits
   plan:
   - in_parallel:
@@ -741,6 +756,7 @@ jobs:
   plan:
     - get: capi-kpack-watcher
       trigger: true
+      passed: [capi-k8s-release-unit-tests]
     - get: capi-ci
     - task: write-tag-file
       file: capi-ci/ci/docker/write-head-tag-file.yml
