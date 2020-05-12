@@ -11,9 +11,9 @@ function get_image_reference () {
 
 function bump_image_references() {
     echo "Updating images..."
-    echo "Updating ccng image to cloud_controller_ng git SHA: $(cat capi-docker-image/rootfs/cloud_controller_ng/head-tag-file)"
-    echo "Updating nginx image to capi-k8s-release git SHA: $(cat capi-docker-image/rootfs/nginx-docker-image/head-tag-file)"
-    echo "Updating watcher image to capi-k8s-release git SHA: $(cat capi-docker-image/rootfs/capi_kpack_watcher/head-tag-file)"
+    echo "Updating ccng image to cloud_controller_ng digest: $(cat capi-docker-image/digest)"
+    echo "Updating nginx image to capi-k8s-release digest: $(cat capi-docker-image/digest)"
+    echo "Updating watcher image to capi-k8s-release digest: $(cat capi-docker-image/digest)"
 
     cat <<- EOF > "${PWD}/update-images.yml"
 ---
@@ -38,14 +38,17 @@ EOF
 }
 
 function make_git_commit() {
+    shopt -s dotglob
+
     pushd "capi-k8s-release"
       git config user.name "${GIT_COMMIT_USERNAME}"
       git config user.email "${GIT_COMMIT_EMAIL}"
-
       git add values.yml
       # TODO: figure out changelog for all of the images?
       git commit -m "Update image references in values.yml"
     popd
+
+    cp -R "capi-k8s-release/." "updated-capi-k8s-release"
 }
 
 function main() {
