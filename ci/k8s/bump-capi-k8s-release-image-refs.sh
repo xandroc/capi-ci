@@ -39,6 +39,9 @@ EOF
 
 function make_git_commit() {
     pushd "capi-k8s-release"
+      git config user.name "${GIT_COMMIT_USERNAME}"
+      git config user.email "${GIT_COMMIT_EMAIL}"
+
       git add values.yml
       # TODO: figure out changelog for all of the images?
       git commit -m "Update image references in values.yml"
