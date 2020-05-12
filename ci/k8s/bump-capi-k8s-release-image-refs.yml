@@ -1,0 +1,53 @@
+---
+platform: linux
+
+image_resource:
+  type: registry-image
+  source:
+    repository: cloudfoundry/capi
+    tag: cf-for-k8s
+
+inputs:
+- name: capi-ci
+# - name: capi-ci-private
+- name: capi-k8s-release
+- name: capi-docker-image
+- name: watcher-docker-image
+- name: nginx-docker-image
+# outputs:
+# - name: env-metadata
+
+# params:
+#   # Required.
+#   # This is the environment name inside capi-ci-private. This should be the
+#   # directory name.
+#   CAPI_ENVIRONMENT_NAME:
+
+#   # Required.
+#   # This is a file path to a cf-for-k8s values YAML file.
+#   CF_INSTALL_VALUES_FILE:
+
+#   # Required.
+#   # This is the Google Cloud project name.
+#   GOOGLE_PROJECT_NAME:
+
+#   # Required.
+#   # This is the Google Cloud cluster name.
+#   CLUSTER_NAME:
+
+#   # Required.
+#   # This is the Google Cloud cluster zone.
+#   GCP_ZONE:
+
+#   # Required.
+#   # This is the service account that has access to the K8s cluster under
+#   # GOOGLE_PROJECT_NAME.
+#   GOOGLE_SERVICE_ACCOUNT_EMAIL:
+
+#   # Required.
+#   # This is the path to a key-file associated with the Google service account
+#   # and project.  It'll be passed as a `--key-file` to the `gcloud` command.
+#   GOOGLE_KEY_FILE_PATH:
+
+run:
+  path: capi-ci/ci/k8s/bump-capi-k8s-release-image-refs.sh
