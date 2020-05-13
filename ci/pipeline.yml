@@ -23,6 +23,7 @@ groups:
   - capi-release-template-tests
   - create-capi-release
   - samus-cf-for-k8s
+  - bump-capi-k8s-release-image-refs
   - bump-capi-release
   - mulan-postgres
   - elsa-HA
@@ -1366,6 +1367,30 @@ jobs:
         GOOGLE_PROJECT_NAME: cff-capi-samus
         GOOGLE_KEY_FILE_PATH: capi-ci-private/samus/concourse-service-account.json
         NODES: 2
+
+- name: bump-capi-k8s-release-image-refs
+  serial: true
+  serial_groups: [samus]
+  plan:
+  - in_parallel:
+    - get: capi-ci
+    - get: capi-k8s-release
+      passed: [samus-cf-for-k8s]
+    - get: capi-docker-image
+      trigger: true
+      passed: [samus-cf-for-k8s]
+    - get: watcher-docker-image
+      trigger: true
+      passed: [samus-cf-for-k8s]
+    - get: nginx-docker-image
+      trigger: true
+      passed: [samus-cf-for-k8s]
+  - task: bump-capi-k8s-release-image-refs
+    file: capi-ci/ci/k8s/bump-capi-k8s-release-image-refs.yml
+  - put: capi-k8s-release
+    params:
+      repository: updated-capi-k8s-release
+      rebase: true
 
 - name: ripley-nfs
   serial: true
