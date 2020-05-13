@@ -22,6 +22,10 @@ EOF
 
   bosh interpolate cf-for-k8s/vendir.yml -o "${PWD}/update-vendir-def.yml" > updated-vendir.yml
   cat updated-vendir.yml > cf-for-k8s/vendir.yml
+
+  pushd cf-for-k8s
+    vendir sync
+  popd
 }
 
 echo "Logging into gcloud..."
@@ -48,6 +52,8 @@ cat <<- EOF > "${PWD}/update-images.yml"
   value: $(getImageReference watcher-docker-image)
 EOF
 
+temp_update_vendir_definition
+
 pushd "capi-k8s-release"
   bosh interpolate values/images.yml -o "../update-images.yml" > values-int.yml
 
@@ -57,8 +63,6 @@ pushd "capi-k8s-release"
 
   scripts/bump-cf-for-k8s.sh
 popd
-
-temp_update_vendir_definition
 
 source "capi-ci-private/${CAPI_ENVIRONMENT_NAME}/.envrc"
 pushd "cf-for-k8s"
