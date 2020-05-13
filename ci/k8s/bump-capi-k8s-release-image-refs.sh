@@ -29,11 +29,11 @@ function bump_image_references() {
 EOF
 
     pushd "capi-k8s-release"
-      bosh interpolate values.yml -o "../update-images.yml" > values-int.yml
+      bosh interpolate values/images.yml -o "../update-images.yml" > values-int.yml
 
-      echo "#@data/values" > values.yml
-      echo "---" >> values.yml
-      cat values-int.yml >> values.yml
+      echo "#@data/values" > values/images.yml
+      echo "---" >> values/images.yml
+      cat values-int.yml >> values/images.yml
     popd
 }
 
