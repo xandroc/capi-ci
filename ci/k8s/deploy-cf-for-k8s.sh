@@ -18,9 +18,9 @@ gcloud auth activate-service-account \
   --project="${GOOGLE_PROJECT_NAME}"
 
 echo "Updating images..."
-echo "Updating ccng image to cloud_controller_ng git SHA: $(cat capi-docker-image/rootfs/cloud_controller_ng/head-tag-file)"
-echo "Updating nginx image to capi-k8s-release git SHA: $(cat capi-docker-image/rootfs/nginx-docker-image/head-tag-file)"
-echo "Updating watcher image to capi-k8s-release git SHA: $(cat capi-docker-image/rootfs/capi_kpack_watcher/head-tag-file)"
+echo "Updating ccng image to cloud_controller_ng digest: $(cat capi-docker-image/digest)"
+echo "Updating nginx image to capi-k8s-release digest: $(cat capi-docker-image/digest)"
+echo "Updating watcher image to capi-k8s-release digest: $(cat capi-docker-image/digest)"
 
 cat <<- EOF > "${PWD}/update-images.yml"
 ---
@@ -36,11 +36,11 @@ cat <<- EOF > "${PWD}/update-images.yml"
 EOF
 
 pushd "capi-k8s-release"
-  bosh interpolate values.yml -o "../update-images.yml" > values-int.yml
+  bosh interpolate values/images.yml -o "../update-images.yml" > values-int.yml
 
-  echo "#@data/values" > values.yml
-  echo "---" >> values.yml
-  cat values-int.yml >> values.yml
+  echo "#@data/values" > values/images.yml
+  echo "---" >> values/images.yml
+  cat values-int.yml >> values/images.yml
 
   scripts/bump-cf-for-k8s.sh
 popd
