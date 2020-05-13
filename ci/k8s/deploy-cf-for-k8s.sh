@@ -11,6 +11,19 @@ function getImageReference () {
   popd >/dev/null
 }
 
+# TODO: get rid of the following after this is merged: https://github.com/cloudfoundry/cf-for-k8s/pull/192
+function temp_update_vendir_definition() {
+  cat <<- EOF > "${PWD}/update-vendir-def.yml"
+---
+- type: replace
+  path: /directories/path=config~1_ytt_lib/contents/path=github.com~1cloudfoundry~1capi-k8s-release/includePaths
+  value: ["templates/**/*", "values/**/*"]
+EOF
+
+  bosh interpolate cf-for-k8s/vendir.yml -o "${PWD}/update-vendir-def.yml" > updated-vendir.yml
+  cat updated-vendir.yml > cf-for-k8s/vendir.yml
+}
+
 echo "Logging into gcloud..."
 gcloud auth activate-service-account \
   "${GOOGLE_SERVICE_ACCOUNT_EMAIL}" \
@@ -44,6 +57,8 @@ pushd "capi-k8s-release"
 
   scripts/bump-cf-for-k8s.sh
 popd
+
+temp_update_vendir_definition
 
 source "capi-ci-private/${CAPI_ENVIRONMENT_NAME}/.envrc"
 pushd "cf-for-k8s"
