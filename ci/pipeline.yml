@@ -1317,12 +1317,12 @@ jobs:
     - get: watcher-docker-image
       trigger: true
       passed: [build-watcher-docker-image]
-    - get: capi-kpack-watcher
-      trigger: true
-      passed: [build-watcher-docker-image]
     - get: nginx-docker-image
       trigger: true
       passed: [build-nginx-docker-image]
+    - get: capi-kpack-watcher
+      trigger: true
+      passed: [build-watcher-docker-image]
     - get: capi-nginx
       trigger: true
       passed: [build-nginx-docker-image]
@@ -1399,10 +1399,16 @@ jobs:
     - get: nginx-docker-image
       trigger: true
       passed: [samus-cf-for-k8s]
+    - get: capi-k8s-release-get
+      passed: [samus-cf-for-k8s]
+    - get: capi-kpack-watcher
+      trigger: true
+      passed: [samus-cf-for-k8s]
+    - get: capi-nginx
+      trigger: true
+      passed: [samus-cf-for-k8s]
   - task: bump-capi-k8s-release-image-refs
     file: capi-ci/ci/k8s/bump-capi-k8s-release-image-refs.yml
-    input_mapping:
-      capi-k8s-release: capi-k8s-release-get
   - put: capi-k8s-release-put
     params:
       repository: updated-capi-k8s-release

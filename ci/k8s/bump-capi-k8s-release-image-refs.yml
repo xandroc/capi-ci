@@ -9,7 +9,7 @@ image_resource:
 
 inputs:
 - name: capi-ci
-- name: capi-k8s-release
+- name: capi-k8s-release-get
 - name: capi-docker-image
 - name: watcher-docker-image
 - name: nginx-docker-image
