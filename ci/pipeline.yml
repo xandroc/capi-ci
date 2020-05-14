@@ -193,7 +193,15 @@ resources:
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/cf-for-k8s.git
 
-- name: capi-k8s-release
+- name: capi-k8s-release-get
+  type: git
+  source:
+    branch: master
+    private_key: ((private_key))
+    uri: git@github.com:cloudfoundry/capi-k8s-release.git
+    ignore_paths: [values/images.yml]
+
+- name: capi-k8s-release-put
   type: git
   source:
     branch: master
@@ -1301,7 +1309,7 @@ jobs:
     - get: capi-ci-private
     - get: cf-for-k8s
       trigger: true
-    - get: capi-k8s-release
+    - get: capi-k8s-release-get
       trigger: true
     - get: capi-docker-image
       trigger: true
@@ -1374,7 +1382,7 @@ jobs:
   plan:
   - in_parallel:
     - get: capi-ci
-    - get: capi-k8s-release
+    - get: capi-k8s-release-get
       passed: [samus-cf-for-k8s]
     - get: capi-docker-image
       trigger: true
@@ -1387,7 +1395,9 @@ jobs:
       passed: [samus-cf-for-k8s]
   - task: bump-capi-k8s-release-image-refs
     file: capi-ci/ci/k8s/bump-capi-k8s-release-image-refs.yml
-  - put: capi-k8s-release
+    input_mapping:
+      capi-k8s-release: capi-k8s-release-get
+  - put: capi-k8s-release-put
     params:
       repository: updated-capi-k8s-release
       rebase: true
