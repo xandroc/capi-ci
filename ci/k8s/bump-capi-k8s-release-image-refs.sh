@@ -1,5 +1,3 @@
-#!/bin/bash
-
 set -eu -o pipefail
 
 # TODO: extract common functions
@@ -43,9 +41,9 @@ function make_git_commit() {
     pushd "capi-k8s-release"
       git config user.name "${GIT_COMMIT_USERNAME}"
       git config user.email "${GIT_COMMIT_EMAIL}"
-      git add values.yml
+      git add values/images.yml
       # TODO: figure out changelog for all of the images?
-      git commit -m "Update image references in values.yml"
+      git commit -m "Update image references in values/images.yml"
     popd
 
     cp -R "capi-k8s-release/." "updated-capi-k8s-release"
