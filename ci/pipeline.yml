@@ -1303,22 +1303,27 @@ jobs:
   - in_parallel:
     - get: cloud_controller_ng
       passed: [build-capi-docker-image]
+    - get: capi-k8s-release-get
+      trigger: true
     - get: capi-ci
     - get: capi-bara-tests
     - get: cf-cli
     - get: capi-ci-private
     - get: cf-for-k8s
       trigger: true
-    - get: capi-k8s-release-get
-      trigger: true
-      passed: [build-watcher-docker-image, build-nginx-docker-image]
     - get: capi-docker-image
       trigger: true
       passed: [build-capi-docker-image]
     - get: watcher-docker-image
       trigger: true
       passed: [build-watcher-docker-image]
+    - get: capi-kpack-watcher
+      trigger: true
+      passed: [build-watcher-docker-image]
     - get: nginx-docker-image
+      trigger: true
+      passed: [build-nginx-docker-image]
+    - get: capi-nginx
       trigger: true
       passed: [build-nginx-docker-image]
   - task: delete-deployment
@@ -1383,8 +1388,6 @@ jobs:
   plan:
   - in_parallel:
     - get: capi-ci
-    - get: capi-k8s-release-get
-      passed: [samus-cf-for-k8s]
     - get: cloud_controller_ng
       passed: [samus-cf-for-k8s]
     - get: capi-docker-image
