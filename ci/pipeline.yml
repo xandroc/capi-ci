@@ -1329,6 +1329,8 @@ jobs:
       GOOGLE_KEY_FILE_PATH: capi-ci-private/samus/concourse-service-account.json
   - task: deploy
     file: capi-ci/ci/k8s/deploy-cf-for-k8s.yml
+    input_mapping:
+      capi-k8s-release: capi-k8s-release-get
     params:
       CAPI_ENVIRONMENT_NAME: samus
       GOOGLE_SERVICE_ACCOUNT_EMAIL: concourse@cff-capi-samus.iam.gserviceaccount.com
