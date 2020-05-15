@@ -16,9 +16,9 @@ function git_sha () {
   popd >/dev/null
 }
 
-CAPI_IMAGE="$(get_image_reference capi-docker-image)"
-NGINX_IMAGE="$(get_image_reference nginx-docker-image)"
-WATCHER_IMAGE="$(get_image_reference watcher-docker-image)"
+CAPI_IMAGE="$(image_reference capi-docker-image)"
+NGINX_IMAGE="$(image_reference nginx-docker-image)"
+WATCHER_IMAGE="$(image_reference watcher-docker-image)"
 CAPI_SHA="$(git_sha cloud_controller_ng)"
 NGINX_SHA="$(git_sha capi-nginx)"
 WATCHER_SHA="$(git_sha capi-kpack-watcher)"
@@ -42,13 +42,13 @@ EOF
 ---
 - type: replace
   path: /images/ccng
-  value: $(get_image_reference capi-docker-image)
+  value: $(image_reference capi-docker-image)
 - type: replace
   path: /images/nginx
-  value: $(get_image_reference nginx-docker-image)
+  value: $(image_reference nginx-docker-image)
 - type: replace
   path: /images/capi_kpack_watcher
-  value: $(get_image_reference watcher-docker-image)
+  value: $(image_reference watcher-docker-image)
 EOF
 
     pushd "capi-k8s-release"
