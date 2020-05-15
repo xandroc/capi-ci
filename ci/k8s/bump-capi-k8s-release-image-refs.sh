@@ -62,7 +62,7 @@ ${CAPI_SHA}
 Updating nginx image to digest:
 ${NGINX_IMAGE}
 
-Built from capi-k8s-release SHA
+Built from capi-k8s-release SHA:
 ${NGINX_SHA}
 
 ---

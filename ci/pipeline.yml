@@ -208,6 +208,13 @@ resources:
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/capi-k8s-release.git
 
+- name: capi-k8s-release-ci-passed
+  type: git
+  source:
+    branch: ci-passed
+    private_key: ((private_key))
+    uri: git@github.com:cloudfoundry/capi-k8s-release.git
+
 - name: capi-release-master
   type: git
   source:
@@ -1397,6 +1404,7 @@ jobs:
       trigger: true
       passed: [samus-cf-for-k8s]
     - get: capi-k8s-release
+      trigger: true
       passed: [samus-cf-for-k8s]
     - get: capi-kpack-watcher
       passed: [samus-cf-for-k8s]
@@ -1407,7 +1415,11 @@ jobs:
   - put: capi-k8s-release
     params:
       repository: updated-capi-k8s-release
-      merge: true
+      rebase: true
+  - put: capi-k8s-release-ci-passed
+    params:
+      repository: updated-capi-k8s-release
+      rebase: true
 
 - name: ripley-nfs
   serial: true
