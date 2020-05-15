@@ -12,7 +12,7 @@ function image_reference () {
 
 function git_sha () {
   pushd $1 >/dev/null
-    git rev-parse --short head
+    git rev-parse --short HEAD
   popd >/dev/null
 }
 
@@ -24,20 +24,6 @@ NGINX_SHA="$(git_sha capi-nginx)"
 WATCHER_SHA="$(git_sha capi-kpack-watcher)"
 
 function bump_image_references() {
-    cat > "${MESSAGE_FILE}" <<- EOF
-images.yml updated by CI
-
-Updating ccng image to: ${CAPI_IMAGE}
-Built from cloud_controller_ng SHA ${CAPI_SHA}
-
-Updating nginx image to digest: ${NGINX_IMAGE}
-Built from capi-k8s-release SHA ${NGINX_SHA}
-
-Updating watcher image to digest: ${WATCHER_IMAGE}
-Built from capi-k8s-release SHA ${WATCHER_SHA}
-EOF
-
-    cat "${MESSAGE_FILE}"
     cat <<- EOF > "${PWD}/update-images.yml"
 ---
 - type: replace
@@ -63,6 +49,20 @@ EOF
 function make_git_commit() {
     shopt -s dotglob
 
+    cat > "${MESSAGE_FILE}" <<- EOF
+images.yml updated by CI
+
+Updating ccng image to: ${CAPI_IMAGE}
+Built from cloud_controller_ng SHA ${CAPI_SHA}
+
+Updating nginx image to digest: ${NGINX_IMAGE}
+Built from capi-k8s-release SHA ${NGINX_SHA}
+
+Updating watcher image to digest: ${WATCHER_IMAGE}
+Built from capi-k8s-release SHA ${WATCHER_SHA}
+EOF
+
+    cat "${MESSAGE_FILE}"
     pushd "capi-k8s-release"
       git config user.name "${GIT_COMMIT_USERNAME}"
       git config user.email "${GIT_COMMIT_EMAIL}"
