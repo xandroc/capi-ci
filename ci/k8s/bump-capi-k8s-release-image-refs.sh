@@ -12,7 +12,7 @@ function image_reference () {
 
 function git_sha () {
   pushd $1 >/dev/null
-    git rev-parse --short HEAD
+    git rev-parse HEAD
   popd >/dev/null
 }
 
@@ -51,15 +51,26 @@ function make_git_commit() {
 
     cat > "${MESSAGE_FILE}" <<- EOF
 images.yml updated by CI
+---
+Updating ccng image to:
+${CAPI_IMAGE}
 
-Updating ccng image to: ${CAPI_IMAGE}
-Built from cloud_controller_ng SHA ${CAPI_SHA}
+Built from cloud_controller_ng SHA:
+${CAPI_SHA}
 
-Updating nginx image to digest: ${NGINX_IMAGE}
-Built from capi-k8s-release SHA ${NGINX_SHA}
+---
+Updating nginx image to digest:
+${NGINX_IMAGE}
 
-Updating watcher image to digest: ${WATCHER_IMAGE}
-Built from capi-k8s-release SHA ${WATCHER_SHA}
+Built from capi-k8s-release SHA
+${NGINX_SHA}
+
+---
+Updating watcher image to digest:
+${WATCHER_IMAGE}
+
+Built from capi-k8s-release SHA:
+${WATCHER_SHA}
 EOF
 
     cat "${MESSAGE_FILE}"
