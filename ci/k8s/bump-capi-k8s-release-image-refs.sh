@@ -2,18 +2,42 @@
 
 set -eu -o pipefail
 
-function get_image_reference () {
+MESSAGE_FILE="$(mktemp)"
+
+function image_reference () {
   pushd $1 >/dev/null
     echo "$(cat repository)@$(cat digest)"
   popd >/dev/null
 }
 
-function bump_image_references() {
-    echo "Updating images..."
-    echo "Updating ccng image to: $(get_image_reference capi-docker-image)"
-    echo "Updating nginx image to capi-k8s-release digest: $(get_image_reference nginx-docker-image)"
-    echo "Updating watcher image to capi-k8s-release digest: $(get_image_reference  watcher-docker-image)"
+function git_sha () {
+  pushd $1 >/dev/null
+    git rev-parse --short head
+  popd >/dev/null
+}
 
+CAPI_IMAGE="$(get_image_reference capi-docker-image)"
+NGINX_IMAGE="$(get_image_reference nginx-docker-image)"
+WATCHER_IMAGE="$(get_image_reference watcher-docker-image)"
+CAPI_SHA="$(git_sha cloud_controller_ng)"
+NGINX_SHA="$(git_sha capi-nginx)"
+WATCHER_SHA="$(git_sha capi-kpack-watcher)"
+
+function bump_image_references() {
+    cat > "${MESSAGE_FILE}" <<- EOF
+images.yml updated by CI
+
+Updating ccng image to: ${CAPI_IMAGE}
+Built from cloud_controller_ng SHA ${CAPI_SHA}
+
+Updating nginx image to digest: ${NGINX_IMAGE}
+Built from capi-k8s-release SHA ${NGINX_SHA}
+
+Updating watcher image to digest: ${WATCHER_IMAGE}
+Built from capi-k8s-release SHA ${WATCHER_SHA}
+EOF
+
+    cat "${MESSAGE_FILE}"
     cat <<- EOF > "${PWD}/update-images.yml"
 ---
 - type: replace
@@ -43,7 +67,8 @@ function make_git_commit() {
       git config user.name "${GIT_COMMIT_USERNAME}"
       git config user.email "${GIT_COMMIT_EMAIL}"
       git add values/images.yml
-      git commit -m "Update image references in values/images.yml"
+
+      git commit -F "${MESSAGE_FILE}"
     popd
 
     cp -R "capi-k8s-release/." "updated-capi-k8s-release"
