@@ -73,13 +73,17 @@ Built from capi-k8s-release SHA:
 ${WATCHER_SHA}
 EOF
 
-    cat "${MESSAGE_FILE}"
     pushd "capi-k8s-release"
       git config user.name "${GIT_COMMIT_USERNAME}"
       git config user.email "${GIT_COMMIT_EMAIL}"
       git add values/images.yml
 
-      git commit -F "${MESSAGE_FILE}"
+      # dont make a commit if there aren't new images
+      if ! git diff --cached --exit-code; then
+        cat "${MESSAGE_FILE}"
+        echo "committing!"
+        git commit -F "${MESSAGE_FILE}"
+      fi
     popd
 
     cp -R "capi-k8s-release/." "updated-capi-k8s-release"
