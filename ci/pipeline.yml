@@ -193,7 +193,7 @@ resources:
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/cf-for-k8s.git
 
-- name: capi-k8s-release-get
+- name: capi-k8s-release-except-images
   type: git
   source:
     branch: master
@@ -201,7 +201,7 @@ resources:
     uri: git@github.com:cloudfoundry/capi-k8s-release.git
     ignore_paths: [values/images.yml]
 
-- name: capi-k8s-release-put
+- name: capi-k8s-release
   type: git
   source:
     branch: master
@@ -1303,8 +1303,9 @@ jobs:
   - in_parallel:
     - get: cloud_controller_ng
       passed: [build-capi-docker-image]
-    - get: capi-k8s-release-get
+    - get: capi-k8s-release-except-images
       trigger: true
+    - get: capi-k8s-release
     - get: capi-ci
     - get: capi-bara-tests
     - get: cf-cli
@@ -1321,10 +1322,8 @@ jobs:
       trigger: true
       passed: [build-nginx-docker-image]
     - get: capi-kpack-watcher
-      trigger: true
       passed: [build-watcher-docker-image]
     - get: capi-nginx
-      trigger: true
       passed: [build-nginx-docker-image]
   - task: delete-deployment
     file: capi-ci/ci/k8s/delete-cf-for-k8s.yml
@@ -1335,8 +1334,6 @@ jobs:
       GOOGLE_KEY_FILE_PATH: capi-ci-private/samus/concourse-service-account.json
   - task: deploy
     file: capi-ci/ci/k8s/deploy-cf-for-k8s.yml
-    input_mapping:
-      capi-k8s-release: capi-k8s-release-get
     params:
       CAPI_ENVIRONMENT_NAME: samus
       GOOGLE_SERVICE_ACCOUNT_EMAIL: concourse@cff-capi-samus.iam.gserviceaccount.com
@@ -1399,7 +1396,7 @@ jobs:
     - get: nginx-docker-image
       trigger: true
       passed: [samus-cf-for-k8s]
-    - get: capi-k8s-release-get
+    - get: capi-k8s-release
       passed: [samus-cf-for-k8s]
     - get: capi-kpack-watcher
       passed: [samus-cf-for-k8s]
@@ -1407,12 +1404,10 @@ jobs:
       passed: [samus-cf-for-k8s]
   - task: bump-capi-k8s-release-image-refs
     file: capi-ci/ci/k8s/bump-capi-k8s-release-image-refs.yml
-    input_mapping:
-      capi-k8s-release: capi-k8s-release-get
-  # - put: capi-k8s-release-put
-  #   params:
-  #     repository: updated-capi-k8s-release
-  #     rebase: true
+  - put: capi-k8s-release
+    params:
+      repository: updated-capi-k8s-release
+      merge: true
 
 - name: ripley-nfs
   serial: true
