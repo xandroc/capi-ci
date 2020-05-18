@@ -788,21 +788,7 @@ jobs:
           path: build
     - task: run-deplab
       privileged: true
-      config:
-        platform: linux
-        image_resource:
-          type: registry-image
-          source:
-            repository: pivotalcfreleng/tas-for-k8s-ci
-        inputs:
-        - name: image
-        outputs:
-        - name: labeled-image
-        run:
-          path: bash
-          args:
-          - -euc
-          - deplab --image-tar image/image.tar --output-tar "labeled-image/image.tar"
+      file: capi-ci/ci/docker/run-deplab.yml
     - put: watcher-docker-image
       params:
         image: labeled-image/image.tar
