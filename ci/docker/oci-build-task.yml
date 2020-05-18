@@ -9,8 +9,5 @@ inputs:
 - name: capi-kpack-watcher
 outputs:
 - name: image
-params:
-  DOCKERFILE: capi-kpack-watcher/src/capi-kpack-watcher/Dockerfile
-  CONTEXT: capi-kpack-watcher/src/capi-kpack-watcher
 run:
   path: build
