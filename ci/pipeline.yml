@@ -771,7 +771,7 @@ jobs:
     - get: capi-ci
     - task: build
       privileged: true
-      file: capi-ci/docker/oci-build-task.yml
+      file: capi-ci/ci/docker/oci-build-task.yml
     - task: run-deplab
       privileged: true
       file: capi-ci/ci/docker/run-deplab.yml
