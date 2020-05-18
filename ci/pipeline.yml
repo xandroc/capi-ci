@@ -597,7 +597,7 @@ resources:
 
 # Docker images
 - name: capi-docker-image
-  type: docker-image
+  type: registry-image
   source:
     repository: cloudfoundry/cloud-controller-ng
     username: ((dockerhub_user))
@@ -611,7 +611,7 @@ resources:
     password: ((dockerhub_pass))
 
 - name: nginx-docker-image
-  type: docker-image
+  type: registry-image
   source:
     repository: cloudfoundry/capi-nginx
     username: ((dockerhub_user))
@@ -749,29 +749,41 @@ jobs:
 
 - name: build-capi-docker-image
   plan:
-    - get: cloud_controller_ng
-      passed: [cc-unit-tests]
-      trigger: true
-    - get: capi-ci
-    - task: write-tag-file
-      file: capi-ci/ci/docker/write-head-tag-file.yml
-      input_mapping:
-        repo: cloud_controller_ng
-    - put: capi-docker-image
-      params:
-        build: repo-with-head-tag-file
-        additional_tags: repo-with-head-tag-file/head-tag-file
-        cache: true
-
-- name: build-watcher-docker-image
-  plan:
-    - get: capi-kpack-watcher
-      trigger: true
-      passed: [capi-k8s-release-unit-tests]
-    - get: capi-ci
+    - in_parallel:
+      - get: cloud_controller_ng
+        passed: [cc-unit-tests]
+        trigger: true
+      - get: capi-ci
     - task: build
       privileged: true
       file: capi-ci/ci/docker/oci-build-task.yml
+      input_mapping:
+        context-repository: cloud_controller_ng
+      params:
+        CONTEXT: context-repository
+    - task: run-deplab
+      privileged: true
+      file: capi-ci/ci/docker/run-deplab.yml
+      input_mapping:
+        source-repository: cloud_controller_ng
+    - put: capi-docker-image
+      params:
+        image: labeled-image/image.tar
+
+- name: build-watcher-docker-image
+  plan:
+    - in_parallel:
+      - get: capi-kpack-watcher
+        trigger: true
+        passed: [capi-k8s-release-unit-tests]
+      - get: capi-ci
+    - task: build
+      privileged: true
+      file: capi-ci/ci/docker/oci-build-task.yml
+      input_mapping:
+        context-repository: capi-kpack-watcher
+      params:
+        CONTEXT: context-repository/src/capi-kpack-watcher
     - task: run-deplab
       privileged: true
       file: capi-ci/ci/docker/run-deplab.yml
@@ -783,18 +795,25 @@ jobs:
 
 - name: build-nginx-docker-image
   plan:
-    - get: capi-nginx
-      trigger: true
-    - get: capi-ci
-    - task: write-tag-file
-      file: capi-ci/ci/docker/write-head-tag-file.yml
+    - in_parallel:
+      - get: capi-nginx
+        trigger: true
+      - get: capi-ci
+    - task: build
+      privileged: true
+      file: capi-ci/ci/docker/oci-build-task.yml
       input_mapping:
-        repo: capi-nginx
+        context-repository: capi-nginx
+      params:
+        CONTEXT: context-repository/dockerfiles/nginx
+    - task: run-deplab
+      privileged: true
+      file: capi-ci/ci/docker/run-deplab.yml
+      input_mapping:
+        source-repository: capi-nginx
     - put: nginx-docker-image
       params:
-        build: repo-with-head-tag-file/dockerfiles/nginx
-        additional_tags: repo-with-head-tag-file/head-tag-file
-        cache: true
+        image: labeled-image/image.tar
 
 - name: bump-bbs-protos
   plan:
