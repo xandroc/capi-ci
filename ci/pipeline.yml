@@ -604,7 +604,7 @@ resources:
     password: ((dockerhub_pass))
 
 - name: watcher-docker-image
-  type: docker-image
+  type: registry-image
   source:
     repository: cloudfoundry/capi-kpack-watcher
     username: ((dockerhub_user))
@@ -769,15 +769,43 @@ jobs:
       trigger: true
       passed: [capi-k8s-release-unit-tests]
     - get: capi-ci
-    - task: write-tag-file
-      file: capi-ci/ci/docker/write-head-tag-file.yml
-      input_mapping:
-        repo: capi-kpack-watcher
+    - task: build
+      privileged: true
+      config:
+        platform: linux
+        image_resource:
+          type: registry-image
+          source:
+            repository: vito/oci-build-task
+        inputs:
+        - name: capi-kpack-watcher
+        outputs:
+        - name: image
+        params:
+          DOCKERFILE: capi-kpack-watcher/src/capi-kpack-watcher/Dockerfile
+          CONTEXT: capi-kpack-watcher/src/capi-kpack-watcher
+        run:
+          path: build
+    - task: run-deplab
+      privileged: true
+      config:
+        platform: linux
+        image_resource:
+          type: registry-image
+          source:
+            repository: pivotalcfreleng/tas-for-k8s-ci
+        inputs:
+        - name: image
+        outputs:
+        - name: labeled-image
+        run:
+          path: bash
+          args:
+          - -euc
+          - deplab --image-tar image/image.tar --output-tar "labeled-image/image.tar"
     - put: watcher-docker-image
       params:
-        build: repo-with-head-tag-file/src/capi-kpack-watcher
-        additional_tags: repo-with-head-tag-file/head-tag-file
-        cache: true
+        image: labeled-image/image.tar
 
 - name: build-nginx-docker-image
   plan:
