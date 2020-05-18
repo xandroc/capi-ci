@@ -11,19 +11,23 @@
 ##
 
 groups:
-- name: capi-release
+- name: capi-k8s-release
   jobs:
   - cc-unit-tests
-  - bridge-unit-tests
   - capi-k8s-release-unit-tests
   - build-capi-docker-image
   - build-watcher-docker-image
   - build-nginx-docker-image
+  - samus-cf-for-k8s
+  - k8s-ci-passed
+  - snyk-test
+- name: capi-release
+  jobs:
+  - cc-unit-tests
+  - bridge-unit-tests
   - verify-capi-release-commits
   - capi-release-template-tests
   - create-capi-release
-  - samus-cf-for-k8s
-  - bump-capi-k8s-release-image-refs
   - bump-capi-release
   - mulan-postgres
   - elsa-HA
@@ -32,8 +36,8 @@ groups:
   - gabrielle-postgres-drats
   - ripley-nfs
   - bump-ci-passed
-  - snyk-test
   - bump-bbs-protos
+  - snyk-test
 - name: blobstore-fanout
   jobs:
   - create-capi-release
@@ -1388,7 +1392,7 @@ jobs:
         GOOGLE_KEY_FILE_PATH: capi-ci-private/samus/concourse-service-account.json
         NODES: 2
 
-- name: bump-capi-k8s-release-image-refs
+- name: k8s-ci-passed
   plan:
   - in_parallel:
     - get: capi-ci
