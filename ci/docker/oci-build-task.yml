@@ -6,7 +6,7 @@ image_resource:
   source:
     repository: vito/oci-build-task
 inputs:
-- name: capi-kpack-watcher
+- name: context-repository
 outputs:
 - name: image
 run:
