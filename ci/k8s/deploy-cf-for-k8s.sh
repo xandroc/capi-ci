@@ -5,11 +5,17 @@ set -eu -o pipefail
 export CF_FOR_K8s_DIR="${PWD}/cf-for-k8s"
 export SERVICE_ACCOUNT_KEY="${PWD}/${GOOGLE_KEY_FILE_PATH}"
 
-function getImageReference () {
+function get_image_digest_for_resource () {
   pushd $1 >/dev/null
-    echo "$(cat repository)@$(cat digest)"
+    echo "$(cat digest)"
   popd >/dev/null
 }
+
+# actual script
+
+CAPI_IMAGE="cloudfoundry/cloud-controller-ng@$(get_image_digest_for_resource capi-docker-image)"
+NGINX_IMAGE="cloudfoundry/capi-nginx@$(get_image_digest_for_resource nginx-docker-image)"
+WATCHER_IMAGE="cloudfoundry/capi-kpack-watcher@$(get_image_digest_for_resource watcher-docker-image)"
 
 echo "Logging into gcloud..."
 gcloud auth activate-service-account \
@@ -18,21 +24,21 @@ gcloud auth activate-service-account \
   --project="${GOOGLE_PROJECT_NAME}"
 
 echo "Updating images..."
-echo "Updating ccng image to cloud_controller_ng digest: $(cat capi-docker-image/digest)"
-echo "Updating nginx image to capi-k8s-release digest: $(cat capi-docker-image/digest)"
-echo "Updating watcher image to capi-k8s-release digest: $(cat capi-docker-image/digest)"
+echo "Updating ccng image to cloud_controller_ng digest: ${CAPI_IMAGE}"
+echo "Updating nginx image to capi-k8s-release digest: ${NGINX_IMAGE}"
+echo "Updating watcher image to capi-k8s-release digest: ${WATCHER_IMAGE}"
 
 cat <<- EOF > "${PWD}/update-images.yml"
 ---
 - type: replace
   path: /images/ccng
-  value: $(getImageReference capi-docker-image)
+  value: ${CAPI_IMAGE}
 - type: replace
   path: /images/nginx
-  value: $(getImageReference nginx-docker-image)
+  value: ${NGINX_IMAGE}
 - type: replace
   path: /images/capi_kpack_watcher
-  value: $(getImageReference watcher-docker-image)
+  value: ${WATCHER_IMAGE}
 EOF
 
 pushd "capi-k8s-release"

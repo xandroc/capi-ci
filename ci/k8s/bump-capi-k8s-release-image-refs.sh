@@ -4,9 +4,9 @@ set -eu -o pipefail
 
 MESSAGE_FILE="$(mktemp)"
 
-function image_reference () {
+function get_image_digest_for_resource () {
   pushd $1 >/dev/null
-    echo "$(cat repository)@$(cat digest)"
+    echo "$(cat digest)"
   popd >/dev/null
 }
 
@@ -16,9 +16,9 @@ function git_sha () {
   popd >/dev/null
 }
 
-CAPI_IMAGE="$(image_reference capi-docker-image)"
-NGINX_IMAGE="$(image_reference nginx-docker-image)"
-WATCHER_IMAGE="$(image_reference watcher-docker-image)"
+CAPI_IMAGE="cloudfoundry/cloud-controller-ng@$(get_image_digest_for_resource capi-docker-image)"
+NGINX_IMAGE="cloudfoundry/capi-nginx@$(get_image_digest_for_resource nginx-docker-image)"
+WATCHER_IMAGE="cloudfoundry/capi-kpack-watcher@$(get_image_digest_for_resource watcher-docker-image)"
 CAPI_SHA="$(git_sha cloud_controller_ng)"
 NGINX_SHA="$(git_sha capi-nginx)"
 WATCHER_SHA="$(git_sha capi-kpack-watcher)"
@@ -28,13 +28,13 @@ function bump_image_references() {
 ---
 - type: replace
   path: /images/ccng
-  value: $(image_reference capi-docker-image)
+  value: ${CAPI_IMAGE}
 - type: replace
   path: /images/nginx
-  value: $(image_reference nginx-docker-image)
+  value: ${NGINX_IMAGE}
 - type: replace
   path: /images/capi_kpack_watcher
-  value: $(image_reference watcher-docker-image)
+  value: ${WATCHER_IMAGE}
 EOF
 
     pushd "capi-k8s-release"
