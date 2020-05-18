@@ -16,6 +16,4 @@ run:
   path: bash
   args:
   - -euc
-  - deplab --image-tar image/image.tar \
-      --git source-repository
-      --output-tar "labeled-image/image.tar"
+  - deplab --image-tar image/image.tar --git source-repository --output-tar "labeled-image/image.tar"

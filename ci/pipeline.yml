@@ -771,21 +771,7 @@ jobs:
     - get: capi-ci
     - task: build
       privileged: true
-      config:
-        platform: linux
-        image_resource:
-          type: registry-image
-          source:
-            repository: vito/oci-build-task
-        inputs:
-        - name: capi-kpack-watcher
-        outputs:
-        - name: image
-        params:
-          DOCKERFILE: capi-kpack-watcher/src/capi-kpack-watcher/Dockerfile
-          CONTEXT: capi-kpack-watcher/src/capi-kpack-watcher
-        run:
-          path: build
+      file: capi-ci/docker/oci-build-task.yml
     - task: run-deplab
       privileged: true
       file: capi-ci/ci/docker/run-deplab.yml
