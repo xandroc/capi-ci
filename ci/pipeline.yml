@@ -789,6 +789,8 @@ jobs:
     - task: run-deplab
       privileged: true
       file: capi-ci/ci/docker/run-deplab.yml
+      input_mapping:
+        source-repository: capi-kpack-watcher
     - put: watcher-docker-image
       params:
         image: labeled-image/image.tar

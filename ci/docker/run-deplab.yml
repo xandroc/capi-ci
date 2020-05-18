@@ -7,6 +7,7 @@ image_resource:
 
 inputs:
 - name: image
+- name: source-repository
 
 outputs:
 - name: labeled-image
@@ -15,4 +16,6 @@ run:
   path: bash
   args:
   - -euc
-  - deplab --image-tar image/image.tar --output-tar "labeled-image/image.tar"
+  - deplab --image-tar image/image.tar \
+      --git source-repository
+      --output-tar "labeled-image/image.tar"
