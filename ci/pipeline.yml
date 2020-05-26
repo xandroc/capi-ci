@@ -777,13 +777,13 @@ jobs:
         trigger: true
         passed: [capi-k8s-release-unit-tests]
       - get: capi-ci
-    - task: build
+    - task: build-with-pack
       privileged: true
-      file: capi-ci/ci/docker/oci-build-task.yml
-      input_mapping:
-        context-repository: capi-kpack-watcher
+      file: capi-ci/ci/oci/build-with-pack.yml
       params:
-        CONTEXT: context-repository/src/capi-kpack-watcher
+        CONTEXT_PATH: src/capi-kpack-watcher
+      input_mapping:
+        source-repository: capi-kpack-watcher
     - task: run-deplab
       privileged: true
       file: capi-ci/ci/docker/run-deplab.yml
