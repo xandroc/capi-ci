@@ -20,7 +20,6 @@ groups:
   - build-nginx-docker-image
   - samus-cf-for-k8s
   - k8s-ci-passed
-  - snyk-test
 - name: capi-release
   jobs:
   - cc-unit-tests
@@ -37,7 +36,6 @@ groups:
   - ripley-nfs
   - bump-ci-passed
   - bump-bbs-protos
-  - snyk-test
 - name: blobstore-fanout
   jobs:
   - create-capi-release
@@ -693,17 +691,6 @@ jobs:
       params:
         text: "[verify-capi-release-commits] OH NO! There's a bad commit on capi-release"
         icon_emoji: ((slack_failure_emoji))
-
-- name: snyk-test
-  plan:
-  - in_parallel:
-    - get: cloud_controller_ng
-      trigger: true
-    - get: capi-ci
-  - task: snyk-test
-    file: capi-ci/ci/snyk-test/run-snyk-test.yml
-    params:
-      SNYK_TOKEN: ((snyk_token))
 
 - name: capi-release-template-tests
   plan:
