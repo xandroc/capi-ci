@@ -2199,6 +2199,18 @@ jobs:
     params:
       ENVIRONMENT: elsa
       ON_OR_OFF: off
+  - task: backup-elsa-mysql-server-ca
+    file: capi-ci/ci/cf/backup-certificate.yml
+    params:
+      CERTIFICATE_NAME: /bosh-elsa/cf/pxc_server_ca
+      BACKUP_NAME: /bosh-elsa/backup/pxc_server_ca
+      BBL_STATE_DIR: elsa
+  - task: backup-elsa-mysql-galera-ca
+    file: capi-ci/ci/cf/backup-certificate.yml
+    params:
+      CERTIFICATE_NAME: /bosh-elsa/cf/pxc_galera_ca
+      BACKUP_NAME: /bosh-elsa/backup/pxc_galera_ca
+      BBL_STATE_DIR: elsa
   - task: delete-certs
     file: capi-ci/ci/bbl-tasks/delete-certs.yml
     params:
