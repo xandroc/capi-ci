@@ -1996,7 +1996,7 @@ jobs:
       passed: [k8s-ci-passed]
     - get: capi-k8s-github-published-release
   - task: bump-version-from-github-release
-    file: capi-ci/ci/git/bump-minor-version-from-github-release.yml
+    file: capi-ci/ci/git/bump_minor_version_from_github_release.yml
     input_mapping:
       github-release: capi-k8s-github-published-release
   - task: generate-github-release
