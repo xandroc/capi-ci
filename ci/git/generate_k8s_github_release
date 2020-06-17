@@ -39,7 +39,5 @@ cat <<EOF > $OUTPUT_DIR/body
 
 #### Cloud Controller Database Migrations
 
-$( IFS=$'\n'; echo "${MIGRATIONS_FORMATTED[*]}" )
-
 #### Pull Requests and Issues
 EOF
