@@ -25,14 +25,11 @@ pushd cloud_controller_ng
   popd
 popd
 
-# TODO: get these variables somehow
-MIGRATIONS_FORMATTED=""
-
 # body == release notes
 cat <<EOF > $OUTPUT_DIR/body
 **Highlights**
 
-**CC API Version: $VERSION_V2 and [$VERSION_V3](http://v3-apidocs.cloudfoundry.org/version/$VERSION_V3/)**
+**CC API Version: $VERSION_V2 and $VERSION_V3-rc**
 
 **Service Broker API Version: [$VERSION_BROKER_API](https://github.com/openservicebrokerapi/servicebroker/blob/v$VERSION_BROKER_API/spec.md)**
 
