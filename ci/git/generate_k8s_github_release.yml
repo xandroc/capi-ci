@@ -1,0 +1,16 @@
+---
+platform: linux
+image_resource:
+  type: docker-image
+  source:
+    repository: cloudfoundry/capi
+    tag: runtime-ci
+inputs:
+  - name: capi-ci
+  - name: cloud_controller_ng
+  - name: capi-k8s-release
+  - name: capi-k8s-release-version
+outputs:
+  - name: generated-release
+run:
+  path: capi-ci/ci/git/generate_k8s_github_release

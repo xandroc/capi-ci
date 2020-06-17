@@ -9,6 +9,7 @@ inputs:
   - name: github-release
 outputs:
   - name: bumped-minor-version
+# TODO: create separate file for the below script pls
 run:
   path: bash
   args:
