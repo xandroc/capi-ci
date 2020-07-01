@@ -361,7 +361,7 @@ resources:
   type: git
   source:
     branch: master
-    paths: [src/capi-kpack-watcher]
+    paths: [src/capi-kpack-watcher, src/cf-api-kpack-watcher]
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/capi-k8s-release.git
 
@@ -689,7 +689,7 @@ jobs:
     on_failure:
       put: slack-alert
       params:
-        text: '[capi-k8s-release-unit-tests] OH NO! Failed when running with postgres'
+        text: '[capi-k8s-release-unit-tests] OH NO! Failed when running with kubernetes'
         icon_emoji: ((slack_failure_emoji))
 
 - name: verify-capi-release-commits
