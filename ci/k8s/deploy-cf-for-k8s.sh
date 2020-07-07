@@ -17,6 +17,9 @@ CAPI_IMAGE="cloudfoundry/cloud-controller-ng@$(get_image_digest_for_resource cap
 NGINX_IMAGE="cloudfoundry/capi-nginx@$(get_image_digest_for_resource nginx-docker-image)"
 WATCHER_IMAGE="cloudfoundry/capi-kpack-watcher@$(get_image_digest_for_resource watcher-docker-image)"
 
+echo "kapp version..."
+kapp version
+
 echo "Logging into gcloud..."
 gcloud auth activate-service-account \
   "${GOOGLE_SERVICE_ACCOUNT_EMAIL}" \
