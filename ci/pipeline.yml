@@ -17,6 +17,7 @@ groups:
   - capi-k8s-release-unit-tests
   - build-capi-docker-image
   - build-watcher-docker-image
+  - build-cf-api-kpack-watcher-image
   - build-nginx-docker-image
   - samus-cf-for-k8s
   - k8s-ci-passed
@@ -625,6 +626,15 @@ resources:
     username: ((dockerhub_user))
     password: ((dockerhub_pass))
 
+# when we make a final call on this things name, we'll get a new dockerhub repo
+- name: cf-api-watcher-docker-image
+  type: registry-image
+  source:
+    repository: cloudfoundry/capi-kpack-watcher
+    tag: cf-api-watcher
+    username: ((dockerhub_user))
+    password: ((dockerhub_pass))
+
 - name: nginx-docker-image
   type: registry-image
   source:
@@ -794,6 +804,29 @@ jobs:
       input_mapping:
         source-repository: capi-kpack-watcher
     - put: watcher-docker-image
+      params:
+        image: labeled-image/image.tar
+
+- name: build-cf-api-kpack-watcher-image
+  plan:
+    - in_parallel:
+      - get: capi-kpack-watcher
+        trigger: true
+        passed: [capi-k8s-release-unit-tests]
+      - get: capi-ci
+    - task: build-with-pack
+      privileged: true
+      file: capi-ci/ci/oci/build-with-pack.yml
+      params:
+        CONTEXT_PATH: src/cf-api-kpack-watcher
+      input_mapping:
+        source-repository: capi-kpack-watcher
+    - task: run-deplab
+      privileged: true
+      file: capi-ci/ci/docker/run-deplab.yml
+      input_mapping:
+        source-repository: capi-kpack-watcher
+    - put: cf-api-watcher-docker-image
       params:
         image: labeled-image/image.tar
 
