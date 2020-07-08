@@ -18,7 +18,7 @@ function git_sha () {
 
 CAPI_IMAGE="cloudfoundry/cloud-controller-ng@$(get_image_digest_for_resource capi-docker-image)"
 NGINX_IMAGE="cloudfoundry/capi-nginx@$(get_image_digest_for_resource nginx-docker-image)"
-WATCHER_IMAGE="cloudfoundry/capi-kpack-watcher@$(get_image_digest_for_resource watcher-docker-image)"
+WATCHER_IMAGE="cloudfoundry/capi-kpack-watcher@$(get_image_digest_for_resource cf-api-watcher-docker-image)"
 CAPI_SHA="$(git_sha cloud_controller_ng)"
 NGINX_SHA="$(git_sha capi-nginx)"
 WATCHER_SHA="$(git_sha capi-kpack-watcher)"
