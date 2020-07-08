@@ -818,7 +818,7 @@ jobs:
       privileged: true
       file: capi-ci/ci/oci/build-with-pack.yml
       params:
-        CONTEXT_PATH: src/cf-api-kpack-watcher
+        CONTEXT_PATH: src/cf-api-controllers
       input_mapping:
         source-repository: capi-kpack-watcher
     - task: run-deplab

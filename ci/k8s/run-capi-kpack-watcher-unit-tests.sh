@@ -10,6 +10,6 @@ pushd "${workspace_dir}/capi-kpack-watcher/src/capi-kpack-watcher" >/dev/null
     go test ./...
 popd >/dev/null
 
-pushd "${workspace_dir}/capi-kpack-watcher/src/cf-api-kpack-watcher" >/dev/null
+pushd "${workspace_dir}/capi-kpack-watcher/src/cf-api-controllers" >/dev/null
     make test
 popd >/dev/null
