@@ -1384,14 +1384,14 @@ jobs:
     - get: capi-docker-image
       trigger: true
       passed: [build-capi-docker-image]
-    - get: watcher-docker-image
+    - get: cf-api-watcher-docker-image
       trigger: true
-      passed: [build-watcher-docker-image]
+      passed: [build-cf-api-kpack-watcher-image]
     - get: nginx-docker-image
       trigger: true
       passed: [build-nginx-docker-image]
     - get: capi-kpack-watcher
-      passed: [build-watcher-docker-image]
+      passed: [build-cf-api-kpack-watcher-image]
     - get: capi-nginx
       passed: [build-nginx-docker-image]
   - task: delete-deployment
@@ -1403,6 +1403,8 @@ jobs:
       GOOGLE_KEY_FILE_PATH: capi-ci-private/samus/concourse-service-account.json
   - task: deploy
     file: capi-ci/ci/k8s/deploy-cf-for-k8s.yml
+    input_mapping:
+      watcher-docker-image: cf-api-watcher-docker-image
     params:
       CAPI_ENVIRONMENT_NAME: samus
       GOOGLE_SERVICE_ACCOUNT_EMAIL: concourse@cff-capi-samus.iam.gserviceaccount.com
@@ -1459,7 +1461,7 @@ jobs:
     - get: capi-docker-image
       trigger: true
       passed: [samus-cf-for-k8s]
-    - get: watcher-docker-image
+    - get: cf-api-watcher-docker-image
       trigger: true
       passed: [samus-cf-for-k8s]
     - get: nginx-docker-image
@@ -1474,6 +1476,8 @@ jobs:
       passed: [samus-cf-for-k8s]
   - task: bump-capi-k8s-release-image-refs
     file: capi-ci/ci/k8s/bump-capi-k8s-release-image-refs.yml
+    input_mapping:
+      watcher-docker-image: cf-api-watcher-docker-image
   - put: capi-k8s-release
     params:
       repository: updated-capi-k8s-release
