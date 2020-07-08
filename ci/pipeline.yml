@@ -362,7 +362,7 @@ resources:
   type: git
   source:
     branch: master
-    paths: [src/capi-kpack-watcher, src/cf-api-kpack-watcher]
+    paths: [src/capi-kpack-watcher, src/cf-api-controllers]
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/capi-k8s-release.git
 
