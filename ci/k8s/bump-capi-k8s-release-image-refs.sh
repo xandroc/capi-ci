@@ -21,7 +21,7 @@ NGINX_IMAGE="cloudfoundry/capi-nginx@$(get_image_digest_for_resource nginx-docke
 WATCHER_IMAGE="cloudfoundry/capi-kpack-watcher@$(get_image_digest_for_resource cf-api-watcher-docker-image)"
 CAPI_SHA="$(git_sha cloud_controller_ng)"
 NGINX_SHA="$(git_sha capi-nginx)"
-WATCHER_SHA="$(git_sha capi-kpack-watcher)"
+WATCHER_SHA="$(git_sha cf-api-controllers)"
 
 function bump_image_references() {
     cat <<- EOF > "${PWD}/update-images.yml"

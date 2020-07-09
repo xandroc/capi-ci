@@ -357,7 +357,7 @@ resources:
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/cloud_controller_ng.git
 
-- name: capi-kpack-watcher
+- name: cf-api-controllers
   type: git
   source:
     branch: master
@@ -683,7 +683,7 @@ jobs:
 - name: capi-k8s-release-unit-tests
   plan:
   - in_parallel:
-    - get: capi-kpack-watcher
+    - get: cf-api-controllers
       trigger: true
     - get: capi-ci
   - task: run-capi-kpack-watcher-unit-tests
@@ -779,7 +779,7 @@ jobs:
 - name: build-cf-api-kpack-watcher-image
   plan:
     - in_parallel:
-      - get: capi-kpack-watcher
+      - get: cf-api-controllers
         trigger: true
         passed: [capi-k8s-release-unit-tests]
       - get: capi-ci
@@ -789,12 +789,12 @@ jobs:
       params:
         CONTEXT_PATH: src/cf-api-controllers
       input_mapping:
-        source-repository: capi-kpack-watcher
+        source-repository: cf-api-controllers
     - task: run-deplab
       privileged: true
       file: capi-ci/ci/docker/run-deplab.yml
       input_mapping:
-        source-repository: capi-kpack-watcher
+        source-repository: cf-api-controllers
     - put: cf-api-watcher-docker-image
       params:
         image: labeled-image/image.tar
@@ -1359,7 +1359,7 @@ jobs:
     - get: nginx-docker-image
       trigger: true
       passed: [build-nginx-docker-image]
-    - get: capi-kpack-watcher
+    - get: cf-api-controllers
       passed: [build-cf-api-kpack-watcher-image]
     - get: capi-nginx
       passed: [build-nginx-docker-image]
@@ -1437,7 +1437,7 @@ jobs:
     - get: capi-k8s-release
       trigger: true
       passed: [samus-cf-for-k8s]
-    - get: capi-kpack-watcher
+    - get: cf-api-controllers
       passed: [samus-cf-for-k8s]
     - get: capi-nginx
       passed: [samus-cf-for-k8s]

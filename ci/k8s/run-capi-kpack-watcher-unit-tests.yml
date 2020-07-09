@@ -9,7 +9,7 @@ image_resource:
     tag: go-units
 
 inputs:
-  - name: capi-kpack-watcher
+  - name: cf-api-controllers
   - name: capi-ci
 
 params: {}

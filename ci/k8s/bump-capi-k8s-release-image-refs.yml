@@ -15,7 +15,7 @@ inputs:
 - name: nginx-docker-image
 - name: cloud_controller_ng
 - name: capi-nginx
-- name: capi-kpack-watcher
+- name: cf-api-controllers
 
 outputs:
 - name: updated-capi-k8s-release
