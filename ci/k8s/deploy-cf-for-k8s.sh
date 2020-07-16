@@ -75,6 +75,7 @@ cat > env-metadata/integration_config.json << EOF
   "include_kpack": true,
   "gcloud_project_name": "${GOOGLE_PROJECT_NAME}",
   "cluster_zone": "${GCP_ZONE}",
-  "cluster_name": "${CLUSTER_NAME}"
+  "cluster_name": "${CLUSTER_NAME}",
+  "cf_push_timeout": 480
 }
 EOF
