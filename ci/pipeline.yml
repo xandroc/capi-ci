@@ -2733,7 +2733,6 @@ jobs:
       passed: [create-capi-release]
     - get: leia-azure-storage-integration-configs
     - get: cf-acceptance-tests
-    - get: sync-integration-tests
     - get: nightly
       trigger: true
   - task: stemcell-upload
@@ -2799,28 +2798,14 @@ jobs:
       params:
         repository: updated-integration-configs
         rebase: true
-  - in_parallel:
-    - task: acceptance-tests
-      file: cf-deployment-concourse-tasks/run-cats/task.yml
-      input_mapping:
-        integration-config: updated-integration-configs
-      params:
-        NODES: 4
-        CONFIG_FILE_PATH: "leia-azure-storage/cats_integration_config.json"
-        CAPTURE_LOGS: true
-    - task: sync-integration-tests
-      file: sync-integration-tests/concourse/task_with_credhub.yml
-      input_mapping:
-        environment: capi-ci-private
-      params:
-        BOSH_DEPLOYMENT_NAME: cf
-        BOSH_API_INSTANCE: api/0
-        CF_API_TARGET: &leia-azure-storage-api-url https://api.leia-azure-storage.capi.land
-        CF_SKIP_SSL_VALIDATION: true
-        CF_APPS_DOMAIN: *leia-azure-storage-domain
-        BBL_STATE_DIR: leia-azure-storage
-        USE_CREDHUB: true
-        RUN_REVISIONS_TESTS: true
+  - task: acceptance-tests
+    file: cf-deployment-concourse-tasks/run-cats/task.yml
+    input_mapping:
+      integration-config: updated-integration-configs
+    params:
+      NODES: 4
+      CONFIG_FILE_PATH: "leia-azure-storage/cats_integration_config.json"
+      CAPTURE_LOGS: true
   - task: run-blobstore-benchmarks
     file: capi-ci/ci/benchmarks/run-blobstore-benchmarks.yml
     params:
@@ -2828,8 +2813,9 @@ jobs:
   - task: cleanup-acceptance-test-leftovers
     file: capi-ci/ci/acceptance-test-utils/cats_cleanup.yml
     params:
-      CF_API_TARGET: *leia-azure-storage-api-url
+      CF_API_TARGET: https://api.leia-azure-storage.capi.land
       BBL_STATE_DIR: leia-azure-storage
+
 - name: rotate-certs-leia-azure-storage
   serial: true
   serial_groups: [leia-azure-storage]
@@ -2991,7 +2977,6 @@ jobs:
       passed: [create-capi-release]
     - get: rey-gcs-storage-integration-configs
     - get: cf-acceptance-tests
-    - get: sync-integration-tests
     - get: nightly
       trigger: true
   - task: extract-bbl-environment
@@ -3049,28 +3034,14 @@ jobs:
       params:
         repository: updated-integration-configs
         rebase: true
-  - in_parallel:
-    - task: acceptance-tests
-      file: cf-deployment-concourse-tasks/run-cats/task.yml
-      input_mapping:
-        integration-config: updated-integration-configs
-      params:
-        NODES: 4
-        CONFIG_FILE_PATH: "rey-gcs-storage/cats_integration_config.json"
-        CAPTURE_LOGS: true
-    - task: sync-integration-tests
-      file: sync-integration-tests/concourse/task_with_credhub.yml
-      input_mapping:
-        environment: capi-ci-private
-      params:
-        BOSH_DEPLOYMENT_NAME: cf
-        BOSH_API_INSTANCE: api/0
-        CF_API_TARGET: &rey-gcs-storage-api-url https://api.rey-gcs-storage.capi.land
-        CF_SKIP_SSL_VALIDATION: true
-        CF_APPS_DOMAIN: *rey-gcs-storage-domain
-        BBL_STATE_DIR: rey-gcs-storage
-        USE_CREDHUB: true
-        RUN_REVISIONS_TESTS: true
+  - task: acceptance-tests
+    file: cf-deployment-concourse-tasks/run-cats/task.yml
+    input_mapping:
+      integration-config: updated-integration-configs
+    params:
+      NODES: 4
+      CONFIG_FILE_PATH: "rey-gcs-storage/cats_integration_config.json"
+      CAPTURE_LOGS: true
   - task: run-blobstore-benchmarks
     file: capi-ci/ci/benchmarks/run-blobstore-benchmarks.yml
     params:
@@ -3078,7 +3049,7 @@ jobs:
   - task: cleanup-acceptance-test-leftovers
     file: capi-ci/ci/acceptance-test-utils/cats_cleanup.yml
     params:
-      CF_API_TARGET: *rey-gcs-storage-api-url
+      CF_API_TARGET: https://api.rey-gcs-storage.capi.land
       BBL_STATE_DIR: rey-gcs-storage
 
 - name: rotate-certs-rey-gcs-storage
