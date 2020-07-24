@@ -40,7 +40,7 @@ cat <<- EOF > "${PWD}/update-images.yml"
   path: /images/nginx
   value: ${NGINX_IMAGE}
 - type: replace
-  path: /images/capi_kpack_watcher
+  path: /images/cf_api_controllers
   value: ${WATCHER_IMAGE}
 EOF
 
