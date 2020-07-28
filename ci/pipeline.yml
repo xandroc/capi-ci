@@ -1649,6 +1649,12 @@ jobs:
 - name: elsa-HA
   serial: true
   serial_groups: [elsa]
+  ensure:
+    task: cleanup-acceptance-test-leftovers
+    file: capi-ci/ci/acceptance-test-utils/cats_cleanup.yml
+    params:
+      CF_API_TARGET: &elsa-api-url https://api.elsa.capi.land
+      BBL_STATE_DIR: elsa
   plan:
   - in_parallel:
     - get: cloud_controller_ng
@@ -1823,7 +1829,7 @@ jobs:
       params:
         BOSH_DEPLOYMENT_NAME: cf
         BOSH_API_INSTANCE: api/0
-        CF_API_TARGET: &elsa-api-url https://api.elsa.capi.land
+        CF_API_TARGET: *elsa-api-url
         CF_SKIP_SSL_VALIDATION: false
         CF_APPS_DOMAIN: *elsa-domain
         BBL_STATE_DIR: elsa
@@ -1832,11 +1838,6 @@ jobs:
   - task: run-blobstore-benchmarks
     file: capi-ci/ci/benchmarks/run-blobstore-benchmarks.yml
     params:
-      BBL_STATE_DIR: elsa
-  - task: cleanup-acceptance-test-leftovers
-    file: capi-ci/ci/acceptance-test-utils/cats_cleanup.yml
-    params:
-      CF_API_TARGET: *elsa-api-url
       BBL_STATE_DIR: elsa
 
 - name: kiki-back-compat-migrations
