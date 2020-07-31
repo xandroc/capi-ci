@@ -55,7 +55,6 @@ groups:
   jobs:
   - rc-docs-v3
   - update-checkman
-  - deliver-stories
   - update-and-push-docs-v2
 - name: update-bosh
   jobs:
@@ -1452,6 +1451,10 @@ jobs:
   - put: capi-k8s-release-ci-passed
     params:
       repository: updated-capi-k8s-release
+  - put: deliver-capi-stories
+    params:
+      repos:
+      - capi-k8s-release-ci-passed
 
 - name: ripley-nfs
   serial: true
@@ -3223,25 +3226,6 @@ jobs:
         repository: updated-bbl-state
         rebase: true
 
-- name: deliver-stories
-  serial: true
-  plan:
-  - get: capi-release
-    resource: capi-release-ci-passed
-    trigger: true
-  - put: deliver-capi-stories
-    params:
-      repos:
-      - capi-release/src/cloud_controller_ng
-      - capi-release/src/code.cloudfoundry.org/tps
-      - capi-release
-  - put: deliver-vat-stories
-    params:
-      repos:
-      - capi-release/src/cloud_controller_ng
-      - capi-release/src/code.cloudfoundry.org/tps
-      - capi-release
-
 - name: merge-capi-release-master
   serial: true
   plan:
@@ -3291,6 +3275,18 @@ jobs:
   - put: capi-release-ci-passed
     params:
       repository: capi-release
+  - put: deliver-capi-stories
+    params:
+      repos:
+      - capi-release-ci-passed/src/cloud_controller_ng
+      - capi-release-ci-passed/src/code.cloudfoundry.org/tps
+      - capi-release-ci-passed
+  - put: deliver-vat-stories
+    params:
+      repos:
+      - capi-release-ci-passed/src/cloud_controller_ng
+      - capi-release-ci-passed/src/code.cloudfoundry.org/tps
+      - capi-release-ci-passed
 
 - name: xena-mysql-drats
   serial: true
