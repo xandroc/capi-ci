@@ -68,7 +68,7 @@ echo "${CAPI_ENVIRONMENT_NAME}.capi.land" > env-metadata/dns-domain.txt
 cat > env-metadata/integration_config.json << EOF
 {
   "api": "api.${CAPI_ENVIRONMENT_NAME}.capi.land",
-  "apps_domain": "${CAPI_ENVIRONMENT_NAME}.capi.land",
+  "apps_domain": "apps.${CAPI_ENVIRONMENT_NAME}.capi.land",
   "admin_user": "admin",
   "admin_password": "$(cat env-metadata/cf-admin-password.txt)",
   "skip_ssl_validation": true,
