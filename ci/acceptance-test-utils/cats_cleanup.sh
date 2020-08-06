@@ -1,5 +1,5 @@
 #!/bin/bash
-set -eux
+set -eu
 
 # ENV
 : "${CF_API_TARGET:?}"
