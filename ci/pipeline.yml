@@ -1992,6 +1992,7 @@ jobs:
       bbl-state: kiki-bbl-state
     params:
       BBL_STATE_DIR: kiki
+    attempts: 3 # We noticed that we sometimes get Error: Digest::Base cannot be directly inherited in Ruby, so we should retry
 
 - name: ship-it-k8s
   serial_groups: [k8s-version]
