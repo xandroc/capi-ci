@@ -34,10 +34,10 @@ export CF_DIAL_TIMEOUT=11
 
 export CF_PLUGIN_HOME=$HOME
 
-./bin/test \
--keepGoing \
--randomizeAllSpecs \
--skipPackage=helpers \
--slowSpecThreshold=120 \
--nodes="${NODES}" \
--noisySkippings=false
+./bin/test . stack \
+  -keepGoing \
+  -randomizeAllSpecs \
+  -skipPackage=helpers \
+  -slowSpecThreshold=120 \
+  -nodes="${NODES}" \
+  -noisySkippings=false
