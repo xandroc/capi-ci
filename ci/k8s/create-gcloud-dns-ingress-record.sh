@@ -37,6 +37,4 @@ function verify_dns()
 SUCCESSES=3
 for i in $(seq ${SUCCESSES}); do
   verify_dns
-  verify_dns
-  verify_dns
 done
