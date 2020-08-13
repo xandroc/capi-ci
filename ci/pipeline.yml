@@ -1395,6 +1395,7 @@ jobs:
           rebase: true
   - in_parallel:
     - task: set-dns
+      attempts: 3
       file: capi-ci/ci/k8s/create-gcloud-dns-ingress-record.yml
       params:
         CF_DOMAIN: samus.capi.land
@@ -1404,6 +1405,7 @@ jobs:
         GOOGLE_PROJECT_NAME: cff-capi-samus
         GOOGLE_KEY_FILE_PATH: capi-ci-private/samus/concourse-service-account.json
     - task: set-dns
+      attempts: 3
       file: capi-ci/ci/k8s/create-gcloud-dns-ingress-record.yml
       params:
         CF_DOMAIN: apps.samus.capi.land
