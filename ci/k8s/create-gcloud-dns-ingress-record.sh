@@ -2,6 +2,13 @@
 
 set -eux -o pipefail
 
+function verify_dns()
+{
+  while [ "$(dig +short ${NAME})" != "${INGRESS_IP}" ]; do
+    sleep 1
+  done
+}
+
 gcloud auth activate-service-account \
   "${GOOGLE_SERVICE_ACCOUNT_EMAIL}" \
   --key-file="${GOOGLE_KEY_FILE_PATH}" \
@@ -17,13 +24,13 @@ set +e
 PREVIOUS_RECORD_IP="$(gcloud dns record-sets list --zone ${GOOGLE_DNS_ZONE} | grep ${NAME} | awk '{ print $4 }')"
 set -e
 
-gcloud dns record-sets transaction start --zone="${GOOGLE_DNS_ZONE}"
-
 if [ "${PREVIOUS_RECORD_IP}" == "${INGRESS_IP}" ]; then
   echo 'New Ingress IP matches existing DNS record'
   verify_dns
   exit 0
 fi
+
+gcloud dns record-sets transaction start --zone="${GOOGLE_DNS_ZONE}"
 
 if [[ -n "${PREVIOUS_RECORD_IP}" ]]; then
   gcloud dns record-sets transaction remove "${PREVIOUS_RECORD_IP}" --name "${NAME}" --ttl="${DNS_TTL}" --type=A --zone="${GOOGLE_DNS_ZONE}"
@@ -32,13 +39,6 @@ fi
 gcloud dns record-sets transaction add "${INGRESS_IP}" --name "${NAME}" --ttl="${DNS_TTL}" --type=A --zone="${GOOGLE_DNS_ZONE}"
 
 gcloud dns record-sets transaction execute --zone="${GOOGLE_DNS_ZONE}"
-
-function verify_dns()
-{
-  while [ "$(dig +short ${NAME})" != "${INGRESS_IP}" ]; do
-    sleep 1
-  done
-}
 
 SUCCESSES=3
 for i in $(seq ${SUCCESSES}); do
