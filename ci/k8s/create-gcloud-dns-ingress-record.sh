@@ -27,6 +27,16 @@ gcloud dns record-sets transaction add "${INGRESS_IP}" --name "${NAME}" --ttl="$
 
 gcloud dns record-sets transaction execute --zone="${GOOGLE_DNS_ZONE}"
 
-while [ "$(dig +short ${NAME})" != "${INGRESS_IP}" ]; do
-  sleep 1
+function verify_dns()
+{
+  while [ "$(dig +short ${NAME})" != "${INGRESS_IP}" ]; do
+    sleep 1
+  done
+}
+
+SUCCESSES=3
+for i in $(seq ${SUCCESSES}); do
+  verify_dns
+  verify_dns
+  verify_dns
 done
