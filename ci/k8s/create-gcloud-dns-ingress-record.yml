@@ -13,7 +13,7 @@ inputs:
 
 params:
   # Required.
-  # The domain to aim the wildcard a record at. This is the app AND system domain
+  # The domain to aim the wildcard a record at. This will not cover the app and system domain, just one or the other
   CF_DOMAIN:
 
   # Required.

@@ -1393,15 +1393,25 @@ jobs:
         params:
           repository: updated-private-env-repo
           rebase: true
-  - task: set-dns
-    file: capi-ci/ci/k8s/create-gcloud-dns-ingress-record.yml
-    params:
-      CF_DOMAIN: samus.capi.land
-      GOOGLE_DNS_ZONE: samus-zone
-      CAPI_ENVIRONMENT_NAME: samus
-      GOOGLE_SERVICE_ACCOUNT_EMAIL: concourse@cff-capi-samus.iam.gserviceaccount.com
-      GOOGLE_PROJECT_NAME: cff-capi-samus
-      GOOGLE_KEY_FILE_PATH: capi-ci-private/samus/concourse-service-account.json
+  - in_parallel:
+    - task: set-dns
+      file: capi-ci/ci/k8s/create-gcloud-dns-ingress-record.yml
+      params:
+        CF_DOMAIN: samus.capi.land
+        GOOGLE_DNS_ZONE: samus-zone
+        CAPI_ENVIRONMENT_NAME: samus
+        GOOGLE_SERVICE_ACCOUNT_EMAIL: concourse@cff-capi-samus.iam.gserviceaccount.com
+        GOOGLE_PROJECT_NAME: cff-capi-samus
+        GOOGLE_KEY_FILE_PATH: capi-ci-private/samus/concourse-service-account.json
+    - task: set-dns
+      file: capi-ci/ci/k8s/create-gcloud-dns-ingress-record.yml
+      params:
+        CF_DOMAIN: apps.samus.capi.land
+        GOOGLE_DNS_ZONE: samus-zone
+        CAPI_ENVIRONMENT_NAME: samus
+        GOOGLE_SERVICE_ACCOUNT_EMAIL: concourse@cff-capi-samus.iam.gserviceaccount.com
+        GOOGLE_PROJECT_NAME: cff-capi-samus
+        GOOGLE_KEY_FILE_PATH: capi-ci-private/samus/concourse-service-account.json
   - in_parallel:
     - task: run-smoke-tests
       file: capi-ci/ci/k8s/run-smoke-tests.yml
