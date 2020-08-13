@@ -19,6 +19,12 @@ set -e
 
 gcloud dns record-sets transaction start --zone="${GOOGLE_DNS_ZONE}"
 
+if [ "${PREVIOUS_RECORD_IP}" == "${INGRESS_IP}" ]; then
+  echo 'New Ingress IP matches existing DNS record'
+  verify_dns
+  exit 0
+fi
+
 if [[ -n "${PREVIOUS_RECORD_IP}" ]]; then
   gcloud dns record-sets transaction remove "${PREVIOUS_RECORD_IP}" --name "${NAME}" --ttl="${DNS_TTL}" --type=A --zone="${GOOGLE_DNS_ZONE}"
 fi
