@@ -13,6 +13,8 @@
 groups:
 - name: capi-k8s-release
   jobs:
+  - provision-samus-cluster
+  - delete-samus-cluster
   - cc-unit-tests
   - capi-k8s-release-unit-tests
   - build-capi-docker-image
@@ -483,6 +485,18 @@ resources:
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/bosh-deployment.git
 
+# Samus resources
+- name: samus-cluster-tf-state
+  type: terraform
+  source:
+    env_name: samus
+    backend_type: gcs
+    backend_config:
+      bucket: samus-cluster-tf-state
+      credentials: ((samus_gcp_json_key))
+    # TODO: change to `true`?
+    delete_on_failure: false
+
 # Mulan resources
 - name: mulan-bbl-state
   type: git
@@ -497,7 +511,6 @@ resources:
     branch: master
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/capi-ci-private.git
-
 
 # Ripley resources
 - name: ripley-bbl-state
@@ -635,6 +648,41 @@ resources:
     password: ((dockerhub_pass))
 
 jobs:
+- name: provision-samus-cluster
+  plan:
+  # TODO: what should we trigger on? should we even trigger???
+  - get: cf-for-k8s
+  - put: samus-cluster-tf-state
+    params:
+      terraform_source: cf-for-k8s/deploy/gke/terraform
+      vars:
+        project: cff-capi-samus
+        region: us-west1
+        zone: us-west1-a
+        service_account_key: ((samus_gcp_json_key))
+        env_name: poop
+        env_dns_domain: poop.capi.land
+        dns_zone_name: poop-zone
+
+- name: delete-samus-cluster
+  plan:
+  # TODO: what should we trigger on? should we even trigger???
+  - get: cf-for-k8s
+  - put: samus-cluster-tf-state
+    params:
+      action: destroy
+      terraform_source: cf-for-k8s/deploy/gke/terraform
+      vars:
+        project: cff-capi-samus
+        region: us-west1
+        zone: us-west1-a
+        service_account_key: ((samus_gcp_json_key))
+        env_name: poop
+        env_dns_domain: poop.capi.land
+        dns_zone_name: poop-zone
+    get_params:
+      action: destroy
+
 - name: autobump-golang-package
   plan:
   - in_parallel:

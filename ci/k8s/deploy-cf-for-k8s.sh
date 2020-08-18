@@ -58,7 +58,8 @@ source "capi-ci-private/${CAPI_ENVIRONMENT_NAME}/.envrc"
 pushd "cf-for-k8s"
   hack/generate-values.sh -d "${CAPI_ENVIRONMENT_NAME}.capi.land" -g "${SERVICE_ACCOUNT_KEY}" > cf-install-values.yml
 
-  kapp deploy -a cf -f <(ytt -f ./config/ -f ./cf-install-values.yml) -y
+  lb_static_ip="$(jq -r .lb_static_ip ../cluster-tf-state/metadata)"
+  kapp deploy -a cf -f <(ytt -f ./config/ -f ./cf-install-values.yml -v istio_static_ip="${lb_static_ip}") -y
 popd
 
 cp cf-for-k8s/cf-install-values.yml env-metadata/cf-install-values.yml

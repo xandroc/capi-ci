@@ -15,6 +15,7 @@ inputs:
 - name: capi-docker-image
 - name: cf-api-watcher-docker-image
 - name: nginx-docker-image
+- name: cluster-tf-state
 outputs:
 - name: env-metadata
 
