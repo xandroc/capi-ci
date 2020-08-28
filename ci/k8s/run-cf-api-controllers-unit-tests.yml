@@ -15,4 +15,4 @@ inputs:
 params: {}
 
 run:
-  path: capi-ci/ci/k8s/run-capi-kpack-watcher-unit-tests.sh
+  path: capi-ci/ci/k8s/run-cf-api-controllers-unit-tests.sh

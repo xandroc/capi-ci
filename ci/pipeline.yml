@@ -18,7 +18,7 @@ groups:
   - cc-unit-tests
   - capi-k8s-release-unit-tests
   - build-capi-docker-image
-  - build-cf-api-kpack-watcher-image
+  - build-cf-api-controllers-image
   - build-nginx-docker-image
   - samus-cf-for-k8s
   - k8s-ci-passed
@@ -632,11 +632,11 @@ resources:
     password: ((dockerhub_pass))
 
 # TODO: when we make a final call on this things name, we'll get a new dockerhub repo
-- name: cf-api-watcher-docker-image
+- name: cf-api-controllers-docker-image
   type: registry-image
   source:
-    repository: cloudfoundry/capi-kpack-watcher
-    tag: cf-api-watcher
+    repository: cloudfoundry/cf-api-controllers
+    tag: cf-api-controllers
     username: ((dockerhub_user))
     password: ((dockerhub_pass))
 
@@ -734,8 +734,8 @@ jobs:
     - get: cf-api-controllers
       trigger: true
     - get: capi-ci
-  - task: run-capi-kpack-watcher-unit-tests
-    file: capi-ci/ci/k8s/run-capi-kpack-watcher-unit-tests.yml
+  - task: run-cf-api-controllers-unit-tests
+    file: capi-ci/ci/k8s/run-cf-api-controllers-unit-tests.yml
     on_failure:
       put: slack-alert
       params:
@@ -824,7 +824,7 @@ jobs:
       params:
         image: labeled-image/image.tar
 
-- name: build-cf-api-kpack-watcher-image
+- name: build-cf-api-controllers-image
   plan:
     - in_parallel:
       - get: cf-api-controllers
@@ -843,7 +843,7 @@ jobs:
       file: capi-ci/ci/docker/run-deplab.yml
       input_mapping:
         source-repository: cf-api-controllers
-    - put: cf-api-watcher-docker-image
+    - put: cf-api-controllers-docker-image
       params:
         image: labeled-image/image.tar
 
@@ -1401,14 +1401,14 @@ jobs:
     - get: capi-docker-image
       trigger: true
       passed: [build-capi-docker-image]
-    - get: cf-api-watcher-docker-image
+    - get: cf-api-controllers-docker-image
       trigger: true
-      passed: [build-cf-api-kpack-watcher-image]
+      passed: [build-cf-api-controllers-image]
     - get: nginx-docker-image
       trigger: true
       passed: [build-nginx-docker-image]
     - get: cf-api-controllers
-      passed: [build-cf-api-kpack-watcher-image]
+      passed: [build-cf-api-controllers-image]
     - get: capi-nginx
       passed: [build-nginx-docker-image]
     - get: samus-cluster-tf-state
@@ -1472,7 +1472,7 @@ jobs:
     - get: capi-docker-image
       trigger: true
       passed: [samus-cf-for-k8s]
-    - get: cf-api-watcher-docker-image
+    - get: cf-api-controllers-docker-image
       trigger: true
       passed: [samus-cf-for-k8s]
     - get: nginx-docker-image

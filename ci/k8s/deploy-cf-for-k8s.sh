@@ -15,7 +15,7 @@ function get_image_digest_for_resource () {
 
 CAPI_IMAGE="cloudfoundry/cloud-controller-ng@$(get_image_digest_for_resource capi-docker-image)"
 NGINX_IMAGE="cloudfoundry/capi-nginx@$(get_image_digest_for_resource nginx-docker-image)"
-WATCHER_IMAGE="cloudfoundry/capi-kpack-watcher@$(get_image_digest_for_resource cf-api-watcher-docker-image)"
+WATCHER_IMAGE="cloudfoundry/cf-api-controllers@$(get_image_digest_for_resource cf-api-controllers-docker-image)"
 
 echo "kapp version..."
 kapp version

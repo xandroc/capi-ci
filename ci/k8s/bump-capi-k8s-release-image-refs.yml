@@ -11,7 +11,7 @@ inputs:
 - name: capi-ci
 - name: capi-k8s-release
 - name: capi-docker-image
-- name: cf-api-watcher-docker-image
+- name: cf-api-controllers-docker-image
 - name: nginx-docker-image
 - name: cloud_controller_ng
 - name: capi-nginx

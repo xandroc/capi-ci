@@ -13,7 +13,7 @@ inputs:
 - name: cf-for-k8s
 - name: capi-k8s-release
 - name: capi-docker-image
-- name: cf-api-watcher-docker-image
+- name: cf-api-controllers-docker-image
 - name: nginx-docker-image
 - name: cluster-tf-state
 outputs:
