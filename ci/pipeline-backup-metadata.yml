@@ -1,0 +1,219 @@
+---
+resource_types:
+- name: gcs
+  type: docker-image
+  source:
+    repository: frodenas/gcs-resource
+
+- name: pcf-pool
+  type: docker-image
+  source:
+      repository: cftoolsmiths/toolsmiths-envs-resource
+
+resources:
+- name: tas-env
+  type: pcf-pool
+  source:
+    api_token: ((toolsmiths_api_token))
+    hostname: environments.toolsmiths.cf-app.com
+    pool_name: us_2_10
+  tags:
+    - platform-recovery-vsphere
+
+- name: ci
+  type: git
+  icon: github-box
+  source:
+    private_key: ((private_key))
+    uri: git@github.com:cloudfoundry/capi-ci
+    branch: platform-recovery-moving-in
+
+- name: src
+  type: git
+  icon: github-box
+  source:
+    private_key: ((private_key))
+    uri: git@github.com:cloudfoundry/capi-k8s-release
+    branch: platform-recovery-moving-in
+
+- name: tas-cf-metadata-test-artifacts
+  type: gcs
+  source:
+    bucket: tas-cf-metadata-test-artifacts
+    json_key: ((gcp_service_account_owner))
+    regexp: .*.tgz
+
+- name: version
+  type: semver
+  source:
+    bucket: tas-cf-metadata-test-artifacts
+    key: version
+    json_key: ((gcp_service_account_owner))
+    initial_version: 0.0.1
+    driver: gcs
+
+- name: cluster-name
+  type: gcs
+  source:
+    bucket: tas-cf-metadata-cluster-name
+    json_key: ((gcp_service_account_owner))
+    versioned_file: info
+
+- name: velero-bucket
+  type: gcs
+  source:
+    bucket: tas-cf-metadata-velero-bucket-name
+    json_key: ((gcp_service_account_owner))
+    versioned_file: info
+
+- name: cf-for-k8s-disaster-recovery-image
+  type: registry-image
+  source:
+    repository: dev.registry.pivotal.io/platform_recovery/backup-restore
+    tag: latest
+    username: ((tanzu_registry_username))
+    password: ((tanzu_registry_password))
+
+jobs:
+- name: bump-image-sha
+  plan:
+    - in_parallel:
+      - get: src
+      - get: ci
+      - get: cf-for-k8s-disaster-recovery-image
+        trigger: true
+    - task: bump-image-sha
+      file: ci/ci/backup-metadata/bump-image-sha.yml
+    - put: src
+      params:
+        repository: cf-for-k8s-disaster-recovery-updated
+        rebase: true
+
+- name: build
+  plan:
+    - in_parallel:
+      - get: ci
+      - get: src
+        trigger: true
+      - get: cf-for-k8s-disaster-recovery-image
+      - get: version
+        params: {pre: build}
+    - task: build-artifact
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: pcfplatformrecovery/backup-and-restore-cf-for-k8s
+        inputs:
+          - name: src
+          - name: version
+        outputs:
+          - name: tas-cf-metadata-test-artifacts
+        run:
+          dir: src/backup-metadata
+          path: sh
+          args:
+          - "-c"
+          - "make artifact && mv cf-metadata.tgz ../../tas-cf-metadata-test-artifacts/backup-metadata.$(cat ../../version/number).tgz"
+    - put: version
+      params: { file: version/number }
+    - put: tas-cf-metadata-test-artifacts
+      params:
+        file: tas-cf-metadata-test-artifacts/*.tgz
+
+- name: create-cluster
+  plan:
+  - in_parallel:
+    - get: tas-cf-metadata-test-artifacts
+      passed: [build]
+      trigger: true
+    - get: src
+      passed: [build]
+    - get: ci
+  - in_parallel:
+    - task: create
+      file: ci/ci/backup-metadata/create-cluster.yml
+      params:
+        GKE_SERVICE_ACCOUNT_KEY: ((gke_service_account))
+        CLUSTER_PREFIX: ci-cluster
+    - task: create-velero-bucket
+      file: ci/ci/backup-metadata/create-velero-bucket.yml
+      params:
+        GKE_SERVICE_ACCOUNT_KEY: ((gke_service_account))
+  - in_parallel:
+    - put: cluster-name
+      params:
+        file: cluster-name/info
+    - put: velero-bucket
+      params:
+        file: velero-bucket/info
+
+- name: install-cf-metadata-and-test
+  plan:
+  - in_parallel:
+    - get: tas-cf-metadata-test-artifacts
+      passed: [create-cluster]
+      trigger: true
+    - get: cluster-name
+      passed: [create-cluster]
+      trigger: true
+    - get: src
+      passed: [create-cluster]
+    - get: ci
+    - get: velero-bucket
+      passed: [create-cluster]
+      trigger: true
+  - put: tas-env
+    params:
+      action: claim
+    tags:
+    - platform-recovery-vsphere
+  - task: install-velero
+    file: ci/ci/backup-metadata/install-velero.yml
+    params:
+      GKE_SERVICE_ACCOUNT_KEY: ((gke_service_account))
+      VELERO_SERVICE_ACCOUNT_KEY: ((velero_service_account))
+  - task: install-cf-metadata
+    file: ci/ci/backup-metadata/install-cf-metadata.yml
+    params:
+      GKE_SERVICE_ACCOUNT_KEY: ((gke_service_account))
+      TANZU_REGISTRY_CREDENTIALS: ((tanzu_registry_credentials))
+  - task: e2e-test
+    file: ci/ci/backup-metadata/e2e-test.yml
+    params:
+      GKE_SERVICE_ACCOUNT_KEY: ((gke_service_account))
+
+- name: cleanup-infrastructure
+  plan:
+  - get: velero-bucket
+    trigger: true
+    passed:
+    - install-cf-metadata-and-test
+  - get: cluster-name
+    trigger: true
+    passed:
+    - install-cf-metadata-and-test
+  - get: src
+  - get: ci
+  - get: tas-env
+    trigger: true
+    passed:
+    - install-cf-metadata-and-test
+    tags:
+    - platform-recovery-vsphere
+  - put: tas-env
+    params:
+      action: unclaim
+      env_file: tas-env/metadata
+    tags:
+    - platform-recovery-vsphere
+  - in_parallel:
+    - task: cleanup-velero-bucket
+      file: ci/ci/backup-metadata/cleanup-velero-bucket.yml
+      params:
+        GKE_SERVICE_ACCOUNT_KEY: ((gke_service_account))
+    - task: cleanup-cluster
+      file: ci/ci/backup-metadata/cleanup-cluster.yml
+      params:
+        GKE_SERVICE_ACCOUNT_KEY: ((gke_service_account))
