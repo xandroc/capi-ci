@@ -8,10 +8,10 @@ image_resource:
 inputs:
 - name: src
 - name: ci
-- name: cf-for-k8s-disaster-recovery-image
+- name: backup-metadata-docker-image
 
 outputs:
-- name: cf-for-k8s-disaster-recovery-updated
+- name: backup-metadata-docker-image-updated
 
 run:
   path: ci/ci/backup-metadata/bump-image-sha.sh

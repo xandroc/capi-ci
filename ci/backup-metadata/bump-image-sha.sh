@@ -2,9 +2,9 @@
 
 set -euo pipefail
 
-LATEST_SHA=$(cat cf-for-k8s-disaster-recovery-image/digest)
+LATEST_SHA=$(cat backup-metadata-docker-image/digest)
 
-pushd src/backup-metadata/config
+pushd src/src/backup-metadata/config
   IMAGE=$(yq r cfmetadata.yml spec.containers[0].image | cut -d'@' -f1)
   yq w -i cfmetadata.yml spec.containers[0].image "${IMAGE}@${LATEST_SHA}"
 
@@ -17,4 +17,5 @@ pushd src/backup-metadata/config
   fi
 popd
 
-cp -r src/. cf-for-k8s-disaster-recovery-updated
+cp -r src/. backup-metadata-docker-image-updated
+
