@@ -20,7 +20,7 @@ groups:
   - package-image-uploader-unit-tests
   - build-capi-docker-image
   - build-cf-api-controllers-image
-  - build-package-image-uploader-image
+  - build-package-image-uploader-docker-image
   - build-nginx-docker-image
   - samus-cf-for-k8s
   - k8s-ci-passed
@@ -648,7 +648,7 @@ resources:
     username: ((dockerhub_user))
     password: ((dockerhub_pass))
 
-- name: package-image-uploader-image
+- name: package-image-uploader-docker-image
   type: registry-image
   source:
     repository: cloudfoundry/cf-api-package-image-uploader
@@ -876,7 +876,7 @@ jobs:
       params:
         image: labeled-image/image.tar
 
-- name: build-package-image-uploader-image
+- name: build-package-image-uploader-docker-image
   plan:
     - in_parallel:
       - get: package-image-uploader
@@ -889,13 +889,13 @@ jobs:
       params:
         CONTEXT_PATH: src/package-image-uploader
       input_mapping:
-        source-repository: cf-api-controllers
+        source-repository: package-image-uploader
     - task: run-deplab
       privileged: true
       file: capi-ci/ci/docker/run-deplab.yml
       input_mapping:
-        source-repository: cf-api-controllers
-    - put: package-image-uploader-image
+        source-repository: package-image-uploader
+    - put: package-image-uploader-docker-image
       params:
         image: labeled-image/image.tar
 
@@ -1456,6 +1456,9 @@ jobs:
     - get: cf-api-controllers-docker-image
       trigger: true
       passed: [build-cf-api-controllers-image]
+    - get: package-image-uploader-docker-image
+      trigger: true
+      passed: [build-package-image-uploader-docker-image]
     - get: nginx-docker-image
       trigger: true
       passed: [build-nginx-docker-image]
