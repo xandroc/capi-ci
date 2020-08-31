@@ -1,0 +1,18 @@
+
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: cloudfoundry/capi
+    tag: go-units
+
+inputs:
+  - name: package-image-uploader
+  - name: capi-ci
+
+params: {}
+
+run:
+  path: capi-ci/ci/k8s/run-package-image-uploader-unit-tests.sh

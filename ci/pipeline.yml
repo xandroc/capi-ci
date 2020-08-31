@@ -16,9 +16,11 @@ groups:
   - provision-samus-cluster
   - delete-samus-cluster
   - cc-unit-tests
-  - capi-k8s-release-unit-tests
+  - cf-api-controllers-unit-tests
+  - package-image-uploader-unit-tests
   - build-capi-docker-image
   - build-cf-api-controllers-image
+  - build-package-image-uploader-image
   - build-nginx-docker-image
   - samus-cf-for-k8s
   - k8s-ci-passed
@@ -367,6 +369,14 @@ resources:
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/capi-k8s-release.git
 
+- name: package-image-uploader
+  type: git
+  source:
+    branch: master
+    paths: [src/package-image-uploader]
+    private_key: ((private_key))
+    uri: git@github.com:cloudfoundry/capi-k8s-release.git
+
 # currently nginx Dockerfile and source are in the
 # capi-k8s-release repo
 - name: capi-nginx
@@ -631,12 +641,17 @@ resources:
     username: ((dockerhub_user))
     password: ((dockerhub_pass))
 
-# TODO: when we make a final call on this things name, we'll get a new dockerhub repo
 - name: cf-api-controllers-docker-image
   type: registry-image
   source:
     repository: cloudfoundry/cf-api-controllers
-    tag: cf-api-controllers
+    username: ((dockerhub_user))
+    password: ((dockerhub_pass))
+
+- name: package-image-uploader-image
+  type: registry-image
+  source:
+    repository: cloudfoundry/cf-api-package-image-uploader
     username: ((dockerhub_user))
     password: ((dockerhub_pass))
 
@@ -728,7 +743,7 @@ jobs:
           text: '[cc-unit-tests] OH NO! Failed when running with postgres'
           icon_emoji: ((slack_failure_emoji))
 
-- name: capi-k8s-release-unit-tests
+- name: cf-api-controllers-unit-tests
   plan:
   - in_parallel:
     - get: cf-api-controllers
@@ -739,7 +754,21 @@ jobs:
     on_failure:
       put: slack-alert
       params:
-        text: '[capi-k8s-release-unit-tests] OH NO! Failed when running with kubernetes'
+        text: '[cf-api-controllers-unit-tests] OH NO! Failed when running with kubebuilder'
+        icon_emoji: ((slack_failure_emoji))
+
+- name: package-image-uploader-unit-tests
+  plan:
+  - in_parallel:
+    - get: package-image-uploader
+      trigger: true
+    - get: capi-ci
+  - task: run-package-image-uploader-unit-tests
+    file: capi-ci/ci/k8s/run-package-image-uploader-unit-tests.yml
+    on_failure:
+      put: slack-alert
+      params:
+        text: '[package-image-uploader-unit-tests] OH NO! Failed package registry-ing'
         icon_emoji: ((slack_failure_emoji))
 
 - name: verify-capi-release-commits
@@ -829,7 +858,7 @@ jobs:
     - in_parallel:
       - get: cf-api-controllers
         trigger: true
-        passed: [capi-k8s-release-unit-tests]
+        passed: [cf-api-controllers-unit-tests]
       - get: capi-ci
     - task: build-with-pack
       privileged: true
@@ -844,6 +873,29 @@ jobs:
       input_mapping:
         source-repository: cf-api-controllers
     - put: cf-api-controllers-docker-image
+      params:
+        image: labeled-image/image.tar
+
+- name: build-package-image-uploader-image
+  plan:
+    - in_parallel:
+      - get: package-image-uploader
+        trigger: true
+        passed: [package-image-uploader-unit-tests]
+      - get: capi-ci
+    - task: build-with-pack
+      privileged: true
+      file: capi-ci/ci/oci/build-with-pack.yml
+      params:
+        CONTEXT_PATH: src/package-image-uploader
+      input_mapping:
+        source-repository: cf-api-controllers
+    - task: run-deplab
+      privileged: true
+      file: capi-ci/ci/docker/run-deplab.yml
+      input_mapping:
+        source-repository: cf-api-controllers
+    - put: package-image-uploader-image
       params:
         image: labeled-image/image.tar
 
