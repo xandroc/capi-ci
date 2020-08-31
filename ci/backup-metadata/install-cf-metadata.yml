@@ -7,7 +7,7 @@ image_resource:
     repository: pcfplatformrecovery/backup-and-restore-cf-for-k8s
 
 inputs:
-- name: tas-cf-metadata-test-artifacts
+- name: tas-cf-metadata-test-artifacts-capi
 - name: ci
 - name: cluster-name
 - name: tas-env
