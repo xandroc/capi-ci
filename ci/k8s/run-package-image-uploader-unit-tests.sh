@@ -6,6 +6,6 @@ set -eu
 script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 workspace_dir="$( cd "${script_dir}/../../../" && pwd )"
 
-pushd "${workspace_dir}/cf-api-controllers/src/package-image-uploader" >/dev/null
+pushd "${workspace_dir}/package-image-uploader/src/package-image-uploader" >/dev/null
     ginkgo -r -p
 popd >/dev/null
