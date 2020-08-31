@@ -1464,6 +1464,8 @@ jobs:
       passed: [build-nginx-docker-image]
     - get: cf-api-controllers
       passed: [build-cf-api-controllers-image]
+    - get: package-image-uploader
+      passed: [build-package-image-uploader-docker-image]
     - get: capi-nginx
       passed: [build-nginx-docker-image]
     - get: samus-cluster-tf-state
@@ -1527,6 +1529,9 @@ jobs:
     - get: capi-docker-image
       trigger: true
       passed: [samus-cf-for-k8s]
+    - get: package-image-uploader-docker-image
+      passed: [samus-cf-for-k8s]
+      trigger: true
     - get: cf-api-controllers-docker-image
       trigger: true
       passed: [samus-cf-for-k8s]
@@ -1537,6 +1542,8 @@ jobs:
       trigger: true
       passed: [samus-cf-for-k8s]
     - get: cf-api-controllers
+      passed: [samus-cf-for-k8s]
+    - get: package-image-uploader
       passed: [samus-cf-for-k8s]
     - get: capi-nginx
       passed: [samus-cf-for-k8s]

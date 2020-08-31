@@ -18,10 +18,12 @@ function git_sha () {
 
 CAPI_IMAGE="cloudfoundry/cloud-controller-ng@$(get_image_digest_for_resource capi-docker-image)"
 NGINX_IMAGE="cloudfoundry/capi-nginx@$(get_image_digest_for_resource nginx-docker-image)"
-WATCHER_IMAGE="cloudfoundry/cf-api-controllers@$(get_image_digest_for_resource cf-api-controllers-docker-image)"
+CONTROLLERS_IMAGE="cloudfoundry/cf-api-controllers@$(get_image_digest_for_resource cf-api-controllers-docker-image)"
+PACKAGE_IMAGE_UPLOADER_IMAGE="cloudfoundry/cf-api-package-image-uploader@$(get_image_digest_for_resource package-image-uploader-docker-image)"
 CAPI_SHA="$(git_sha cloud_controller_ng)"
 NGINX_SHA="$(git_sha capi-nginx)"
-WATCHER_SHA="$(git_sha cf-api-controllers)"
+CONTROLLERS_SHA="$(git_sha cf-api-controllers)"
+PACKAGE_IMAGE_UPLOADER_SHA="$(git_sha package-image-uploader)"
 
 function bump_image_references() {
     cat <<- EOF > "${PWD}/update-images.yml"
@@ -34,7 +36,10 @@ function bump_image_references() {
   value: ${NGINX_IMAGE}
 - type: replace
   path: /images/cf_api_controllers
-  value: ${WATCHER_IMAGE}
+  value: ${CONTROLLERS_IMAGE}
+- type: replace
+  path: /images/package_image_uploader
+  value: ${PACKAGE_IMAGE_UPLOADER_IMAGE}
 EOF
 
     pushd "capi-k8s-release"
@@ -66,11 +71,18 @@ Built from capi-k8s-release SHA:
 ${NGINX_SHA}
 
 ---
-Updating watcher image to digest:
-${WATCHER_IMAGE}
+Updating cf-api-controllers image to digest:
+${CONTROLLERS_IMAGE}
 
 Built from capi-k8s-release SHA:
-${WATCHER_SHA}
+${CONTROLLERS_SHA}
+
+---
+Updating package-image-uploader image to digest:
+${PACKAGE_IMAGE_UPLOADER_IMAGE}
+
+Built from capi-k8s-release SHA:
+${PACKAGE_IMAGE_UPLOADER_SHA}
 EOF
 
     pushd "capi-k8s-release"
