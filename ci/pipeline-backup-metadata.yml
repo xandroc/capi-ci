@@ -63,6 +63,14 @@ resources:
   source:
     branch: platform-recovery-moving-in
     paths: [src/backup-metadata]
+    ignore_paths: [src/backup-metadata/config]
+    private_key: ((private_key))
+    uri: git@github.com:cloudfoundry/capi-k8s-release.git
+
+- name: capi-k8s-release
+  type: git
+  source:
+    branch: platform-recovery-moving-in
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/capi-k8s-release.git
 
@@ -74,13 +82,32 @@ resources:
     username: ((dockerhub_user))
     password: ((dockerhub_pass))
 
+- name: cloudfoundry-build-base
+  type: docker-image
+  source:
+    repository: cloudfoundry/build
+    tag: base
+
 jobs:
-- name: build-backup-metadata-image
+- name: backup-metadata-unit-tests
   plan:
   - in_parallel:
     - get: src
       trigger: true
     - get: ci
+  - task: run-backup-metadata-unit-tests
+    file: ci/ci/backup-metadata/run-backup-metadata-unit-tests.yml
+
+- name: build-backup-metadata-image
+  plan:
+  - in_parallel:
+    - get: src
+      passed: [backup-metadata-unit-tests]
+      trigger: true
+      passed: [backup-metadata-unit-tests]
+    - get: ci
+    - get: cloudfoundry-build-base
+      trigger: true
   - task: build
     privileged: true
     file: ci/ci/docker/oci-build-task.yml
@@ -101,23 +128,26 @@ jobs:
   plan:
     - in_parallel:
       - get: src
+        passed: [build-backup-metadata-image]
+      - get: capi-k8s-release
       - get: ci
       - get: backup-metadata-docker-image
         trigger: true
     - task: bump-image-sha
       file: ci/ci/backup-metadata/bump-image-sha.yml
-    - put: src
+    - put: capi-k8s-release
       params:
-        repository: backup-metadata-docker-image-updated
+        repository: updated-capi-k8s-release
         rebase: true
 
-- name: build
+- name: build-artifact
   plan:
     - in_parallel:
       - get: ci
-      - get: src
-        trigger: true
+      - get: capi-k8s-release
       - get: backup-metadata-docker-image
+        trigger: true
+        passed: [bump-image-sha]
       - get: version
         params: {pre: build}
     - task: build-artifact
@@ -128,12 +158,12 @@ jobs:
           source:
             repository: pcfplatformrecovery/backup-and-restore-cf-for-k8s
         inputs:
-          - name: src
+          - name: capi-k8s-release
           - name: version
         outputs:
           - name: tas-cf-metadata-test-artifacts-capi
         run:
-          dir: src/src/backup-metadata
+          dir: capi-k8s-release/src/backup-metadata
           path: sh
           args:
           - "-c"
@@ -148,10 +178,10 @@ jobs:
   plan:
   - in_parallel:
     - get: tas-cf-metadata-test-artifacts-capi
-      passed: [build]
+      passed: [build-artifact]
       trigger: true
-    - get: src
-      passed: [build]
+    - get: capi-k8s-release
+      passed: [build-artifact]
     - get: ci
   - in_parallel:
     - task: create
@@ -180,17 +210,17 @@ jobs:
     - get: cluster-name
       passed: [create-cluster]
       trigger: true
-    - get: src
+    - get: capi-k8s-release
       passed: [create-cluster]
     - get: ci
     - get: velero-bucket
       passed: [create-cluster]
       trigger: true
-  - put: tas-env
-    params:
-      action: claim
-    tags:
-    - platform-recovery-vsphere
+  # - put: tas-env
+  #   params:
+  #     action: claim
+  #   tags:
+  #   - platform-recovery-vsphere
   - task: install-velero
     file: ci/ci/backup-metadata/install-velero.yml
     params:
@@ -200,7 +230,9 @@ jobs:
     file: ci/ci/backup-metadata/install-cf-metadata.yml
     params:
       GKE_SERVICE_ACCOUNT_KEY: ((gke_service_account))
-      TANZU_REGISTRY_CREDENTIALS: ((tanzu_registry_credentials))
+      REGISTRY_HOSTNAME: hub.docker.com
+      REGISTRY_USERNAME: ((dockerhub_user))
+      REGISTRY_PASSWORD: ((dockerhub_pass))
   - task: e2e-test
     file: ci/ci/backup-metadata/e2e-test.yml
     params:
@@ -216,14 +248,13 @@ jobs:
     trigger: true
     passed:
     - install-cf-metadata-and-test
-  - get: src
   - get: ci
-  - get: tas-env
-    trigger: true
-    passed:
-    - install-cf-metadata-and-test
-    tags:
-    - platform-recovery-vsphere
+  # - get: tas-env
+  #   trigger: true
+  #   passed:
+  #   - install-cf-metadata-and-test
+  #   tags:
+  #   - platform-recovery-vsphere
   - put: tas-env
     params:
       action: unclaim
