@@ -6,12 +6,12 @@ image_resource:
     repository: pcfplatformrecovery/backup-and-restore-cf-for-k8s
 
 inputs:
-- name: src
+- name: capi-k8s-release
 - name: ci
 - name: backup-metadata-docker-image
 
 outputs:
-- name: backup-metadata-docker-image-updated
+- name: updated-capi-k8s-release
 
 run:
   path: ci/ci/backup-metadata/bump-image-sha.sh

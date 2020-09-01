@@ -8,7 +8,7 @@ image_resource:
 
 inputs:
   - name: ci
-  - name: src
+  - name: capi-k8s-release
   - name: cluster-name
 
 params:
