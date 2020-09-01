@@ -1,0 +1,15 @@
+
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: pcfplatformrecovery/backup-and-restore-cf-for-k8s
+
+inputs:
+  - name: src
+  - name: ci
+
+run:
+  path: ci/ci/backup-metadata/run-backup-metadata-unit-tests.sh
