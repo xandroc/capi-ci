@@ -1470,13 +1470,13 @@ jobs:
       passed: [build-nginx-docker-image]
     - get: samus-cluster-tf-state
       passed: [provision-samus-cluster]
-  - task: delete-deployment
-    file: capi-ci/ci/k8s/delete-cf-for-k8s.yml
-    params:
-      CAPI_ENVIRONMENT_NAME: samus
-      GOOGLE_SERVICE_ACCOUNT_EMAIL: concourse@cff-capi-samus.iam.gserviceaccount.com
-      GOOGLE_PROJECT_NAME: cff-capi-samus
-      GOOGLE_KEY_FILE_PATH: capi-ci-private/samus/concourse-service-account.json
+  # - task: delete-deployment
+  #   file: capi-ci/ci/k8s/delete-cf-for-k8s.yml
+  #   params:
+  #     CAPI_ENVIRONMENT_NAME: samus
+  #     GOOGLE_SERVICE_ACCOUNT_EMAIL: concourse@cff-capi-samus.iam.gserviceaccount.com
+  #     GOOGLE_PROJECT_NAME: cff-capi-samus
+  #     GOOGLE_KEY_FILE_PATH: capi-ci-private/samus/concourse-service-account.json
   - task: deploy
     file: capi-ci/ci/k8s/deploy-cf-for-k8s.yml
     input_mapping:

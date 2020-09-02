@@ -14,5 +14,5 @@ export SMOKE_TEST_APPS_DOMAIN="apps.${DNS_DOMAIN}"
 export SMOKE_TEST_USERNAME=admin
 export SMOKE_TEST_PASSWORD=$(cat env-metadata/cf-admin-password.txt)
 pushd "cf-for-k8s/tests/smoke"
-  ginkgo .
+  ginkgo -progress -race -v .
 popd
