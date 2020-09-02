@@ -60,7 +60,7 @@ pushd "capi-k8s-release"
 popd
 
 source "capi-ci-private/${CAPI_ENVIRONMENT_NAME}/.envrc"
-cp -r "capi-ci-private/${CAPI_ENVIRONMENT_NAME}/" env-metadata/
+cp -r "capi-ci-private/${CAPI_ENVIRONMENT_NAME}/." env-metadata
 
 pushd "cf-for-k8s"
   # hack/generate-values.sh -d "${CAPI_ENVIRONMENT_NAME}.capi.land" -g "${SERVICE_ACCOUNT_KEY}" > env-metadata/cf-install-values.yml
