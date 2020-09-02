@@ -60,15 +60,17 @@ pushd "capi-k8s-release"
 popd
 
 source "capi-ci-private/${CAPI_ENVIRONMENT_NAME}/.envrc"
+cp -r "capi-ci-private/${CAPI_ENVIRONMENT_NAME}/" env-metadata/
+
 pushd "cf-for-k8s"
-  # hack/generate-values.sh -d "${CAPI_ENVIRONMENT_NAME}.capi.land" -g "${SERVICE_ACCOUNT_KEY}" > cf-install-values.yml
+  # hack/generate-values.sh -d "${CAPI_ENVIRONMENT_NAME}.capi.land" -g "${SERVICE_ACCOUNT_KEY}" > env-metadata/cf-install-values.yml
 
   lb_static_ip="$(jq -r .lb_static_ip ../cluster-tf-state/metadata)"
-  kapp deploy -a cf -f <(ytt -f ./config/ -f ./cf-install-values.yml -v istio_static_ip="${lb_static_ip}") -y
+  kapp deploy -a cf -f <(ytt -f ./config/ -f ../env-metadata/cf-install-values.yml -v istio_static_ip="${lb_static_ip}") -y
 popd
 
-cp cf-for-k8s/cf-install-values.yml env-metadata/cf-install-values.yml
-bosh interpolate --path /cf_admin_password cf-for-k8s/cf-install-values.yml > env-metadata/cf-admin-password.txt
+# cp cf-for-k8s/cf-install-values.yml env-metadata/cf-install-values.yml
+bosh interpolate --path /cf_admin_password env-metadata/cf-install-values.yml > env-metadata/cf-admin-password.txt
 echo "${CAPI_ENVIRONMENT_NAME}.capi.land" > env-metadata/dns-domain.txt
 
 cat > env-metadata/integration_config.json << EOF
