@@ -2,18 +2,11 @@
 
 set -euo pipefail
 
-OM_USERNAME=$(yq read tas-env/pcf.yml 'username')
-OM_PASSWORD=$(yq read tas-env/pcf.yml 'password')
-OM_API=$(yq read tas-env/pcf.yml 'target')
-
 ./ci/ci/backup-metadata/helpers/log-into-gke-cluster.bash
 
-creds=$(om -u "$OM_USERNAME" -t "$OM_API" -p "$OM_PASSWORD" credentials \
-  --product-name cf --credential-reference .uaa.admin_credentials -t json)
-
-CF_API="https://api.$(cat tas-env/metadata | jq .sys_domain --raw-output)"
-CF_USERNAME=$(echo $creds | jq .identity --raw-output)
-CF_PASSWORD=$(echo $creds | jq .password --raw-output)
+CF_API="https://api.$(yq r cf-install-values/values 'system_domain')"
+CF_USERNAME="admin"
+CF_PASSWORD=$(yq r cf-install-values/values 'cf_admin_password')
 
 tar -xf tas-cf-metadata-test-artifacts-capi/*.tgz
 

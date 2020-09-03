@@ -3,6 +3,6 @@ set -euo pipefail
 
 ./ci/ci/backup-metadata/helpers/log-into-gke-cluster.bash
 
-pushd ./capi-k8s-release/backup-metadata
+pushd ./capi-k8s-release/src/backup-metadata
     make test-e2e
 popd
