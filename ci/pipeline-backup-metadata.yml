@@ -11,15 +11,6 @@ resource_types:
       repository: cftoolsmiths/toolsmiths-envs-resource
 
 resources:
-- name: tas-env
-  type: pcf-pool
-  source:
-    api_token: ((toolsmiths_api_token))
-    hostname: environments.toolsmiths.cf-app.com
-    pool_name: us_2_10
-  tags:
-    - platform-recovery-vsphere
-
 - name: ci
   type: git
   icon: github-box
@@ -88,6 +79,13 @@ resources:
     repository: cloudfoundry/build
     tag: base
 
+- name: cf-for-k8s
+  type: git
+  source:
+    branch: develop
+    private_key: ((private_key))
+    uri: git@github.com:cloudfoundry/cf-for-k8s.git
+
 jobs:
 - name: backup-metadata-unit-tests
   plan:
@@ -145,8 +143,8 @@ jobs:
     - in_parallel:
       - get: ci
       - get: capi-k8s-release
-      - get: backup-metadata-docker-image
         trigger: true
+      - get: backup-metadata-docker-image
         passed: [bump-image-sha]
       - get: version
         params: {pre: build}
@@ -216,16 +214,13 @@ jobs:
     - get: velero-bucket
       passed: [create-cluster]
       trigger: true
-  # - put: tas-env
-  #   params:
-  #     action: claim
-  #   tags:
-  #   - platform-recovery-vsphere
-  - task: install-velero
-    file: ci/ci/backup-metadata/install-velero.yml
+    - get: cf-for-k8s
+  - task: deploy
+    file: ci/ci/backup-metadata/install-cf-for-k8s.yml
     params:
       GKE_SERVICE_ACCOUNT_KEY: ((gke_service_account))
-      VELERO_SERVICE_ACCOUNT_KEY: ((velero_service_account))
+      DNS_ZONE_NAME: platform-recovery
+      DNS_ROOT_DOMAIN: platform-recovery.cf-app.com
   - task: install-cf-metadata
     file: ci/ci/backup-metadata/install-cf-metadata.yml
     params:
@@ -233,6 +228,11 @@ jobs:
       REGISTRY_HOSTNAME: hub.docker.com
       REGISTRY_USERNAME: ((dockerhub_user))
       REGISTRY_PASSWORD: ((dockerhub_pass))
+  - task: install-velero
+    file: ci/ci/backup-metadata/install-velero.yml
+    params:
+      GKE_SERVICE_ACCOUNT_KEY: ((gke_service_account))
+      VELERO_SERVICE_ACCOUNT_KEY: ((velero_service_account))
   - task: e2e-test
     file: ci/ci/backup-metadata/e2e-test.yml
     params:
@@ -249,18 +249,6 @@ jobs:
     passed:
     - install-cf-metadata-and-test
   - get: ci
-  # - get: tas-env
-  #   trigger: true
-  #   passed:
-  #   - install-cf-metadata-and-test
-  #   tags:
-  #   - platform-recovery-vsphere
-  - put: tas-env
-    params:
-      action: unclaim
-      env_file: tas-env/metadata
-    tags:
-    - platform-recovery-vsphere
   - in_parallel:
     - task: cleanup-velero-bucket
       file: ci/ci/backup-metadata/cleanup-velero-bucket.yml
