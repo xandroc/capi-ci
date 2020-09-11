@@ -54,8 +54,8 @@ mkdir -p "${updated_capi_ci_private}/${ENVIRONMENT}"
 pushd "${updated_capi_ci_private}/${ENVIRONMENT}"
   delete_cf_certs
   delete_bosh_dns_certs
-  
-  if [ $1 != "cf-only" ]; then
+
+  if [ "$1" != "cf-only" ]; then
     delete_bbl_certs
   fi
 
