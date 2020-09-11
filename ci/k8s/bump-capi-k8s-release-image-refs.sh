@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -exu -o pipefail
+set -eu -o pipefail
 
 function get_image_digest_for_resource () {
   pushd $1 >/dev/null
@@ -56,6 +56,8 @@ function make_git_commit() {
         ./scripts/generate-shortlog.sh
         echo "committing!"
         git commit -F <(./scripts/generate-shortlog.sh)
+      else
+        echo "no changes to images, not bothering with a commit"
       fi
     popd
 
