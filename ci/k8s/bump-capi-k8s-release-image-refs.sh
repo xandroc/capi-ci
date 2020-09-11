@@ -1,8 +1,6 @@
 #!/bin/bash
 
-set -eu -o pipefail
-
-MESSAGE_FILE="$(mktemp)"
+set -exu -o pipefail
 
 function get_image_digest_for_resource () {
   pushd $1 >/dev/null
