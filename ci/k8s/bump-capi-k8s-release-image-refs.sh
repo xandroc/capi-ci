@@ -13,10 +13,11 @@ NGINX_IMAGE="cloudfoundry/capi-nginx@$(get_image_digest_for_resource nginx-docke
 CONTROLLERS_IMAGE="cloudfoundry/cf-api-controllers@$(get_image_digest_for_resource cf-api-controllers-docker-image)"
 PACKAGE_IMAGE_UPLOADER_IMAGE="cloudfoundry/cf-api-package-image-uploader@$(get_image_digest_for_resource package-image-uploader-docker-image)"
 
-CCNG_DIR="cloud_controller_ng"
-CF_API_CONTROLLERS_DIR="cf-api-controllers"
-PACKAGE_IMAGE_UPLOADER_DIR="package-image-uploader"
-NGINX_DIR="capi-nginx"
+# these need to be exported so generate-shortlog can find the appropriate source code
+export CCNG_DIR="cloud_controller_ng"
+export CF_API_CONTROLLERS_DIR="cf-api-controllers"
+export PACKAGE_IMAGE_UPLOADER_DIR="package-image-uploader"
+export NGINX_DIR="capi-nginx"
 
 function bump_image_references() {
     cat <<- EOF > "${PWD}/update-images.yml"
