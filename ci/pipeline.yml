@@ -837,13 +837,11 @@ jobs:
         passed: [cc-unit-tests]
         trigger: true
       - get: capi-ci
-    - task: build
+    - task: build-with-pack
       privileged: true
-      file: capi-ci/ci/docker/oci-build-task.yml
+      file: capi-ci/ci/oci/build-with-pack.yml
       input_mapping:
-        context-repository: cloud_controller_ng
-      params:
-        CONTEXT: context-repository
+        source-repository: cloud_controller_ng
     - task: run-deplab
       privileged: true
       file: capi-ci/ci/docker/run-deplab.yml
