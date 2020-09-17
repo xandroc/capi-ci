@@ -14,7 +14,8 @@ outputs:
   - name: image
 
 params:
-  CONTEXT_PATH: ~
+  CONTEXT_PATH: null
+  ADDITIONAL_ARGS: null
 
 run:
   path: capi-ci/ci/oci/build-with-pack.sh

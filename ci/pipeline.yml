@@ -840,6 +840,8 @@ jobs:
     - task: build-with-pack
       privileged: true
       file: capi-ci/ci/oci/build-with-pack.yml
+      params:
+        ADDITIONAL_ARGS: "-b gcr.io/paketo-community/ruby"
       input_mapping:
         source-repository: cloud_controller_ng
     - task: run-deplab

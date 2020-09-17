@@ -6,8 +6,8 @@ source capi-ci/ci/docker/common.sh
 
 start_docker
 
-# TODO: parametrize builder?
-pack build built-image --builder cloudfoundry/cnb:bionic --path "source-repository/${CONTEXT_PATH}"
+# parameterizing this is hard in place - ADDITIONAL_ARGS is a hack
+pack build built-image --builder cloudfoundry/cnb:bionic --path "source-repository/${CONTEXT_PATH}" ${ADDITIONAL_ARGS}
 
 docker save built-image -o image/image.tar
 
