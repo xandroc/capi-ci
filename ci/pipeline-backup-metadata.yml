@@ -1,0 +1,260 @@
+---
+resource_types:
+- name: gcs
+  type: docker-image
+  source:
+    repository: frodenas/gcs-resource
+
+- name: pcf-pool
+  type: docker-image
+  source:
+      repository: cftoolsmiths/toolsmiths-envs-resource
+
+resources:
+- name: ci
+  type: git
+  icon: github-box
+  source:
+    private_key: ((private_key))
+    uri: git@github.com:cloudfoundry/capi-ci
+    branch: platform-recovery-moving-in
+
+- name: tas-cf-metadata-test-artifacts-capi
+  type: gcs
+  source:
+    bucket: tas-cf-metadata-test-artifacts-capi
+    json_key: ((gcp_service_account_owner))
+    regexp: .*.tgz
+
+- name: version
+  type: semver
+  source:
+    bucket: tas-cf-metadata-test-artifacts-capi
+    key: version
+    json_key: ((gcp_service_account_owner))
+    initial_version: 0.0.1
+    driver: gcs
+
+- name: cluster-name
+  type: gcs
+  source:
+    bucket: tas-cf-metadata-cluster-name
+    json_key: ((gcp_service_account_owner))
+    versioned_file: info
+
+- name: velero-bucket
+  type: gcs
+  source:
+    bucket: tas-cf-metadata-velero-bucket-name
+    json_key: ((gcp_service_account_owner))
+    versioned_file: info
+
+- name: src
+  type: git
+  source:
+    branch: platform-recovery-moving-in
+    paths: [src/backup-metadata]
+    ignore_paths: [src/backup-metadata/config]
+    private_key: ((private_key))
+    uri: git@github.com:cloudfoundry/capi-k8s-release.git
+
+- name: capi-k8s-release
+  type: git
+  source:
+    branch: platform-recovery-moving-in
+    private_key: ((private_key))
+    uri: git@github.com:cloudfoundry/capi-k8s-release.git
+
+- name: backup-metadata-docker-image
+  type: registry-image
+  source:
+    repository: cfcapidocker/backup-metadata
+    tag: latest
+    username: ((dockerhub_user))
+    password: ((dockerhub_pass))
+
+- name: cloudfoundry-build-base
+  type: docker-image
+  source:
+    repository: cloudfoundry/build
+    tag: base
+
+- name: cf-for-k8s
+  type: git
+  source:
+    branch: develop
+    private_key: ((private_key))
+    uri: git@github.com:cloudfoundry/cf-for-k8s.git
+
+jobs:
+- name: backup-metadata-unit-tests
+  plan:
+  - in_parallel:
+    - get: src
+      trigger: true
+    - get: ci
+  - task: run-backup-metadata-unit-tests
+    file: ci/ci/backup-metadata/run-backup-metadata-unit-tests.yml
+
+- name: build-backup-metadata-image
+  plan:
+  - in_parallel:
+    - get: src
+      passed: [backup-metadata-unit-tests]
+      trigger: true
+      passed: [backup-metadata-unit-tests]
+    - get: ci
+    - get: cloudfoundry-build-base
+      trigger: true
+  - task: build
+    privileged: true
+    file: ci/ci/docker/oci-build-task.yml
+    params:
+      CONTEXT: context-repository/src/backup-metadata
+    input_mapping:
+      context-repository: src
+  - task: run-deplab
+    privileged: true
+    file: ci/ci/docker/run-deplab.yml
+    input_mapping:
+      source-repository: src
+  - put: backup-metadata-docker-image
+    params:
+      image: labeled-image/image.tar
+
+- name: bump-image-sha
+  plan:
+    - in_parallel:
+      - get: src
+        passed: [build-backup-metadata-image]
+      - get: capi-k8s-release
+      - get: ci
+      - get: backup-metadata-docker-image
+        trigger: true
+    - task: bump-image-sha
+      file: ci/ci/backup-metadata/bump-image-sha.yml
+    - put: capi-k8s-release
+      params:
+        repository: updated-capi-k8s-release
+        rebase: true
+
+- name: build-artifact
+  plan:
+    - in_parallel:
+      - get: ci
+      - get: capi-k8s-release
+        trigger: true
+      - get: backup-metadata-docker-image
+        passed: [bump-image-sha]
+      - get: version
+        params: {pre: build}
+    - task: build-artifact
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: pcfplatformrecovery/backup-and-restore-cf-for-k8s
+        inputs:
+          - name: capi-k8s-release
+          - name: version
+        outputs:
+          - name: tas-cf-metadata-test-artifacts-capi
+        run:
+          dir: capi-k8s-release/src/backup-metadata
+          path: sh
+          args:
+          - "-c"
+          - "make artifact && mv cf-metadata.tgz ../../../tas-cf-metadata-test-artifacts-capi/backup-metadata.$(cat ../../../version/number).tgz"
+    - put: version
+      params: { file: version/number }
+    - put: tas-cf-metadata-test-artifacts-capi
+      params:
+        file: tas-cf-metadata-test-artifacts-capi/*.tgz
+
+- name: create-cluster
+  plan:
+  - in_parallel:
+    - get: tas-cf-metadata-test-artifacts-capi
+      passed: [build-artifact]
+      trigger: true
+    - get: capi-k8s-release
+      passed: [build-artifact]
+    - get: ci
+  - in_parallel:
+    - task: create
+      file: ci/ci/backup-metadata/create-cluster.yml
+      params:
+        GKE_SERVICE_ACCOUNT_KEY: ((gke_service_account))
+        CLUSTER_PREFIX: ci-cluster
+    - task: create-velero-bucket
+      file: ci/ci/backup-metadata/create-velero-bucket.yml
+      params:
+        GKE_SERVICE_ACCOUNT_KEY: ((gke_service_account))
+  - in_parallel:
+    - put: cluster-name
+      params:
+        file: cluster-name/info
+    - put: velero-bucket
+      params:
+        file: velero-bucket/info
+
+- name: install-cf-metadata-and-test
+  plan:
+  - in_parallel:
+    - get: tas-cf-metadata-test-artifacts-capi
+      passed: [create-cluster]
+      trigger: true
+    - get: cluster-name
+      passed: [create-cluster]
+      trigger: true
+    - get: capi-k8s-release
+      passed: [create-cluster]
+    - get: ci
+    - get: velero-bucket
+      passed: [create-cluster]
+      trigger: true
+    - get: cf-for-k8s
+  - task: deploy
+    file: ci/ci/backup-metadata/install-cf-for-k8s.yml
+    params:
+      GKE_SERVICE_ACCOUNT_KEY: ((gke_service_account))
+      DNS_ZONE_NAME: platform-recovery
+      DNS_ROOT_DOMAIN: platform-recovery.cf-app.com
+  - task: install-cf-metadata
+    file: ci/ci/backup-metadata/install-cf-metadata.yml
+    params:
+      GKE_SERVICE_ACCOUNT_KEY: ((gke_service_account))
+      REGISTRY_HOSTNAME: hub.docker.com
+      REGISTRY_USERNAME: ((dockerhub_user))
+      REGISTRY_PASSWORD: ((dockerhub_pass))
+  - task: install-velero
+    file: ci/ci/backup-metadata/install-velero.yml
+    params:
+      GKE_SERVICE_ACCOUNT_KEY: ((gke_service_account))
+      VELERO_SERVICE_ACCOUNT_KEY: ((velero_service_account))
+  - task: e2e-test
+    file: ci/ci/backup-metadata/e2e-test.yml
+    params:
+      GKE_SERVICE_ACCOUNT_KEY: ((gke_service_account))
+
+- name: cleanup-infrastructure
+  plan:
+  - get: velero-bucket
+    trigger: true
+    passed:
+    - install-cf-metadata-and-test
+  - get: cluster-name
+    trigger: true
+    passed:
+    - install-cf-metadata-and-test
+  - get: ci
+  - in_parallel:
+    - task: cleanup-velero-bucket
+      file: ci/ci/backup-metadata/cleanup-velero-bucket.yml
+      params:
+        GKE_SERVICE_ACCOUNT_KEY: ((gke_service_account))
+    - task: cleanup-cluster
+      file: ci/ci/backup-metadata/cleanup-cluster.yml
+      params:
+        GKE_SERVICE_ACCOUNT_KEY: ((gke_service_account))
