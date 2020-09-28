@@ -1470,6 +1470,7 @@ jobs:
       passed: [build-nginx-docker-image]
     - get: samus-cluster-tf-state
       passed: [provision-samus-cluster]
+    - get: cf-acceptance-tests
   # - task: delete-deployment
   #   file: capi-ci/ci/k8s/delete-cf-for-k8s.yml
   #   params:
@@ -1502,6 +1503,19 @@ jobs:
           repository: updated-private-env-repo
           rebase: true
   - in_parallel:
+    - task: cats
+      file: cf-for-k8s/ci/tasks/run-cats/task.yml
+      input_mapping:
+        cf-for-k8s-ci: cf-for-k8s
+      params:
+        INCLUDE_APPS: true
+        INCLUDE_DETECT: true
+        INCLUDE_ROUTING: true
+        CONFIG_FILE_PATH: samus/integration_config.json
+        GOOGLE_SERVICE_ACCOUNT_EMAIL: concourse@cff-capi-samus.iam.gserviceaccount.com
+        GOOGLE_PROJECT_NAME: cff-capi-samus
+        GOOGLE_KEY_FILE_PATH: capi-ci-private/samus/concourse-service-account.json
+        NODES: 6
     - task: run-smoke-tests
       file: capi-ci/ci/k8s/run-smoke-tests.yml
       params:
