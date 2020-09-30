@@ -62,16 +62,13 @@ popd
 source "capi-ci-private/${CAPI_ENVIRONMENT_NAME}/.envrc"
 cp -r "capi-ci-private/${CAPI_ENVIRONMENT_NAME}/." env-metadata/
 
-pushd "cf-for-k8s"
-  hack/generate-values.sh -d "${CAPI_ENVIRONMENT_NAME}.capi.land" -g "${SERVICE_ACCOUNT_KEY}" > ../env-metadata/cf-install-values.yml
+cf-for-k8s/hack/generate-values.sh -d "${CAPI_ENVIRONMENT_NAME}.capi.land" -g "${SERVICE_ACCOUNT_KEY}" > env-metadata/cf-install-values.yml
 
-  lb_static_ip="$(jq -r .lb_static_ip ../cluster-tf-state/metadata)"
-  kapp deploy -a cf -f <(ytt -f ./config/ -f ../env-metadata/cf-install-values.yml \
-    -v load_balancer.static_ip="${lb_static_ip}" \
-    -v load_balancer.enable="true") -y
-popd
+lb_static_ip="$(jq -r .lb_static_ip cluster-tf-state/metadata)"
+kapp deploy -a cf -f <(ytt -f cf-for-k8s/config/ -f env-metadata/cf-install-values.yml \
+  -v load_balancer.static_ip="${lb_static_ip}" \
+  -v load_balancer.enable="true") -y
 
-cp cf-for-k8s/cf-install-values.yml env-metadata/cf-install-values.yml
 bosh interpolate --path /cf_admin_password env-metadata/cf-install-values.yml > env-metadata/cf-admin-password.txt
 echo "${CAPI_ENVIRONMENT_NAME}.capi.land" > env-metadata/dns-domain.txt
 
