@@ -68,7 +68,7 @@ pushd "cf-for-k8s"
   lb_static_ip="$(jq -r .lb_static_ip ../cluster-tf-state/metadata)"
   kapp deploy -a cf -f <(ytt -f ./config/ -f ../env-metadata/cf-install-values.yml \
     -v load_balancer.static_ip="${lb_static_ip}" \
-    -v load_balancer.enabled="true") -y
+    -v load_balancer.enable="true") -y
 popd
 
 cp cf-for-k8s/cf-install-values.yml env-metadata/cf-install-values.yml
