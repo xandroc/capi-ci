@@ -23,7 +23,7 @@ resources:
   type: gcs
   source:
     bucket: tas-cf-metadata-test-artifacts-capi
-    json_key: ((gcp_service_account_owner))
+    json_key: ((backup_metadata_gcp_service_account_owner_key))
     regexp: .*.tgz
 
 - name: version
@@ -31,7 +31,7 @@ resources:
   source:
     bucket: tas-cf-metadata-test-artifacts-capi
     key: version
-    json_key: ((gcp_service_account_owner))
+    json_key: ((backup_metadata_gcp_service_account_owner_key))
     initial_version: 0.0.1
     driver: gcs
 
@@ -39,20 +39,19 @@ resources:
   type: gcs
   source:
     bucket: tas-cf-metadata-cluster-name
-    json_key: ((gcp_service_account_owner))
+    json_key: ((backup_metadata_gcp_service_account_owner_key))
     versioned_file: info
 
 - name: velero-bucket
   type: gcs
   source:
     bucket: tas-cf-metadata-velero-bucket-name
-    json_key: ((gcp_service_account_owner))
+    json_key: ((backup_metadata_gcp_service_account_owner_key))
     versioned_file: info
 
 - name: src
   type: git
   source:
-    branch: platform-recovery-moving-in
     paths: [src/backup-metadata]
     ignore_paths: [src/backup-metadata/config]
     private_key: ((private_key))
@@ -61,7 +60,6 @@ resources:
 - name: capi-k8s-release
   type: git
   source:
-    branch: platform-recovery-moving-in
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/capi-k8s-release.git
 
@@ -185,12 +183,12 @@ jobs:
     - task: create
       file: ci/ci/backup-metadata/create-cluster.yml
       params:
-        GKE_SERVICE_ACCOUNT_KEY: ((gke_service_account))
+        GKE_SERVICE_ACCOUNT_KEY: ((backup_metadata_gke_service_account_key))
         CLUSTER_PREFIX: ci-cluster
     - task: create-velero-bucket
       file: ci/ci/backup-metadata/create-velero-bucket.yml
       params:
-        GKE_SERVICE_ACCOUNT_KEY: ((gke_service_account))
+        GKE_SERVICE_ACCOUNT_KEY: ((backup_metadata_gke_service_account_key))
   - in_parallel:
     - put: cluster-name
       params:
@@ -218,25 +216,25 @@ jobs:
   - task: deploy
     file: ci/ci/backup-metadata/install-cf-for-k8s.yml
     params:
-      GKE_SERVICE_ACCOUNT_KEY: ((gke_service_account))
+      GKE_SERVICE_ACCOUNT_KEY: ((backup_metadata_gke_service_account_key))
       DNS_ZONE_NAME: platform-recovery
       DNS_ROOT_DOMAIN: platform-recovery.cf-app.com
   - task: install-cf-metadata
     file: ci/ci/backup-metadata/install-cf-metadata.yml
     params:
-      GKE_SERVICE_ACCOUNT_KEY: ((gke_service_account))
+      GKE_SERVICE_ACCOUNT_KEY: ((backup_metadata_gke_service_account_key))
       REGISTRY_HOSTNAME: hub.docker.com
       REGISTRY_USERNAME: ((dockerhub_user))
       REGISTRY_PASSWORD: ((dockerhub_pass))
   - task: install-velero
     file: ci/ci/backup-metadata/install-velero.yml
     params:
-      GKE_SERVICE_ACCOUNT_KEY: ((gke_service_account))
-      VELERO_SERVICE_ACCOUNT_KEY: ((velero_service_account))
+      GKE_SERVICE_ACCOUNT_KEY: ((backup_metadata_gke_service_account_key))
+      VELERO_SERVICE_ACCOUNT_KEY: ((backup_metadata_velero_service_account_key))
   - task: e2e-test
     file: ci/ci/backup-metadata/e2e-test.yml
     params:
-      GKE_SERVICE_ACCOUNT_KEY: ((gke_service_account))
+      GKE_SERVICE_ACCOUNT_KEY: ((backup_metadata_gke_service_account_key))
 
 - name: cleanup-infrastructure
   plan:
@@ -253,8 +251,8 @@ jobs:
     - task: cleanup-velero-bucket
       file: ci/ci/backup-metadata/cleanup-velero-bucket.yml
       params:
-        GKE_SERVICE_ACCOUNT_KEY: ((gke_service_account))
+        GKE_SERVICE_ACCOUNT_KEY: ((backup_metadata_gke_service_account_key))
     - task: cleanup-cluster
       file: ci/ci/backup-metadata/cleanup-cluster.yml
       params:
-        GKE_SERVICE_ACCOUNT_KEY: ((gke_service_account))
+        GKE_SERVICE_ACCOUNT_KEY: ((backup_metadata_gke_service_account_key))
