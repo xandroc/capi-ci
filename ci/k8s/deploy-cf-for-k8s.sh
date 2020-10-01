@@ -79,7 +79,7 @@ cat > env-metadata/integration_config.json << EOF
   "admin_user": "admin",
   "admin_password": "$(cat env-metadata/cf-admin-password.txt)",
   "skip_ssl_validation": true,
-  "include_kpack": true,
+  "infrastructure": "kubernetes",
   "gcloud_project_name": "${GOOGLE_PROJECT_NAME}",
   "cluster_zone": "${GCP_ZONE}",
   "cluster_name": "${CLUSTER_NAME}",
