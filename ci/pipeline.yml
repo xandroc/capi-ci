@@ -459,7 +459,7 @@ resources:
   source:
     owner: cloudfoundry
     repository: cli
-    tag_filter: "v7.0.0-*.*"
+    tag_filter: "v7.*"
     pre_release: true
     access_token: ((github_access_token))
 
