@@ -157,6 +157,13 @@ resources:
     project_id: '966314'
     tracker_url: https://www.pivotaltracker.com
 
+- name: deliver-cake-stories
+  type: tracker
+  source:
+    token: ((deliver_cake_tracker_token))
+    project_id: '2468497'
+    tracker_url: https://www.pivotaltracker.com
+
 - name: deliver-vat-stories
   type: tracker
   source:
@@ -1570,7 +1577,7 @@ jobs:
   - put: capi-k8s-release-ci-passed
     params:
       repository: updated-capi-k8s-release
-  - put: deliver-capi-stories
+  - put: deliver-cake-stories
     params:
       repos:
       - capi-k8s-release-ci-passed
