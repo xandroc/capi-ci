@@ -83,6 +83,13 @@ cat > env-metadata/integration_config.json << EOF
   "gcloud_project_name": "${GOOGLE_PROJECT_NAME}",
   "cluster_zone": "${GCP_ZONE}",
   "cluster_name": "${CLUSTER_NAME}",
-  "cf_push_timeout": 480
+  "cf_push_timeout": 480,
+  "python_buildpack_name": "paketo-community/python",
+  "ruby_buildpack_name": "paketo-community/ruby",
+  "java_buildpack_name": "paketo-buildpacks/java",
+  "go_buildpack_name": "paketo-buildpacks/go",
+  "nodejs_buildpack_name": "paketo-buildpacks/nodejs",
+  "staticfile_buildpack_name": "paketo-community/staticfile",
+  "binary_buildpack_name": "paketo-buildpacks/procfile"
 }
 EOF
