@@ -18,6 +18,7 @@ groups:
   - cc-unit-tests
   - cf-api-controllers-unit-tests
   - registry-buddy-unit-tests
+  - registry-buddy-integration-tests
   - build-capi-docker-image
   - build-cf-api-controllers-image
   - registry-buddy-docker-image
@@ -778,6 +779,24 @@ jobs:
         text: '[registry-buddy-unit-tests] OH NO! Failed package registry-ing'
         icon_emoji: ((slack_failure_emoji))
 
+- name: registry-buddy-integration-tests
+  plan:
+    - in_parallel:
+        - get: registry-buddy
+          trigger: true
+        - get: capi-ci
+    - task: run-registry-buddy-integration-tests-on-gcr
+      file: capi-ci/ci/k8s/run-registry-buddy-integration-tests.yml
+      params:
+        REGISTRY_BASE_PATH: gcr.io/cf-capi-ci/registry-buddy-integration
+        REGISTRY_PASSWORD: ((ci_gcp_json_key))
+        REGISTRY_USERNAME: _json_key
+      on_failure:
+        put: slack-alert
+        params:
+          text: '[registry-buddy-integratoin-tests] OH NO! Failed package registry-ing'
+          icon_emoji: ((slack_failure_emoji))
+
 - name: verify-capi-release-commits
   plan:
   - in_parallel:
@@ -888,7 +907,7 @@ jobs:
     - in_parallel:
       - get: registry-buddy
         trigger: true
-        passed: [registry-buddy-unit-tests]
+        passed: [registry-buddy-unit-tests, registry-buddy-integration-tests]
       - get: capi-ci
     - task: build-with-pack
       privileged: true

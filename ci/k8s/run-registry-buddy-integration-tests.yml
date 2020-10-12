@@ -1,0 +1,21 @@
+
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: cloudfoundry/capi
+    tag: go-units
+
+inputs:
+  - name: registry-buddy
+  - name: capi-ci
+
+params:
+  REGISTRY_BASE_PATH:
+  REGISTRY_PASSWORD:
+  REGISTRY_USERNAME:
+
+run:
+  path: capi-ci/ci/k8s/run-registry-buddy-integration-tests.sh
