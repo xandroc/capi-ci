@@ -6,8 +6,8 @@ export CF_FOR_K8s_DIR="${PWD}/cf-for-k8s"
 export SERVICE_ACCOUNT_KEY="${PWD}/${GOOGLE_KEY_FILE_PATH}"
 
 function get_image_digest_for_resource () {
-  pushd $1 >/dev/null
-    echo "$(cat digest)"
+  pushd "$1" >/dev/null
+    cat digest
   popd >/dev/null
 }
 
@@ -16,7 +16,7 @@ function get_image_digest_for_resource () {
 CAPI_IMAGE="cloudfoundry/cloud-controller-ng@$(get_image_digest_for_resource capi-docker-image)"
 NGINX_IMAGE="cloudfoundry/capi-nginx@$(get_image_digest_for_resource nginx-docker-image)"
 CONTROLLERS_IMAGE="cloudfoundry/cf-api-controllers@$(get_image_digest_for_resource cf-api-controllers-docker-image)"
-PACKAGE_IMAGE_UPLOADER_IMAGE="cloudfoundry/cf-api-package-image-uploader@$(get_image_digest_for_resource package-image-uploader-docker-image)"
+REGISTRY_BUDDY_IMAGE="cloudfoundry/cf-api-package-registry-buddy@$(get_image_digest_for_resource registry-buddy-docker-image)"
 
 echo "kapp version..."
 kapp version
@@ -31,7 +31,7 @@ echo "Updating images..."
 echo "Updating ccng image to cloud_controller_ng digest: ${CAPI_IMAGE}"
 echo "Updating nginx image to capi-k8s-release digest: ${NGINX_IMAGE}"
 echo "Updating cf-api-controllers image to capi-k8s-release digest: ${CONTROLLERS_IMAGE}"
-echo "Updating package image uploader image to capi-k8s-release digest: ${PACKAGE_IMAGE_UPLOADER_IMAGE}"
+echo "Updating registry buddy image to capi-k8s-release digest: ${REGISTRY_BUDDY_IMAGE}"
 
 cat <<- EOF > "${PWD}/update-images.yml"
 ---
@@ -45,8 +45,8 @@ cat <<- EOF > "${PWD}/update-images.yml"
   path: /images/cf_api_controllers
   value: ${CONTROLLERS_IMAGE}
 - type: replace
-  path: /images/package_image_uploader
-  value: ${PACKAGE_IMAGE_UPLOADER_IMAGE}
+  path: /images/registry_buddy
+  value: ${REGISTRY_BUDDY_IMAGE}
 EOF
 
 pushd "capi-k8s-release"

@@ -3,15 +3,15 @@
 set -eu -o pipefail
 
 function get_image_digest_for_resource () {
-  pushd $1 >/dev/null
-    echo "$(cat digest)"
+  pushd "$1" >/dev/null
+    cat digest
   popd >/dev/null
 }
 
 CAPI_IMAGE="cloudfoundry/cloud-controller-ng@$(get_image_digest_for_resource capi-docker-image)"
 NGINX_IMAGE="cloudfoundry/capi-nginx@$(get_image_digest_for_resource nginx-docker-image)"
 CONTROLLERS_IMAGE="cloudfoundry/cf-api-controllers@$(get_image_digest_for_resource cf-api-controllers-docker-image)"
-PACKAGE_IMAGE_UPLOADER_IMAGE="cloudfoundry/cf-api-package-image-uploader@$(get_image_digest_for_resource package-image-uploader-docker-image)"
+REGISTRY_BUDDY_IMAGE="cloudfoundry/cf-api-package-registry-buddy@$(get_image_digest_for_resource registry-buddy-docker-image)"
 
 
 function bump_image_references() {
@@ -27,8 +27,8 @@ function bump_image_references() {
   path: /images/cf_api_controllers
   value: ${CONTROLLERS_IMAGE}
 - type: replace
-  path: /images/package_image_uploader
-  value: ${PACKAGE_IMAGE_UPLOADER_IMAGE}
+  path: /images/registry_buddy
+  value: ${REGISTRY_BUDDY_IMAGE}
 EOF
 
     pushd "capi-k8s-release"
@@ -46,7 +46,7 @@ function make_git_commit() {
     # these need to be exported so generate-shortlog can find the appropriate source code
     export CCNG_DIR="cloud_controller_ng"
     export CF_API_CONTROLLERS_DIR="cf-api-controllers"
-    export PACKAGE_IMAGE_UPLOADER_DIR="package-image-uploader"
+    export REGISTRY_BUDDY_DIR="registry-buddy"
     export NGINX_DIR="capi-nginx"
     ./capi-k8s-release/scripts/generate-shortlog.sh
     SHORTLOG="$(./capi-k8s-release/scripts/generate-shortlog.sh)"

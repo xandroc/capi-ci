@@ -17,10 +17,10 @@ groups:
   - delete-samus-cluster
   - cc-unit-tests
   - cf-api-controllers-unit-tests
-  - package-image-uploader-unit-tests
+  - registry-buddy-unit-tests
   - build-capi-docker-image
   - build-cf-api-controllers-image
-  - build-package-image-uploader-docker-image
+  - registry-buddy-docker-image
   - build-nginx-docker-image
   - samus-cf-for-k8s
   - k8s-ci-passed
@@ -376,11 +376,11 @@ resources:
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/capi-k8s-release.git
 
-- name: package-image-uploader
+- name: registry-buddy
   type: git
   source:
     branch: master
-    paths: [src/package-image-uploader]
+    paths: [src/registry-buddy]
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/capi-k8s-release.git
 
@@ -655,10 +655,10 @@ resources:
     username: ((dockerhub_user))
     password: ((dockerhub_pass))
 
-- name: package-image-uploader-docker-image
+- name: registry-buddy-docker-image
   type: registry-image
   source:
-    repository: cloudfoundry/cf-api-package-image-uploader
+    repository: cloudfoundry/cf-api-package-registry-buddy
     username: ((dockerhub_user))
     password: ((dockerhub_pass))
 
@@ -764,18 +764,18 @@ jobs:
         text: '[cf-api-controllers-unit-tests] OH NO! Failed when running with kubebuilder'
         icon_emoji: ((slack_failure_emoji))
 
-- name: package-image-uploader-unit-tests
+- name: registry-buddy-unit-tests
   plan:
   - in_parallel:
-    - get: package-image-uploader
+    - get: registry-buddy
       trigger: true
     - get: capi-ci
-  - task: run-package-image-uploader-unit-tests
-    file: capi-ci/ci/k8s/run-package-image-uploader-unit-tests.yml
+  - task: run-registry-buddy-unit-tests
+    file: capi-ci/ci/k8s/run-registry-buddy-unit-tests.yml
     on_failure:
       put: slack-alert
       params:
-        text: '[package-image-uploader-unit-tests] OH NO! Failed package registry-ing'
+        text: '[registry-buddy-unit-tests] OH NO! Failed package registry-ing'
         icon_emoji: ((slack_failure_emoji))
 
 - name: verify-capi-release-commits
@@ -883,26 +883,26 @@ jobs:
       params:
         image: labeled-image/image.tar
 
-- name: build-package-image-uploader-docker-image
+- name: registry-buddy-docker-image
   plan:
     - in_parallel:
-      - get: package-image-uploader
+      - get: registry-buddy
         trigger: true
-        passed: [package-image-uploader-unit-tests]
+        passed: [registry-buddy-unit-tests]
       - get: capi-ci
     - task: build-with-pack
       privileged: true
       file: capi-ci/ci/oci/build-with-pack.yml
       params:
-        CONTEXT_PATH: src/package-image-uploader
+        CONTEXT_PATH: src/registry-buddy
       input_mapping:
-        source-repository: package-image-uploader
+        source-repository: registry-buddy
     - task: run-deplab
       privileged: true
       file: capi-ci/ci/docker/run-deplab.yml
       input_mapping:
-        source-repository: package-image-uploader
-    - put: package-image-uploader-docker-image
+        source-repository: registry-buddy
+    - put: registry-buddy-docker-image
       params:
         image: labeled-image/image.tar
 
@@ -1463,16 +1463,16 @@ jobs:
     - get: cf-api-controllers-docker-image
       trigger: true
       passed: [build-cf-api-controllers-image]
-    - get: package-image-uploader-docker-image
+    - get: registry-buddy-docker-image
       trigger: true
-      passed: [build-package-image-uploader-docker-image]
+      passed: [registry-buddy-docker-image]
     - get: nginx-docker-image
       trigger: true
       passed: [build-nginx-docker-image]
     - get: cf-api-controllers
       passed: [build-cf-api-controllers-image]
-    - get: package-image-uploader
-      passed: [build-package-image-uploader-docker-image]
+    - get: registry-buddy
+      passed: [registry-buddy-docker-image]
     - get: capi-nginx
       passed: [build-nginx-docker-image]
     - get: samus-cluster-tf-state
@@ -1550,7 +1550,7 @@ jobs:
     - get: capi-docker-image
       trigger: true
       passed: [samus-cf-for-k8s]
-    - get: package-image-uploader-docker-image
+    - get: registry-buddy-docker-image
       passed: [samus-cf-for-k8s]
       trigger: true
     - get: cf-api-controllers-docker-image
@@ -1564,7 +1564,7 @@ jobs:
       passed: [samus-cf-for-k8s]
     - get: cf-api-controllers
       passed: [samus-cf-for-k8s]
-    - get: package-image-uploader
+    - get: registry-buddy
       passed: [samus-cf-for-k8s]
     - get: capi-nginx
       passed: [samus-cf-for-k8s]

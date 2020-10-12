@@ -12,12 +12,12 @@ inputs:
 - name: capi-k8s-release
 - name: capi-docker-image
 - name: cf-api-controllers-docker-image
-- name: package-image-uploader-docker-image
+- name: registry-buddy-docker-image
 - name: nginx-docker-image
 - name: cloud_controller_ng
 - name: capi-nginx
 - name: cf-api-controllers
-- name: package-image-uploader
+- name: registry-buddy
 
 outputs:
 - name: updated-capi-k8s-release

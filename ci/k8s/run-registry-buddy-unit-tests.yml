@@ -9,10 +9,10 @@ image_resource:
     tag: go-units
 
 inputs:
-  - name: package-image-uploader
+  - name: registry-buddy
   - name: capi-ci
 
 params: {}
 
 run:
-  path: capi-ci/ci/k8s/run-package-image-uploader-unit-tests.sh
+  path: capi-ci/ci/k8s/run-registry-buddy-unit-tests.sh
