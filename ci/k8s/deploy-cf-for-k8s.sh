@@ -85,7 +85,7 @@ cat > env-metadata/integration_config.json << EOF
   "cluster_name": "${CLUSTER_NAME}",
   "cf_push_timeout": 480,
   "python_buildpack_name": "paketo-community/python",
-  "ruby_buildpack_name": "paketo-community/ruby",
+  "ruby_buildpack_name": "paketo-buildpacks/ruby",
   "java_buildpack_name": "paketo-buildpacks/java",
   "go_buildpack_name": "paketo-buildpacks/go",
   "nodejs_buildpack_name": "paketo-buildpacks/nodejs",
