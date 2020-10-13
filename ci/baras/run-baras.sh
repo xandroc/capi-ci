@@ -38,6 +38,6 @@ export CF_PLUGIN_HOME=$HOME
   -keepGoing \
   -randomizeAllSpecs \
   -skipPackage=helpers \
-  -slowSpecThreshold=120 \
+  -slowSpecThreshold=300 \
   -nodes="${NODES}" \
   -noisySkippings=false
