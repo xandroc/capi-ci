@@ -16,7 +16,6 @@ groups:
   - provision-samus-cluster
   - delete-samus-cluster
   - cc-unit-tests
-  - cc-unit-tests-postgres-BUT-FASTER
   - cf-api-controllers-unit-tests
   - registry-buddy-unit-tests
   - registry-buddy-integration-tests
@@ -732,7 +731,9 @@ jobs:
     - get: capi-ci
   - in_parallel:
     - task: run-cc-unit-tests-mysql
-      file: capi-ci/ci/test-unit/run_cc_unit_tests.yml
+      tags: [high-compute]
+      file: capi-ci/ci/test-unit/run_cc_unit_tests_fast.yml
+      privileged: true
       params:
         DB: mysql
         RUN_IN_PARALLEL: true
@@ -742,7 +743,9 @@ jobs:
           text: '[cc-unit-tests] OH NO! Failed when running with mysql'
           icon_emoji: ((slack_failure_emoji))
     - task: run-cc-unit-tests-postgres
-      file: capi-ci/ci/test-unit/run_cc_unit_tests.yml
+      tags: [high-compute]
+      file: capi-ci/ci/test-unit/run_cc_unit_tests_fast.yml
+      privileged: true
       params:
         DB: postgres
         RUN_IN_PARALLEL: true
@@ -751,20 +754,6 @@ jobs:
         params:
           text: '[cc-unit-tests] OH NO! Failed when running with postgres'
           icon_emoji: ((slack_failure_emoji))
-
-- name: cc-unit-tests-postgres-BUT-FASTER
-  plan:
-  - in_parallel:
-    - get: cloud_controller_ng
-      trigger: true
-    - get: capi-ci
-  - task: run-cc-unit-tests-postgres
-    tags: [high-compute]
-    file: capi-ci/ci/test-unit/run_cc_unit_tests_fast.yml
-    privileged: true
-    params:
-      DB: postgres
-      RUN_IN_PARALLEL: true
 
 - name: cf-api-controllers-unit-tests
   plan:
