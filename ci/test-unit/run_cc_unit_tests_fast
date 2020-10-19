@@ -12,7 +12,7 @@ start_db() {
 
     mkdir -p /var/lib/ramdisk
     # TODO: what size should the mount be?
-    mount -t tmpfs -o size=2048m ramdisk /var/lib/ramdisk
+    mount -t tmpfs -o size=4096m ramdisk /var/lib/ramdisk
 
     cp -R /var/lib/mysql/* /var/lib/ramdisk/
     chown -R mysql /var/lib/ramdisk
@@ -29,7 +29,7 @@ start_db() {
 
     mkdir -p /var/lib/ramdisk
     # TODO: what size should the mount be?
-    mount -t tmpfs -o size=2048m ramdisk /var/lib/ramdisk
+    mount -t tmpfs -o size=4096m ramdisk /var/lib/ramdisk
 
     cp -R /var/lib/postgresql/9.6/main/* /var/lib/ramdisk/
     chown -R postgres /var/lib/ramdisk
