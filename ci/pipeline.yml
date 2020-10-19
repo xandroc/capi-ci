@@ -732,7 +732,7 @@ jobs:
   - in_parallel:
     - task: run-cc-unit-tests-mysql
       tags: [high-compute]
-      file: capi-ci/ci/test-unit/run_cc_unit_tests_fast.yml
+      file: capi-ci/ci/test-unit/run_cc_unit_tests.yml
       privileged: true
       params:
         DB: mysql
@@ -744,7 +744,7 @@ jobs:
           icon_emoji: ((slack_failure_emoji))
     - task: run-cc-unit-tests-postgres
       tags: [high-compute]
-      file: capi-ci/ci/test-unit/run_cc_unit_tests_fast.yml
+      file: capi-ci/ci/test-unit/run_cc_unit_tests.yml
       privileged: true
       params:
         DB: postgres
