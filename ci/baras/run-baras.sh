@@ -38,6 +38,7 @@ export CF_PLUGIN_HOME=$HOME
   -randomizeAllSpecs \
   -skipPackage=helpers \
   -slowSpecThreshold=300 \
+  --flakeAttempts="${FLAKE_ATTEMPTS}" \
   -nodes="${NODES}" \
   -noisySkippings=false \
   . stack

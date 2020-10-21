@@ -25,6 +25,10 @@ params:
   NODES: 12
 
   # - Optional
+  # - Number of times ginkgo will re-run a flaky test
+  FLAKE_ATTEMPTS: 1
+
+  # - Optional
   # - Path to the BARAs integration configuration file.
   # - The path is relative to the `integration-config` input.
   CONFIG_FILE_PATH: integration_config.json
