@@ -1880,12 +1880,6 @@ jobs:
       vars:
         system_domain: *elsa-domain
         new_relic_license_key: ((new_relic_license_key))
-        syslog_address: ((elsa_syslog_remote_address))
-        syslog_port: ((elsa_syslog_remote_port))
-        syslog_custom_rule: ""
-        syslog_fallback_servers: []
-        syslog_permitted_peer: "*.logit.io"
-        syslog_ca_cert: ((logit_syslog_ca_cert))
         prometheus_password: ((prometheus_password))
       vars_files:
       - elsa-aws-storage-terraform/metadata
@@ -1919,11 +1913,6 @@ jobs:
       - capi-ci/cf-deployment-operations/disable-skip-cert-verify-iso-seg.yml
       # Increase logging level to include all CCDB queries
       - capi-ci/cf-deployment-operations/log-all-sequel-activity.yml
-      # Silence noisy logs to reduce volume on logit.io #152155581
-      - cf-deployment/operations/addons/enable-component-syslog.yml
-      - cf-deployment/operations/addons/component-syslog-custom-ca.yml
-      - capi-ci/cf-deployment-operations/silence-noisy-logs.yml
-      - capi-ci/cf-deployment-operations/silence-noisy-logs-isolated-diego-cell.yml
       # Disable GETs against UAA in anticipation of it being removed #148914087
       - capi-ci/cf-deployment-operations/temporary/disable-uaa-get-requests.yml
       # Open ASGS for apps to use Credhub
@@ -2464,11 +2453,6 @@ jobs:
       - capi-ci/cf-deployment-operations/disable-skip-cert-verify-iso-seg.yml
       # Increase logging level to include all CCDB queries
       - capi-ci/cf-deployment-operations/log-all-sequel-activity.yml
-      # Silence noisy logs to reduce volume on logit.io #152155581
-      - cf-deployment/operations/addons/enable-component-syslog.yml
-      - cf-deployment/operations/addons/component-syslog-custom-ca.yml
-      - capi-ci/cf-deployment-operations/silence-noisy-logs.yml
-      - capi-ci/cf-deployment-operations/silence-noisy-logs-isolated-diego-cell.yml
       # Disable GETs against UAA in anticipation of it being removed #148914087
       - capi-ci/cf-deployment-operations/temporary/disable-uaa-get-requests.yml
       # Open ASGS for apps to use Credhub
