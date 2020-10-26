@@ -19,6 +19,7 @@ groups:
   - cf-api-controllers-unit-tests
   - registry-buddy-unit-tests
   - registry-buddy-integration-tests
+  - backup-metadata-unit-tests
   - build-capi-docker-image
   - build-cf-api-controllers-image
   - registry-buddy-docker-image
@@ -382,6 +383,14 @@ resources:
   source:
     branch: master
     paths: [src/registry-buddy]
+    private_key: ((private_key))
+    uri: git@github.com:cloudfoundry/capi-k8s-release.git
+
+- name: backup-metadata
+  type: git
+  source:
+    branch: master
+    paths: [src/backup-metadata]
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/capi-k8s-release.git
 
@@ -812,6 +821,15 @@ jobs:
           params:
             text: '[registry-buddy-integratoin-tests] OH NO! Failed package registry-ing with Harbor'
             icon_emoji: ((slack_failure_emoji))
+
+- name: backup-metadata-unit-tests
+  plan:
+    - in_parallel:
+      - get: backup-metadata
+        trigger: true
+      - get: capi-ci
+    - task: run-backup-metadata-unit-tests
+      file: capi-ci/ci/backup-metadata/run-backup-metadata-unit-tests.yml
 
 - name: verify-capi-release-commits
   plan:

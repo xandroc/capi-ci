@@ -8,8 +8,8 @@ image_resource:
     repository: pcfplatformrecovery/backup-and-restore-cf-for-k8s
 
 inputs:
-  - name: src
-  - name: ci
+  - name: backup-metadata
+  - name: capi-ci
 
 run:
-  path: ci/ci/backup-metadata/run-backup-metadata-unit-tests.sh
+  path: capi-ci/ci/backup-metadata/run-backup-metadata-unit-tests.sh
