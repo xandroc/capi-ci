@@ -17,7 +17,6 @@ resources:
   source:
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/capi-ci
-    branch: platform-recovery-moving-in
 
 - name: tas-cf-metadata-test-artifacts-capi
   type: gcs
@@ -94,6 +93,9 @@ jobs:
     - get: ci
   - task: run-backup-metadata-unit-tests
     file: ci/ci/backup-metadata/run-backup-metadata-unit-tests.yml
+    input_mapping:
+      backup-metadata: src
+      capi-ci: ci
 
 - name: build-backup-metadata-image
   plan:
@@ -105,13 +107,15 @@ jobs:
     - get: ci
     - get: cloudfoundry-build-base
       trigger: true
-  - task: build
+  - task: build-with-pack
     privileged: true
-    file: ci/ci/docker/oci-build-task.yml
+    file: ci/ci/oci/build-with-pack.yml
     params:
-      CONTEXT: context-repository/src/backup-metadata
+      CONTEXT_PATH: src/backup-metadata
+      ADDITIONAL_ARGS: "--buildpack gcr.io/paketo-buildpacks/go --buildpack gcr.io/paketo-buildpacks/procfile --default-process wait"
     input_mapping:
-      context-repository: src
+      source-repository: src
+      capi-ci: ci
   - task: run-deplab
     privileged: true
     file: ci/ci/docker/run-deplab.yml
