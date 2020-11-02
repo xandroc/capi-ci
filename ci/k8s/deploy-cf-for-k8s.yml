@@ -15,6 +15,7 @@ inputs:
 - name: capi-docker-image
 - name: cf-api-controllers-docker-image
 - name: registry-buddy-docker-image
+- name: backup-metadata-docker-image
 - name: nginx-docker-image
 - name: cluster-tf-state
 outputs:
