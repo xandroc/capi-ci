@@ -679,6 +679,13 @@ resources:
     username: ((dockerhub_user))
     password: ((dockerhub_pass))
 
+- name: backup-metadata-docker-image
+  type: registry-image
+  source:
+    repository: cloudfoundry/cf-api-backup-metadata-generator
+    username: ((dockerhub_user))
+    password: ((dockerhub_pass))
+
 jobs:
 - name: provision-samus-cluster
   plan:
@@ -1519,6 +1526,7 @@ jobs:
     - get: registry-buddy-docker-image
       trigger: true
       passed: [registry-buddy-docker-image]
+    - get: backup-metadata-docker-image
     - get: nginx-docker-image
       trigger: true
       passed: [build-nginx-docker-image]

@@ -17,6 +17,7 @@ CAPI_IMAGE="cloudfoundry/cloud-controller-ng@$(get_image_digest_for_resource cap
 NGINX_IMAGE="cloudfoundry/capi-nginx@$(get_image_digest_for_resource nginx-docker-image)"
 CONTROLLERS_IMAGE="cloudfoundry/cf-api-controllers@$(get_image_digest_for_resource cf-api-controllers-docker-image)"
 REGISTRY_BUDDY_IMAGE="cloudfoundry/cf-api-package-registry-buddy@$(get_image_digest_for_resource registry-buddy-docker-image)"
+BACKUP_METADATA_GENERATOR_IMAGE="cloudfoundry/cloudfoundry/cf-api-backup-metadata-generator@$(get_image_digest_for_resource backup-metadata-docker-image)"
 
 echo "kapp version..."
 kapp version
@@ -32,6 +33,7 @@ echo "Updating ccng image to cloud_controller_ng digest: ${CAPI_IMAGE}"
 echo "Updating nginx image to capi-k8s-release digest: ${NGINX_IMAGE}"
 echo "Updating cf-api-controllers image to capi-k8s-release digest: ${CONTROLLERS_IMAGE}"
 echo "Updating registry buddy image to capi-k8s-release digest: ${REGISTRY_BUDDY_IMAGE}"
+echo "Updating backup metadata generator image to capi-k8s-release digest: ${BACKUP_METADATA_GENERATOR_IMAGE}"
 
 cat <<- EOF > "${PWD}/update-images.yml"
 ---
@@ -47,6 +49,9 @@ cat <<- EOF > "${PWD}/update-images.yml"
 - type: replace
   path: /images/registry_buddy
   value: ${REGISTRY_BUDDY_IMAGE}
+- type: replace
+  path: /images/backup_metadata
+  value: ${BACKUP_METADATA_GENERATOR_IMAGE}
 EOF
 
 pushd "capi-k8s-release"
