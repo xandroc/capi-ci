@@ -10,43 +10,26 @@ resource_types:
   source:
       repository: cftoolsmiths/toolsmiths-envs-resource
 
+- name: terraform
+  type: docker-image
+  source:
+    repository: ljfranklin/terraform-resource
+
 resources:
-- name: ci
+- name: capi-ci
   type: git
   icon: github-box
   source:
+    branch: master
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/capi-ci
 
-- name: tas-cf-metadata-test-artifacts-capi
-  type: gcs
+- name: capi-ci-private
+  type: git
   source:
-    bucket: tas-cf-metadata-test-artifacts-capi
-    json_key: ((backup_metadata_gcp_service_account_owner_key))
-    regexp: .*.tgz
-
-- name: version
-  type: semver
-  source:
-    bucket: tas-cf-metadata-test-artifacts-capi
-    key: version
-    json_key: ((backup_metadata_gcp_service_account_owner_key))
-    initial_version: 0.0.1
-    driver: gcs
-
-- name: cluster-name
-  type: gcs
-  source:
-    bucket: tas-cf-metadata-cluster-name
-    json_key: ((backup_metadata_gcp_service_account_owner_key))
-    versioned_file: info
-
-- name: velero-bucket
-  type: gcs
-  source:
-    bucket: tas-cf-metadata-velero-bucket-name
-    json_key: ((backup_metadata_gcp_service_account_owner_key))
-    versioned_file: info
+    branch: master
+    private_key: ((private_key))
+    uri: git@github.com:cloudfoundry/capi-ci-private.git
 
 - name: src
   type: git
@@ -56,20 +39,14 @@ resources:
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/capi-k8s-release.git
 
-- name: capi-k8s-release
+- name: capi-k8s-release-except-images
   type: git
+  check_every: 2m
   source:
+    branch: master
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/capi-k8s-release.git
-    branch: master
-
-- name: backup-metadata-docker-image
-  type: registry-image
-  source:
-    repository: cfcapidocker/backup-metadata
-    tag: latest
-    username: ((dockerhub_user))
-    password: ((dockerhub_pass))
+    ignore_paths: [values/images.yml]
 
 - name: cloudfoundry-build-base
   type: docker-image
@@ -84,18 +61,96 @@ resources:
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/cf-for-k8s.git
 
+- name: samus-backup-test-cluster-tf-state
+  type: terraform
+  source:
+    env_name: samus-backup-test
+    backend_type: gcs
+    backend_config:
+      bucket: samus-backup-test-cluster-tf-state
+      credentials: ((samus_gcp_json_key))
+    delete_on_failure: false
+
+  # Docker images
+- name: capi-docker-image
+  type: registry-image
+  source:
+    repository: cloudfoundry/cloud-controller-ng
+    username: ((dockerhub_user))
+    password: ((dockerhub_pass))
+
+- name: cf-api-controllers-docker-image
+  type: registry-image
+  source:
+    repository: cloudfoundry/cf-api-controllers
+    username: ((dockerhub_user))
+    password: ((dockerhub_pass))
+
+- name: registry-buddy-docker-image
+  type: registry-image
+  source:
+    repository: cloudfoundry/cf-api-package-registry-buddy
+    username: ((dockerhub_user))
+    password: ((dockerhub_pass))
+
+- name: nginx-docker-image
+  type: registry-image
+  source:
+    repository: cloudfoundry/capi-nginx
+    username: ((dockerhub_user))
+    password: ((dockerhub_pass))
+
+- name: backup-metadata-docker-image
+  type: registry-image
+  source:
+    repository: cloudfoundry/cf-api-backup-metadata-generator
+    username: ((dockerhub_user))
+    password: ((dockerhub_pass))
+
 jobs:
+- name: provision-samus-backup-test-cluster
+  plan:
+    - get: cf-for-k8s
+    - put: samus-backup-test-cluster-tf-state
+      params:
+        terraform_source: cf-for-k8s/deploy/gke/terraform
+        vars:
+          project: cff-capi-samus
+          region: us-west1
+          zone: us-west1-a
+          service_account_key: ((samus_gcp_json_key))
+          env_name: samus-backup-test
+          env_dns_domain: samus-backup-test.capi.land
+          dns_zone_name: samus-backup-test-zone
+
+- name: delete-samus-backup-test-cluster
+  plan:
+    - get: cf-for-k8s
+    - put: samus-backup-test-cluster-tf-state
+      params:
+        action: destroy
+        terraform_source: cf-for-k8s/deploy/gke/terraform
+        vars:
+          project: cff-capi-samus
+          region: us-west1
+          zone: us-west1-a
+          service_account_key: ((samus_gcp_json_key))
+          env_name: samus-backup-test
+          env_dns_domain: samus-backup-test.capi.land
+          dns_zone_name: samus-backup-test-zone
+      get_params:
+        action: destroy
+
 - name: backup-metadata-unit-tests
   plan:
   - in_parallel:
     - get: src
       trigger: true
-    - get: ci
+    - get: capi-ci
   - task: run-backup-metadata-unit-tests
-    file: ci/ci/backup-metadata/run-backup-metadata-unit-tests.yml
+    file: capi-ci/ci/backup-metadata/run-backup-metadata-unit-tests.yml
     input_mapping:
       backup-metadata: src
-      capi-ci: ci
 
 - name: build-backup-metadata-image
   plan:
@@ -104,160 +159,90 @@ jobs:
       passed: [backup-metadata-unit-tests]
       trigger: true
       passed: [backup-metadata-unit-tests]
-    - get: ci
+    - get: capi-ci
     - get: cloudfoundry-build-base
       trigger: true
   - task: build-with-pack
     privileged: true
-    file: ci/ci/oci/build-with-pack.yml
+    file: capi-ci/ci/oci/build-with-pack.yml
     params:
       CONTEXT_PATH: src/backup-metadata
       ADDITIONAL_ARGS: "--buildpack gcr.io/paketo-buildpacks/go --buildpack gcr.io/paketo-buildpacks/procfile --default-process wait"
     input_mapping:
       source-repository: src
-      capi-ci: ci
   - task: run-deplab
     privileged: true
-    file: ci/ci/docker/run-deplab.yml
+    file: capi-ci/ci/docker/run-deplab.yml
     input_mapping:
       source-repository: src
   - put: backup-metadata-docker-image
     params:
       image: labeled-image/image.tar
 
-- name: bump-image-sha
-  plan:
-    - in_parallel:
-      - get: src
-        passed: [build-backup-metadata-image]
-      - get: capi-k8s-release
-      - get: ci
-      - get: backup-metadata-docker-image
-        trigger: true
-    - task: bump-image-sha
-      file: ci/ci/backup-metadata/bump-image-sha.yml
-    - put: capi-k8s-release
-      params:
-        repository: updated-capi-k8s-release
-        rebase: true
-
-- name: build-artifact
-  plan:
-    - in_parallel:
-      - get: ci
-      - get: capi-k8s-release
-        trigger: true
-      - get: backup-metadata-docker-image
-        passed: [bump-image-sha]
-      - get: version
-        params: {pre: build}
-    - task: build-artifact
-      config:
-        platform: linux
-        image_resource:
-          type: docker-image
-          source:
-            repository: pcfplatformrecovery/backup-and-restore-cf-for-k8s
-        inputs:
-          - name: capi-k8s-release
-          - name: version
-        outputs:
-          - name: tas-cf-metadata-test-artifacts-capi
-        run:
-          dir: capi-k8s-release/src/backup-metadata
-          path: sh
-          args:
-          - "-c"
-          - "make artifact && mv cf-metadata.tgz ../../../tas-cf-metadata-test-artifacts-capi/backup-metadata.$(cat ../../../version/number).tgz"
-    - put: version
-      params: { file: version/number }
-    - put: tas-cf-metadata-test-artifacts-capi
-      params:
-        file: tas-cf-metadata-test-artifacts-capi/*.tgz
-
-- name: create-cluster
+- name: deploy-and-test
+  serial: true
+  serial_groups: [ samus-backup-test ]
   plan:
   - in_parallel:
-    - get: tas-cf-metadata-test-artifacts-capi
-      passed: [build-artifact]
+    - get: capi-k8s-release-except-images
       trigger: true
-    - get: capi-k8s-release
-      passed: [build-artifact]
-    - get: ci
-  - in_parallel:
-    - task: create
-      file: ci/ci/backup-metadata/create-cluster.yml
-      params:
-        GKE_SERVICE_ACCOUNT_KEY: ((backup_metadata_gke_service_account_key))
-        CLUSTER_PREFIX: ci-cluster
-    - task: create-velero-bucket
-      file: ci/ci/backup-metadata/create-velero-bucket.yml
-      params:
-        GKE_SERVICE_ACCOUNT_KEY: ((backup_metadata_gke_service_account_key))
-  - in_parallel:
-    - put: cluster-name
-      params:
-        file: cluster-name/info
-    - put: velero-bucket
-      params:
-        file: velero-bucket/info
-
-- name: install-cf-metadata-and-test
-  plan:
-  - in_parallel:
-    - get: tas-cf-metadata-test-artifacts-capi
-      passed: [create-cluster]
-      trigger: true
-    - get: cluster-name
-      passed: [create-cluster]
-      trigger: true
-    - get: capi-k8s-release
-      passed: [create-cluster]
-    - get: ci
-    - get: velero-bucket
-      passed: [create-cluster]
-      trigger: true
+    - get: capi-ci
+    - get: capi-ci-private
     - get: cf-for-k8s
+    - get: backup-metadata-docker-image
+      trigger: true
+      passed: [build-backup-metadata-image]
+    - get: capi-docker-image
+    - get: cf-api-controllers-docker-image
+    - get: registry-buddy-docker-image
+    - get: nginx-docker-image
+    - get: samus-backup-test-cluster-tf-state
+      passed: [ provision-samus-backup-test-cluster ]
+  - task: delete-deployment
+    file: capi-ci/ci/k8s/delete-cf-for-k8s.yml
+    params:
+      CAPI_ENVIRONMENT_NAME: samus-backup-test
+      GOOGLE_SERVICE_ACCOUNT_EMAIL: concourse@cff-capi-samus.iam.gserviceaccount.com
+      GOOGLE_PROJECT_NAME: cff-capi-samus
+      GOOGLE_KEY_FILE_PATH: capi-ci-private/samus/concourse-service-account.json
   - task: deploy
-    file: ci/ci/backup-metadata/install-cf-for-k8s.yml
+    file: capi-ci/ci/k8s/deploy-cf-for-k8s.yml
+    input_mapping:
+      capi-k8s-release: capi-k8s-release-except-images
+      cluster-tf-state: samus-backup-test-cluster-tf-state
     params:
-      GKE_SERVICE_ACCOUNT_KEY: ((backup_metadata_gke_service_account_key))
-      DNS_ZONE_NAME: platform-recovery
-      DNS_ROOT_DOMAIN: platform-recovery.cf-app.com
-  - task: install-cf-metadata
-    file: ci/ci/backup-metadata/install-cf-metadata.yml
-    params:
-      GKE_SERVICE_ACCOUNT_KEY: ((backup_metadata_gke_service_account_key))
-      REGISTRY_HOSTNAME: hub.docker.com
-      REGISTRY_USERNAME: ((dockerhub_user))
-      REGISTRY_PASSWORD: ((dockerhub_pass))
+      CAPI_ENVIRONMENT_NAME: samus-backup-test
+      GOOGLE_SERVICE_ACCOUNT_EMAIL: concourse@cff-capi-samus.iam.gserviceaccount.com
+      GOOGLE_PROJECT_NAME: cff-capi-samus
+      CLUSTER_NAME: samus-backup-test
+      GCP_ZONE: us-west1-a
+      GOOGLE_KEY_FILE_PATH: capi-ci-private/samus/concourse-service-account.json
+    ensure:
+      do:
+      - task: commit-env-metadata
+        file: capi-ci/ci/k8s/commit-env-metadata.yml
+        params:
+          REPO_SUBDIRECTORY: samus-backup-test
+        input_mapping:
+          private-env-repo: capi-ci-private
+      - put: capi-ci-private
+        params:
+          repository: updated-private-env-repo
+          rebase: true
   - task: install-velero
-    file: ci/ci/backup-metadata/install-velero.yml
+    file: capi-ci/ci/backup-metadata/install-velero.yml
     params:
       GKE_SERVICE_ACCOUNT_KEY: ((backup_metadata_gke_service_account_key))
       VELERO_SERVICE_ACCOUNT_KEY: ((backup_metadata_velero_service_account_key))
+      VELERO_TEST_BUCKET: samus-backup-test-cluster-velero-bucket
+      CLUSTER_NAME: samus-backup-test
+      GCP_ZONE: us-west1-a
   - task: e2e-test
-    file: ci/ci/backup-metadata/e2e-test.yml
+    file: capi-ci/ci/backup-metadata/e2e-test.yml
+    input_mapping:
+      capi-k8s-release: capi-k8s-release-except-images
     params:
       GKE_SERVICE_ACCOUNT_KEY: ((backup_metadata_gke_service_account_key))
-
-- name: cleanup-infrastructure
-  plan:
-  - get: velero-bucket
-    trigger: true
-    passed:
-    - install-cf-metadata-and-test
-  - get: cluster-name
-    trigger: true
-    passed:
-    - install-cf-metadata-and-test
-  - get: ci
-  - in_parallel:
-    - task: cleanup-velero-bucket
-      file: ci/ci/backup-metadata/cleanup-velero-bucket.yml
-      params:
-        GKE_SERVICE_ACCOUNT_KEY: ((backup_metadata_gke_service_account_key))
-    - task: cleanup-cluster
-      file: ci/ci/backup-metadata/cleanup-cluster.yml
-      params:
-        GKE_SERVICE_ACCOUNT_KEY: ((backup_metadata_gke_service_account_key))
+      GOOGLE_PROJECT_NAME: cff-capi-samus
+      CLUSTER_NAME: samus-backup-test
+      GCP_ZONE: us-west1-a

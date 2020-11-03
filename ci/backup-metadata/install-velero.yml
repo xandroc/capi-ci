@@ -7,14 +7,14 @@ image_resource:
     repository: pcfplatformrecovery/backup-and-restore-cf-for-k8s
 
 inputs:
-- name: ci
-- name: cluster-name
-- name: velero-bucket
+- name: capi-ci
 
 params:
   GKE_SERVICE_ACCOUNT_KEY:
   VELERO_SERVICE_ACCOUNT_KEY:
   VELERO_TEST_BUCKET:
+  CLUSTER_NAME:
+  GCP_ZONE:
 
 run:
-  path: ci/ci/backup-metadata/install-velero.sh
+  path: capi-ci/ci/backup-metadata/install-velero.sh
