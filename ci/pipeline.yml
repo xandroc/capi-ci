@@ -689,7 +689,6 @@ resources:
 jobs:
 - name: provision-samus-cluster
   plan:
-  # TODO: what should we trigger on? should we even trigger???
   - get: cf-for-k8s
   - put: samus-cluster-tf-state
     params:
@@ -705,7 +704,6 @@ jobs:
 
 - name: delete-samus-cluster
   plan:
-  # TODO: what should we trigger on? should we even trigger???
   - get: cf-for-k8s
   - put: samus-cluster-tf-state
     params:
@@ -817,17 +815,18 @@ jobs:
           params:
             text: '[registry-buddy-integratoin-tests] OH NO! Failed package registry-ing with GCR'
             icon_emoji: ((slack_failure_emoji))
-      - task: run-registry-buddy-integration-tests-on-harbor
-        file: capi-ci/ci/k8s/run-registry-buddy-integration-tests.yml
-        params:
-          REGISTRY_BASE_PATH: dev.registry.pivotal.io/cf-cake
-          REGISTRY_PASSWORD: ((dev_pivnet_registry_password))
-          REGISTRY_USERNAME: ((dev_pivnet_registry_username))
-        on_failure:
-          put: slack-alert
-          params:
-            text: '[registry-buddy-integratoin-tests] OH NO! Failed package registry-ing with Harbor'
-            icon_emoji: ((slack_failure_emoji))
+      # TODO: we will run tests against Harbor again as part of this: https://www.pivotaltracker.com/story/show/175365622
+      # - task: run-registry-buddy-integration-tests-on-harbor
+      #   file: capi-ci/ci/k8s/run-registry-buddy-integration-tests.yml
+      #   params:
+      #     REGISTRY_BASE_PATH: dev.registry.pivotal.io/cf-cake
+      #     REGISTRY_PASSWORD: ((dev_pivnet_registry_password))
+      #     REGISTRY_USERNAME: ((dev_pivnet_registry_username))
+      #   on_failure:
+      #     put: slack-alert
+      #     params:
+      #       text: '[registry-buddy-integratoin-tests] OH NO! Failed package registry-ing with Harbor'
+      #       icon_emoji: ((slack_failure_emoji))
 
 - name: backup-metadata-unit-tests
   plan:
