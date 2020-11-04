@@ -10,25 +10,12 @@ function setup_bosh_env_vars() {
 
 function bosh_clean_up() {
   echo "Running bosh clean-up on ${BOSH_ENVIRONMENT}..."
-  bosh -n clean-up
-}
-
-function bosh_delete_orphaned_disks() {
-  echo "Checking for orphaned persistent disks on ${BOSH_ENVIRONMENT}..."
-
-  if [[ $(bosh disks --orphaned --json | jq .Tables[].Rows[].disk_cid) ]]; then
-      # bosh clean-up --all also did this, but deleted "unused" releases like bosh-dns that later jobs rely on
-      echo "Manually deleting orphaned disks..."
-      bosh disks --orphaned --json | jq .Tables[].Rows[].disk_cid | xargs -L1 bosh delete-disk -n
-  else
-      echo "No orphaned disks found"
-  fi
+  bosh -n clean-up --all
 }
 
 function main() {
   setup_bosh_env_vars
   bosh_clean_up
-  bosh_delete_orphaned_disks
   echo "Done"
 }
 
