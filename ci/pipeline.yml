@@ -1780,6 +1780,7 @@ jobs:
   - put: capi-k8s-release
     params:
       repository: updated-capi-k8s-release
+      rebase: true
   - put: capi-k8s-release-ci-passed
     params:
       repository: updated-capi-k8s-release
