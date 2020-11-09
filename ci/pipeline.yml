@@ -1744,6 +1744,7 @@ jobs:
         GCP_ZONE: us-west1-a
 
 - name: k8s-ci-passed
+  serial: true
   plan:
   - in_parallel:
     - get: capi-ci
@@ -1780,7 +1781,6 @@ jobs:
   - put: capi-k8s-release
     params:
       repository: updated-capi-k8s-release
-      rebase: true
   - put: capi-k8s-release-ci-passed
     params:
       repository: updated-capi-k8s-release
