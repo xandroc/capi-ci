@@ -15,16 +15,20 @@ groups:
   jobs:
   - provision-samus-cluster
   - delete-samus-cluster
+  - provision-samus-backup-test-cluster
+  - delete-samus-backup-test-cluster
   - cc-unit-tests
   - cf-api-controllers-unit-tests
   - registry-buddy-unit-tests
   - registry-buddy-integration-tests
   - backup-metadata-unit-tests
+  - build-backup-metadata-image
   - build-capi-docker-image
   - build-cf-api-controllers-image
   - registry-buddy-docker-image
   - build-nginx-docker-image
   - samus-cf-for-k8s
+  - backup-metadata-deploy-and-test
   - k8s-ci-passed
 - name: capi-release
   jobs:
@@ -524,6 +528,16 @@ resources:
     # TODO: change to `true`?
     delete_on_failure: false
 
+- name: samus-backup-test-cluster-tf-state
+  type: terraform
+  source:
+    env_name: samus-backup-test
+    backend_type: gcs
+    backend_config:
+      bucket: samus-backup-test-cluster-tf-state
+      credentials: ((samus_gcp_json_key))
+    delete_on_failure: false
+
 # Mulan resources
 - name: mulan-bbl-state
   type: git
@@ -719,6 +733,39 @@ jobs:
         dns_zone_name: samus-zone
     get_params:
       action: destroy
+
+- name: provision-samus-backup-test-cluster
+  plan:
+    - get: cf-for-k8s
+    - put: samus-backup-test-cluster-tf-state
+      params:
+        terraform_source: cf-for-k8s/deploy/gke/terraform
+        vars:
+          project: cff-capi-samus
+          region: us-west1
+          zone: us-west1-a
+          service_account_key: ((samus_gcp_json_key))
+          env_name: samus-backup-test
+          env_dns_domain: samus-backup-test.capi.land
+          dns_zone_name: samus-backup-test-zone
+
+- name: delete-samus-backup-test-cluster
+  plan:
+    - get: cf-for-k8s
+    - put: samus-backup-test-cluster-tf-state
+      params:
+        action: destroy
+        terraform_source: cf-for-k8s/deploy/gke/terraform
+        vars:
+          project: cff-capi-samus
+          region: us-west1
+          zone: us-west1-a
+          service_account_key: ((samus_gcp_json_key))
+          env_name: samus-backup-test
+          env_dns_domain: samus-backup-test.capi.land
+          dns_zone_name: samus-backup-test-zone
+      get_params:
+        action: destroy
 
 - name: autobump-golang-package
   plan:
@@ -984,6 +1031,30 @@ jobs:
       input_mapping:
         source-repository: capi-nginx
     - put: nginx-docker-image
+      params:
+        image: labeled-image/image.tar
+
+- name: build-backup-metadata-image
+  plan:
+    - in_parallel:
+        - get: backup-metadata
+          passed: [backup-metadata-unit-tests]
+          trigger: true
+        - get: capi-ci
+    - task: build-with-pack
+      privileged: true
+      file: capi-ci/ci/oci/build-with-pack.yml
+      params:
+        CONTEXT_PATH: src/backup-metadata
+        ADDITIONAL_ARGS: "--buildpack gcr.io/paketo-buildpacks/go --buildpack gcr.io/paketo-buildpacks/procfile --default-process wait"
+      input_mapping:
+        source-repository: backup-metadata
+    - task: run-deplab
+      privileged: true
+      file: capi-ci/ci/docker/run-deplab.yml
+      input_mapping:
+        source-repository: backup-metadata
+    - put: backup-metadata-docker-image
       params:
         image: labeled-image/image.tar
 
@@ -1602,7 +1673,78 @@ jobs:
         NODES: 3
         FLAKE_ATTEMPTS: 2 # TODO: Set this back to 1 once Samus stabilizes
 
+- name: backup-metadata-deploy-and-test
+  serial: true
+  serial_groups: [ samus-backup-test ]
+  plan:
+    - in_parallel:
+        - get: backup-metadata
+          passed: [build-backup-metadata-image]
+        - get: capi-k8s-release-except-images
+          trigger: true
+        - get: capi-ci
+        - get: capi-ci-private
+        - get: cf-for-k8s
+        - get: backup-metadata-docker-image
+          trigger: true
+          passed: [build-backup-metadata-image]
+        - get: capi-docker-image
+        - get: cf-api-controllers-docker-image
+        - get: registry-buddy-docker-image
+        - get: nginx-docker-image
+        - get: samus-backup-test-cluster-tf-state
+          passed: [ provision-samus-backup-test-cluster ]
+    - task: delete-deployment
+      file: capi-ci/ci/k8s/delete-cf-for-k8s.yml
+      params:
+        CAPI_ENVIRONMENT_NAME: samus-backup-test
+        GOOGLE_SERVICE_ACCOUNT_EMAIL: concourse@cff-capi-samus.iam.gserviceaccount.com
+        GOOGLE_PROJECT_NAME: cff-capi-samus
+        GOOGLE_KEY_FILE_PATH: capi-ci-private/samus/concourse-service-account.json
+    - task: deploy
+      file: capi-ci/ci/k8s/deploy-cf-for-k8s.yml
+      input_mapping:
+        capi-k8s-release: capi-k8s-release-except-images
+        cluster-tf-state: samus-backup-test-cluster-tf-state
+      params:
+        CAPI_ENVIRONMENT_NAME: samus-backup-test
+        GOOGLE_SERVICE_ACCOUNT_EMAIL: concourse@cff-capi-samus.iam.gserviceaccount.com
+        GOOGLE_PROJECT_NAME: cff-capi-samus
+        CLUSTER_NAME: samus-backup-test
+        GCP_ZONE: us-west1-a
+        GOOGLE_KEY_FILE_PATH: capi-ci-private/samus/concourse-service-account.json
+      ensure:
+        do:
+          - task: commit-env-metadata
+            file: capi-ci/ci/k8s/commit-env-metadata.yml
+            params:
+              REPO_SUBDIRECTORY: samus-backup-test
+            input_mapping:
+              private-env-repo: capi-ci-private
+          - put: capi-ci-private
+            params:
+              repository: updated-private-env-repo
+              rebase: true
+    - task: install-velero
+      file: capi-ci/ci/backup-metadata/install-velero.yml
+      params:
+        GKE_SERVICE_ACCOUNT_KEY: ((backup_metadata_gke_service_account_key))
+        VELERO_SERVICE_ACCOUNT_KEY: ((backup_metadata_velero_service_account_key))
+        VELERO_TEST_BUCKET: samus-backup-test-cluster-velero-bucket
+        CLUSTER_NAME: samus-backup-test
+        GCP_ZONE: us-west1-a
+    - task: e2e-test
+      file: capi-ci/ci/backup-metadata/e2e-test.yml
+      input_mapping:
+        capi-k8s-release: capi-k8s-release-except-images
+      params:
+        GKE_SERVICE_ACCOUNT_KEY: ((backup_metadata_gke_service_account_key))
+        GOOGLE_PROJECT_NAME: cff-capi-samus
+        CLUSTER_NAME: samus-backup-test
+        GCP_ZONE: us-west1-a
+
 - name: k8s-ci-passed
+  serial: true
   plan:
   - in_parallel:
     - get: capi-ci
@@ -1620,6 +1762,9 @@ jobs:
     - get: nginx-docker-image
       trigger: true
       passed: [samus-cf-for-k8s]
+    - get: backup-metadata-docker-image
+      trigger: true
+      passed: [backup-metadata-deploy-and-test]
     - get: capi-k8s-release
       trigger: true
       passed: [samus-cf-for-k8s]
@@ -1629,6 +1774,8 @@ jobs:
       passed: [samus-cf-for-k8s]
     - get: capi-nginx
       passed: [samus-cf-for-k8s]
+    - get: backup-metadata
+      passed: [ backup-metadata-deploy-and-test ]
   - task: bump-capi-k8s-release-image-refs
     file: capi-ci/ci/k8s/bump-capi-k8s-release-image-refs.yml
   - put: capi-k8s-release

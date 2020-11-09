@@ -14,10 +14,12 @@ inputs:
 - name: cf-api-controllers-docker-image
 - name: registry-buddy-docker-image
 - name: nginx-docker-image
+- name: backup-metadata-docker-image
 - name: cloud_controller_ng
 - name: capi-nginx
 - name: cf-api-controllers
 - name: registry-buddy
+- name: backup-metadata
 
 outputs:
 - name: updated-capi-k8s-release
