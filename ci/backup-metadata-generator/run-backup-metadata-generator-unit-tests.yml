@@ -1,3 +1,4 @@
+
 ---
 platform: linux
 
@@ -8,13 +9,8 @@ image_resource:
     tag: cf-for-k8s
 
 inputs:
+  - name: backup-metadata-generator
   - name: capi-ci
-  - name: capi-k8s-release
-
-params:
-  GKE_SERVICE_ACCOUNT_KEY:
-  CLUSTER_NAME:
-  GCP_ZONE:
 
 run:
-  path: capi-ci/ci/backup-metadata/e2e-test.sh
+  path: capi-ci/ci/backup-metadata-generator/run-backup-metadata-generator-unit-tests.sh
