@@ -12,7 +12,7 @@ CAPI_IMAGE="cloudfoundry/cloud-controller-ng@$(get_image_digest_for_resource cap
 NGINX_IMAGE="cloudfoundry/capi-nginx@$(get_image_digest_for_resource nginx-docker-image)"
 CONTROLLERS_IMAGE="cloudfoundry/cf-api-controllers@$(get_image_digest_for_resource cf-api-controllers-docker-image)"
 REGISTRY_BUDDY_IMAGE="cloudfoundry/cf-api-package-registry-buddy@$(get_image_digest_for_resource registry-buddy-docker-image)"
-BACKUP_METADATA_GENERATOR_IMAGE="cloudfoundry/cf-api-backup-metadata-generator@$(get_image_digest_for_resource backup-metadata-docker-image)"
+BACKUP_METADATA_GENERATOR_IMAGE="cloudfoundry/cf-api-backup-metadata-generator@$(get_image_digest_for_resource backup-metadata-generator-docker-image)"
 
 
 function bump_image_references() {
@@ -51,7 +51,7 @@ function make_git_commit() {
     export CCNG_DIR="cloud_controller_ng"
     export CF_API_CONTROLLERS_DIR="cf-api-controllers"
     export REGISTRY_BUDDY_DIR="registry-buddy"
-    export BACKUP_METADATA_GENERATOR_DIR="backup-metadata"
+    export BACKUP_METADATA_GENERATOR_DIR="backup-metadata-generator"
     export NGINX_DIR="capi-nginx"
     ./capi-k8s-release/scripts/generate-shortlog.sh
     SHORTLOG="$(./capi-k8s-release/scripts/generate-shortlog.sh)"

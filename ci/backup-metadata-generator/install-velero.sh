@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-./capi-ci/ci/backup-metadata/helpers/log-into-gke-cluster.bash
+./capi-ci/ci/backup-metadata-generator/helpers/log-into-gke-cluster.bash
 
 echo "$VELERO_SERVICE_ACCOUNT_KEY" > velero-service-account.json
 

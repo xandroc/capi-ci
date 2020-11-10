@@ -18,4 +18,4 @@ params:
   GCP_ZONE:
 
 run:
-  path: capi-ci/ci/backup-metadata/install-velero.sh
+  path: capi-ci/ci/backup-metadata-generator/install-velero.sh

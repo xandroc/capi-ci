@@ -21,14 +21,14 @@ groups:
   - cf-api-controllers-unit-tests
   - registry-buddy-unit-tests
   - registry-buddy-integration-tests
-  - backup-metadata-unit-tests
-  - build-backup-metadata-image
+  - backup-metadata-generator-unit-tests
+  - build-backup-metadata-generator-image
   - build-capi-docker-image
   - build-cf-api-controllers-image
   - registry-buddy-docker-image
   - build-nginx-docker-image
   - samus-cf-for-k8s
-  - backup-metadata-deploy-and-test
+  - backup-metadata-generator-deploy-and-test
   - k8s-ci-passed
 - name: capi-release
   jobs:
@@ -390,11 +390,11 @@ resources:
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/capi-k8s-release.git
 
-- name: backup-metadata
+- name: backup-metadata-generator
   type: git
   source:
     branch: master
-    paths: [src/backup-metadata]
+    paths: [src/backup-metadata-generator]
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/capi-k8s-release.git
 
@@ -693,7 +693,7 @@ resources:
     username: ((dockerhub_user))
     password: ((dockerhub_pass))
 
-- name: backup-metadata-docker-image
+- name: backup-metadata-generator-docker-image
   type: registry-image
   source:
     repository: cloudfoundry/cf-api-backup-metadata-generator
@@ -875,14 +875,14 @@ jobs:
       #       text: '[registry-buddy-integratoin-tests] OH NO! Failed package registry-ing with Harbor'
       #       icon_emoji: ((slack_failure_emoji))
 
-- name: backup-metadata-unit-tests
+- name: backup-metadata-generator-unit-tests
   plan:
     - in_parallel:
-      - get: backup-metadata
+      - get: backup-metadata-generator
         trigger: true
       - get: capi-ci
-    - task: run-backup-metadata-unit-tests
-      file: capi-ci/ci/backup-metadata/run-backup-metadata-unit-tests.yml
+    - task: run-backup-metadata-generator-unit-tests
+      file: capi-ci/ci/backup-metadata-generator/run-backup-metadata-generator-unit-tests.yml
 
 - name: verify-capi-release-commits
   plan:
@@ -1034,27 +1034,27 @@ jobs:
       params:
         image: labeled-image/image.tar
 
-- name: build-backup-metadata-image
+- name: build-backup-metadata-generator-image
   plan:
     - in_parallel:
-        - get: backup-metadata
-          passed: [backup-metadata-unit-tests]
+        - get: backup-metadata-generator
+          passed: [backup-metadata-generator-unit-tests]
           trigger: true
         - get: capi-ci
     - task: build-with-pack
       privileged: true
       file: capi-ci/ci/oci/build-with-pack.yml
       params:
-        CONTEXT_PATH: src/backup-metadata
+        CONTEXT_PATH: src/backup-metadata-generator
         ADDITIONAL_ARGS: "--buildpack gcr.io/paketo-buildpacks/go --buildpack gcr.io/paketo-buildpacks/procfile --default-process wait"
       input_mapping:
-        source-repository: backup-metadata
+        source-repository: backup-metadata-generator
     - task: run-deplab
       privileged: true
       file: capi-ci/ci/docker/run-deplab.yml
       input_mapping:
-        source-repository: backup-metadata
-    - put: backup-metadata-docker-image
+        source-repository: backup-metadata-generator
+    - put: backup-metadata-generator-docker-image
       params:
         image: labeled-image/image.tar
 
@@ -1596,7 +1596,7 @@ jobs:
     - get: registry-buddy-docker-image
       trigger: true
       passed: [registry-buddy-docker-image]
-    - get: backup-metadata-docker-image
+    - get: backup-metadata-generator-docker-image
     - get: nginx-docker-image
       trigger: true
       passed: [build-nginx-docker-image]
@@ -1673,21 +1673,21 @@ jobs:
         NODES: 3
         FLAKE_ATTEMPTS: 2 # TODO: Set this back to 1 once Samus stabilizes
 
-- name: backup-metadata-deploy-and-test
+- name: backup-metadata-generator-deploy-and-test
   serial: true
   serial_groups: [ samus-backup-test ]
   plan:
     - in_parallel:
-        - get: backup-metadata
-          passed: [build-backup-metadata-image]
+        - get: backup-metadata-generator
+          passed: [build-backup-metadata-generator-image]
         - get: capi-k8s-release-except-images
           trigger: true
         - get: capi-ci
         - get: capi-ci-private
         - get: cf-for-k8s
-        - get: backup-metadata-docker-image
+        - get: backup-metadata-generator-docker-image
           trigger: true
-          passed: [build-backup-metadata-image]
+          passed: [build-backup-metadata-generator-image]
         - get: capi-docker-image
         - get: cf-api-controllers-docker-image
         - get: registry-buddy-docker-image
@@ -1726,7 +1726,7 @@ jobs:
               repository: updated-private-env-repo
               rebase: true
     - task: install-velero
-      file: capi-ci/ci/backup-metadata/install-velero.yml
+      file: capi-ci/ci/backup-metadata-generator/install-velero.yml
       params:
         GKE_SERVICE_ACCOUNT_KEY: ((backup_metadata_gke_service_account_key))
         VELERO_SERVICE_ACCOUNT_KEY: ((backup_metadata_velero_service_account_key))
@@ -1734,7 +1734,7 @@ jobs:
         CLUSTER_NAME: samus-backup-test
         GCP_ZONE: us-west1-a
     - task: e2e-test
-      file: capi-ci/ci/backup-metadata/e2e-test.yml
+      file: capi-ci/ci/backup-metadata-generator/e2e-test.yml
       input_mapping:
         capi-k8s-release: capi-k8s-release-except-images
       params:
@@ -1762,9 +1762,9 @@ jobs:
     - get: nginx-docker-image
       trigger: true
       passed: [samus-cf-for-k8s]
-    - get: backup-metadata-docker-image
+    - get: backup-metadata-generator-docker-image
       trigger: true
-      passed: [backup-metadata-deploy-and-test]
+      passed: [backup-metadata-generator-deploy-and-test]
     - get: capi-k8s-release
       trigger: true
       passed: [samus-cf-for-k8s]
@@ -1774,8 +1774,8 @@ jobs:
       passed: [samus-cf-for-k8s]
     - get: capi-nginx
       passed: [samus-cf-for-k8s]
-    - get: backup-metadata
-      passed: [ backup-metadata-deploy-and-test ]
+    - get: backup-metadata-generator
+      passed: [ backup-metadata-generator-deploy-and-test ]
   - task: bump-capi-k8s-release-image-refs
     file: capi-ci/ci/k8s/bump-capi-k8s-release-image-refs.yml
   - put: capi-k8s-release
