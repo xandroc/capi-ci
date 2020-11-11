@@ -50,7 +50,7 @@ cat <<- EOF > "${PWD}/update-images.yml"
   path: /images/registry_buddy
   value: ${REGISTRY_BUDDY_IMAGE}
 - type: replace
-  path: /images/backup_metadata
+  path: /images/backup_metadata_generator
   value: ${BACKUP_METADATA_GENERATOR_IMAGE}
 EOF
 
