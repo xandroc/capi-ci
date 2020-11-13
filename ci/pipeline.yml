@@ -96,7 +96,9 @@ groups:
 - name: bump-dependencies
   jobs:
     - autobump-golang-package
-
+- name: workstations
+  jobs:
+    - capi-ws-4
 resource_types:
 - name: slack-notification
   type: docker-image
@@ -515,6 +517,13 @@ resources:
     branch: master
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/bosh-deployment.git
+
+- name: capi-workspace
+  type: git
+  source:
+    branch: master
+    private_key: ((private_key))
+    uri: git@github.com:cloudfoundry/capi-workspace.git
 
 # Samus resources
 - name: samus-cluster-tf-state
@@ -4022,3 +4031,14 @@ jobs:
         all the certs are going to rotate TONIGHT at 7pm PST
         unless you pause the "thirtyfirstly" resource in concourse.
         January, March, May, July, August, October, and December all have 31 days.
+
+# Workstation jobs
+
+- name: capi-ws-4
+  plan:
+  - get: capi-workspace
+  - task: build-workstation
+    file: capi-ci/ci/workstations/build_workstation.yml
+    params:
+     GCP_SERVICE_ACCOUNT_KEY: ((shared_gcp_account_creds))
+     WORKSTATION_NAME: capi-ws-4
