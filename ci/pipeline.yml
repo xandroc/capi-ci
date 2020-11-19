@@ -314,7 +314,7 @@ resources:
 - name: staticfile-app
   type: git
   source:
-    branch: master
+    branch: main
     uri: git@github.com:cloudfoundry/cf-acceptance-tests.git
     private_key: ((private_key))
     paths:
@@ -446,12 +446,12 @@ resources:
     private_key: ((private_key))
     branch: release-candidate
 
-- name: cf-deployment-master
+- name: cf-deployment-main
   type: git
   source:
     uri: git@github.com:cloudfoundry/cf-deployment.git
     private_key: ((private_key))
-    branch: master
+    branch: main
 
 - name: cf-deployment-release
   type: github-release
@@ -463,7 +463,7 @@ resources:
 - name: cf-deployment-concourse-tasks
   type: git
   source:
-    branch: master
+    branch: main
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/cf-deployment-concourse-tasks.git
     tag_filter: v*
@@ -500,7 +500,7 @@ resources:
 - name: runtime-ci
   type: git
   source:
-    branch: master
+    branch: main
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/runtime-ci.git
 
@@ -2186,7 +2186,7 @@ jobs:
     - get: cf-deployment-concourse-tasks
       resource: cf-deployment-concourse-tasks
     - get: cf-deployment
-      resource: cf-deployment-master
+      resource: cf-deployment-main
     - get: kiki-bbl-state
     - get: kiki-integration-configs
     - get: sync-integration-tests
@@ -2450,7 +2450,7 @@ jobs:
   - in_parallel:
     - get: cf-deployment-release
       trigger: true
-    - get: cf-deployment-master
+    - get: cf-deployment-main
     - get: capi-ci
     - get: api-docs
     - get: capi-release-master
@@ -2468,7 +2468,7 @@ jobs:
       GIT_COMMIT_EMAIL: "cf-capi-eng+ci@pivotal.io"
     input_mapping:
       capi-release: capi-release-master
-      cf-deployment: cf-deployment-master
+      cf-deployment: cf-deployment-main
   - put: api-docs
     resource: api-docs
     params:
