@@ -15,11 +15,20 @@ See [pipeline.yml](https://github.com/cloudfoundry/capi-ci/blob/master/ci/pipeli
  \_ |  Elsa: biggest and most "real" environment                           |
     |          · Long-lived                                                |
     |          · HA / Multi-AZ                                             |
-    |          · Windows Cell                                              |
+    |          · Windows cell                                              |
     |          · "Real" router certs (via DigiCert)                        |
-    |          · Credhub                                                   |
+    |          · Encrypted database                                        |
+    |          · Clustered database                                        |
+    |          · Runtime credhub (assisted mode)                           |
+    |          · Telemetry                                                 |
     |          · Database: MySQL                                           |
     |          · Blobstore: S3                                             |
+    |                                                                      |
+    |  Mulan: used for testing Postgres and non-standard configuration     |
+    |          · Long-lived                                                |
+    |          · Runtime credhub (non-assisted mode)                       |
+    |          · Database: Postgres                                        |
+    |          · Blobstore: WebDAV                                         |
     |                                                                      |
     |  Ripley: used for testing NFS blobstore                              |
     |          · Long-lived                                                |
@@ -35,11 +44,6 @@ See [pipeline.yml](https://github.com/cloudfoundry/capi-ci/blob/master/ci/pipeli
     |          · Long-lived                                                |
     |          · Database: MySQL                                           |
     |          · Blobstore: GCP                                            |
-    |                                                                      |
-    |  Mulan: used for testing Postgres                                    |
-    |          · Long-lived                                                |
-    |          · Database: Postgres                                        |
-    |          · Blobstore: WebDAV                                         |
     |                                                                      |
     |  Kiki: used for testing that db migrations are backwards compatible  |
     |          · Short-lived                                               |
