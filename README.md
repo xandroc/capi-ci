@@ -16,7 +16,7 @@ See [pipeline.yml](https://github.com/cloudfoundry/capi-ci/blob/master/ci/pipeli
     |          · Long-lived                                                |
     |          · HA / Multi-AZ                                             |
     |          · Windows Cell                                              |
-    |          · Real Certs                                                |
+    |          · "Real" router certs (via DigiCert)                        |
     |          · Credhub                                                   |
     |          · Database: MySQL                                           |
     |          · Blobstore: S3                                             |
@@ -72,6 +72,8 @@ See [pipeline.yml](https://github.com/cloudfoundry/capi-ci/blob/master/ci/pipeli
 
 ### capi
 
+This pipeline is responsible for testing, building, and releasing capi-release and capi-k8s-release.
+
 #### capi-k8s-release
 
 This is where the testing for capi-k8s-release components live.
@@ -106,16 +108,63 @@ Jobs responsible for cutting capi-release and capi-k8s-release.
 
 #### dependencies-docs
 
+Assortment of jobs for updating docs and other things.
+
+- Update v2 docs every time a new cf-deployment is released
+- Update release candidate in v3 docs every time `ci-passed` branch is updated
+- Update [checkman](https://github.com/cppforlife/checkman) with pipeline status
+
 #### update-bosh
+
+Updates the bosh deployments for all the pipeline environments (using `bbl up`).
 
 #### bbl-destroy
 
+Theoretically useful for destroying broken bosh deployments for all the pipeline environments. Often doesn't work because the directors are in such bad state.
+
 #### rotate-certs
+
+Rotate the bosh-managed certificates for all the pipeline environments every other month. This prevents the certs from expiring and breaking the pipelines.
 
 #### bump-dependencies
 
+Automatically bumps golang version for capi-release components every time a new [golang-release](https://github.com/bosh-packages/golang-release) is available.
+
+### concourse
+
+Pipeline responsible for updating the concourse deployment that it is running on. Meta!
+
 ### docker-images
+
+Build the [docker images](https://github.com/cloudfoundry/capi-dockerfiles) that are used by other pipeline jobs. This is where all the dependencies that we need to run unit tests, acceptance tests, bosh deploys, etc come from.
+
+- Bump bosh CLI version in docker files
+- Every week rebuild images used for
+   - Pushing release candidate docs
+   - Running ruby unit tests
+   - Running golang unit tests
+   - Running DRATS (for testing BBR)
+   - Running migration backwards compatibility tests
+   - Running SITS (for testing sync job)
+   - Deploying pipeline bosh environments
+   - Creating releases and other random things (`runtime-ci` tag)
+   - Manging the bosh-lite pool
+   - Deploying/Building/Testing cf-for-k8s
+   - Building cloud controller with [pack](https://github.com/buildpacks/pack)
 
 ### bosh-lite
 
+Pipeline responsible for managing the development [bosh-lite pool](https://github.com/cloudfoundry/capi-env-pool/).
+
+- Delete released bosh-lites
+- Create new bosh-lites if there is room in the pool
+- Post in slack every week with what bosh lites are claimed in the pool
+
+### streamline-team
+
+Very important pipeline that randomly selects a person every week and posts about it in slack.
+
+### backup-metadata
+
+Tests backup and restore for cf-for-k8s.
 
