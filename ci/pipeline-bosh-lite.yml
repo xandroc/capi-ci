@@ -90,10 +90,10 @@ resources:
     source:
       expression: "30 13 * * 5"
       location: "America/Los_Angeles"
-  - name: 5m
+  - name: 1h
     type: time
     source:
-      interval: 5m
+      interval: 1h
 
 jobs:
   - name: create-bosh-lite
@@ -235,7 +235,7 @@ jobs:
       - aggregate:
         - get: capi-ci
         - get: pool-repo
-        - get: 5m
+        - get: 1h
           trigger: true
       - task: check-pool-size
         file: capi-ci/ci/bosh-lite/check-pool-size.yml
@@ -254,7 +254,7 @@ jobs:
       - aggregate:
         - get: capi-ci
         - get: pool-repo
-        - get: 5m
+        - get: 1h
           trigger: true
       - try:
           task: check-broken-pool-size
