@@ -86,7 +86,7 @@ See [pipeline.yml](https://github.com/cloudfoundry/capi-ci/blob/master/ci/pipeli
 
 ### What's Up with Kiki
 
-Kiki starts with an older version of cf-deployment. It then runs the new migrations, but keeps the old cloud controller code. This catches any backwards-incompatible migrations. This is important because cloud controller instances do rolling upgrades. For example: if you write a migration that drops a table, old CC instances that depend on that table existing will crash.
+Kiki starts with an older version of cf-deployment. It then runs the new migrations, but keeps the old cloud controller code. This catches any backwards-incompatible migrations. This is important because cloud controller instances do rolling upgrades. For example: if you write a migration that drops a table, old CC instances that depend on that table existing will crash during the rolling deploy.
 
 
 ## Pipelines
