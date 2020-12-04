@@ -2,11 +2,11 @@
 
 Hello, this is the capi team's ci repo. It houses concourse configuration settings for our ci environments.
 
-Check it out! https://capi.ci.cf-app.com/
+Check it out! https://capi.ci.cf-app.com/ (old) and https://ci.cake.capi.land/ (new)
 
 ## Environments
 
-See [pipeline.yml](https://github.com/cloudfoundry/capi-ci/blob/master/ci/pipeline.yml) for more details.
+See [pipeline.yml](https://github.com/cloudfoundry/capi-ci/blob/master/ci/pipeline.yml) for more details (for example: https://github.com/cloudfoundry/capi-ci/blob/8de01d623d0ec99e9be55dec9047668ff77bffd5/ci/pipeline.yml#L2071).
 
 ```
    ________________________________________________________________________
@@ -70,6 +70,23 @@ See [pipeline.yml](https://github.com/cloudfoundry/capi-ci/blob/master/ci/pipeli
     |  /                                                                      /
     \_/______________________________________________________________________/
 ```
+
+### Variables
+
+- Database: https://docs.cloudfoundry.org/concepts/architecture/cloud-controller.html#database
+- Blobstore: https://docs.cloudfoundry.org/deploying/common/cc-blobstore-config.html
+- HA: https://docs.cloudfoundry.org/concepts/high-availability.html
+- Short-lived/Long-lived: Short-lived environments are destroyed and re-deployed every test run. Long-lived ones are not torn down between runs.
+- DB Encryption: https://docs.cloudfoundry.org/adminguide/encrypting-cc-db.html
+- Clustered DB: https://docs.pivotal.io/application-service/2-9/mysql/scaling-mysql.html
+- Runtime Credhub: https://docs.pivotal.io/application-service/2-10/operating/secure-si-creds.html
+- Windows Cells: https://docs.cloudfoundry.org/deploying/cf-deployment/deploy-cf.html#ops-files
+- Telemetry: https://docs.pivotal.io/telemetry-collector/0-5/index.html
+- Certs: https://docs.cloudfoundry.org/adminguide/securing-traffic.html (CATs etc are actually validating SSL certs (no `--skip-ssl-validation`))
+
+### What's Up with Kiki
+
+Kiki starts with an older version of cf-deployment. It then runs the new migrations, but keeps the old cloud controller code. This catches any backwards-incompatible migrations. This is important because cloud controller instances do rolling upgrades. For example: if you write a migration that drops a table, old CC instances that depend on that table existing will crash.
 
 
 ## Pipelines
