@@ -57,7 +57,7 @@ groups:
   - bump-cc-v2-api
   - bump-cc-v3-api
   - push-github-release
-  - merge-capi-release-master
+  - merge-capi-release-main
   - publish-docs-v3
   - update-api-info-v2-docs
   - ship-it-k8s
@@ -235,10 +235,10 @@ resources:
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/capi-k8s-release.git
 
-- name: capi-release-master
+- name: capi-release-main
   type: git
   source:
-    branch: master
+    branch: main
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/capi-release.git
 
@@ -903,7 +903,7 @@ jobs:
     - get: capi-release
       resource: capi-release-develop
       trigger: true
-    - get: capi-release-master
+    - get: capi-release-main
       trigger: true
   - task: run-capi-release-commit-test
     file: capi-ci/ci/test-unit/run_capi_release_commit_test.yml
@@ -2382,7 +2382,7 @@ jobs:
     params:
       file: finalized-release-tarball/capi-*.tgz
   - put: capi-release
-    resource: capi-release-master
+    resource: capi-release-main
     params:
       repository: finalized-release-git-repo/capi-release
       tag: next-version/version
@@ -2405,7 +2405,7 @@ jobs:
   - in_parallel:
     - get: capi-ci
     - get: capi-release
-      resource: capi-release-master
+      resource: capi-release-main
       passed: [ship-it]
     - get: capi-final-releases
       passed: [ship-it]
@@ -2454,7 +2454,7 @@ jobs:
     - get: cf-deployment-main
     - get: capi-ci
     - get: api-docs
-    - get: capi-release-master
+    - get: capi-release-main
       params:
         submodules:
         - src/cloud_controller_ng
@@ -2468,7 +2468,7 @@ jobs:
       GIT_COMMIT_USERNAME: "CAPI CI"
       GIT_COMMIT_EMAIL: "cf-capi-eng+ci@pivotal.io"
     input_mapping:
-      capi-release: capi-release-master
+      capi-release: capi-release-main
       cf-deployment: cf-deployment-main
   - put: api-docs
     resource: api-docs
@@ -2534,7 +2534,7 @@ jobs:
   - in_parallel:
     - get: capi-ci
     - get: capi-release
-      resource: capi-release-master
+      resource: capi-release-main
       trigger: true
       passed: [ship-it]
       params:
@@ -3556,12 +3556,12 @@ jobs:
         repository: updated-bbl-state
         rebase: true
 
-- name: merge-capi-release-master
+- name: merge-capi-release-main
   serial: true
   plan:
   - in_parallel:
     - get: capi-ci
-    - get: capi-release-master
+    - get: capi-release-main
       passed: [ship-it]
       trigger: true
     - get: capi-release

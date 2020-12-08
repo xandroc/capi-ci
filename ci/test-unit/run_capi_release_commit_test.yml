@@ -10,7 +10,7 @@ image_resource:
 inputs:
   - name: capi-ci
   - name: capi-release
-  - name: capi-release-master
+  - name: capi-release-main
 
 run:
   path: capi-ci/ci/test-unit/run_capi_release_commit_test

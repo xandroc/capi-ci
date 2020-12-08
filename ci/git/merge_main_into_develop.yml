@@ -7,11 +7,11 @@ image_resource:
 
 inputs:
   - name: capi-release
-  - name: capi-release-master
+  - name: capi-release-main
   - name: capi-ci
 
 outputs:
   - name: merged
 
 run:
-  path: capi-ci/ci/git/merge_master_into_develop.sh
+  path: capi-ci/ci/git/merge_main_into_develop.sh

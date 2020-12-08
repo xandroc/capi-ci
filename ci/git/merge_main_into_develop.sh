@@ -6,10 +6,10 @@ pushd capi-release
   git config user.name "CAPI CI"
   git config user.email "cf-capi-eng+ci@pivotal.io"
 
-  echo "----- Adding master cloned release as remote"
-  git remote add local-capi-release-master ../capi-release-master
-  git fetch local-capi-release-master
-  git merge --no-edit local-capi-release-master/master
+  echo "----- Adding main cloned release as remote"
+  git remote add local-capi-release-main ../capi-release-main
+  git fetch local-capi-release-main
+  git merge --no-edit local-capi-release-main/main
 popd
 
 cp -a capi-release merged/capi-release
