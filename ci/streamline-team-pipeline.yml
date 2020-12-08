@@ -31,9 +31,10 @@ jobs:
 
 - name: assign-and-alert-snack-tsar
   plan:
-  - aggregate:
-    - get: weekly-wednesday
-      trigger: true
+  - in_parallel:
+      steps:
+      - get: weekly-wednesday
+        trigger: true
     - get: capi-ci
     - get: capi-ci-private
   - task: assign-and-alert-snack-tsar

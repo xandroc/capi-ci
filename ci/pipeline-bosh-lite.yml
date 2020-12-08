@@ -30,7 +30,7 @@ resources:
   - name: capi-ci
     type: git
     source:
-      branch: master
+      branch: main
       uri: https://github.com/cloudfoundry/capi-ci.git
   - name: bosh-deployment
     type: git
@@ -98,12 +98,13 @@ resources:
 jobs:
   - name: create-bosh-lite
     plan:
-      - aggregate:
-        - get: capi-ci
-        - get: bosh-deployment
-        - get: cf-deployment
-        - get: create-bosh-lite-trigger
-          trigger: true
+      - in_parallel:
+          steps:
+          - get: capi-ci
+          - get: bosh-deployment
+          - get: cf-deployment
+          - get: create-bosh-lite-trigger
+            trigger: true
       - task: generate-fake-env-for-building-pool
         file: capi-ci/ci/bosh-lite/generate-fake-env-for-building-pool.yml
       - put: building-pool
@@ -162,34 +163,37 @@ jobs:
                 params:
                   remove: fake-placeholder-env/
             on_failure:
-              aggregate:
-              - put: building-pool
-                params:
-                  remove: fake-placeholder-env/
-              - task: delete-bosh-lite
-                file: capi-ci/ci/bosh-lite/delete-bosh-lite.yml
+              in_parallel:
+                steps:
+                - put: building-pool
+                  params:
+                    remove: fake-placeholder-env/
+                - task: delete-bosh-lite
+                  file: capi-ci/ci/bosh-lite/delete-bosh-lite.yml
         on_failure:
-          aggregate:
-          - put: terraform
-            params:
-              action: destroy
-              env_name_file: terraform/name
-              terraform_source: capi-ci/terraform/bosh-lite/
-              vars: *terraform-vars
-            get_params:
-              action: destroy
-          - put: building-pool
-            params:
-              remove: fake-placeholder-env/
+          in_parallel:
+            steps:
+            - put: terraform
+              params:
+                action: destroy
+                env_name_file: terraform/name
+                terraform_source: capi-ci/terraform/bosh-lite/
+                vars: *terraform-vars
+              get_params:
+                action: destroy
+            - put: building-pool
+              params:
+                remove: fake-placeholder-env/
 
   - name: delete-bosh-lite
     plan:
-      - aggregate:
-        - get: capi-ci
-        - get: bosh-deployment
-        - get: broken-pool
-          passed: [ check-broken-pool-size ]
-          trigger: true
+      - in_parallel:
+          steps:
+          - get: capi-ci
+          - get: bosh-deployment
+          - get: broken-pool
+            passed: [ check-broken-pool-size ]
+            trigger: true
       - do:
         - task: download-from-gcs
           file: capi-ci/ci/gcs/download-from-gcs.yml
@@ -232,11 +236,12 @@ jobs:
   - name: check-pool-size
     build_logs_to_retain: 100
     plan:
-      - aggregate:
-        - get: capi-ci
-        - get: pool-repo
-        - get: 1h
-          trigger: true
+      - in_parallel:
+          steps:
+          - get: capi-ci
+          - get: pool-repo
+          - get: 1h
+            trigger: true
       - task: check-pool-size
         file: capi-ci/ci/bosh-lite/check-pool-size.yml
         input_mapping:
@@ -251,11 +256,12 @@ jobs:
   - name: check-broken-pool-size
     build_logs_to_retain: 100
     plan:
-      - aggregate:
-        - get: capi-ci
-        - get: pool-repo
-        - get: 1h
-          trigger: true
+      - in_parallel:
+          steps:
+          - get: capi-ci
+          - get: pool-repo
+          - get: 1h
+            trigger: true
       - try:
           task: check-broken-pool-size
           file: capi-ci/ci/bosh-lite/check-broken-pool-size.yml
@@ -267,11 +273,12 @@ jobs:
 
   - name: slack-claimed-envs
     plan:
-      - aggregate:
-        - get: capi-ci
-        - get: pool-repo
-        - get: friday-afternoon
-          trigger: true
+      - in_parallel:
+          steps:
+          - get: capi-ci
+          - get: pool-repo
+          - get: friday-afternoon
+            trigger: true
       - task: print-claimed-envs
         file: capi-ci/ci/bosh-lite/print-claimed-envs.yml
         input_mapping:

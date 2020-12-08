@@ -89,11 +89,12 @@ jobs:
 - name: update-bosh-concourse
   serial: true
   plan:
-    - aggregate:
-      - get: capi-ci
-      - get: capi-ci-private
-      - get: weekly-sunday
-        trigger: true
+    - in_parallel:
+        steps:
+        - get: capi-ci
+        - get: capi-ci-private
+        - get: weekly-sunday
+          trigger: true
     - do:
       - put: ci-bbl-state
         params:

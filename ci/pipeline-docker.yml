@@ -199,7 +199,7 @@ resources:
 - name: capi-ci
   type: git
   source:
-    branch: master
+    branch: main
     uri: https://github.com/cloudfoundry/capi-ci.git
     access_token: ((github_access_token))
 
