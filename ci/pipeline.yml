@@ -487,6 +487,7 @@ resources:
 - name: capi-bara-tests
   type: git
   source:
+    branch: main 
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/capi-bara-tests.git
 
