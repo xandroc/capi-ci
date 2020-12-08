@@ -201,7 +201,7 @@ resources:
 - name: capi-ci-private
   type: git
   source:
-    branch: master
+    branch: main
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/capi-ci-private.git
 
@@ -543,14 +543,14 @@ resources:
 - name: mulan-bbl-state
   type: git
   source:
-    branch: master
+    branch: main
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/capi-ci-private.git
 
 - name: mulan-integration-configs
   type: git
   source:
-    branch: master
+    branch: main
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/capi-ci-private.git
 
@@ -558,14 +558,14 @@ resources:
 - name: ripley-bbl-state
   type: git
   source:
-    branch: master
+    branch: main
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/capi-ci-private.git
 
 - name: ripley-integration-configs
   type: git
   source:
-    branch: master
+    branch: main
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/capi-ci-private.git
 
@@ -573,14 +573,14 @@ resources:
 - name: elsa-bbl-state
   type: git
   source:
-    branch: master
+    branch: main
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/capi-ci-private.git
 
 - name: elsa-integration-configs
   type: git
   source:
-    branch: master
+    branch: main
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/capi-ci-private.git
 
@@ -603,14 +603,14 @@ resources:
 - name: kiki-bbl-state
   type: git
   source:
-    branch: master
+    branch: main
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/capi-ci-private.git
 
 - name: kiki-integration-configs
   type: git
   source:
-    branch: master
+    branch: main
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/capi-ci-private.git
 
@@ -618,14 +618,14 @@ resources:
 - name: xena-mysql-bbl-state
   type: git
   source:
-    branch: master
+    branch: main
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/capi-ci-private.git
 
 - name: gabrielle-postgres-bbl-state
   type: git
   source:
-    branch: master
+    branch: main
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/capi-ci-private.git
 
@@ -633,14 +633,14 @@ resources:
 - name: leia-azure-storage-bbl-state
   type: git
   source:
-    branch: master
+    branch: main
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/capi-ci-private.git
 
 - name: leia-azure-storage-integration-configs
   type: git
   source:
-    branch: master
+    branch: main
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/capi-ci-private.git
 
@@ -648,14 +648,14 @@ resources:
 - name: rey-gcs-storage-bbl-state
   type: git
   source:
-    branch: master
+    branch: main
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/capi-ci-private.git
 
 - name: rey-gcs-storage-integration-configs
   type: git
   source:
-    branch: master
+    branch: main
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/capi-ci-private.git
 
