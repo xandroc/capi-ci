@@ -9,14 +9,14 @@ resources:
 - name: capi-dockerfiles
   type: git
   source:
-    branch: master
+    branch: main
     uri: git@github.com:cloudfoundry/capi-dockerfiles.git
     private_key: ((capi_dockerfiles_private_key))
 
 - name: capi-dockerfiles-rc-docs
   type: git
   source:
-    branch: master
+    branch: main
     uri: https://github.com/cloudfoundry/capi-dockerfiles.git
     paths: [rc-docs/Dockerfile]
 
@@ -32,21 +32,21 @@ resources:
 - name: capi-dockerfiles-runtime-ci
   type: git
   source:
-    branch: master
+    branch: main
     uri: https://github.com/cloudfoundry/capi-dockerfiles.git
     paths: [capi-runtime-ci/Dockerfile]
 
 - name: capi-dockerfiles-sits
   type: git
   source:
-    branch: master
+    branch: main
     uri: https://github.com/cloudfoundry/capi-dockerfiles.git
     paths: [sits/Dockerfile]
 
 - name: capi-cf-for-k8s
   type: git
   source:
-    branch: master
+    branch: main
     uri: https://github.com/cloudfoundry/capi-dockerfiles.git
     paths: [cf-for-k8s/Dockerfile]
 
@@ -71,7 +71,7 @@ resources:
 - name: capi-dockerfiles-ruby-units
   type: git
   source:
-    branch: master
+    branch: main
     uri: https://github.com/cloudfoundry/capi-dockerfiles.git
     paths: [capi-ruby-units/Dockerfile]
 
@@ -87,7 +87,7 @@ resources:
 - name: capi-dockerfiles-go-units
   type: git
   source:
-    branch: master
+    branch: main 
     uri: https://github.com/cloudfoundry/capi-dockerfiles.git
     paths: [capi-go-units/Dockerfile]
 
@@ -103,7 +103,7 @@ resources:
 - name: capi-dockerfiles-bbl
   type: git
   source:
-    branch: master
+    branch: main
     uri: https://github.com/cloudfoundry/capi-dockerfiles.git
     paths: [bbl/Dockerfile]
 
@@ -128,7 +128,7 @@ resources:
 - name: capi-dockerfiles-bosh-lite
   type: git
   source:
-    branch: master
+    branch: main
     uri: https://github.com/cloudfoundry/capi-dockerfiles.git
     paths: [bosh-lite/Dockerfile]
 
@@ -144,14 +144,14 @@ resources:
 - name: capi-dockerfiles-bbr-run-drats
   type: git
   source:
-    branch: master
+    branch: main 
     uri: https://github.com/cloudfoundry/capi-dockerfiles.git
     paths: [bbr-run-drats/Dockerfile]
 
 - name: capi-dockerfiles-migration-compatibility
   type: git
   source:
-    branch: master
+    branch: main 
     uri: https://github.com/cloudfoundry/capi-dockerfiles.git
     paths: [capi-migration-compatibility/Dockerfile]
 
@@ -183,7 +183,7 @@ resources:
 - name: capi-dockerfiles-pack-builder
   type: git
   source:
-    branch: master
+    branch: main
     uri: https://github.com/cloudfoundry/capi-dockerfiles.git
     paths: [capi-pack-builder/Dockerfile]
 
@@ -207,11 +207,12 @@ jobs:
 - name: bump-bosh-cli-version
   serial: true
   plan:
-  - aggregate:
-    - get: bosh-cli-github-release
-      trigger: true
-    - get: capi-dockerfiles
-    - get: capi-ci
+  - in_parallel:
+      steps:
+      - get: bosh-cli-github-release
+        trigger: true
+      - get: capi-dockerfiles
+      - get: capi-ci
   - task: update-dockerfile-bosh-version
     file: capi-ci/ci/dockerfiles/bump_bosh_version.yml
   - put: capi-dockerfiles
@@ -222,121 +223,132 @@ jobs:
 - name: rc-docs-docker
   serial: true
   plan:
-  - aggregate:
-    - get: weekly
-      trigger: true
-    - get: capi-dockerfiles-rc-docs
-      trigger: true
+  - in_parallel:
+      steps:      
+      - get: weekly
+        trigger: true
+      - get: capi-dockerfiles-rc-docs
+        trigger: true
   - put: docker-image-rc-docs
     params:
       build: capi-dockerfiles-rc-docs/rc-docs
 - name: ruby-units-docker
   serial: true
   plan:
-  - aggregate:
-    - get: weekly
-      trigger: true
-    - get: capi-dockerfiles-ruby-units
-      trigger: true
+  - in_parallel:
+      steps:
+      - get: weekly
+        trigger: true
+      - get: capi-dockerfiles-ruby-units
+        trigger: true
   - put: docker-image-ruby-units
     params:
       build: capi-dockerfiles-ruby-units/capi-ruby-units
 - name: go-units-docker
   serial: true
   plan:
-  - aggregate:
-    - get: weekly
-      trigger: true
-    - get: capi-dockerfiles-go-units
-      trigger: true
+  - in_parallel:
+      steps:
+      - get: weekly
+        trigger: true
+      - get: capi-dockerfiles-go-units
+        trigger: true
   - put: docker-image-go-units
     params:
       build: capi-dockerfiles-go-units/capi-go-units
 - name: bbl-docker
   serial: true
   plan:
-  - aggregate:
-    - get: weekly
-      trigger: true
-    - get: capi-dockerfiles-bbl
-      trigger: true
+  - in_parallel:
+      steps:
+      - get: weekly
+        trigger: true
+      - get: capi-dockerfiles-bbl
+        trigger: true
   - put: docker-image-bbl
     params:
       build: capi-dockerfiles-bbl/bbl
 - name: runtime-ci
   serial: true
   plan:
-  - aggregate:
-    - get: weekly
-      trigger: true
-    - get: capi-dockerfiles-runtime-ci
-      trigger: true
+  - in_parallel:
+      steps:
+      - get: weekly
+        trigger: true
+      - get: capi-dockerfiles-runtime-ci
+        trigger: true
   - put: docker-image-runtime-ci
     params:
       build: capi-dockerfiles-runtime-ci/capi-runtime-ci
 - name: bosh-lite-docker
   serial: true
   plan:
-  - aggregate:
-    - get: weekly
-      trigger: true
-    - get: capi-dockerfiles-bosh-lite
-      trigger: true
+  - in_parallel:
+      steps:
+      - get: weekly
+        trigger: true
+      - get: capi-dockerfiles-bosh-lite
+        trigger: true
   - put: docker-image-bosh-lite
     params:
       build: capi-dockerfiles-bosh-lite/bosh-lite
 - name: capi-dockerfiles-pack-builder
   serial: true
   plan:
-  - aggregate:
-    - get: weekly
-      trigger: true
-    - get: capi-dockerfiles-pack-builder
-      trigger: true
+  - in_parallel:
+      steps:    
+      - get: weekly
+        trigger: true
+      - get: capi-dockerfiles-pack-builder
+        trigger: true
   - put: docker-image-capi-pack-builder
     params:
       build: capi-dockerfiles-pack-builder/capi-pack-builder
 - name: capi-dockerfiles-bbr-run-drats
   serial: true
   plan:
-  - aggregate:
-    - get: weekly
-      trigger: true
-    - get: capi-dockerfiles-bbr-run-drats
-      trigger: true
+  - in_parallel:
+      steps:
+      - get: weekly
+        trigger: true
+      - get: capi-dockerfiles-bbr-run-drats
+        trigger: true
   - put: docker-image-bbr-run-drats
     params:
       build: capi-dockerfiles-bbr-run-drats/bbr-run-drats
 - name: migration-compatibility-docker
   serial: true
   plan:
-  - aggregate:
-    - get: weekly
-      trigger: true
-    - get: capi-dockerfiles-migration-compatibility
-      trigger: true
+  - in_parallel:
+      steps:
+      - get: weekly
+        trigger: true
+      - get: capi-dockerfiles-migration-compatibility
+        trigger: true
   - put: docker-image-migration-compatibility
     params:
       build: capi-dockerfiles-migration-compatibility/capi-migration-compatibility
 - name: sits-docker
   serial: true
   plan:
-  - aggregate:
-    - get: weekly
-      trigger: true
-    - get: capi-dockerfiles-sits
-      trigger: true
+  - in_parallel:
+      steps:
+      - get: weekly
+        trigger: true
+      - get: capi-dockerfiles-sits
+        trigger: true
   - put: docker-image-sits
     params:
       build: capi-dockerfiles-sits/sits
 - name: capi-cf-for-k8s
   serial: true
   plan:
-  - aggregate:
-    - get: weekly
-      trigger: true
-    - get: capi-cf-for-k8s
-      trigger: true
+  - in_parallel:
+      steps:
+      - get: weekly
+        trigger: true
+      - get: capi-cf-for-k8s
+        trigger: true
   - put: docker-image-capi-cf-for-k8s
     params:
       build: capi-cf-for-k8s/cf-for-k8s
