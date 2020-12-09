@@ -3535,8 +3535,8 @@ jobs:
       trigger: true
     - get: capi-release
       resource: capi-release-develop
-  - task: merge-master-into-develop
-    file: capi-ci/ci/git/merge_master_into_develop.yml
+  - task: merge-main-into-develop
+    file: capi-ci/ci/git/merge_main_into_develop.yml
   - put: capi-release-develop
     params:
       repository: merged/capi-release

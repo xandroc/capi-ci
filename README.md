@@ -6,7 +6,7 @@ Check it out! https://capi.ci.cf-app.com/ (old) and https://ci.cake.capi.land/ (
 
 ## Environments
 
-See [pipeline.yml](https://github.com/cloudfoundry/capi-ci/blob/master/ci/pipeline.yml) for more details (for example: https://github.com/cloudfoundry/capi-ci/blob/8de01d623d0ec99e9be55dec9047668ff77bffd5/ci/pipeline.yml#L2071).
+See [pipeline.yml](https://github.com/cloudfoundry/capi-ci/blob/main/ci/pipeline.yml) for more details (for example: https://github.com/cloudfoundry/capi-ci/blob/8de01d623d0ec99e9be55dec9047668ff77bffd5/ci/pipeline.yml#L2071).
 
 ```
    ________________________________________________________________________
