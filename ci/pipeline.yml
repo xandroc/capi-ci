@@ -259,7 +259,7 @@ resources:
 - name: api-docs
   type: git
   source:
-    branch: master
+    branch: main
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/api-docs.git
 
@@ -323,7 +323,7 @@ resources:
 - name: cc-uploader
   type: git
   source:
-    branch: master
+    branch: main
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/cc-uploader.git
 
@@ -2474,7 +2474,7 @@ jobs:
     resource: api-docs
     params:
       repository: updated-api-docs/api-docs
-      branch: master
+      branch: main
       rebase: true
   - put: api-docs-production-deploy
     params:
