@@ -133,7 +133,6 @@ Assortment of jobs for updating docs and other things.
 
 - Update v2 docs every time a new cf-deployment is released
 - Update release candidate in v3 docs every time `ci-passed` branch is updated
-- Update [checkman](https://github.com/cppforlife/checkman) with pipeline status
 
 #### update-bosh
 

@@ -64,7 +64,6 @@ groups:
 - name: dependencies-docs
   jobs:
   - rc-docs-v3
-  - update-checkman
   - update-and-push-docs-v2
 - name: update-bosh
   jobs:
@@ -183,13 +182,6 @@ resources:
     regexp: capi-(.*).tgz
     access_key_id: ((wasabi_ci_artifacts_s3_access_key))
     secret_access_key: ((wasabi_ci_artifacts_s3_secret_key))
-
-- name: capi-checkman
-  type: git
-  source:
-    branch: master
-    private_key: ((private_key))
-    uri: git@github.com:cloudfoundry/capi-checkman.git
 
 - name: capi-ci
   type: git
@@ -2550,29 +2542,6 @@ jobs:
       params:
         text: '[publish-docs-v3] OH NO! Failed to update documentation https://capi.ci.cf-app.com/?groups=migrations-dependencies-docs'
         icon_emoji: ((slack_failure_emoji))
-
-- name: update-checkman
-  plan:
-  - in_parallel:
-    - get: capi-ci
-      trigger: true
-    - get: capi-checkman
-  - task: update-checkman
-    file: capi-ci/ci/monitoring/update_checkman.yml
-    on_success:
-      put: slack-alert
-      params:
-        text: '[update-checkman] Checkman configuration successfully updated'
-        icon_emoji: ':capi:'
-    on_failure:
-      put: slack-alert
-      params:
-        text: '[update-checkman] OH NO! There was a problem updating configuration! https://capi.ci.cf-app.com/?groups=migrations-dependencies-docs'
-        icon_emoji: ((slack_failure_emoji))
-  - put: capi-checkman
-    params:
-      repository: updated-capi-checkman
-      rebase: true
 
 - name: rotate-certs-elsa
   serial: true
