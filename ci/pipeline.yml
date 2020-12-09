@@ -296,7 +296,7 @@ resources:
   source:
     driver: git
     uri: git@github.com:cloudfoundry/cloud_controller_ng.git
-    branch: master
+    branch: main
     file: config/version
     git_user: 'CAPI CI <cf-capi-eng+ci@pivotal.io>'
     private_key: ((private_key))
@@ -306,7 +306,7 @@ resources:
   source:
     driver: git
     uri: git@github.com:cloudfoundry/cloud_controller_ng.git
-    branch: master
+    branch: main
     file: config/version_v2
     git_user: 'CAPI CI <cf-capi-eng+ci@pivotal.io>'
     private_key: ((private_key))
@@ -370,7 +370,7 @@ resources:
 - name: cloud_controller_ng
   type: git
   source:
-    branch: master
+    branch: main
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/cloud_controller_ng.git
 
