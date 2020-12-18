@@ -11,6 +11,22 @@
 ##
 
 groups:
+- name: capi-release
+  jobs:
+  - cc-unit-tests
+  - bridge-unit-tests
+  - verify-capi-release-commits
+  - capi-release-template-tests
+  - create-capi-release
+  - bump-capi-release
+  - mulan-postgres
+  - elsa-HA
+  - kiki-back-compat-migrations
+  - xena-mysql-drats
+  - gabrielle-postgres-drats
+  - ripley-nfs
+  - bump-ci-passed
+  - bump-bbs-protos
 - name: capi-k8s-release
   jobs:
   - provision-samus-cluster
@@ -30,22 +46,6 @@ groups:
   - samus-cf-for-k8s
   - backup-metadata-generator-deploy-and-test
   - k8s-ci-passed
-- name: capi-release
-  jobs:
-  - cc-unit-tests
-  - bridge-unit-tests
-  - verify-capi-release-commits
-  - capi-release-template-tests
-  - create-capi-release
-  - bump-capi-release
-  - mulan-postgres
-  - elsa-HA
-  - kiki-back-compat-migrations
-  - xena-mysql-drats
-  - gabrielle-postgres-drats
-  - ripley-nfs
-  - bump-ci-passed
-  - bump-bbs-protos
 - name: blobstore-fanout
   jobs:
   - create-capi-release
