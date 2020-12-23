@@ -81,7 +81,7 @@ jobs:
       - task: startup
         file: capi-ci/ci/workstation-scheduler/startup-ws.yml
         params:
-          GCP_VM_NAME: capi-ws-4
+          GCP_VM_NAME: capi-ws-5
           GCP_VM_ZONE: us-central1-a
           GCP_SERVICE_ACCOUNT_KEY: ((arya_gcp_json_key))
 
@@ -118,7 +118,7 @@ jobs:
         file: capi-ci/ci/workstation-scheduler/shutdown-ws.yml
         params:
           GCP_VM_NAME: capi-ws-3
-          GCP_VM_ZONE: us-west1-b
+          GCP_VM_ZONE: us-central1-a
           GCP_SERVICE_ACCOUNT_KEY: ((arya_gcp_json_key))
 
   - name: shutdown-capi-ws-4
@@ -141,6 +141,6 @@ jobs:
       - task: shutdown
         file: capi-ci/ci/workstation-scheduler/shutdown-ws.yml
         params:
-          GCP_VM_NAME: capi-ws-4
+          GCP_VM_NAME: capi-ws-5
           GCP_VM_ZONE: us-central1-a
           GCP_SERVICE_ACCOUNT_KEY: ((arya_gcp_json_key))
