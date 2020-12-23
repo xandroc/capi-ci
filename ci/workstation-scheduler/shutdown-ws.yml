@@ -1,0 +1,26 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: google/cloud-sdk
+
+params:
+  GCP_VM_NAME: ""
+  GCP_VM_ZONE: ""
+  GCP_PROJECT_NAME: "CF-CAPI-arya"
+  GCP_SERVICE_ACCOUNT_KEY: ""
+
+run:
+  path: bash
+  args:
+    - -c
+    - |
+      set -e
+
+      gcloud auth activate-service-account --key-file=<(echo $GCP_SERVICE_ACCOUNT_KEY)
+
+      echo "Shutting down VM $GCP_VM_NAME in zone $GCP_VM_ZONE for project $GCP_PROJECT_NAME..."
+
+      gcloud compute instances stop $GCP_VM_NAME --project $GCP_PROJECT_NAME --zone $GCP_VM_ZONE
