@@ -9,7 +9,7 @@ image_resource:
 params:
   GCP_VM_NAME: ""
   GCP_VM_ZONE: ""
-  GCP_PROJECT_NAME: "CF-CAPI-arya"
+  GCP_PROJECT_NAME: "cf-capi-arya"
   GCP_SERVICE_ACCOUNT_KEY: ""
 
 run:
