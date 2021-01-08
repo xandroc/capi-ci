@@ -25,20 +25,22 @@ start_db() {
     service mysql restart
     trap stop_mysql EXIT
   elif [ "${DB}" = "postgres" ]; then
+    POSTGRES_DATA_DIR=$(su postgres -c "psql -c 'show data_directory'" | grep main)
+    POSTGRES_CONF_FILE=$(su postgres -c "psql -c 'show config_file'" | grep "postgresql.conf")
+    
     service postgresql stop
 
     mkdir -p /var/lib/ramdisk
     # HACK: not really sure what a good size for the mount is
     mount -t tmpfs -o size=8192m ramdisk /var/lib/ramdisk
 
-    POSTGRES_DATA_DIR=$(su postgres -c "psql -c 'show data_directory'" | grep main)
+    
     cp -R $POSTGRES_DATA_DIR/* /var/lib/ramdisk/
     chown -R postgres /var/lib/ramdisk
     chgrp -R postgres /var/lib/ramdisk
     chmod 700 /var/lib/ramdisk
 
     # HACKish: update postgres config to use ramdisk mount to back its disk storage
-    POSTGRES_CONF_FILE=$(su postgres -c "psql -c 'show config_file'" | grep "postgresql.conf")
     sed -i -E "s#data_directory = (.*)#data_directory = '/var/lib/ramdisk'#g" $POSTGRES_CONF_FILE
 
     service postgresql restart
