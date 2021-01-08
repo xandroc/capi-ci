@@ -25,6 +25,7 @@ start_db() {
     service mysql restart
     trap stop_mysql EXIT
   elif [ "${DB}" = "postgres" ]; then
+    service postgresql start
     POSTGRES_DATA_DIR=$(su postgres -c "psql -c 'show data_directory'" | grep main)
     POSTGRES_CONF_FILE=$(su postgres -c "psql -c 'show config_file'" | grep "postgresql.conf")
     
