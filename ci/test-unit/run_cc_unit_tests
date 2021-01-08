@@ -31,7 +31,7 @@ start_db() {
     # HACK: not really sure what a good size for the mount is
     mount -t tmpfs -o size=8192m ramdisk /var/lib/ramdisk
 
-    cp -R /var/lib/postgresql/9.6/main/* /var/lib/ramdisk/
+    cp -R /var/lib/postgresql/11/main/* /var/lib/ramdisk/
     chown -R postgres /var/lib/ramdisk
     chgrp -R postgres /var/lib/ramdisk
     chmod 700 /var/lib/ramdisk
