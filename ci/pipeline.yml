@@ -2289,8 +2289,7 @@ jobs:
       # Use S3 as blobstore
       - capi-ci/cf-deployment-operations/use-s3-and-cdn-storage.yml
       # Metrics
-      # temporarily removing New Relic until we figure out support with Ruby 2.7
-      # - capi-ci/cf-deployment-operations/add-new-relic.yml
+      - capi-ci/cf-deployment-operations/add-new-relic.yml
       - capi-ci/cf-deployment-operations/add-prometheus.yml
       - capi-ci/cf-deployment-operations/add-prometheus-capi-homepage.yml
       # Disable skip-cert-verify because this env has a real cert
