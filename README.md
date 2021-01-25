@@ -60,11 +60,6 @@ See [pipeline.yml](https://github.com/cloudfoundry/capi-ci/blob/main/ci/pipeline
     |          · Database: Postgres                                        |
     |          · Blobstore: WebDAV                                         |
     |                                                                      |
-    |  Samus: used for testing cf-for-k8s                                  |
-    |          · Short-lived                                               |
-    |          · Database: MySQL                                           |
-    |          · Blobstore: WebDAV (barely used)                           |
-    |                                                                      |
     |                                                                      |    
     |   ___________________________________________________________________|___
     |  /                                                                      /
