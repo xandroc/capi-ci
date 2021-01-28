@@ -1293,6 +1293,7 @@ jobs:
         cf-deployment-operations/performance/scale-generic-worker-processes.yml
         cf-deployment-operations/seed-credhub-asg.yml
         cf-deployment-operations/disable-credhub-interpolate-service-bindings.yml
+        cf-deployment-operations/add-new-relic.yml
   - task: deploy
     file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
     input_mapping:
@@ -1314,6 +1315,7 @@ jobs:
         seed-credhub-asg.yml
         disable-credhub-interpolate-service-bindings.yml
         base-ops-files/operations/experimental/disable-v2-api.yml
+        add-new-relic.yml
   - task: updated-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
     input_mapping:
