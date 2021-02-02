@@ -357,8 +357,7 @@ resources:
 - name: cf-acceptance-tests
   type: git
   source:
-    # switch back to release-candidate once https://github.com/cloudfoundry/cf-acceptance-tests/pull/454 is merged
-    branch: zdt-multi-port-restart
+    branch: release-candidate
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/cf-acceptance-tests.git
 
