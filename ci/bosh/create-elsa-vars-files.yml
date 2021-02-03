@@ -8,6 +8,7 @@ image_resource:
 inputs:
 - name: elsa-aws-storage-terraform
 - name: capi-ci-private
+- name: capi-ci
 
 outputs:
 - name: capi-ci-private-with-extra
