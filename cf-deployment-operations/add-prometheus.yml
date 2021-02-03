@@ -10,12 +10,12 @@
 # - metrics exporters for BOSH, CF, and prometheus itself
 # - dashboard config files for the above exporters
 #
-# Required properties (names re-used from bosh-deployment-resource source file):
+# Required properties, taken from bbl-state.json of the environment:
 #
-# - target: bosh director URL
-# - client: bosh director username
-# - client_secret: bosh director password
-# - ca_cert: bosh director CA cert
+# - bosh director URL
+# - bosh director username
+# - bosh director password
+# - bosh director CA cert
 #
 # Optional properties:
 #
@@ -68,10 +68,10 @@
           bosh_exporter:
             bosh:
               # re-use values from bosh-deployment-resource source file
-              url: ((target))
-              username: ((client))
-              password: ((client_secret))
-              ca_cert: ((ca_cert))
+              url: ((bosh.directorAddress))
+              username: ((bosh.directorUsername))
+              password: ((bosh.directorPassword))
+              ca_cert: ((bosh.directorSSLCA))
             metrics:
               environment: ((system_domain))
       - name: firehose_exporter
