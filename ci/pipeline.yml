@@ -2353,12 +2353,6 @@ jobs:
       params:
         repository: updated-bbl-state
         rebase: true
-  - task: extract-bbl-environment
-    file: capi-ci/ci/bbl-tasks/extract_bbl_environment.yml
-    input_mapping:
-      capi-ci-private: updated-bbl-state
-    params:
-      ENV_NAME: xena-mysql
   - task: update-cloud-config
     file: capi-ci/ci/bosh/update_cloud_config.yml
     input_mapping:
@@ -2441,12 +2435,6 @@ jobs:
       params:
         repository: updated-bbl-state
         rebase: true
-  - task: extract-bbl-environment
-    file: capi-ci/ci/bbl-tasks/extract_bbl_environment.yml
-    input_mapping:
-      capi-ci-private: updated-bbl-state
-    params:
-      ENV_NAME: gabrielle-postgres
   - task: update-cloud-config
     file: capi-ci/ci/bosh/update_cloud_config.yml
     input_mapping:
@@ -2796,12 +2784,6 @@ jobs:
       params:
         repository: updated-bbl-state
         rebase: true
-  - task: extract-bbl-environment
-    file: capi-ci/ci/bbl-tasks/extract_bbl_environment.yml
-    input_mapping:
-      capi-ci-private: updated-bbl-state
-    params:
-      ENV_NAME: rey-gcs-storage
   - task: create-dns-record
     attempts: 5
     file: capi-ci/ci/bbl-tasks/create-dns-record.yml
