@@ -87,10 +87,6 @@ resource_types:
   type: docker-image
   source:
     repository: ljfranklin/terraform-resource
-- name: bosh2-deployment
-  type: docker-image
-  source:
-    repository: cloudfoundry/bosh-deployment-resource
 - name: gcs
   type: docker-image
   source:
@@ -447,11 +443,6 @@ resources:
     branch: main
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/capi-ci-private.git
-
-- name: elsa-deployment
-  type: bosh2-deployment
-  source:
-    skip_check: true
 
 - name: elsa-aws-storage-terraform
   type: terraform
@@ -1591,22 +1582,6 @@ jobs:
       release-tarball: capi-release-tarball
     params:
       BBL_STATE_DIR: "elsa"
-  - task: elsa-linux-stemcell-upload
-    file: cf-deployment-concourse-tasks/bosh-upload-stemcell-from-cf-deployment/task.yml
-    input_mapping:
-      bbl-state: elsa-bbl-state
-    params:
-      BBL_STATE_DIR: "elsa"
-  - task: elsa-windows-stemcell-upload
-    file: capi-ci/ci/bosh/upload-windows-stemcell-for-gcp.yml
-    input_mapping:
-      bbl-state: elsa-bbl-state
-    params:
-      BBL_STATE_DIR: "elsa"
-  - task: extract-bbl-environment
-    file: capi-ci/ci/bbl-tasks/extract_bbl_environment.yml
-    params:
-      ENV_NAME: elsa
   - put: elsa-aws-storage-terraform
     params:
       env_name: elsa
@@ -1616,56 +1591,75 @@ jobs:
         aws_secret_key: ((wasabi_aws_secret_key))
         cdn_key_pair_id: ((wasabi_cdn_key_pair_id))
         cdn_private_key: ((wasabi_cdn_private_key))
-  - put: elsa-deployment
+  - task: create-elsa-vars-files
+    file: capi-ci/ci/bosh/create-elsa-vars-files.yml
     params:
-      source_file: environment/metadata
-      manifest: cf-deployment/cf-deployment.yml
-      vars:
-        system_domain: *elsa-domain
-        new_relic_license_key: ((new_relic_license_key))
-        prometheus_password: ((prometheus_password))
-      vars_files:
-      - elsa-aws-storage-terraform/metadata
-      - environment/metadata # used by prometheus bosh exporter
-      - capi-ci-private/elsa/certs/router/certs.yml
-      ops_files:
-      # Add isolation segment diego cell for CATs
-      - cf-deployment/operations/test/add-persistent-isolation-segment-diego-cell.yml
-      # Add windows diego cell
-      - cf-deployment/operations/windows2019-cell.yml
-      - cf-deployment/operations/use-online-windows2019fs.yml
-      # Skip ssl validation on that cell
-      - capi-ci/cf-deployment-operations/skip-cert-verify-on-windows-cell.yml
-      # Use rotatable database encryption keys
-      - capi-ci/cf-deployment-operations/rotate-cc-database-key/add-database-encryption-keys.yml
-      # Scale up cells to prevent apps piling onto one cell during rolling deploy.
-      # See https://github.com/cloudfoundry/capi-ci/commit/4f22dc4721aa5ed3917e84c4e0ce9f99d732a920 for details
-      - capi-ci/cf-deployment-operations/scale-up-cells.yml
-      # Scale up generic worker processes due to load by CATS, BARAS, SITS, etc.
-      - capi-ci/cf-deployment-operations/performance/scale-generic-worker-processes.yml
-      # Use latest CAPI release
-      - capi-ci/cf-deployment-operations/use-latest-capi.yml
-      # Use S3 as blobstore
-      - capi-ci/cf-deployment-operations/use-s3-and-cdn-storage.yml
-      # Metrics
-      - capi-ci/cf-deployment-operations/add-new-relic.yml
-      - capi-ci/cf-deployment-operations/add-prometheus.yml
-      - capi-ci/cf-deployment-operations/add-prometheus-capi-homepage.yml
-      # Disable skip-cert-verify because this env has a real cert
-      - capi-ci/cf-deployment-operations/disable-skip-cert-verify.yml
-      - capi-ci/cf-deployment-operations/disable-skip-cert-verify-iso-seg.yml
-      # Increase logging level to include all CCDB queries
-      - capi-ci/cf-deployment-operations/log-all-sequel-activity.yml
-      # Disable GETs against UAA in anticipation of it being removed #148914087
-      - capi-ci/cf-deployment-operations/temporary/disable-uaa-get-requests.yml
-      # Open ASGS for apps to use Credhub
-      - capi-ci/cf-deployment-operations/seed-credhub-asg.yml
-      # Use clustered PXC MySQL as our Database
-      - cf-deployment/operations/scale-database-cluster.yml
-      # Credhub requires UAA auth so we must allow containers to talk to UAA
-      - capi-ci/cf-deployment-operations/seed-uaa-asg.yml
-      # enable telemetry emissions
-      - capi-ci-private/elsa/telemetry.yml
+      NEW_RELIC_LICENSE_KEY: ((new_relic_license_key))
+      PROMETHEUS_PASSWORD: ((prometheus_password))
+  - task: collect-ops-files
+    file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
+    input_mapping:
+      base-ops-files: cf-deployment
+      new-ops-files: capi-ci
+    params:
+      NEW_OPS_FILES: &elsa-ops-files-to-collect |
+        cf-deployment-operations/skip-cert-verify-on-windows-cell.yml
+        cf-deployment-operations/rotate-cc-database-key/add-database-encryption-keys.yml
+        cf-deployment-operations/scale-up-cells.yml
+        cf-deployment-operations/performance/scale-generic-worker-processes.yml
+        cf-deployment-operations/use-latest-capi.yml
+        cf-deployment-operations/use-s3-and-cdn-storage.yml
+        cf-deployment-operations/add-new-relic.yml
+        cf-deployment-operations/add-prometheus.yml
+        cf-deployment-operations/add-prometheus-capi-homepage.yml
+        cf-deployment-operations/disable-skip-cert-verify.yml
+        cf-deployment-operations/disable-skip-cert-verify-iso-seg.yml
+        cf-deployment-operations/log-all-sequel-activity.yml
+        cf-deployment-operations/temporary/disable-uaa-get-requests.yml
+        cf-deployment-operations/seed-credhub-asg.yml
+        cf-deployment-operations/seed-uaa-asg.yml
+  - task: collect-private-ops-files
+    file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
+    input_mapping:
+      base-ops-files: collected-ops-files
+      new-ops-files: capi-ci-private
+    params:
+      NEW_OPS_FILES: elsa/telemetry.yml
+  - task: deploy
+    file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
+    input_mapping:
+      bbl-state: capi-ci-private
+      ops-files: collected-ops-files
+      vars-files: capi-ci-private-with-extra
+    params:
+      BBL_STATE_DIR: "elsa"
+      SYSTEM_DOMAIN: *elsa-domain
+      OPS_FILES: &elsa-ops-files-for-deploy |
+        base-ops-files/base-ops-files/operations/test/add-persistent-isolation-segment-diego-cell.yml
+        base-ops-files/base-ops-files/operations/windows2019-cell.yml
+        base-ops-files/base-ops-files/operations/use-online-windows2019fs.yml
+        base-ops-files/skip-cert-verify-on-windows-cell.yml
+        base-ops-files/add-database-encryption-keys.yml
+        base-ops-files/scale-up-cells.yml
+        base-ops-files/scale-generic-worker-processes.yml
+        base-ops-files/use-latest-capi.yml
+        base-ops-files/use-s3-and-cdn-storage.yml
+        base-ops-files/add-new-relic.yml
+        base-ops-files/add-prometheus.yml
+        base-ops-files/add-prometheus-capi-homepage.yml
+        base-ops-files/disable-skip-cert-verify.yml
+        base-ops-files/disable-skip-cert-verify-iso-seg.yml
+        base-ops-files/log-all-sequel-activity.yml
+        base-ops-files/disable-uaa-get-requests.yml
+        base-ops-files/seed-credhub-asg.yml
+        base-ops-files/base-ops-files/operations/scale-database-cluster.yml
+        base-ops-files/seed-uaa-asg.yml
+        telemetry.yml
+      VARS_FILES: |
+        certs.yml
+        s3-terraform-metadata.json
+        bbl-state-for-prometheus.json
+        extra-vars.yml
   - task: updated-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
     input_mapping:
@@ -2096,10 +2090,6 @@ jobs:
     params:
       ENVIRONMENT: elsa
       ON_OR_OFF: off
-  - task: extract-bbl-environment
-    file: capi-ci/ci/bbl-tasks/extract_bbl_environment.yml
-    params:
-      ENV_NAME: elsa
   - put: elsa-aws-storage-terraform
     params:
       env_name: elsa
@@ -2109,58 +2099,59 @@ jobs:
         aws_secret_key: ((wasabi_aws_secret_key))
         cdn_key_pair_id: ((wasabi_cdn_key_pair_id))
         cdn_private_key: ((wasabi_cdn_private_key))
-  # deploy elsa with only one MySQL VM
-  - put: elsa-deployment
+  - task: create-elsa-vars-files
+    file: capi-ci/ci/bosh/create-elsa-vars-files.yml
     params:
-      fix: true
-      recreate: true
-      source_file: environment/metadata
-      manifest: cf-deployment/cf-deployment.yml
-      vars:
-        system_domain: *elsa-domain
-        new_relic_license_key: ((new_relic_license_key))
-        prometheus_password: ((prometheus_password))
-      vars_files:
-      - elsa-aws-storage-terraform/metadata
-      - environment/metadata # used by prometheus bosh exporter
-      - capi-ci-private/elsa/certs/router/certs.yml
-      # use all the same ops files except scale-database-cluster.yml
-      ops_files:
-      # Add isolation segment diego cell for CATs
-      - cf-deployment/operations/test/add-persistent-isolation-segment-diego-cell.yml
-      # Add windows diego cell
-      - cf-deployment/operations/windows2019-cell.yml
-      - cf-deployment/operations/use-online-windows2019fs.yml
-      # Skip ssl validation on that cell
-      - capi-ci/cf-deployment-operations/skip-cert-verify-on-windows-cell.yml
-      # Use rotatable database encryption keys
-      - capi-ci/cf-deployment-operations/rotate-cc-database-key/add-database-encryption-keys.yml
-      # Scale up cells to prevent apps piling onto one cell during rolling deploy.
-      # See https://github.com/cloudfoundry/capi-ci/commit/4f22dc4721aa5ed3917e84c4e0ce9f99d732a920 for details
-      - capi-ci/cf-deployment-operations/scale-up-cells.yml
-      # Scale up generic worker processes due to load by CATS, BARAS, SITS, etc.
-      - capi-ci/cf-deployment-operations/performance/scale-generic-worker-processes.yml
-      # Use latest CAPI release
-      - capi-ci/cf-deployment-operations/use-latest-capi.yml
-      # Use S3 as blobstore
-      - capi-ci/cf-deployment-operations/use-s3-and-cdn-storage.yml
-      # Metrics
-      - capi-ci/cf-deployment-operations/add-new-relic.yml
-      - capi-ci/cf-deployment-operations/add-prometheus.yml
-      - capi-ci/cf-deployment-operations/add-prometheus-capi-homepage.yml
-      # Disable skip-cert-verify because this env has a real cert
-      - capi-ci/cf-deployment-operations/disable-skip-cert-verify.yml
-      - capi-ci/cf-deployment-operations/disable-skip-cert-verify-iso-seg.yml
-      # Increase logging level to include all CCDB queries
-      - capi-ci/cf-deployment-operations/log-all-sequel-activity.yml
-      # Disable GETs against UAA in anticipation of it being removed #148914087
-      - capi-ci/cf-deployment-operations/temporary/disable-uaa-get-requests.yml
-      # Open ASGS for apps to use Credhub
-      - capi-ci/cf-deployment-operations/seed-credhub-asg.yml
-      # Credhub requires UAA auth so we must allow containers to talk to UAA
-      - capi-ci/cf-deployment-operations/seed-uaa-asg.yml
-      # enable telemetry emissions
-      - capi-ci-private/elsa/telemetry.yml
+      NEW_RELIC_LICENSE_KEY: ((new_relic_license_key))
+      PROMETHEUS_PASSWORD: ((prometheus_password))
+  - task: collect-ops-files
+    file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
+    input_mapping:
+      base-ops-files: cf-deployment
+      new-ops-files: capi-ci
+    params:
+      NEW_OPS_FILES: *elsa-ops-files-to-collect
+  - task: collect-private-ops-files
+    file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
+    input_mapping:
+      base-ops-files: collected-ops-files
+      new-ops-files: capi-ci-private
+    params:
+      NEW_OPS_FILES: elsa/telemetry.yml
+  - task: deploy
+    file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
+    input_mapping:
+      bbl-state: capi-ci-private
+      ops-files: collected-ops-files
+      vars-files: capi-ci-private-with-extra
+    params:
+      BBL_STATE_DIR: "elsa"
+      SYSTEM_DOMAIN: *elsa-domain
+      OPS_FILES: |
+        base-ops-files/base-ops-files/operations/test/add-persistent-isolation-segment-diego-cell.yml
+        base-ops-files/base-ops-files/operations/windows2019-cell.yml
+        base-ops-files/base-ops-files/operations/use-online-windows2019fs.yml
+        base-ops-files/skip-cert-verify-on-windows-cell.yml
+        base-ops-files/add-database-encryption-keys.yml
+        base-ops-files/scale-up-cells.yml
+        base-ops-files/scale-generic-worker-processes.yml
+        base-ops-files/use-latest-capi.yml
+        base-ops-files/use-s3-and-cdn-storage.yml
+        base-ops-files/add-new-relic.yml
+        base-ops-files/add-prometheus.yml
+        base-ops-files/add-prometheus-capi-homepage.yml
+        base-ops-files/disable-skip-cert-verify.yml
+        base-ops-files/disable-skip-cert-verify-iso-seg.yml
+        base-ops-files/log-all-sequel-activity.yml
+        base-ops-files/disable-uaa-get-requests.yml
+        base-ops-files/seed-credhub-asg.yml
+        base-ops-files/seed-uaa-asg.yml
+        telemetry.yml
+      VARS_FILES: |
+        certs.yml
+        s3-terraform-metadata.json
+        bbl-state-for-prometheus.json
+        extra-vars.yml
   - task: delete-certs
     file: capi-ci/ci/bbl-tasks/delete-certs.yml
     params:
@@ -2180,6 +2171,29 @@ jobs:
       params:
         repository: updated-bbl-state
         rebase: true
+  - task: create-elsa-vars-files
+    file: capi-ci/ci/bosh/create-elsa-vars-files.yml
+    input_mapping:
+      capi-ci-private: updated-bbl-state
+    params:
+      NEW_RELIC_LICENSE_KEY: ((new_relic_license_key))
+      PROMETHEUS_PASSWORD: ((prometheus_password))
+  - task: deploy
+    file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
+    input_mapping:
+      bbl-state: updated-bbl-state
+      ops-files: collected-ops-files
+      vars-files: capi-ci-private-with-extra
+    params:
+      BBL_STATE_DIR: "elsa"
+      SYSTEM_DOMAIN: *elsa-domain
+      OPS_FILES: *elsa-ops-files-for-deploy
+      VARS_FILES: |
+        certs.yml
+        s3-terraform-metadata.json
+        bbl-state-for-prometheus.json
+        extra-vars.yml
+      BOSH_DEPLOY_ARGS: "--fix"
   - task: enable-resurrection
     file: capi-ci/ci/bbl-tasks/update-resurrection.yml
     input_mapping:
@@ -2187,65 +2201,6 @@ jobs:
     params:
       ENVIRONMENT: elsa
       ON_OR_OFF: on
-  - task: extract-bbl-environment
-    file: capi-ci/ci/bbl-tasks/extract_bbl_environment.yml
-    input_mapping:
-      capi-ci-private: updated-bbl-state
-    params:
-      ENV_NAME: elsa
-  # deploy elsa normally to restore database cluster
-  - put: elsa-deployment
-    params:
-      source_file: environment/metadata
-      manifest: cf-deployment/cf-deployment.yml
-      vars:
-        system_domain: *elsa-domain
-        new_relic_license_key: ((new_relic_license_key))
-        prometheus_password: ((prometheus_password))
-      vars_files:
-      - elsa-aws-storage-terraform/metadata
-      - environment/metadata # used by prometheus bosh exporter
-      - capi-ci-private/elsa/certs/router/certs.yml
-      ops_files:
-      # Add isolation segment diego cell for CATs
-      - cf-deployment/operations/test/add-persistent-isolation-segment-diego-cell.yml
-      # Add windows diego cell
-      - cf-deployment/operations/windows2019-cell.yml
-      - cf-deployment/operations/use-online-windows2019fs.yml
-      # Skip ssl validation on that cell
-      - capi-ci/cf-deployment-operations/skip-cert-verify-on-windows-cell.yml
-      # Use rotatable database encryption keys
-      - capi-ci/cf-deployment-operations/rotate-cc-database-key/add-database-encryption-keys.yml
-      # Scale up cells to prevent apps piling onto one cell during rolling deploy.
-      # See https://github.com/cloudfoundry/capi-ci/commit/4f22dc4721aa5ed3917e84c4e0ce9f99d732a920 for details
-      - capi-ci/cf-deployment-operations/scale-up-cells.yml
-      # Scale up generic worker processes due to load by CATS, BARAS, SITS, etc.
-      - capi-ci/cf-deployment-operations/performance/scale-generic-worker-processes.yml
-      # Use latest CAPI release
-      - capi-ci/cf-deployment-operations/use-latest-capi.yml
-      # Use S3 as blobstore
-      - capi-ci/cf-deployment-operations/use-s3-and-cdn-storage.yml
-      # Metrics
-      - capi-ci/cf-deployment-operations/add-new-relic.yml
-      - capi-ci/cf-deployment-operations/add-prometheus.yml
-      - capi-ci/cf-deployment-operations/add-prometheus-capi-homepage.yml
-      # Disable skip-cert-verify because this env has a real cert
-      - capi-ci/cf-deployment-operations/disable-skip-cert-verify.yml
-      - capi-ci/cf-deployment-operations/disable-skip-cert-verify-iso-seg.yml
-      # Increase logging level to include all CCDB queries
-      - capi-ci/cf-deployment-operations/log-all-sequel-activity.yml
-      # Disable GETs against UAA in anticipation of it being removed #148914087
-      - capi-ci/cf-deployment-operations/temporary/disable-uaa-get-requests.yml
-      # Open ASGS for apps to use Credhub
-      - capi-ci/cf-deployment-operations/seed-credhub-asg.yml
-      # Use clustered PXC MySQL as our Database
-      - cf-deployment/operations/scale-database-cluster.yml
-      # Credhub requires UAA auth so we must allow containers to talk to UAA
-      - capi-ci/cf-deployment-operations/seed-uaa-asg.yml
-      # enable telemetry emissions
-      - capi-ci-private/elsa/telemetry.yml
-      fix: true
-      recreate: true
 
 - name: rotate-certs-mulan
   serial: true
