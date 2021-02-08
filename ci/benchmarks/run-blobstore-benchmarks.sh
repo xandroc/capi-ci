@@ -12,21 +12,10 @@ workspace_dir="$( cd "${script_dir}/../../.." && pwd )"
 cloud_controller_dir="${workspace_dir}/cloud_controller_ng"
 bbl_vars_file="${workspace_dir}/environment/metadata"
 
-BOSH_ENVIRONMENT="$(jq -e -r .target "${bbl_vars_file}")"
-BOSH_CLIENT="$(jq -e -r .client "${bbl_vars_file}")"
-BOSH_CLIENT_SECRET="$(jq -e -r .client_secret "${bbl_vars_file}")"
-BOSH_CA_CERT="$(jq -e -r .ca_cert "${bbl_vars_file}")"
-BOSH_GW_USER="$(jq -e -r .gw_user "${bbl_vars_file}")"
-BOSH_GW_HOST="$(jq -e -r .gw_host "${bbl_vars_file}")"
-BOSH_GW_PRIVATE_KEY_CONTENTS="$(jq -e -r .gw_private_key "${bbl_vars_file}")"
+JUMPBOX_URL="$(jq -e -r .jumpbox_url "${bbl_vars_file}")" # jumpbox address, includes port which bbl jumpbox-address doesn't
+JUMPBOX_SSH_KEY="$(jq -e -r .jumpbox_ssh_key "${bbl_vars_file}")" # bbl ssh-key
 
-JUMPBOX_URL="$(jq -e -r .jumpbox_url "${bbl_vars_file}")"
-JUMPBOX_SSH_KEY="$(jq -e -r .jumpbox_ssh_key "${bbl_vars_file}")"
-JUMPBOX_USERNAME="$(jq -e -r .jumpbox_username "${bbl_vars_file}")"
-
-export BOSH_ENVIRONMENT BOSH_CLIENT BOSH_CLIENT_SECRET BOSH_CA_CERT \
-  BOSH_GW_USER BOSH_GW_HOST BOSH_GW_PRIVATE_KEY_CONTENTS \
-  JUMPBOX_URL JUMPBOX_SSH_KEY JUMPBOX_USERNAME
+export JUMPBOX_URL JUMPBOX_SSH_KEY
 
 green="$(tput -T xterm-256color setaf 2)"
 reset="$(tput -T xterm-256color sgr0)"
@@ -44,7 +33,7 @@ write_ssh_key() {
   echo "${green}Writing BOSH GW SSH key...${reset}"
 
   key_path="${tmp_dir}/bosh.pem"
-  echo "${BOSH_GW_PRIVATE_KEY_CONTENTS}" > "${key_path}"
+  echo "${JUMPBOX_SSH_KEY}" > "${key_path}"
   chmod 600 "${key_path}"
   export BOSH_GW_PRIVATE_KEY="${key_path}"
 }
@@ -52,7 +41,7 @@ write_ssh_key() {
 start_background_ssh_tunnel() {
   echo "${green}Starting background SSH tunnel as SOCKS Proxy...${reset}"
   ssh_jumpbox_url=$(echo "${JUMPBOX_URL}" | cut -d':' -f1)
-  ssh -o 'StrictHostKeyChecking no' -o 'UserKnownHostsFile /dev/null' -D ${tunnel_port} -fNC ${JUMPBOX_USERNAME}@${ssh_jumpbox_url} -i ${JUMPBOX_PRIVATE_KEY}
+  ssh -o 'StrictHostKeyChecking no' -o 'UserKnownHostsFile /dev/null' -D ${tunnel_port} -fNC jumpbox@${ssh_jumpbox_url} -i ${JUMPBOX_PRIVATE_KEY}
 }
 
 kill_background_ssh_tunnel() {

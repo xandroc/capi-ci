@@ -9,7 +9,7 @@ image_resource:
 inputs:
   - name: capi-ci
   - name: drats
-  - name: environment
+  # - name: environment
   - name: bbr-binary-release
   - name: capi-ci-private
 
@@ -17,10 +17,10 @@ run:
   path: capi-ci/ci/drats/run-drats.sh
 
 params:
-  CF_API_URL: ""
-  CF_DEPLOYMENT_NAME: ""
+  CF_API_URL: "https://api.xena-mysql.capi.land"
+  CF_DEPLOYMENT_NAME: "cf"
   CF_ADMIN_USERNAME: ""
   BBR_BUILD_PATH: ""
   GOPATH: ""
-  SKIP_SUITE_NAME: ""
-  BBL_STATE_DIR:
+  SKIP_SUITE_NAME: "cf-nfsbroker|cf-credhub|cf-smbbroker"
+  BBL_STATE_DIR: "xena-mysql"
