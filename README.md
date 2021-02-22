@@ -2,7 +2,7 @@
 
 Hello, this is the capi team's ci repo. It houses concourse configuration settings for our ci environments.
 
-Check it out! https://capi.ci.cf-app.com/ (old) and https://ci.cake.capi.land/ (new)
+Check it out! https://ci.cake.capi.land/
 
 ## Environments
 
