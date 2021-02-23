@@ -17,7 +17,7 @@ popd
 pushd capi-release
   source .envrc
 
-  go install github.com/onsi/ginkgo/ginkgo
+  go install github.com/onsi/ginkgo/ginkgo@latest
 
   pushd src/code.cloudfoundry.org
     pushd cc-uploader
