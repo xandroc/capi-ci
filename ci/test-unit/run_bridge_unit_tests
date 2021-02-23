@@ -13,7 +13,8 @@ popd
 pushd tps
   TPS_SHA=$(git rev-parse HEAD)
 popd
-
+# Temporarily set go mod detection to auto until we convert projects to go mods
+go env -w GO111MODULE=auto
 pushd capi-release
   source .envrc
 
