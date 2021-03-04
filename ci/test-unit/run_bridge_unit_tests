@@ -18,7 +18,7 @@ go env -w GO111MODULE=off
 pushd capi-release
   source .envrc
 
-  go install github.com/onsi/ginkgo/ginkgo@latest
+  go install github.com/onsi/ginkgo/ginkgo
 
   pushd src/code.cloudfoundry.org
     pushd cc-uploader
