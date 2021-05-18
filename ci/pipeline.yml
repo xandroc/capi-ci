@@ -194,16 +194,6 @@ resources:
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/api-docs.git
 
-- name: api-docs-production-deploy
-  type: cf
-  source:
-    api: https://api.run.pivotal.io
-    username: ((cf_api_docs_username))
-    password: ((cf_api_docs_password))
-    organization: cfcommunity
-    space: api
-    skip_cert_check: false
-
 - name: capi-release-tarball
   type: s3
   source:
@@ -1780,13 +1770,6 @@ jobs:
       repository: updated-api-docs/api-docs
       branch: main
       rebase: true
-  - put: api-docs-production-deploy
-    params:
-      manifest: updated-api-docs/api-docs/manifest-sample.yml
-      use_rolling_app_deployment: false
-      # Uncomment the following lines if `use_rolling_app_deployment` is true
-      # current_app_name: apidocs
-      # path: updated-api-docs/api-docs
 
 - name: bump-cc-v3-api
   serial: true
