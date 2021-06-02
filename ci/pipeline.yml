@@ -505,7 +505,7 @@ resources:
 - name: drats
   type: git
   source:
-    branch: master
+    branch: main
     uri: https://github.com/cloudfoundry-incubator/disaster-recovery-acceptance-tests
 
 jobs:
