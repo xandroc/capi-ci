@@ -71,6 +71,7 @@ fi
 
 echo "Running DRATs..."
 pushd "${drats_dir}" > /dev/null
+  go env -w GO111MODULE=on
   ./scripts/_run_acceptance_tests.sh
 popd > /dev/null
 
