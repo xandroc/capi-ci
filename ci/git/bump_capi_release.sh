@@ -13,7 +13,7 @@ pushd diego-release/src/code.cloudfoundry.org/bbs
 popd
 
 pushd diego-release/src/code.cloudfoundry.org
-  LAGER_SHA=$(cat go.mod | grep 'code.cloudfoundry.org/lager =>') | sed 's/.*-//'
+  LAGER_SHA=$(cat go.mod | grep 'code.cloudfoundry.org/lager =>' | sed 's/.*-//' )
 popd
 
 pushd diego-release/src/code.cloudfoundry.org/locket
