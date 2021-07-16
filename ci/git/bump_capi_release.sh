@@ -12,8 +12,8 @@ pushd diego-release/src/code.cloudfoundry.org/bbs
   BBS_SHA=$(git rev-parse HEAD)
 popd
 
-pushd diego-release/src/code.cloudfoundry.org/lager
-  LAGER_SHA=$(git rev-parse HEAD)
+pushd diego-release/src/code.cloudfoundry.org
+  LAGER_SHA=$(cat go.mod | grep 'code.cloudfoundry.org/lager =>') | sed 's/.*-//'
 popd
 
 pushd diego-release/src/code.cloudfoundry.org/locket
