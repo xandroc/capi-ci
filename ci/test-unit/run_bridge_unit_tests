@@ -13,8 +13,12 @@ popd
 pushd tps
   TPS_SHA=$(git rev-parse HEAD)
 popd
-# Temporarily set go mod detection to auto until we convert projects to go mods
-go env -w GO111MODULE=off
+
+# building locket for TPS watcher tests
+pushd diego-release/src/code.cloudfoundry.org
+  go build -o /go/bin/locket ./locket/cmd/locket
+popd
+
 pushd capi-release
   source .envrc
 
@@ -24,14 +28,13 @@ pushd capi-release
     pushd cc-uploader
       git fetch
       git checkout "${CC_UPLOADER_SHA}"
+      ginkgo -r -keepGoing -p -trace -randomizeAllSpecs -progress --race .
     popd
 
     pushd tps
       git fetch
       git checkout "${TPS_SHA}"
+      ginkgo -r -keepGoing -p -trace -randomizeAllSpecs -progress --race .
     popd
-
-    ginkgo -r -keepGoing -p -trace -randomizeAllSpecs -progress --race \
-        cc-uploader tps
   popd
 popd

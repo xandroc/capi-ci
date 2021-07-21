@@ -652,6 +652,7 @@ jobs:
       params:
         submodules:
         - src/code.cloudfoundry.org/bbs
+        - src/code.cloudfoundry.org/locket
   - task: run-bridge-unit-tests
     file: capi-ci/ci/test-unit/run_bridge_unit_tests.yml
 
