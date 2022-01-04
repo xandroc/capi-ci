@@ -33,7 +33,6 @@ reset="$(tput -T xterm-256color sgr0)"
 tmp_dir="$( mktemp -d /tmp/capi-migrations.XXXXXXXXXX )"
 
 tunnel_port="8080"
-proxychains_conf="${tmp_dir}/proxychains.conf"
 
 setup_bbl_environment() {
   pushd "capi-ci-private/${BBL_STATE_DIR}"
@@ -73,20 +72,6 @@ start_background_ssh_tunnel() {
   ssh -o 'StrictHostKeyChecking no' -o 'UserKnownHostsFile /dev/null' -D ${tunnel_port} -fNC ${JUMPBOX_USERNAME}@${ssh_jumpbox_url} -i ${JUMPBOX_PRIVATE_KEY}
 }
 
-write_proxychains_config() {
-  echo "${green}Writing proxychains config file...${reset}"
-
-  cat << EOF > "${proxychains_conf}"
-strict_chain
-proxy_dns
-tcp_read_time_out 15000
-tcp_connect_time_out 8000
-
-[ProxyList]
-socks5 	127.0.0.1 ${tunnel_port}
-EOF
-}
-
 kill_background_ssh_tunnel() {
   echo "${green}Killing SSH tunnel...${reset}"
 
@@ -114,27 +99,8 @@ cache_ip_for_hostname() {
 
 run_migrations() {
   echo "${green}Applying latest migrations to deployment...${reset}"
-  pushd "${cloud_controller_dir}" > /dev/null
-    set +e
-    for i in {1..3}; do
-      bundle install --without development test
-      exit_code="$?"
-
-      if [ "${exit_code}" == "0" ]; then
-        break
-      fi
-    done
-    set -e
-
-    if [ "${exit_code}" != "0" ]; then
-      echo "ERROR: Failed to run bundle, exiting..."
-      exit "${exit_code}"
-    fi
-
-    # proxychains forwards all TCP connections over the SSH SOCKS Proxy
-    proxychains4 -f "${proxychains_conf}" bundle exec rake db:migrate
-    proxychains4 -f "${proxychains_conf}" bundle exec rake db:ensure_migrations_are_current
-  popd > /dev/null
+  bosh ssh -d "${BOSH_DEPLOYMENT_NAME}" "${BOSH_API_INSTANCE}" "cd /var/vcap/packages/cloud_controller_ng/cloud_controller_ng; source /var/vcap/jobs/cloud_controller_ng/bin/ruby_version.sh; sudo bundle exec rake db:migrate"
+  bosh ssh -d "${BOSH_DEPLOYMENT_NAME}" "${BOSH_API_INSTANCE}" "cd /var/vcap/packages/cloud_controller_ng/cloud_controller_ng; source /var/vcap/jobs/cloud_controller_ng/bin/ruby_version.sh; sudo bundle exec rake db:ensure_migrations_are_current"
 }
 
 cleanup() {
@@ -148,7 +114,6 @@ main() {
   write_ssh_key
   download_cloud_controller_config
   start_background_ssh_tunnel
-  write_proxychains_config
 
   trap 'cleanup' EXIT
 
