@@ -75,7 +75,7 @@ provider "aws" {
 data "aws_caller_identity" "current" {
 }
 
-resource "aws_s3_bucket" "resource_pool" {
+resource "aws_s3_bucket_acl" "resource_pool" {
   bucket = "${var.env_name}-cc-resource-pool"
   acl    = "private"
 
@@ -84,7 +84,7 @@ resource "aws_s3_bucket" "resource_pool" {
   }
 }
 
-resource "aws_s3_bucket" "droplets" {
+resource "aws_s3_bucket_acl" "droplets" {
   bucket = "${var.env_name}-cc-droplets"
   acl    = "private"
 
@@ -93,7 +93,7 @@ resource "aws_s3_bucket" "droplets" {
   }
 }
 
-resource "aws_s3_bucket" "packages" {
+resource "aws_s3_bucket_acl" "packages" {
   bucket = "${var.env_name}-cc-packages"
   acl    = "private"
 
@@ -102,7 +102,7 @@ resource "aws_s3_bucket" "packages" {
   }
 }
 
-resource "aws_s3_bucket" "buildpacks" {
+resource "aws_s3_bucket_acl" "buildpacks" {
   bucket = "${var.env_name}-cc-buildpacks"
   acl    = "private"
 
