@@ -2141,7 +2141,6 @@ jobs:
       OPS_FILES: |
         base-ops-files/bosh-lite.yml
         base-ops-files/bosh-lite-runc.yml
-        base-ops-files/gcp/bosh-lite-vm-type.yml
         increase-persistent-disk.yml
     ensure:
       put: xena-mysql-bbl-state
@@ -2223,7 +2222,6 @@ jobs:
       SKIP_LB_CREATION: true
       OPS_FILES: |
         base-ops-files/bosh-lite.yml
-        base-ops-files/gcp/bosh-lite-vm-type.yml
         increase-persistent-disk.yml
     ensure:
       put: gabrielle-postgres-bbl-state
