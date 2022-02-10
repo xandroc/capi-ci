@@ -75,9 +75,21 @@ provider "aws" {
 data "aws_caller_identity" "current" {
 }
 
-resource "aws_s3_bucket_acl" "resource_pool" {
+resource "aws_s3_bucket" "resource_pool" {
   bucket = "${var.env_name}-cc-resource-pool"
+
+  tags = {
+    Name = var.env_name
+  }
+}
+
+resource "aws_s3_bucket_acl" "resource_pool" {
+  bucket = aws_s3_bucket.resource_pool.id
   acl    = "private"
+}
+
+resource "aws_s3_bucket" "droplets" {
+  bucket = "${var.env_name}-cc-droplets"
 
   tags = {
     Name = var.env_name
@@ -85,8 +97,12 @@ resource "aws_s3_bucket_acl" "resource_pool" {
 }
 
 resource "aws_s3_bucket_acl" "droplets" {
-  bucket = "${var.env_name}-cc-droplets"
+  bucket = aws_s3_bucket.droplets.id
   acl    = "private"
+}
+
+resource "aws_s3_bucket" "packages" {
+  bucket = "${var.env_name}-cc-packages"
 
   tags = {
     Name = var.env_name
@@ -94,8 +110,12 @@ resource "aws_s3_bucket_acl" "droplets" {
 }
 
 resource "aws_s3_bucket_acl" "packages" {
-  bucket = "${var.env_name}-cc-packages"
+  bucket = aws_s3_bucket.packages.id
   acl    = "private"
+}
+
+resource "aws_s3_bucket" "buildpacks" {
+  bucket = "${var.env_name}-cc-buildpacks"
 
   tags = {
     Name = var.env_name
@@ -103,12 +123,8 @@ resource "aws_s3_bucket_acl" "packages" {
 }
 
 resource "aws_s3_bucket_acl" "buildpacks" {
-  bucket = "${var.env_name}-cc-buildpacks"
+  bucket = aws_s3_bucket.buildpacks.id
   acl    = "private"
-
-  tags = {
-    Name = var.env_name
-  }
 }
 
 resource "aws_cloudfront_origin_access_identity" "origin_access_identity" {
