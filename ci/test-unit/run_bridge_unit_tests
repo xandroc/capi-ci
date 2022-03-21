@@ -16,7 +16,7 @@ popd
 
 # building locket for TPS watcher tests
 pushd diego-release/src/code.cloudfoundry.org
-  go build -o /go/bin/locket ./locket/cmd/locket
+  go build -buildvcs=false -o /go/bin/locket ./locket/cmd/locket
 popd
 
 pushd capi-release
