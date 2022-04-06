@@ -1375,7 +1375,6 @@ jobs:
     file: capi-ci/ci/bosh/create-elsa-vars-files.yml
     params:
       NEW_RELIC_LICENSE_KEY: ((new_relic_license_key))
-      PROMETHEUS_PASSWORD: ((prometheus_password))
   - task: collect-ops-files
     file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
     input_mapping:
@@ -1390,8 +1389,6 @@ jobs:
         cf-deployment-operations/use-latest-capi.yml
         cf-deployment-operations/use-s3-and-cdn-storage.yml
         cf-deployment-operations/add-new-relic.yml
-        cf-deployment-operations/add-prometheus.yml
-        cf-deployment-operations/add-prometheus-capi-homepage.yml
         cf-deployment-operations/disable-skip-cert-verify.yml
         cf-deployment-operations/disable-skip-cert-verify-iso-seg.yml
         cf-deployment-operations/log-all-sequel-activity.yml
@@ -1425,8 +1422,6 @@ jobs:
         base-ops-files/use-latest-capi.yml
         base-ops-files/use-s3-and-cdn-storage.yml
         base-ops-files/add-new-relic.yml
-        base-ops-files/add-prometheus.yml
-        base-ops-files/add-prometheus-capi-homepage.yml
         base-ops-files/disable-skip-cert-verify.yml
         base-ops-files/disable-skip-cert-verify-iso-seg.yml
         base-ops-files/log-all-sequel-activity.yml
@@ -1438,7 +1433,6 @@ jobs:
       VARS_FILES: |
         certs.yml
         s3-terraform-metadata.json
-        bbl-state-for-prometheus.json
         extra-vars.yml
   - task: updated-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
@@ -1869,7 +1863,6 @@ jobs:
     file: capi-ci/ci/bosh/create-elsa-vars-files.yml
     params:
       NEW_RELIC_LICENSE_KEY: ((new_relic_license_key))
-      PROMETHEUS_PASSWORD: ((prometheus_password))
   - task: collect-ops-files
     file: cf-deployment-concourse-tasks/collect-ops-files/task.yml
     input_mapping:
@@ -1904,8 +1897,6 @@ jobs:
         base-ops-files/use-latest-capi.yml
         base-ops-files/use-s3-and-cdn-storage.yml
         base-ops-files/add-new-relic.yml
-        base-ops-files/add-prometheus.yml
-        base-ops-files/add-prometheus-capi-homepage.yml
         base-ops-files/disable-skip-cert-verify.yml
         base-ops-files/disable-skip-cert-verify-iso-seg.yml
         base-ops-files/log-all-sequel-activity.yml
@@ -1916,7 +1907,6 @@ jobs:
       VARS_FILES: |
         certs.yml
         s3-terraform-metadata.json
-        bbl-state-for-prometheus.json
         extra-vars.yml
   - task: delete-certs
     file: capi-ci/ci/bbl-tasks/delete-certs.yml
@@ -1943,7 +1933,6 @@ jobs:
       capi-ci-private: updated-bbl-state
     params:
       NEW_RELIC_LICENSE_KEY: ((new_relic_license_key))
-      PROMETHEUS_PASSWORD: ((prometheus_password))
   - task: deploy
     file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
     input_mapping:
@@ -1957,7 +1946,6 @@ jobs:
       VARS_FILES: |
         certs.yml
         s3-terraform-metadata.json
-        bbl-state-for-prometheus.json
         extra-vars.yml
       BOSH_DEPLOY_ARGS: "--fix"
   - task: enable-resurrection
