@@ -1052,6 +1052,7 @@ jobs:
         seed-credhub-asg.yml
         base-ops-files/operations/use-postgres.yml
         base-ops-files/operations/experimental/enable-tls-cloud-controller-postgres.yml
+        base-ops-files/operations/test/speed-up-dynamic-asgs.yml
         disable-credhub-interpolate-service-bindings.yml
         log-all-sequel-activity.yml
         disable-uaa-get-requests.yml
@@ -1204,6 +1205,7 @@ jobs:
         scale-up-dopplers.yml
         scale-generic-worker-processes.yml
         base-ops-files/operations/use-compiled-releases.yml
+        base-ops-files/operations/test/speed-up-dynamic-asgs.yml
         use-latest-capi.yml
         use-nfs-blobstore.yml
         skip-cert-verify.yml
@@ -1429,6 +1431,7 @@ jobs:
         base-ops-files/seed-credhub-asg.yml
         base-ops-files/base-ops-files/operations/scale-database-cluster.yml
         base-ops-files/seed-uaa-asg.yml
+        base-ops-files/operations/test/speed-up-dynamic-asgs.yml
         telemetry.yml
       VARS_FILES: |
         certs.yml
@@ -1584,6 +1587,7 @@ jobs:
         scale-up-dopplers.yml
         scale-generic-worker-processes.yml
         base-ops-files/operations/use-postgres.yml
+        base-ops-files/operations/test/speed-up-dynamic-asgs.yml
         log-all-sequel-activity.yml
         disable-uaa-get-requests.yml
   - task: ensure-api-healthy
