@@ -1430,8 +1430,8 @@ jobs:
         base-ops-files/disable-uaa-get-requests.yml
         base-ops-files/seed-credhub-asg.yml
         base-ops-files/base-ops-files/operations/scale-database-cluster.yml
+        base-ops-files/base-ops-files/operations/test/speed-up-dynamic-asgs.yml
         base-ops-files/seed-uaa-asg.yml
-        base-ops-files/operations/test/speed-up-dynamic-asgs.yml
         telemetry.yml
       VARS_FILES: |
         certs.yml
