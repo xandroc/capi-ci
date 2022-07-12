@@ -341,7 +341,7 @@ resources:
 - name: cf-acceptance-tests
   type: git
   source:
-    branch: release-candidate
+    branch: main
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/cf-acceptance-tests.git
 
