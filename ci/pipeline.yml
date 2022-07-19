@@ -1028,7 +1028,6 @@ jobs:
         cf-deployment-operations/performance/scale-generic-worker-processes.yml
         cf-deployment-operations/seed-credhub-asg.yml
         cf-deployment-operations/disable-credhub-interpolate-service-bindings.yml
-        cf-deployment-operations/log-all-sequel-activity.yml
         cf-deployment-operations/temporary/disable-uaa-get-requests.yml
         cf-deployment-operations/enable-cef-security-event-logging.yml
   - task: deploy
@@ -1054,7 +1053,6 @@ jobs:
         base-ops-files/operations/experimental/enable-tls-cloud-controller-postgres.yml
         base-ops-files/operations/test/speed-up-dynamic-asgs.yml
         disable-credhub-interpolate-service-bindings.yml
-        log-all-sequel-activity.yml
         disable-uaa-get-requests.yml
         enable-cef-security-event-logging.yml
   - task: updated-integration-configs
@@ -1393,7 +1391,6 @@ jobs:
         cf-deployment-operations/add-new-relic.yml
         cf-deployment-operations/disable-skip-cert-verify.yml
         cf-deployment-operations/disable-skip-cert-verify-iso-seg.yml
-        cf-deployment-operations/log-all-sequel-activity.yml
         cf-deployment-operations/temporary/disable-uaa-get-requests.yml
         cf-deployment-operations/seed-credhub-asg.yml
         cf-deployment-operations/seed-uaa-asg.yml
@@ -1426,7 +1423,6 @@ jobs:
         base-ops-files/add-new-relic.yml
         base-ops-files/disable-skip-cert-verify.yml
         base-ops-files/disable-skip-cert-verify-iso-seg.yml
-        base-ops-files/log-all-sequel-activity.yml
         base-ops-files/disable-uaa-get-requests.yml
         base-ops-files/seed-credhub-asg.yml
         base-ops-files/base-ops-files/operations/scale-database-cluster.yml
@@ -1903,7 +1899,6 @@ jobs:
         base-ops-files/add-new-relic.yml
         base-ops-files/disable-skip-cert-verify.yml
         base-ops-files/disable-skip-cert-verify-iso-seg.yml
-        base-ops-files/log-all-sequel-activity.yml
         base-ops-files/disable-uaa-get-requests.yml
         base-ops-files/seed-credhub-asg.yml
         base-ops-files/seed-uaa-asg.yml
