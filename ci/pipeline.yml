@@ -1045,6 +1045,7 @@ jobs:
         skip-cert-verify.yml
         use-latest-capi.yml
         base-ops-files/operations/scale-to-one-az.yml
+        base-ops-files/operations/test/scale-to-one-az-addon-parallel-cats.yml
         scale-up-cells.yml
         scale-up-dopplers.yml
         scale-generic-worker-processes.yml
@@ -1199,6 +1200,7 @@ jobs:
       OPS_FILES: &ripley-ops-files |
         base-ops-files/operations/test/add-persistent-isolation-segment-diego-cell.yml
         base-ops-files/operations/scale-to-one-az.yml
+        base-ops-files/operations/test/scale-to-one-az-addon-parallel-cats.yml
         scale-up-cells.yml
         scale-up-dopplers.yml
         scale-generic-worker-processes.yml
@@ -1578,6 +1580,7 @@ jobs:
         base-ops-files/operations/test/add-persistent-isolation-segment-diego-cell.yml
         skip-cert-verify.yml
         base-ops-files/operations/scale-to-one-az.yml
+        base-ops-files/operations/test/scale-to-one-az-addon-parallel-cats.yml
         scale-up-cells.yml
         scale-up-dopplers.yml
         scale-generic-worker-processes.yml
@@ -2377,6 +2380,7 @@ jobs:
         base-ops-files/operations/use-external-blobstore.yml
         base-ops-files/operations/use-azure-storage-blobstore.yml
         base-ops-files/operations/scale-to-one-az.yml
+        base-ops-files/operations/test/scale-to-one-az-addon-parallel-cats.yml
         base-ops-files/operations/test/speed-up-dynamic-asgs.yml
         use-latest-capi.yml
         skip-cert-verify.yml
@@ -2608,6 +2612,7 @@ jobs:
         base-ops-files/operations/use-external-blobstore.yml
         base-ops-files/operations/use-gcs-blobstore-service-account.yml
         base-ops-files/operations/scale-to-one-az.yml
+        base-ops-files/operations/test/scale-to-one-az-addon-parallel-cats.yml
         base-ops-files/operations/test/speed-up-dynamic-asgs.yml
         use-latest-capi.yml
         skip-cert-verify.yml
