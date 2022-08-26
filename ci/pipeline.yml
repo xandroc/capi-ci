@@ -235,7 +235,7 @@ resources:
 - name: staticfile-app
   type: git
   source:
-    branch: main
+    branch: release-candidate
     uri: git@github.com:cloudfoundry/cf-acceptance-tests.git
     private_key: ((private_key))
     paths:
@@ -341,7 +341,7 @@ resources:
 - name: cf-acceptance-tests
   type: git
   source:
-    branch: main
+    branch: release-candidate
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/cf-acceptance-tests.git
 
