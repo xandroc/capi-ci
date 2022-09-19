@@ -17,5 +17,8 @@ outputs:
   - name: finalized-release-git-repo
   - name: finalized-release-tarball
 
+params:
+  PRIVATE_YAML:
+
 run:
   path: capi-ci/ci/bosh/finalize_release

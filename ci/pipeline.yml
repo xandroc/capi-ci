@@ -1669,6 +1669,8 @@ jobs:
     params: {file: next-version/version}
   - task: finalize-release
     file: capi-ci/ci/bosh/finalize-release.yml
+    params:
+      PRIVATE_YAML: ((capi_release_private_yaml))
   - put: capi-final-releases
     params:
       file: finalized-release-tarball/capi-*.tgz

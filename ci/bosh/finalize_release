@@ -13,8 +13,8 @@ function setup_git_user() {
   popd
 }
 
-function copy_private_yml() {
-  cp ${PWD}/capi-ci-private/ci/private.yml ${PWD}/capi-release/config/private.yml
+function set_private_yml() {
+  echo "${PRIVATE_YAML}" > ${PWD}/capi-release/config/private.yml
 }
 
 function create_release() {
@@ -36,7 +36,7 @@ function export_release() {
 
 function main() {
   setup_git_user
-  copy_private_yml
+  set_private_yml
   create_release
   export_release
 }
