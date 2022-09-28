@@ -63,7 +63,7 @@ resources:
     source:
       branch: main
       uri: git@github.com:pivotal-cf/capi-env-pool.git
-      private_key: ((pcf_osh_lite_pool_deploy_key))
+      private_key: ((pcf_bosh_lite_pool_deploy_key))
   - name: create-bosh-lite-trigger
     type: git
     source:
