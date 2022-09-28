@@ -35,8 +35,8 @@ pushd "${output_dir}" > /dev/null
     # The create-bosh-lite job watches this file for changes
     date +%s > .trigger-bosh-lites-create
 
-    git config user.name "${GIT_USERNAME}"
-    git config user.email "${GIT_EMAIL}"
+    #git config user.name "${GIT_USERNAME}"
+    #git config user.email "${GIT_EMAIL}"
     git add .trigger-bosh-lites-create
     git commit -m "Not enough unclaimed envs in ${POOL_NAME} or ${BUILDING_POOL_NAME} pools, updating trigger."
   fi
