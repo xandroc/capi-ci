@@ -17,6 +17,7 @@ image_resource:
 
 params:
   GO_VERSION:
+  PRIVATE_YAML:
 
 run:
   path: capi-ci/ci/update-packages/update_golang_package.sh

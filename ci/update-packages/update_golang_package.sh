@@ -2,7 +2,7 @@
 
 set -e -x
 
-cp $PWD/capi-ci-private/ci/private.yml $PWD/capi-release/config/private.yml
+echo "${PRIVATE_YAML}" > $PWD/capi-release/config/private.yml
 
 pushd golang-release
 	new_go_version=$(bosh blobs | grep linux | grep go${GO_VERSION} | cut -d . -f 1-3 | sort | tail -1)
