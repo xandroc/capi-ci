@@ -8,18 +8,6 @@ pushd cloud_controller_ng
   PASSED_UNIT_TESTS_SHA=$(git log -n1 --format="%H" -- db)
 popd
 
-pushd diego-release/src/code.cloudfoundry.org/bbs
-  BBS_SHA=$(git rev-parse HEAD)
-popd
-
-pushd diego-release/src/code.cloudfoundry.org
-  LAGER_SHA=$(cat go.mod | grep 'code.cloudfoundry.org/lager =>' | sed 's/.*-//' )
-popd
-
-pushd diego-release/src/code.cloudfoundry.org/locket
-  LOCKET_SHA=$(git rev-parse HEAD)
-popd
-
 pushd cc-uploader
   CC_UPLOADER_SHA=$(git rev-parse HEAD)
 popd
@@ -35,21 +23,6 @@ pushd capi-release
   popd
 
   pushd src/code.cloudfoundry.org
-    pushd bbs
-      git fetch
-      git checkout "${BBS_SHA}"
-    popd
-
-    pushd lager
-      git fetch
-      git checkout "${LAGER_SHA}"
-    popd
-
-    pushd locket
-      git fetch
-      git checkout "${LOCKET_SHA}"
-    popd
-
     pushd cc-uploader
       git fetch
       git checkout "${CC_UPLOADER_SHA}"
