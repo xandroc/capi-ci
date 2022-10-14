@@ -1486,6 +1486,7 @@ jobs:
         integration-config: updated-integration-configs
       params:
         NODES: 2
+        FLAKE_ATTEMPTS: 2
         CONFIG_FILE_PATH: "elsa/baras_integration_config.json"
     - task: sync-integration-tests
       file: sync-integration-tests/concourse/task_with_credhub.yml
