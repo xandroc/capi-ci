@@ -3253,7 +3253,6 @@ jobs:
         cf-deployment-operations/skip-cert-verify.yml
         cf-deployment-operations/use-latest-capi.yml
         cf-deployment-operations/scale-up-cloud-controller.yml
-        cf-deployment-operations/temporary/use-postgres-9x.yml
   - task: deploy
     file: cf-deployment-concourse-tasks/bosh-deploy/task.yml
     input_mapping:
@@ -3270,7 +3269,6 @@ jobs:
         base-ops-files/operations/use-compiled-releases.yml
         use-latest-capi.yml
         base-ops-files/operations/use-postgres.yml
-        use-postgres-9x.yml
         base-ops-files/operations/experimental/enable-tls-cloud-controller-postgres.yml
         scale-up-cloud-controller.yml
   - task: extract-bbl-environment
