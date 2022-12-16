@@ -282,7 +282,7 @@ resources:
 - name: diego-release
   type: git
   source:
-    branch: master
+    branch: release
     private_key: ((private_key))
     uri: git@github.com:cloudfoundry/diego-release.git
 
