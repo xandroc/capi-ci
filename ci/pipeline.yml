@@ -1057,7 +1057,6 @@ jobs:
         disable-credhub-interpolate-service-bindings.yml
         disable-uaa-get-requests.yml
         enable-cef-security-event-logging.yml
-        base-ops-files/operations/experimental/use-mysql-version-8.0.yml
   - task: updated-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
     input_mapping:
@@ -1212,7 +1211,6 @@ jobs:
         use-nfs-blobstore.yml
         skip-cert-verify.yml
         disable-uaa-get-requests.yml
-        base-ops-files/operations/experimental/use-mysql-version-8.0.yml
   - task: updated-integration-configs
     file: cf-deployment-concourse-tasks/update-integration-configs/task.yml
     input_mapping:
@@ -2389,7 +2387,6 @@ jobs:
         base-ops-files/operations/scale-to-one-az.yml
         base-ops-files/operations/test/scale-to-one-az-addon-parallel-cats.yml
         base-ops-files/operations/test/speed-up-dynamic-asgs.yml
-        base-ops-files/operations/experimental/use-mysql-version-8.0.yml
         use-latest-capi.yml
         skip-cert-verify.yml
         enable-pxc-binlogging.yml
@@ -2622,7 +2619,6 @@ jobs:
         base-ops-files/operations/scale-to-one-az.yml
         base-ops-files/operations/test/scale-to-one-az-addon-parallel-cats.yml
         base-ops-files/operations/test/speed-up-dynamic-asgs.yml
-        base-ops-files/operations/experimental/use-mysql-version-8.0.yml
         use-latest-capi.yml
         skip-cert-verify.yml
         log-cache-reduce-memory.yml
