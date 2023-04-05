@@ -1509,7 +1509,6 @@ jobs:
     - get: cf-deployment-concourse-tasks
       resource: cf-deployment-concourse-tasks
     - get: cf-deployment
-      resource: cf-deployment-main
     - get: kiki-bbl-state
     - get: kiki-integration-configs
     - get: sync-integration-tests
