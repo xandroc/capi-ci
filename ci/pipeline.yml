@@ -1746,8 +1746,9 @@ jobs:
     file: capi-ci/ci/docs/update_docs_v2.yml
     params: &docs-aws-account
       AWS_DEFAULT_REGION: us-east-1
-      AWS_ACCESS_KEY_ID: ((docs_s3_access_key))
-      AWS_SECRET_ACCESS_KEY: ((docs_s3_secret_key))
+      AWS_ACCESS_KEY_ID: ((cloudgate_docs_s3_access_key))
+      AWS_SECRET_ACCESS_KEY: ((cloudgate_docs_s3_secret_key))
+      AWS_ROLE_ARN: ((cloudgate_docs_s3_role_arn))
       CF_VERSIONS_FILE_PATH: api-docs/data/cf-deployment-api-versions.json
       GIT_COMMIT_USERNAME: "CAPI CI"
       GIT_COMMIT_EMAIL: "cf-capi-eng+ci@pivotal.io"
