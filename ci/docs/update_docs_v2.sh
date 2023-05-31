@@ -17,7 +17,7 @@ function update_versions_json() {
 
 function build_v2_docs() {
   pushd capi-release/src/cloud_controller_ng
-    export $(printf "AWS_ACCESS_KEY_ID=%s AWS_SECRET_ACCESS_KEY=%s AWS_SESSION_TOKEN=%s" $(aws sts assume-role --role-arn $AWS_ROLE_ARN --role-session-name docs-session --output test --query "Credentials.[AccessKeyId,SecretAccessKey,SessionToken]"))
+    export $(printf "AWS_ACCESS_KEY_ID=%s AWS_SECRET_ACCESS_KEY=%s AWS_SESSION_TOKEN=%s" $(aws sts assume-role --role-arn $AWS_ROLE_ARN --role-session-name docs-session --output text --query "Credentials.[AccessKeyId,SecretAccessKey,SessionToken]"))
     aws s3 rm s3://cc-api-docs/release-candidate/ --recursive
     aws s3 cp docs/v2 s3://cc-api-docs/release-candidate --recursive
   popd
