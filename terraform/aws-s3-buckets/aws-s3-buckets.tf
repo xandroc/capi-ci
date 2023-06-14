@@ -24,6 +24,7 @@ variable "aws_region" {
 # Create four buckets:
 #   - two buckets under cloudfront
 #   - two direct s3 buckets
+#   - bucket ownership controls for each bucket
 
 provider "aws" {
   access_key = var.aws_access_key
@@ -42,7 +43,15 @@ resource "aws_s3_bucket" "resource_pool" {
   }
 }
 
+resource "aws_s3_bucket_ownership_controls" "resource_pool" {
+  bucket = aws_s3_bucket.resource_pool.id
+  rule {
+    object_ownership = "BucketOwnerPreferred"
+  }
+}
+
 resource "aws_s3_bucket_acl" "resource_pool" {
+  depends_on = [aws_s3_bucket_ownership_controls.resource_pool]
   bucket = aws_s3_bucket.resource_pool.id
   acl    = "private"
 }
@@ -55,7 +64,15 @@ resource "aws_s3_bucket" "droplets" {
   }
 }
 
+resource "aws_s3_bucket_ownership_controls" "droplets" {
+  bucket = aws_s3_bucket.droplets.id
+  rule {
+    object_ownership = "BucketOwnerPreferred"
+  }
+}
+
 resource "aws_s3_bucket_acl" "droplets" {
+  depends_on = [aws_s3_bucket_ownership_controls.droplets]
   bucket = aws_s3_bucket.droplets.id
   acl    = "private"
 }
@@ -68,7 +85,15 @@ resource "aws_s3_bucket" "packages" {
   }
 }
 
+resource "aws_s3_bucket_ownership_controls" "packages" {
+  bucket = aws_s3_bucket.packages.id
+  rule {
+    object_ownership = "BucketOwnerPreferred"
+  }
+}
+
 resource "aws_s3_bucket_acl" "packages" {
+  depends_on = [aws_s3_bucket_ownership_controls.packages]
   bucket = aws_s3_bucket.packages.id
   acl    = "private"
 }
@@ -81,7 +106,15 @@ resource "aws_s3_bucket" "buildpacks" {
   }
 }
 
+resource "aws_s3_bucket_ownership_controls" "buildpacks" {
+  bucket = aws_s3_bucket.buildpacks.id
+  rule {
+    object_ownership = "BucketOwnerPreferred"
+  }
+}
+
 resource "aws_s3_bucket_acl" "buildpacks" {
+  depends_on = [aws_s3_bucket_ownership_controls.buildpacks]
   bucket = aws_s3_bucket.buildpacks.id
   acl    = "private"
 }
