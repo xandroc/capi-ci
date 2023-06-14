@@ -245,7 +245,7 @@ resource "aws_cloudfront_distribution" "resource_pool_distribution" {
     cached_methods   = ["GET", "HEAD"]
     target_origin_id = "${var.env_name}-resource-pool"
 
-    trusted_signers = ["self"]
+    trusted_key_groups = ["elsa-cdn-key-group"]
 
     forwarded_values {
       query_string = false
@@ -294,7 +294,7 @@ resource "aws_cloudfront_distribution" "droplets_distribution" {
     cached_methods   = ["GET", "HEAD"]
     target_origin_id = "${var.env_name}-droplets"
 
-    trusted_signers = ["self"]
+    trusted_key_groups = ["elsa-cdn-key-group"]
 
     forwarded_values {
       query_string = false
