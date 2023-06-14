@@ -245,7 +245,7 @@ resource "aws_cloudfront_distribution" "resource_pool_distribution" {
     cached_methods   = ["GET", "HEAD"]
     target_origin_id = "${var.env_name}-resource-pool"
 
-    trusted_key_groups = ["elsa-cdn-key-group"]
+    trusted_key_groups = ["34ade5f9-ef91-4df8-b853-f0f9b6830519"]
 
     forwarded_values {
       query_string = false
@@ -294,7 +294,7 @@ resource "aws_cloudfront_distribution" "droplets_distribution" {
     cached_methods   = ["GET", "HEAD"]
     target_origin_id = "${var.env_name}-droplets"
 
-    trusted_key_groups = ["elsa-cdn-key-group"]
+    trusted_key_groups = ["34ade5f9-ef91-4df8-b853-f0f9b6830519"]
 
     forwarded_values {
       query_string = false
