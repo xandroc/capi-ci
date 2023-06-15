@@ -133,10 +133,11 @@ resources:
 - name: capi-final-releases
   type: s3
   source:
-    bucket: capi-final-releases
+    bucket: capi-final-releases-app-runtime-interfaces
     regexp: capi-(.*).tgz
-    access_key_id: ((wasabi_ci_artifacts_s3_access_key))
-    secret_access_key: ((wasabi_ci_artifacts_s3_secret_key))
+    access_key_id: ((app_runtime_interfaces_capi_ci_access_key))
+    secret_access_key: ((app_runtime_interfaces_capi_ci_secret_access_key))
+    region_name: us-east-2
 
 - name: capi-ci
   type: git
@@ -183,20 +184,21 @@ resources:
 - name: capi-release-tarball
   type: s3
   source:
-    bucket: capi-releases
+    bucket: capi-releases-app-runtime-interfaces
     regexp: capi-(.*)-.*-.*.tgz
-    access_key_id: ((wasabi_ci_artifacts_s3_access_key))
-    secret_access_key: ((wasabi_ci_artifacts_s3_secret_key))
+    access_key_id: ((app_runtime_interfaces_capi_ci_access_key))
+    secret_access_key: ((app_runtime_interfaces_capi_ci_secret_access_key))
+    region_name: us-east-2
 
 - name: next-version
   type: semver
   source:
-    access_key_id: ((wasabi_ci_artifacts_s3_access_key))
-    secret_access_key: ((wasabi_ci_artifacts_s3_secret_key))
+    access_key_id: ((app_runtime_interfaces_capi_ci_access_key))
+    secret_access_key: ((app_runtime_interfaces_capi_ci_secret_access_key))
     initial_version: 0.0.0
-    bucket: capi-release-versions
+    bucket: capi-release-versions-app-runtime-interfaces
     key: current-capi-release-version
-    region_name: us-east-1
+    region_name: us-east-2
 
 - name: cc-api-v3-version
   type: semver
@@ -1352,10 +1354,10 @@ jobs:
       env_name: elsa
       terraform_source: capi-ci/terraform/aws-s3-buckets/
       vars:
-        aws_access_key: ((wasabi_aws_access_key))
-        aws_secret_key: ((wasabi_aws_secret_key))
-        cdn_key_pair_id: ((wasabi_cdn_key_pair_id))
-        cdn_private_key: ((wasabi_cdn_private_key))
+        aws_access_key: ((app_runtime_interfaces_elsa_access_key))
+        aws_secret_key: ((app_runtime_interfaces_elsa_secret_access_key))
+        cdn_key_pair_id: ((app_runtime_interfaces_elsa_cdn_key_pair_id))
+        cdn_private_key: ((app_runtime_interfaces_elsa_cdn_private_key))
   - task: create-elsa-vars-files
     file: capi-ci/ci/bosh/create-elsa-vars-files.yml
     params:
@@ -1851,10 +1853,10 @@ jobs:
       env_name: elsa
       terraform_source: capi-ci/terraform/aws-s3-buckets/
       vars:
-        aws_access_key: ((wasabi_aws_access_key))
-        aws_secret_key: ((wasabi_aws_secret_key))
-        cdn_key_pair_id: ((wasabi_cdn_key_pair_id))
-        cdn_private_key: ((wasabi_cdn_private_key))
+        aws_access_key: ((app_runtime_interfaces_elsa_access_key))
+        aws_secret_key: ((app_runtime_interfaces_elsa_secret_access_key))
+        cdn_key_pair_id: ((app_runtime_interfaces_elsa_cdn_key_pair_id))
+        cdn_private_key: ((app_runtime_interfaces_elsa_cdn_private_key))
   - task: create-elsa-vars-files
     file: capi-ci/ci/bosh/create-elsa-vars-files.yml
     params:
