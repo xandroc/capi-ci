@@ -255,9 +255,9 @@ resources:
 - name: golang-release
   type: git
   source:
-    branch: master
+    branch: main
     private_key: ((private_key))
-    uri: git@github.com:bosh-packages/golang-release
+    uri: git@github.com:cloudfoundry/bosh-package-golang-release
     tag_filter: v*
 
 - name: cloud_controller_ng
