@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e -x
+set -eu -o pipefail
 
 if [[ -z "${PRIVATE_YAML}" ]]; then
   echo "Error: PRIVATE_YAML is not set."
@@ -20,11 +20,16 @@ echo "${PRIVATE_YAML}" > "$PWD"/capi-release/config/private.yml
 capi_blobs_path="$PWD/capi-release/config/blobs.yml"
 
 
-#e.g. redis/7.0.11
-current_redis_blob_name_with_version=$(grep -oP 'redis.*(?=.tar.gz)' "$capi_blobs_path" | head -1) || { echo "Error: grep command failed."; exit 1; }
+#e.g. redis/7.0.11.tar.gz
+current_redis_blob_name=$(grep -m 1  "redis" "$capi_blobs_path" | awk -F':' '{print $1}') || { echo "Error: grep command failed."; exit 1; }
 # e.g. 7.0.11
-current_redis_version=$(echo "$current_redis_blob_name_with_version" | awk -F '/' '{print $2}') || { echo "Error: awk command failed."; exit 1; }
+current_redis_version=$(echo "${current_redis_blob_name}" | awk -F'/' '{print $2}' | awk -F'.tar.gz' '{print $1}') || { echo "Error: awk command failed."; exit 1; }
 echo "Current Redis version is '${current_redis_version}'"
+
+if [ -z "$current_redis_blob_name" ] || [ -z "$current_redis_version" ]; then
+  echo "Either no Redis entry found or no version found for Redis in blobs.yml."
+  exit 1
+fi
 
 redis_path="$PWD/redis-release"
 new_redis_version=$(cat "$redis_path/version") || { echo "Error: cat command failed."; exit 1; }
@@ -36,11 +41,11 @@ if [[ "$current_redis_version" == "$new_redis_version" ]]; then
 fi
 
 pushd capi-release
-    bosh remove-blob -n "${current_redis_blob_name_with_version}"
+    bosh remove-blob -n "${current_redis_blob_name}"
     bosh add-blob -n "$redis_path/source.tar.gz" redis/"${new_redis_version}".tar.gz
 
     sed -i "0,/$current_redis_version/s//$new_redis_version/" packages/redis/packaging || { echo "Error: sed command for 'packaging' failed."; exit 1; }
-    sed -i "0,/$current_redis_version/s//$new_redis_version/" packages/redis/README.md || { echo "Error: sed command for 'README' failed."; exit 1; }
+    sed -i "s/$current_redis_version/$new_redis_version/g" path_to_the_redis_spec_file.yml packages/redis/README.md || { echo "Error: sed command for 'README' failed."; exit 1; }
     sed -i "0,/$current_redis_version/s//$new_redis_version/" packages/redis/spec || { echo "Error: sed command for 'spec' failed."; exit 1; }
 
     bosh upload-blobs -n
