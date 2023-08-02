@@ -45,7 +45,7 @@ pushd capi-release
     bosh add-blob -n "$redis_path/source.tar.gz" redis/"${new_redis_version}".tar.gz
 
     sed -i "0,/$current_redis_version/s//$new_redis_version/" packages/redis/packaging || { echo "Error: sed command for 'packaging' failed."; exit 1; }
-    sed -i "s/$current_redis_version/$new_redis_version/g" path_to_the_redis_spec_file.yml packages/redis/README.md || { echo "Error: sed command for 'README' failed."; exit 1; }
+    sed -i "s/$current_redis_version/$new_redis_version/g" packages/redis/README.md || { echo "Error: sed command for 'README' failed."; exit 1; }
     sed -i "0,/$current_redis_version/s//$new_redis_version/" packages/redis/spec || { echo "Error: sed command for 'spec' failed."; exit 1; }
 
     bosh upload-blobs -n
