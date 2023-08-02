@@ -3,7 +3,6 @@ platform: linux
 
 inputs:
   - name: capi-ci
-  - name: capi-ci-private
   - name: capi-release
   - name: redis-release
 outputs:

@@ -32,7 +32,8 @@ if [ -z "$current_redis_blob_name" ] || [ -z "$current_redis_version" ]; then
 fi
 
 redis_path="$PWD/redis-release"
-new_redis_version=$(cat "$redis_path/version") || { echo "Error: cat command failed."; exit 1; }
+new_redis_version=$(cat "$redis_path/version") || { echo "Error: cat command for version failed."; exit 1; }
+new_redis_url=$(cat "$redis_path/url") || { echo "Error: cat command for url failed."; exit 1; }
 echo "New Redis version is '${new_redis_version}'"
 
 if [[ "$current_redis_version" == "$new_redis_version" ]]; then
@@ -57,9 +58,6 @@ pushd capi-release
     git config user.email "cf-capi-eng+ci@pivotal.io"
 
     git add -A packages .final_builds config
-    git commit -n --allow-empty -m "Bump Redis to $new_redis_version"  || { echo "Error: git commit failed."; exit 1; }
+    git commit -n --allow-empty -m "Bump Redis to $new_redis_version" -m "Changes: $new_redis_url"  || { echo "Error: git commit failed."; exit 1; }
     cp -r "$PWD"/. ../updated-capi-release
 popd
-
-
-
