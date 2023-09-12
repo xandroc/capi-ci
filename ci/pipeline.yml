@@ -260,6 +260,7 @@ resources:
     repository: redis
     access_token: ((github_access_token))
     pre_release: false
+    semver_constraint: "7.2.x"
 
 - name: golang-release
   type: git
