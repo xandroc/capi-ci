@@ -100,7 +100,7 @@ cache_ip_for_hostname() {
 run_migrations() {
   echo "${green}Applying latest migrations to deployment...${reset}"
   bosh ssh -d "${BOSH_DEPLOYMENT_NAME}" "${BOSH_API_INSTANCE}" "cd /var/vcap/packages/cloud_controller_ng/cloud_controller_ng; source /var/vcap/jobs/cloud_controller_ng/bin/ruby_version.sh; sudo bundle exec rake db:migrate"
-  bosh ssh -d "${BOSH_DEPLOYMENT_NAME}" "${BOSH_API_INSTANCE}" "cd /var/vcap/packages/cloud_controller_ng/cloud_controller_ng; source /var/vcap/jobs/cloud_controller_ng/bin/ruby_version.sh; sudo sed -i \"s,Dir\['db/migrations/\*'],Dir['db/migrations/*.rb'],g\" lib/tasks/db.rake; sudo bundle exec rake db:ensure_migrations_are_current"
+  bosh ssh -d "${BOSH_DEPLOYMENT_NAME}" "${BOSH_API_INSTANCE}" "cd /var/vcap/packages/cloud_controller_ng/cloud_controller_ng; source /var/vcap/jobs/cloud_controller_ng/bin/ruby_version.sh; sudo bundle exec rake db:ensure_migrations_are_current"
 }
 
 cleanup() {
